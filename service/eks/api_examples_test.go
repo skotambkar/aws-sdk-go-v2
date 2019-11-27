@@ -12,6 +12,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/aws/awserr"
 	"github.com/aws/aws-sdk-go-v2/aws/external"
 	"github.com/aws/aws-sdk-go-v2/service/eks"
+	"github.com/aws/aws-sdk-go-v2/service/eks/types"
 )
 
 var _ time.Duration
@@ -36,10 +37,10 @@ func ExampleClient_CreateClusterRequest_shared00() {
 	}
 
 	svc := eks.New(cfg)
-	input := &eks.CreateClusterInput{
+	input := &types.CreateClusterInput{
 		ClientRequestToken: aws.String("1d2129a1-3d38-460a-9756-e5b91fddb951"),
 		Name:               aws.String("prod"),
-		ResourcesVpcConfig: &eks.VpcConfigRequest{
+		ResourcesVpcConfig: &types.VpcConfigRequest{
 			SecurityGroupIds: []string{
 				"sg-6979fe18",
 			},
@@ -95,7 +96,7 @@ func ExampleClient_DeleteClusterRequest_shared00() {
 	}
 
 	svc := eks.New(cfg)
-	input := &eks.DeleteClusterInput{
+	input := &types.DeleteClusterInput{
 		Name: aws.String("devel"),
 	}
 
@@ -139,7 +140,7 @@ func ExampleClient_DescribeClusterRequest_shared00() {
 	}
 
 	svc := eks.New(cfg)
-	input := &eks.DescribeClusterInput{
+	input := &types.DescribeClusterInput{
 		Name: aws.String("devel"),
 	}
 
@@ -180,7 +181,7 @@ func ExampleClient_ListClustersRequest_shared00() {
 	}
 
 	svc := eks.New(cfg)
-	input := &eks.ListClustersInput{}
+	input := &types.ListClustersInput{}
 
 	req := svc.ListClustersRequest(input)
 	result, err := req.Send(context.Background())

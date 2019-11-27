@@ -6,106 +6,10 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
-	"github.com/aws/aws-sdk-go-v2/internal/awsutil"
 	"github.com/aws/aws-sdk-go-v2/private/protocol"
 	"github.com/aws/aws-sdk-go-v2/private/protocol/restxml"
+	"github.com/aws/aws-sdk-go-v2/service/s3/types"
 )
-
-type PutBucketMetricsConfigurationInput struct {
-	_ struct{} `type:"structure" payload:"MetricsConfiguration"`
-
-	// The name of the bucket for which the metrics configuration is set.
-	//
-	// Bucket is a required field
-	Bucket *string `location:"uri" locationName:"Bucket" type:"string" required:"true"`
-
-	// The ID used to identify the metrics configuration.
-	//
-	// Id is a required field
-	Id *string `location:"querystring" locationName:"id" type:"string" required:"true"`
-
-	// Specifies the metrics configuration.
-	//
-	// MetricsConfiguration is a required field
-	MetricsConfiguration *MetricsConfiguration `locationName:"MetricsConfiguration" type:"structure" required:"true" xmlURI:"http://s3.amazonaws.com/doc/2006-03-01/"`
-}
-
-// String returns the string representation
-func (s PutBucketMetricsConfigurationInput) String() string {
-	return awsutil.Prettify(s)
-}
-
-// Validate inspects the fields of the type to determine if they are valid.
-func (s *PutBucketMetricsConfigurationInput) Validate() error {
-	invalidParams := aws.ErrInvalidParams{Context: "PutBucketMetricsConfigurationInput"}
-
-	if s.Bucket == nil {
-		invalidParams.Add(aws.NewErrParamRequired("Bucket"))
-	}
-
-	if s.Id == nil {
-		invalidParams.Add(aws.NewErrParamRequired("Id"))
-	}
-
-	if s.MetricsConfiguration == nil {
-		invalidParams.Add(aws.NewErrParamRequired("MetricsConfiguration"))
-	}
-	if s.MetricsConfiguration != nil {
-		if err := s.MetricsConfiguration.Validate(); err != nil {
-			invalidParams.AddNested("MetricsConfiguration", err.(aws.ErrInvalidParams))
-		}
-	}
-
-	if invalidParams.Len() > 0 {
-		return invalidParams
-	}
-	return nil
-}
-
-func (s *PutBucketMetricsConfigurationInput) getBucket() (v string) {
-	if s.Bucket == nil {
-		return v
-	}
-	return *s.Bucket
-}
-
-// MarshalFields encodes the AWS API shape using the passed in protocol encoder.
-func (s PutBucketMetricsConfigurationInput) MarshalFields(e protocol.FieldEncoder) error {
-
-	if s.Bucket != nil {
-		v := *s.Bucket
-
-		metadata := protocol.Metadata{}
-		e.SetValue(protocol.PathTarget, "Bucket", protocol.StringValue(v), metadata)
-	}
-	if s.MetricsConfiguration != nil {
-		v := s.MetricsConfiguration
-
-		metadata := protocol.Metadata{XMLNamespaceURI: "http://s3.amazonaws.com/doc/2006-03-01/"}
-		e.SetFields(protocol.PayloadTarget, "MetricsConfiguration", v, metadata)
-	}
-	if s.Id != nil {
-		v := *s.Id
-
-		metadata := protocol.Metadata{}
-		e.SetValue(protocol.QueryTarget, "id", protocol.StringValue(v), metadata)
-	}
-	return nil
-}
-
-type PutBucketMetricsConfigurationOutput struct {
-	_ struct{} `type:"structure"`
-}
-
-// String returns the string representation
-func (s PutBucketMetricsConfigurationOutput) String() string {
-	return awsutil.Prettify(s)
-}
-
-// MarshalFields encodes the AWS API shape using the passed in protocol encoder.
-func (s PutBucketMetricsConfigurationOutput) MarshalFields(e protocol.FieldEncoder) error {
-	return nil
-}
 
 const opPutBucketMetricsConfiguration = "PutBucketMetricsConfiguration"
 
@@ -123,7 +27,7 @@ const opPutBucketMetricsConfiguration = "PutBucketMetricsConfiguration"
 //    }
 //
 // Please also see https://docs.aws.amazon.com/goto/WebAPI/s3-2006-03-01/PutBucketMetricsConfiguration
-func (c *Client) PutBucketMetricsConfigurationRequest(input *PutBucketMetricsConfigurationInput) PutBucketMetricsConfigurationRequest {
+func (c *Client) PutBucketMetricsConfigurationRequest(input *types.PutBucketMetricsConfigurationInput) PutBucketMetricsConfigurationRequest {
 	op := &aws.Operation{
 		Name:       opPutBucketMetricsConfiguration,
 		HTTPMethod: "PUT",
@@ -131,10 +35,10 @@ func (c *Client) PutBucketMetricsConfigurationRequest(input *PutBucketMetricsCon
 	}
 
 	if input == nil {
-		input = &PutBucketMetricsConfigurationInput{}
+		input = &types.PutBucketMetricsConfigurationInput{}
 	}
 
-	req := c.newRequest(op, input, &PutBucketMetricsConfigurationOutput{})
+	req := c.newRequest(op, input, &types.PutBucketMetricsConfigurationOutput{})
 	req.Handlers.Unmarshal.Remove(restxml.UnmarshalHandler)
 	req.Handlers.Unmarshal.PushBackNamed(protocol.UnmarshalDiscardBodyHandler)
 	return PutBucketMetricsConfigurationRequest{Request: req, Input: input, Copy: c.PutBucketMetricsConfigurationRequest}
@@ -144,8 +48,8 @@ func (c *Client) PutBucketMetricsConfigurationRequest(input *PutBucketMetricsCon
 // PutBucketMetricsConfiguration API operation.
 type PutBucketMetricsConfigurationRequest struct {
 	*aws.Request
-	Input *PutBucketMetricsConfigurationInput
-	Copy  func(*PutBucketMetricsConfigurationInput) PutBucketMetricsConfigurationRequest
+	Input *types.PutBucketMetricsConfigurationInput
+	Copy  func(*types.PutBucketMetricsConfigurationInput) PutBucketMetricsConfigurationRequest
 }
 
 // Send marshals and sends the PutBucketMetricsConfiguration API request.
@@ -157,7 +61,7 @@ func (r PutBucketMetricsConfigurationRequest) Send(ctx context.Context) (*PutBuc
 	}
 
 	resp := &PutBucketMetricsConfigurationResponse{
-		PutBucketMetricsConfigurationOutput: r.Request.Data.(*PutBucketMetricsConfigurationOutput),
+		PutBucketMetricsConfigurationOutput: r.Request.Data.(*types.PutBucketMetricsConfigurationOutput),
 		response:                            &aws.Response{Request: r.Request},
 	}
 
@@ -167,7 +71,7 @@ func (r PutBucketMetricsConfigurationRequest) Send(ctx context.Context) (*PutBuc
 // PutBucketMetricsConfigurationResponse is the response type for the
 // PutBucketMetricsConfiguration API operation.
 type PutBucketMetricsConfigurationResponse struct {
-	*PutBucketMetricsConfigurationOutput
+	*types.PutBucketMetricsConfigurationOutput
 
 	response *aws.Response
 }

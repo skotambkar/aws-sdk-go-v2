@@ -10,6 +10,7 @@ package cloudsearchiface
 
 import (
 	"github.com/aws/aws-sdk-go-v2/service/cloudsearch"
+	"github.com/aws/aws-sdk-go-v2/service/cloudsearch/types"
 )
 
 // ClientAPI provides an interface to enable mocking the
@@ -43,7 +44,7 @@ import (
 //    type mockClientClient struct {
 //        cloudsearchiface.ClientPI
 //    }
-//    func (m *mockClientClient) BuildSuggesters(input *cloudsearch.BuildSuggestersInput) (*cloudsearch.BuildSuggestersOutput, error) {
+//    func (m *mockClientClient) BuildSuggesters(input *types.BuildSuggestersInput) (*types.BuildSuggestersOutput, error) {
 //        // mock response/functionality
 //    }
 //
@@ -61,53 +62,53 @@ import (
 // and waiters. Its suggested to use the pattern above for testing, or using
 // tooling to generate mocks to satisfy the interfaces.
 type ClientAPI interface {
-	BuildSuggestersRequest(*cloudsearch.BuildSuggestersInput) cloudsearch.BuildSuggestersRequest
+	BuildSuggestersRequest(*types.BuildSuggestersInput) cloudsearch.BuildSuggestersRequest
 
-	CreateDomainRequest(*cloudsearch.CreateDomainInput) cloudsearch.CreateDomainRequest
+	CreateDomainRequest(*types.CreateDomainInput) cloudsearch.CreateDomainRequest
 
-	DefineAnalysisSchemeRequest(*cloudsearch.DefineAnalysisSchemeInput) cloudsearch.DefineAnalysisSchemeRequest
+	DefineAnalysisSchemeRequest(*types.DefineAnalysisSchemeInput) cloudsearch.DefineAnalysisSchemeRequest
 
-	DefineExpressionRequest(*cloudsearch.DefineExpressionInput) cloudsearch.DefineExpressionRequest
+	DefineExpressionRequest(*types.DefineExpressionInput) cloudsearch.DefineExpressionRequest
 
-	DefineIndexFieldRequest(*cloudsearch.DefineIndexFieldInput) cloudsearch.DefineIndexFieldRequest
+	DefineIndexFieldRequest(*types.DefineIndexFieldInput) cloudsearch.DefineIndexFieldRequest
 
-	DefineSuggesterRequest(*cloudsearch.DefineSuggesterInput) cloudsearch.DefineSuggesterRequest
+	DefineSuggesterRequest(*types.DefineSuggesterInput) cloudsearch.DefineSuggesterRequest
 
-	DeleteAnalysisSchemeRequest(*cloudsearch.DeleteAnalysisSchemeInput) cloudsearch.DeleteAnalysisSchemeRequest
+	DeleteAnalysisSchemeRequest(*types.DeleteAnalysisSchemeInput) cloudsearch.DeleteAnalysisSchemeRequest
 
-	DeleteDomainRequest(*cloudsearch.DeleteDomainInput) cloudsearch.DeleteDomainRequest
+	DeleteDomainRequest(*types.DeleteDomainInput) cloudsearch.DeleteDomainRequest
 
-	DeleteExpressionRequest(*cloudsearch.DeleteExpressionInput) cloudsearch.DeleteExpressionRequest
+	DeleteExpressionRequest(*types.DeleteExpressionInput) cloudsearch.DeleteExpressionRequest
 
-	DeleteIndexFieldRequest(*cloudsearch.DeleteIndexFieldInput) cloudsearch.DeleteIndexFieldRequest
+	DeleteIndexFieldRequest(*types.DeleteIndexFieldInput) cloudsearch.DeleteIndexFieldRequest
 
-	DeleteSuggesterRequest(*cloudsearch.DeleteSuggesterInput) cloudsearch.DeleteSuggesterRequest
+	DeleteSuggesterRequest(*types.DeleteSuggesterInput) cloudsearch.DeleteSuggesterRequest
 
-	DescribeAnalysisSchemesRequest(*cloudsearch.DescribeAnalysisSchemesInput) cloudsearch.DescribeAnalysisSchemesRequest
+	DescribeAnalysisSchemesRequest(*types.DescribeAnalysisSchemesInput) cloudsearch.DescribeAnalysisSchemesRequest
 
-	DescribeAvailabilityOptionsRequest(*cloudsearch.DescribeAvailabilityOptionsInput) cloudsearch.DescribeAvailabilityOptionsRequest
+	DescribeAvailabilityOptionsRequest(*types.DescribeAvailabilityOptionsInput) cloudsearch.DescribeAvailabilityOptionsRequest
 
-	DescribeDomainsRequest(*cloudsearch.DescribeDomainsInput) cloudsearch.DescribeDomainsRequest
+	DescribeDomainsRequest(*types.DescribeDomainsInput) cloudsearch.DescribeDomainsRequest
 
-	DescribeExpressionsRequest(*cloudsearch.DescribeExpressionsInput) cloudsearch.DescribeExpressionsRequest
+	DescribeExpressionsRequest(*types.DescribeExpressionsInput) cloudsearch.DescribeExpressionsRequest
 
-	DescribeIndexFieldsRequest(*cloudsearch.DescribeIndexFieldsInput) cloudsearch.DescribeIndexFieldsRequest
+	DescribeIndexFieldsRequest(*types.DescribeIndexFieldsInput) cloudsearch.DescribeIndexFieldsRequest
 
-	DescribeScalingParametersRequest(*cloudsearch.DescribeScalingParametersInput) cloudsearch.DescribeScalingParametersRequest
+	DescribeScalingParametersRequest(*types.DescribeScalingParametersInput) cloudsearch.DescribeScalingParametersRequest
 
-	DescribeServiceAccessPoliciesRequest(*cloudsearch.DescribeServiceAccessPoliciesInput) cloudsearch.DescribeServiceAccessPoliciesRequest
+	DescribeServiceAccessPoliciesRequest(*types.DescribeServiceAccessPoliciesInput) cloudsearch.DescribeServiceAccessPoliciesRequest
 
-	DescribeSuggestersRequest(*cloudsearch.DescribeSuggestersInput) cloudsearch.DescribeSuggestersRequest
+	DescribeSuggestersRequest(*types.DescribeSuggestersInput) cloudsearch.DescribeSuggestersRequest
 
-	IndexDocumentsRequest(*cloudsearch.IndexDocumentsInput) cloudsearch.IndexDocumentsRequest
+	IndexDocumentsRequest(*types.IndexDocumentsInput) cloudsearch.IndexDocumentsRequest
 
-	ListDomainNamesRequest(*cloudsearch.ListDomainNamesInput) cloudsearch.ListDomainNamesRequest
+	ListDomainNamesRequest(*types.ListDomainNamesInput) cloudsearch.ListDomainNamesRequest
 
-	UpdateAvailabilityOptionsRequest(*cloudsearch.UpdateAvailabilityOptionsInput) cloudsearch.UpdateAvailabilityOptionsRequest
+	UpdateAvailabilityOptionsRequest(*types.UpdateAvailabilityOptionsInput) cloudsearch.UpdateAvailabilityOptionsRequest
 
-	UpdateScalingParametersRequest(*cloudsearch.UpdateScalingParametersInput) cloudsearch.UpdateScalingParametersRequest
+	UpdateScalingParametersRequest(*types.UpdateScalingParametersInput) cloudsearch.UpdateScalingParametersRequest
 
-	UpdateServiceAccessPoliciesRequest(*cloudsearch.UpdateServiceAccessPoliciesInput) cloudsearch.UpdateServiceAccessPoliciesRequest
+	UpdateServiceAccessPoliciesRequest(*types.UpdateServiceAccessPoliciesInput) cloudsearch.UpdateServiceAccessPoliciesRequest
 }
 
 var _ ClientAPI = (*cloudsearch.Client)(nil)

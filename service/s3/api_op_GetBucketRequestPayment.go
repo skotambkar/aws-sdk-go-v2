@@ -6,77 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
-	"github.com/aws/aws-sdk-go-v2/internal/awsutil"
-	"github.com/aws/aws-sdk-go-v2/private/protocol"
+	"github.com/aws/aws-sdk-go-v2/service/s3/types"
 )
-
-type GetBucketRequestPaymentInput struct {
-	_ struct{} `type:"structure"`
-
-	// Bucket is a required field
-	Bucket *string `location:"uri" locationName:"Bucket" type:"string" required:"true"`
-}
-
-// String returns the string representation
-func (s GetBucketRequestPaymentInput) String() string {
-	return awsutil.Prettify(s)
-}
-
-// Validate inspects the fields of the type to determine if they are valid.
-func (s *GetBucketRequestPaymentInput) Validate() error {
-	invalidParams := aws.ErrInvalidParams{Context: "GetBucketRequestPaymentInput"}
-
-	if s.Bucket == nil {
-		invalidParams.Add(aws.NewErrParamRequired("Bucket"))
-	}
-
-	if invalidParams.Len() > 0 {
-		return invalidParams
-	}
-	return nil
-}
-
-func (s *GetBucketRequestPaymentInput) getBucket() (v string) {
-	if s.Bucket == nil {
-		return v
-	}
-	return *s.Bucket
-}
-
-// MarshalFields encodes the AWS API shape using the passed in protocol encoder.
-func (s GetBucketRequestPaymentInput) MarshalFields(e protocol.FieldEncoder) error {
-
-	if s.Bucket != nil {
-		v := *s.Bucket
-
-		metadata := protocol.Metadata{}
-		e.SetValue(protocol.PathTarget, "Bucket", protocol.StringValue(v), metadata)
-	}
-	return nil
-}
-
-type GetBucketRequestPaymentOutput struct {
-	_ struct{} `type:"structure"`
-
-	// Specifies who pays for the download and request fees.
-	Payer Payer `type:"string" enum:"true"`
-}
-
-// String returns the string representation
-func (s GetBucketRequestPaymentOutput) String() string {
-	return awsutil.Prettify(s)
-}
-
-// MarshalFields encodes the AWS API shape using the passed in protocol encoder.
-func (s GetBucketRequestPaymentOutput) MarshalFields(e protocol.FieldEncoder) error {
-	if len(s.Payer) > 0 {
-		v := s.Payer
-
-		metadata := protocol.Metadata{}
-		e.SetValue(protocol.BodyTarget, "Payer", v, metadata)
-	}
-	return nil
-}
 
 const opGetBucketRequestPayment = "GetBucketRequestPayment"
 
@@ -93,7 +24,7 @@ const opGetBucketRequestPayment = "GetBucketRequestPayment"
 //    }
 //
 // Please also see https://docs.aws.amazon.com/goto/WebAPI/s3-2006-03-01/GetBucketRequestPayment
-func (c *Client) GetBucketRequestPaymentRequest(input *GetBucketRequestPaymentInput) GetBucketRequestPaymentRequest {
+func (c *Client) GetBucketRequestPaymentRequest(input *types.GetBucketRequestPaymentInput) GetBucketRequestPaymentRequest {
 	op := &aws.Operation{
 		Name:       opGetBucketRequestPayment,
 		HTTPMethod: "GET",
@@ -101,10 +32,10 @@ func (c *Client) GetBucketRequestPaymentRequest(input *GetBucketRequestPaymentIn
 	}
 
 	if input == nil {
-		input = &GetBucketRequestPaymentInput{}
+		input = &types.GetBucketRequestPaymentInput{}
 	}
 
-	req := c.newRequest(op, input, &GetBucketRequestPaymentOutput{})
+	req := c.newRequest(op, input, &types.GetBucketRequestPaymentOutput{})
 	return GetBucketRequestPaymentRequest{Request: req, Input: input, Copy: c.GetBucketRequestPaymentRequest}
 }
 
@@ -112,8 +43,8 @@ func (c *Client) GetBucketRequestPaymentRequest(input *GetBucketRequestPaymentIn
 // GetBucketRequestPayment API operation.
 type GetBucketRequestPaymentRequest struct {
 	*aws.Request
-	Input *GetBucketRequestPaymentInput
-	Copy  func(*GetBucketRequestPaymentInput) GetBucketRequestPaymentRequest
+	Input *types.GetBucketRequestPaymentInput
+	Copy  func(*types.GetBucketRequestPaymentInput) GetBucketRequestPaymentRequest
 }
 
 // Send marshals and sends the GetBucketRequestPayment API request.
@@ -125,7 +56,7 @@ func (r GetBucketRequestPaymentRequest) Send(ctx context.Context) (*GetBucketReq
 	}
 
 	resp := &GetBucketRequestPaymentResponse{
-		GetBucketRequestPaymentOutput: r.Request.Data.(*GetBucketRequestPaymentOutput),
+		GetBucketRequestPaymentOutput: r.Request.Data.(*types.GetBucketRequestPaymentOutput),
 		response:                      &aws.Response{Request: r.Request},
 	}
 
@@ -135,7 +66,7 @@ func (r GetBucketRequestPaymentRequest) Send(ctx context.Context) (*GetBucketReq
 // GetBucketRequestPaymentResponse is the response type for the
 // GetBucketRequestPayment API operation.
 type GetBucketRequestPaymentResponse struct {
-	*GetBucketRequestPaymentOutput
+	*types.GetBucketRequestPaymentOutput
 
 	response *aws.Response
 }

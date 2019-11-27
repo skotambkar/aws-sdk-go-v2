@@ -6,49 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
-	"github.com/aws/aws-sdk-go-v2/internal/awsutil"
+	"github.com/aws/aws-sdk-go-v2/service/firehose/types"
 )
-
-type StopDeliveryStreamEncryptionInput struct {
-	_ struct{} `type:"structure"`
-
-	// The name of the delivery stream for which you want to disable server-side
-	// encryption (SSE).
-	//
-	// DeliveryStreamName is a required field
-	DeliveryStreamName *string `min:"1" type:"string" required:"true"`
-}
-
-// String returns the string representation
-func (s StopDeliveryStreamEncryptionInput) String() string {
-	return awsutil.Prettify(s)
-}
-
-// Validate inspects the fields of the type to determine if they are valid.
-func (s *StopDeliveryStreamEncryptionInput) Validate() error {
-	invalidParams := aws.ErrInvalidParams{Context: "StopDeliveryStreamEncryptionInput"}
-
-	if s.DeliveryStreamName == nil {
-		invalidParams.Add(aws.NewErrParamRequired("DeliveryStreamName"))
-	}
-	if s.DeliveryStreamName != nil && len(*s.DeliveryStreamName) < 1 {
-		invalidParams.Add(aws.NewErrParamMinLen("DeliveryStreamName", 1))
-	}
-
-	if invalidParams.Len() > 0 {
-		return invalidParams
-	}
-	return nil
-}
-
-type StopDeliveryStreamEncryptionOutput struct {
-	_ struct{} `type:"structure"`
-}
-
-// String returns the string representation
-func (s StopDeliveryStreamEncryptionOutput) String() string {
-	return awsutil.Prettify(s)
-}
 
 const opStopDeliveryStreamEncryption = "StopDeliveryStreamEncryption"
 
@@ -82,7 +41,7 @@ const opStopDeliveryStreamEncryption = "StopDeliveryStreamEncryption"
 //    }
 //
 // Please also see https://docs.aws.amazon.com/goto/WebAPI/firehose-2015-08-04/StopDeliveryStreamEncryption
-func (c *Client) StopDeliveryStreamEncryptionRequest(input *StopDeliveryStreamEncryptionInput) StopDeliveryStreamEncryptionRequest {
+func (c *Client) StopDeliveryStreamEncryptionRequest(input *types.StopDeliveryStreamEncryptionInput) StopDeliveryStreamEncryptionRequest {
 	op := &aws.Operation{
 		Name:       opStopDeliveryStreamEncryption,
 		HTTPMethod: "POST",
@@ -90,10 +49,10 @@ func (c *Client) StopDeliveryStreamEncryptionRequest(input *StopDeliveryStreamEn
 	}
 
 	if input == nil {
-		input = &StopDeliveryStreamEncryptionInput{}
+		input = &types.StopDeliveryStreamEncryptionInput{}
 	}
 
-	req := c.newRequest(op, input, &StopDeliveryStreamEncryptionOutput{})
+	req := c.newRequest(op, input, &types.StopDeliveryStreamEncryptionOutput{})
 	return StopDeliveryStreamEncryptionRequest{Request: req, Input: input, Copy: c.StopDeliveryStreamEncryptionRequest}
 }
 
@@ -101,8 +60,8 @@ func (c *Client) StopDeliveryStreamEncryptionRequest(input *StopDeliveryStreamEn
 // StopDeliveryStreamEncryption API operation.
 type StopDeliveryStreamEncryptionRequest struct {
 	*aws.Request
-	Input *StopDeliveryStreamEncryptionInput
-	Copy  func(*StopDeliveryStreamEncryptionInput) StopDeliveryStreamEncryptionRequest
+	Input *types.StopDeliveryStreamEncryptionInput
+	Copy  func(*types.StopDeliveryStreamEncryptionInput) StopDeliveryStreamEncryptionRequest
 }
 
 // Send marshals and sends the StopDeliveryStreamEncryption API request.
@@ -114,7 +73,7 @@ func (r StopDeliveryStreamEncryptionRequest) Send(ctx context.Context) (*StopDel
 	}
 
 	resp := &StopDeliveryStreamEncryptionResponse{
-		StopDeliveryStreamEncryptionOutput: r.Request.Data.(*StopDeliveryStreamEncryptionOutput),
+		StopDeliveryStreamEncryptionOutput: r.Request.Data.(*types.StopDeliveryStreamEncryptionOutput),
 		response:                           &aws.Response{Request: r.Request},
 	}
 
@@ -124,7 +83,7 @@ func (r StopDeliveryStreamEncryptionRequest) Send(ctx context.Context) (*StopDel
 // StopDeliveryStreamEncryptionResponse is the response type for the
 // StopDeliveryStreamEncryption API operation.
 type StopDeliveryStreamEncryptionResponse struct {
-	*StopDeliveryStreamEncryptionOutput
+	*types.StopDeliveryStreamEncryptionOutput
 
 	response *aws.Response
 }

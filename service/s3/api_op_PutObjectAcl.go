@@ -6,184 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
-	"github.com/aws/aws-sdk-go-v2/internal/awsutil"
-	"github.com/aws/aws-sdk-go-v2/private/protocol"
+	"github.com/aws/aws-sdk-go-v2/service/s3/types"
 )
-
-type PutObjectAclInput struct {
-	_ struct{} `type:"structure" payload:"AccessControlPolicy"`
-
-	// The canned ACL to apply to the object.
-	ACL ObjectCannedACL `location:"header" locationName:"x-amz-acl" type:"string" enum:"true"`
-
-	// Contains the elements that set the ACL permissions for an object per grantee.
-	AccessControlPolicy *AccessControlPolicy `locationName:"AccessControlPolicy" type:"structure" xmlURI:"http://s3.amazonaws.com/doc/2006-03-01/"`
-
-	// Bucket is a required field
-	Bucket *string `location:"uri" locationName:"Bucket" type:"string" required:"true"`
-
-	// Allows grantee the read, write, read ACP, and write ACP permissions on the
-	// bucket.
-	GrantFullControl *string `location:"header" locationName:"x-amz-grant-full-control" type:"string"`
-
-	// Allows grantee to list the objects in the bucket.
-	GrantRead *string `location:"header" locationName:"x-amz-grant-read" type:"string"`
-
-	// Allows grantee to read the bucket ACL.
-	GrantReadACP *string `location:"header" locationName:"x-amz-grant-read-acp" type:"string"`
-
-	// Allows grantee to create, overwrite, and delete any object in the bucket.
-	GrantWrite *string `location:"header" locationName:"x-amz-grant-write" type:"string"`
-
-	// Allows grantee to write the ACL for the applicable bucket.
-	GrantWriteACP *string `location:"header" locationName:"x-amz-grant-write-acp" type:"string"`
-
-	// Key is a required field
-	Key *string `location:"uri" locationName:"Key" min:"1" type:"string" required:"true"`
-
-	// Confirms that the requester knows that she or he will be charged for the
-	// request. Bucket owners need not specify this parameter in their requests.
-	// Documentation on downloading objects from requester pays buckets can be found
-	// at http://docs.aws.amazon.com/AmazonS3/latest/dev/ObjectsinRequesterPaysBuckets.html
-	RequestPayer RequestPayer `location:"header" locationName:"x-amz-request-payer" type:"string" enum:"true"`
-
-	// VersionId used to reference a specific version of the object.
-	VersionId *string `location:"querystring" locationName:"versionId" type:"string"`
-}
-
-// String returns the string representation
-func (s PutObjectAclInput) String() string {
-	return awsutil.Prettify(s)
-}
-
-// Validate inspects the fields of the type to determine if they are valid.
-func (s *PutObjectAclInput) Validate() error {
-	invalidParams := aws.ErrInvalidParams{Context: "PutObjectAclInput"}
-
-	if s.Bucket == nil {
-		invalidParams.Add(aws.NewErrParamRequired("Bucket"))
-	}
-
-	if s.Key == nil {
-		invalidParams.Add(aws.NewErrParamRequired("Key"))
-	}
-	if s.Key != nil && len(*s.Key) < 1 {
-		invalidParams.Add(aws.NewErrParamMinLen("Key", 1))
-	}
-	if s.AccessControlPolicy != nil {
-		if err := s.AccessControlPolicy.Validate(); err != nil {
-			invalidParams.AddNested("AccessControlPolicy", err.(aws.ErrInvalidParams))
-		}
-	}
-
-	if invalidParams.Len() > 0 {
-		return invalidParams
-	}
-	return nil
-}
-
-func (s *PutObjectAclInput) getBucket() (v string) {
-	if s.Bucket == nil {
-		return v
-	}
-	return *s.Bucket
-}
-
-// MarshalFields encodes the AWS API shape using the passed in protocol encoder.
-func (s PutObjectAclInput) MarshalFields(e protocol.FieldEncoder) error {
-
-	if len(s.ACL) > 0 {
-		v := s.ACL
-
-		metadata := protocol.Metadata{}
-		e.SetValue(protocol.HeaderTarget, "x-amz-acl", v, metadata)
-	}
-	if s.GrantFullControl != nil {
-		v := *s.GrantFullControl
-
-		metadata := protocol.Metadata{}
-		e.SetValue(protocol.HeaderTarget, "x-amz-grant-full-control", protocol.StringValue(v), metadata)
-	}
-	if s.GrantRead != nil {
-		v := *s.GrantRead
-
-		metadata := protocol.Metadata{}
-		e.SetValue(protocol.HeaderTarget, "x-amz-grant-read", protocol.StringValue(v), metadata)
-	}
-	if s.GrantReadACP != nil {
-		v := *s.GrantReadACP
-
-		metadata := protocol.Metadata{}
-		e.SetValue(protocol.HeaderTarget, "x-amz-grant-read-acp", protocol.StringValue(v), metadata)
-	}
-	if s.GrantWrite != nil {
-		v := *s.GrantWrite
-
-		metadata := protocol.Metadata{}
-		e.SetValue(protocol.HeaderTarget, "x-amz-grant-write", protocol.StringValue(v), metadata)
-	}
-	if s.GrantWriteACP != nil {
-		v := *s.GrantWriteACP
-
-		metadata := protocol.Metadata{}
-		e.SetValue(protocol.HeaderTarget, "x-amz-grant-write-acp", protocol.StringValue(v), metadata)
-	}
-	if len(s.RequestPayer) > 0 {
-		v := s.RequestPayer
-
-		metadata := protocol.Metadata{}
-		e.SetValue(protocol.HeaderTarget, "x-amz-request-payer", v, metadata)
-	}
-	if s.Bucket != nil {
-		v := *s.Bucket
-
-		metadata := protocol.Metadata{}
-		e.SetValue(protocol.PathTarget, "Bucket", protocol.StringValue(v), metadata)
-	}
-	if s.Key != nil {
-		v := *s.Key
-
-		metadata := protocol.Metadata{}
-		e.SetValue(protocol.PathTarget, "Key", protocol.StringValue(v), metadata)
-	}
-	if s.AccessControlPolicy != nil {
-		v := s.AccessControlPolicy
-
-		metadata := protocol.Metadata{XMLNamespaceURI: "http://s3.amazonaws.com/doc/2006-03-01/"}
-		e.SetFields(protocol.PayloadTarget, "AccessControlPolicy", v, metadata)
-	}
-	if s.VersionId != nil {
-		v := *s.VersionId
-
-		metadata := protocol.Metadata{}
-		e.SetValue(protocol.QueryTarget, "versionId", protocol.StringValue(v), metadata)
-	}
-	return nil
-}
-
-type PutObjectAclOutput struct {
-	_ struct{} `type:"structure"`
-
-	// If present, indicates that the requester was successfully charged for the
-	// request.
-	RequestCharged RequestCharged `location:"header" locationName:"x-amz-request-charged" type:"string" enum:"true"`
-}
-
-// String returns the string representation
-func (s PutObjectAclOutput) String() string {
-	return awsutil.Prettify(s)
-}
-
-// MarshalFields encodes the AWS API shape using the passed in protocol encoder.
-func (s PutObjectAclOutput) MarshalFields(e protocol.FieldEncoder) error {
-	if len(s.RequestCharged) > 0 {
-		v := s.RequestCharged
-
-		metadata := protocol.Metadata{}
-		e.SetValue(protocol.HeaderTarget, "x-amz-request-charged", v, metadata)
-	}
-	return nil
-}
 
 const opPutObjectAcl = "PutObjectAcl"
 
@@ -201,7 +25,7 @@ const opPutObjectAcl = "PutObjectAcl"
 //    }
 //
 // Please also see https://docs.aws.amazon.com/goto/WebAPI/s3-2006-03-01/PutObjectAcl
-func (c *Client) PutObjectAclRequest(input *PutObjectAclInput) PutObjectAclRequest {
+func (c *Client) PutObjectAclRequest(input *types.PutObjectAclInput) PutObjectAclRequest {
 	op := &aws.Operation{
 		Name:       opPutObjectAcl,
 		HTTPMethod: "PUT",
@@ -209,10 +33,10 @@ func (c *Client) PutObjectAclRequest(input *PutObjectAclInput) PutObjectAclReque
 	}
 
 	if input == nil {
-		input = &PutObjectAclInput{}
+		input = &types.PutObjectAclInput{}
 	}
 
-	req := c.newRequest(op, input, &PutObjectAclOutput{})
+	req := c.newRequest(op, input, &types.PutObjectAclOutput{})
 	return PutObjectAclRequest{Request: req, Input: input, Copy: c.PutObjectAclRequest}
 }
 
@@ -220,8 +44,8 @@ func (c *Client) PutObjectAclRequest(input *PutObjectAclInput) PutObjectAclReque
 // PutObjectAcl API operation.
 type PutObjectAclRequest struct {
 	*aws.Request
-	Input *PutObjectAclInput
-	Copy  func(*PutObjectAclInput) PutObjectAclRequest
+	Input *types.PutObjectAclInput
+	Copy  func(*types.PutObjectAclInput) PutObjectAclRequest
 }
 
 // Send marshals and sends the PutObjectAcl API request.
@@ -233,7 +57,7 @@ func (r PutObjectAclRequest) Send(ctx context.Context) (*PutObjectAclResponse, e
 	}
 
 	resp := &PutObjectAclResponse{
-		PutObjectAclOutput: r.Request.Data.(*PutObjectAclOutput),
+		PutObjectAclOutput: r.Request.Data.(*types.PutObjectAclOutput),
 		response:           &aws.Response{Request: r.Request},
 	}
 
@@ -243,7 +67,7 @@ func (r PutObjectAclRequest) Send(ctx context.Context) (*PutObjectAclResponse, e
 // PutObjectAclResponse is the response type for the
 // PutObjectAcl API operation.
 type PutObjectAclResponse struct {
-	*PutObjectAclOutput
+	*types.PutObjectAclOutput
 
 	response *aws.Response
 }

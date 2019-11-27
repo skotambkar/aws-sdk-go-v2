@@ -6,69 +6,10 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
-	"github.com/aws/aws-sdk-go-v2/internal/awsutil"
 	"github.com/aws/aws-sdk-go-v2/private/protocol"
 	"github.com/aws/aws-sdk-go-v2/private/protocol/restxml"
+	"github.com/aws/aws-sdk-go-v2/service/s3/types"
 )
-
-type DeleteBucketPolicyInput struct {
-	_ struct{} `type:"structure"`
-
-	// Bucket is a required field
-	Bucket *string `location:"uri" locationName:"Bucket" type:"string" required:"true"`
-}
-
-// String returns the string representation
-func (s DeleteBucketPolicyInput) String() string {
-	return awsutil.Prettify(s)
-}
-
-// Validate inspects the fields of the type to determine if they are valid.
-func (s *DeleteBucketPolicyInput) Validate() error {
-	invalidParams := aws.ErrInvalidParams{Context: "DeleteBucketPolicyInput"}
-
-	if s.Bucket == nil {
-		invalidParams.Add(aws.NewErrParamRequired("Bucket"))
-	}
-
-	if invalidParams.Len() > 0 {
-		return invalidParams
-	}
-	return nil
-}
-
-func (s *DeleteBucketPolicyInput) getBucket() (v string) {
-	if s.Bucket == nil {
-		return v
-	}
-	return *s.Bucket
-}
-
-// MarshalFields encodes the AWS API shape using the passed in protocol encoder.
-func (s DeleteBucketPolicyInput) MarshalFields(e protocol.FieldEncoder) error {
-
-	if s.Bucket != nil {
-		v := *s.Bucket
-
-		metadata := protocol.Metadata{}
-		e.SetValue(protocol.PathTarget, "Bucket", protocol.StringValue(v), metadata)
-	}
-	return nil
-}
-
-type DeleteBucketPolicyOutput struct {
-	_ struct{} `type:"structure"`
-}
-
-// String returns the string representation
-func (s DeleteBucketPolicyOutput) String() string {
-	return awsutil.Prettify(s)
-}
-
-// MarshalFields encodes the AWS API shape using the passed in protocol encoder.
-func (s DeleteBucketPolicyOutput) MarshalFields(e protocol.FieldEncoder) error {
-	return nil
-}
 
 const opDeleteBucketPolicy = "DeleteBucketPolicy"
 
@@ -85,7 +26,7 @@ const opDeleteBucketPolicy = "DeleteBucketPolicy"
 //    }
 //
 // Please also see https://docs.aws.amazon.com/goto/WebAPI/s3-2006-03-01/DeleteBucketPolicy
-func (c *Client) DeleteBucketPolicyRequest(input *DeleteBucketPolicyInput) DeleteBucketPolicyRequest {
+func (c *Client) DeleteBucketPolicyRequest(input *types.DeleteBucketPolicyInput) DeleteBucketPolicyRequest {
 	op := &aws.Operation{
 		Name:       opDeleteBucketPolicy,
 		HTTPMethod: "DELETE",
@@ -93,10 +34,10 @@ func (c *Client) DeleteBucketPolicyRequest(input *DeleteBucketPolicyInput) Delet
 	}
 
 	if input == nil {
-		input = &DeleteBucketPolicyInput{}
+		input = &types.DeleteBucketPolicyInput{}
 	}
 
-	req := c.newRequest(op, input, &DeleteBucketPolicyOutput{})
+	req := c.newRequest(op, input, &types.DeleteBucketPolicyOutput{})
 	req.Handlers.Unmarshal.Remove(restxml.UnmarshalHandler)
 	req.Handlers.Unmarshal.PushBackNamed(protocol.UnmarshalDiscardBodyHandler)
 	return DeleteBucketPolicyRequest{Request: req, Input: input, Copy: c.DeleteBucketPolicyRequest}
@@ -106,8 +47,8 @@ func (c *Client) DeleteBucketPolicyRequest(input *DeleteBucketPolicyInput) Delet
 // DeleteBucketPolicy API operation.
 type DeleteBucketPolicyRequest struct {
 	*aws.Request
-	Input *DeleteBucketPolicyInput
-	Copy  func(*DeleteBucketPolicyInput) DeleteBucketPolicyRequest
+	Input *types.DeleteBucketPolicyInput
+	Copy  func(*types.DeleteBucketPolicyInput) DeleteBucketPolicyRequest
 }
 
 // Send marshals and sends the DeleteBucketPolicy API request.
@@ -119,7 +60,7 @@ func (r DeleteBucketPolicyRequest) Send(ctx context.Context) (*DeleteBucketPolic
 	}
 
 	resp := &DeleteBucketPolicyResponse{
-		DeleteBucketPolicyOutput: r.Request.Data.(*DeleteBucketPolicyOutput),
+		DeleteBucketPolicyOutput: r.Request.Data.(*types.DeleteBucketPolicyOutput),
 		response:                 &aws.Response{Request: r.Request},
 	}
 
@@ -129,7 +70,7 @@ func (r DeleteBucketPolicyRequest) Send(ctx context.Context) (*DeleteBucketPolic
 // DeleteBucketPolicyResponse is the response type for the
 // DeleteBucketPolicy API operation.
 type DeleteBucketPolicyResponse struct {
-	*DeleteBucketPolicyOutput
+	*types.DeleteBucketPolicyOutput
 
 	response *aws.Response
 }

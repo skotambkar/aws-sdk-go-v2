@@ -10,6 +10,7 @@ package codecommitiface
 
 import (
 	"github.com/aws/aws-sdk-go-v2/service/codecommit"
+	"github.com/aws/aws-sdk-go-v2/service/codecommit/types"
 )
 
 // ClientAPI provides an interface to enable mocking the
@@ -43,7 +44,7 @@ import (
 //    type mockClientClient struct {
 //        codecommitiface.ClientPI
 //    }
-//    func (m *mockClientClient) BatchDescribeMergeConflicts(input *codecommit.BatchDescribeMergeConflictsInput) (*codecommit.BatchDescribeMergeConflictsOutput, error) {
+//    func (m *mockClientClient) BatchDescribeMergeConflicts(input *types.BatchDescribeMergeConflictsInput) (*types.BatchDescribeMergeConflictsOutput, error) {
 //        // mock response/functionality
 //    }
 //
@@ -61,113 +62,113 @@ import (
 // and waiters. Its suggested to use the pattern above for testing, or using
 // tooling to generate mocks to satisfy the interfaces.
 type ClientAPI interface {
-	BatchDescribeMergeConflictsRequest(*codecommit.BatchDescribeMergeConflictsInput) codecommit.BatchDescribeMergeConflictsRequest
+	BatchDescribeMergeConflictsRequest(*types.BatchDescribeMergeConflictsInput) codecommit.BatchDescribeMergeConflictsRequest
 
-	BatchGetCommitsRequest(*codecommit.BatchGetCommitsInput) codecommit.BatchGetCommitsRequest
+	BatchGetCommitsRequest(*types.BatchGetCommitsInput) codecommit.BatchGetCommitsRequest
 
-	BatchGetRepositoriesRequest(*codecommit.BatchGetRepositoriesInput) codecommit.BatchGetRepositoriesRequest
+	BatchGetRepositoriesRequest(*types.BatchGetRepositoriesInput) codecommit.BatchGetRepositoriesRequest
 
-	CreateBranchRequest(*codecommit.CreateBranchInput) codecommit.CreateBranchRequest
+	CreateBranchRequest(*types.CreateBranchInput) codecommit.CreateBranchRequest
 
-	CreateCommitRequest(*codecommit.CreateCommitInput) codecommit.CreateCommitRequest
+	CreateCommitRequest(*types.CreateCommitInput) codecommit.CreateCommitRequest
 
-	CreatePullRequestRequest(*codecommit.CreatePullRequestInput) codecommit.CreatePullRequestRequest
+	CreatePullRequestRequest(*types.CreatePullRequestInput) codecommit.CreatePullRequestRequest
 
-	CreateRepositoryRequest(*codecommit.CreateRepositoryInput) codecommit.CreateRepositoryRequest
+	CreateRepositoryRequest(*types.CreateRepositoryInput) codecommit.CreateRepositoryRequest
 
-	CreateUnreferencedMergeCommitRequest(*codecommit.CreateUnreferencedMergeCommitInput) codecommit.CreateUnreferencedMergeCommitRequest
+	CreateUnreferencedMergeCommitRequest(*types.CreateUnreferencedMergeCommitInput) codecommit.CreateUnreferencedMergeCommitRequest
 
-	DeleteBranchRequest(*codecommit.DeleteBranchInput) codecommit.DeleteBranchRequest
+	DeleteBranchRequest(*types.DeleteBranchInput) codecommit.DeleteBranchRequest
 
-	DeleteCommentContentRequest(*codecommit.DeleteCommentContentInput) codecommit.DeleteCommentContentRequest
+	DeleteCommentContentRequest(*types.DeleteCommentContentInput) codecommit.DeleteCommentContentRequest
 
-	DeleteFileRequest(*codecommit.DeleteFileInput) codecommit.DeleteFileRequest
+	DeleteFileRequest(*types.DeleteFileInput) codecommit.DeleteFileRequest
 
-	DeleteRepositoryRequest(*codecommit.DeleteRepositoryInput) codecommit.DeleteRepositoryRequest
+	DeleteRepositoryRequest(*types.DeleteRepositoryInput) codecommit.DeleteRepositoryRequest
 
-	DescribeMergeConflictsRequest(*codecommit.DescribeMergeConflictsInput) codecommit.DescribeMergeConflictsRequest
+	DescribeMergeConflictsRequest(*types.DescribeMergeConflictsInput) codecommit.DescribeMergeConflictsRequest
 
-	DescribePullRequestEventsRequest(*codecommit.DescribePullRequestEventsInput) codecommit.DescribePullRequestEventsRequest
+	DescribePullRequestEventsRequest(*types.DescribePullRequestEventsInput) codecommit.DescribePullRequestEventsRequest
 
-	GetBlobRequest(*codecommit.GetBlobInput) codecommit.GetBlobRequest
+	GetBlobRequest(*types.GetBlobInput) codecommit.GetBlobRequest
 
-	GetBranchRequest(*codecommit.GetBranchInput) codecommit.GetBranchRequest
+	GetBranchRequest(*types.GetBranchInput) codecommit.GetBranchRequest
 
-	GetCommentRequest(*codecommit.GetCommentInput) codecommit.GetCommentRequest
+	GetCommentRequest(*types.GetCommentInput) codecommit.GetCommentRequest
 
-	GetCommentsForComparedCommitRequest(*codecommit.GetCommentsForComparedCommitInput) codecommit.GetCommentsForComparedCommitRequest
+	GetCommentsForComparedCommitRequest(*types.GetCommentsForComparedCommitInput) codecommit.GetCommentsForComparedCommitRequest
 
-	GetCommentsForPullRequestRequest(*codecommit.GetCommentsForPullRequestInput) codecommit.GetCommentsForPullRequestRequest
+	GetCommentsForPullRequestRequest(*types.GetCommentsForPullRequestInput) codecommit.GetCommentsForPullRequestRequest
 
-	GetCommitRequest(*codecommit.GetCommitInput) codecommit.GetCommitRequest
+	GetCommitRequest(*types.GetCommitInput) codecommit.GetCommitRequest
 
-	GetDifferencesRequest(*codecommit.GetDifferencesInput) codecommit.GetDifferencesRequest
+	GetDifferencesRequest(*types.GetDifferencesInput) codecommit.GetDifferencesRequest
 
-	GetFileRequest(*codecommit.GetFileInput) codecommit.GetFileRequest
+	GetFileRequest(*types.GetFileInput) codecommit.GetFileRequest
 
-	GetFolderRequest(*codecommit.GetFolderInput) codecommit.GetFolderRequest
+	GetFolderRequest(*types.GetFolderInput) codecommit.GetFolderRequest
 
-	GetMergeCommitRequest(*codecommit.GetMergeCommitInput) codecommit.GetMergeCommitRequest
+	GetMergeCommitRequest(*types.GetMergeCommitInput) codecommit.GetMergeCommitRequest
 
-	GetMergeConflictsRequest(*codecommit.GetMergeConflictsInput) codecommit.GetMergeConflictsRequest
+	GetMergeConflictsRequest(*types.GetMergeConflictsInput) codecommit.GetMergeConflictsRequest
 
-	GetMergeOptionsRequest(*codecommit.GetMergeOptionsInput) codecommit.GetMergeOptionsRequest
+	GetMergeOptionsRequest(*types.GetMergeOptionsInput) codecommit.GetMergeOptionsRequest
 
-	GetPullRequestRequest(*codecommit.GetPullRequestInput) codecommit.GetPullRequestRequest
+	GetPullRequestRequest(*types.GetPullRequestInput) codecommit.GetPullRequestRequest
 
-	GetRepositoryRequest(*codecommit.GetRepositoryInput) codecommit.GetRepositoryRequest
+	GetRepositoryRequest(*types.GetRepositoryInput) codecommit.GetRepositoryRequest
 
-	GetRepositoryTriggersRequest(*codecommit.GetRepositoryTriggersInput) codecommit.GetRepositoryTriggersRequest
+	GetRepositoryTriggersRequest(*types.GetRepositoryTriggersInput) codecommit.GetRepositoryTriggersRequest
 
-	ListBranchesRequest(*codecommit.ListBranchesInput) codecommit.ListBranchesRequest
+	ListBranchesRequest(*types.ListBranchesInput) codecommit.ListBranchesRequest
 
-	ListPullRequestsRequest(*codecommit.ListPullRequestsInput) codecommit.ListPullRequestsRequest
+	ListPullRequestsRequest(*types.ListPullRequestsInput) codecommit.ListPullRequestsRequest
 
-	ListRepositoriesRequest(*codecommit.ListRepositoriesInput) codecommit.ListRepositoriesRequest
+	ListRepositoriesRequest(*types.ListRepositoriesInput) codecommit.ListRepositoriesRequest
 
-	ListTagsForResourceRequest(*codecommit.ListTagsForResourceInput) codecommit.ListTagsForResourceRequest
+	ListTagsForResourceRequest(*types.ListTagsForResourceInput) codecommit.ListTagsForResourceRequest
 
-	MergeBranchesByFastForwardRequest(*codecommit.MergeBranchesByFastForwardInput) codecommit.MergeBranchesByFastForwardRequest
+	MergeBranchesByFastForwardRequest(*types.MergeBranchesByFastForwardInput) codecommit.MergeBranchesByFastForwardRequest
 
-	MergeBranchesBySquashRequest(*codecommit.MergeBranchesBySquashInput) codecommit.MergeBranchesBySquashRequest
+	MergeBranchesBySquashRequest(*types.MergeBranchesBySquashInput) codecommit.MergeBranchesBySquashRequest
 
-	MergeBranchesByThreeWayRequest(*codecommit.MergeBranchesByThreeWayInput) codecommit.MergeBranchesByThreeWayRequest
+	MergeBranchesByThreeWayRequest(*types.MergeBranchesByThreeWayInput) codecommit.MergeBranchesByThreeWayRequest
 
-	MergePullRequestByFastForwardRequest(*codecommit.MergePullRequestByFastForwardInput) codecommit.MergePullRequestByFastForwardRequest
+	MergePullRequestByFastForwardRequest(*types.MergePullRequestByFastForwardInput) codecommit.MergePullRequestByFastForwardRequest
 
-	MergePullRequestBySquashRequest(*codecommit.MergePullRequestBySquashInput) codecommit.MergePullRequestBySquashRequest
+	MergePullRequestBySquashRequest(*types.MergePullRequestBySquashInput) codecommit.MergePullRequestBySquashRequest
 
-	MergePullRequestByThreeWayRequest(*codecommit.MergePullRequestByThreeWayInput) codecommit.MergePullRequestByThreeWayRequest
+	MergePullRequestByThreeWayRequest(*types.MergePullRequestByThreeWayInput) codecommit.MergePullRequestByThreeWayRequest
 
-	PostCommentForComparedCommitRequest(*codecommit.PostCommentForComparedCommitInput) codecommit.PostCommentForComparedCommitRequest
+	PostCommentForComparedCommitRequest(*types.PostCommentForComparedCommitInput) codecommit.PostCommentForComparedCommitRequest
 
-	PostCommentForPullRequestRequest(*codecommit.PostCommentForPullRequestInput) codecommit.PostCommentForPullRequestRequest
+	PostCommentForPullRequestRequest(*types.PostCommentForPullRequestInput) codecommit.PostCommentForPullRequestRequest
 
-	PostCommentReplyRequest(*codecommit.PostCommentReplyInput) codecommit.PostCommentReplyRequest
+	PostCommentReplyRequest(*types.PostCommentReplyInput) codecommit.PostCommentReplyRequest
 
-	PutFileRequest(*codecommit.PutFileInput) codecommit.PutFileRequest
+	PutFileRequest(*types.PutFileInput) codecommit.PutFileRequest
 
-	PutRepositoryTriggersRequest(*codecommit.PutRepositoryTriggersInput) codecommit.PutRepositoryTriggersRequest
+	PutRepositoryTriggersRequest(*types.PutRepositoryTriggersInput) codecommit.PutRepositoryTriggersRequest
 
-	TagResourceRequest(*codecommit.TagResourceInput) codecommit.TagResourceRequest
+	TagResourceRequest(*types.TagResourceInput) codecommit.TagResourceRequest
 
-	TestRepositoryTriggersRequest(*codecommit.TestRepositoryTriggersInput) codecommit.TestRepositoryTriggersRequest
+	TestRepositoryTriggersRequest(*types.TestRepositoryTriggersInput) codecommit.TestRepositoryTriggersRequest
 
-	UntagResourceRequest(*codecommit.UntagResourceInput) codecommit.UntagResourceRequest
+	UntagResourceRequest(*types.UntagResourceInput) codecommit.UntagResourceRequest
 
-	UpdateCommentRequest(*codecommit.UpdateCommentInput) codecommit.UpdateCommentRequest
+	UpdateCommentRequest(*types.UpdateCommentInput) codecommit.UpdateCommentRequest
 
-	UpdateDefaultBranchRequest(*codecommit.UpdateDefaultBranchInput) codecommit.UpdateDefaultBranchRequest
+	UpdateDefaultBranchRequest(*types.UpdateDefaultBranchInput) codecommit.UpdateDefaultBranchRequest
 
-	UpdatePullRequestDescriptionRequest(*codecommit.UpdatePullRequestDescriptionInput) codecommit.UpdatePullRequestDescriptionRequest
+	UpdatePullRequestDescriptionRequest(*types.UpdatePullRequestDescriptionInput) codecommit.UpdatePullRequestDescriptionRequest
 
-	UpdatePullRequestStatusRequest(*codecommit.UpdatePullRequestStatusInput) codecommit.UpdatePullRequestStatusRequest
+	UpdatePullRequestStatusRequest(*types.UpdatePullRequestStatusInput) codecommit.UpdatePullRequestStatusRequest
 
-	UpdatePullRequestTitleRequest(*codecommit.UpdatePullRequestTitleInput) codecommit.UpdatePullRequestTitleRequest
+	UpdatePullRequestTitleRequest(*types.UpdatePullRequestTitleInput) codecommit.UpdatePullRequestTitleRequest
 
-	UpdateRepositoryDescriptionRequest(*codecommit.UpdateRepositoryDescriptionInput) codecommit.UpdateRepositoryDescriptionRequest
+	UpdateRepositoryDescriptionRequest(*types.UpdateRepositoryDescriptionInput) codecommit.UpdateRepositoryDescriptionRequest
 
-	UpdateRepositoryNameRequest(*codecommit.UpdateRepositoryNameInput) codecommit.UpdateRepositoryNameRequest
+	UpdateRepositoryNameRequest(*types.UpdateRepositoryNameInput) codecommit.UpdateRepositoryNameRequest
 }
 
 var _ ClientAPI = (*codecommit.Client)(nil)

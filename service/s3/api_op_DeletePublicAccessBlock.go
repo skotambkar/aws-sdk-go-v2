@@ -6,71 +6,10 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
-	"github.com/aws/aws-sdk-go-v2/internal/awsutil"
 	"github.com/aws/aws-sdk-go-v2/private/protocol"
 	"github.com/aws/aws-sdk-go-v2/private/protocol/restxml"
+	"github.com/aws/aws-sdk-go-v2/service/s3/types"
 )
-
-type DeletePublicAccessBlockInput struct {
-	_ struct{} `type:"structure"`
-
-	// The Amazon S3 bucket whose PublicAccessBlock configuration you want to delete.
-	//
-	// Bucket is a required field
-	Bucket *string `location:"uri" locationName:"Bucket" type:"string" required:"true"`
-}
-
-// String returns the string representation
-func (s DeletePublicAccessBlockInput) String() string {
-	return awsutil.Prettify(s)
-}
-
-// Validate inspects the fields of the type to determine if they are valid.
-func (s *DeletePublicAccessBlockInput) Validate() error {
-	invalidParams := aws.ErrInvalidParams{Context: "DeletePublicAccessBlockInput"}
-
-	if s.Bucket == nil {
-		invalidParams.Add(aws.NewErrParamRequired("Bucket"))
-	}
-
-	if invalidParams.Len() > 0 {
-		return invalidParams
-	}
-	return nil
-}
-
-func (s *DeletePublicAccessBlockInput) getBucket() (v string) {
-	if s.Bucket == nil {
-		return v
-	}
-	return *s.Bucket
-}
-
-// MarshalFields encodes the AWS API shape using the passed in protocol encoder.
-func (s DeletePublicAccessBlockInput) MarshalFields(e protocol.FieldEncoder) error {
-
-	if s.Bucket != nil {
-		v := *s.Bucket
-
-		metadata := protocol.Metadata{}
-		e.SetValue(protocol.PathTarget, "Bucket", protocol.StringValue(v), metadata)
-	}
-	return nil
-}
-
-type DeletePublicAccessBlockOutput struct {
-	_ struct{} `type:"structure"`
-}
-
-// String returns the string representation
-func (s DeletePublicAccessBlockOutput) String() string {
-	return awsutil.Prettify(s)
-}
-
-// MarshalFields encodes the AWS API shape using the passed in protocol encoder.
-func (s DeletePublicAccessBlockOutput) MarshalFields(e protocol.FieldEncoder) error {
-	return nil
-}
 
 const opDeletePublicAccessBlock = "DeletePublicAccessBlock"
 
@@ -87,7 +26,7 @@ const opDeletePublicAccessBlock = "DeletePublicAccessBlock"
 //    }
 //
 // Please also see https://docs.aws.amazon.com/goto/WebAPI/s3-2006-03-01/DeletePublicAccessBlock
-func (c *Client) DeletePublicAccessBlockRequest(input *DeletePublicAccessBlockInput) DeletePublicAccessBlockRequest {
+func (c *Client) DeletePublicAccessBlockRequest(input *types.DeletePublicAccessBlockInput) DeletePublicAccessBlockRequest {
 	op := &aws.Operation{
 		Name:       opDeletePublicAccessBlock,
 		HTTPMethod: "DELETE",
@@ -95,10 +34,10 @@ func (c *Client) DeletePublicAccessBlockRequest(input *DeletePublicAccessBlockIn
 	}
 
 	if input == nil {
-		input = &DeletePublicAccessBlockInput{}
+		input = &types.DeletePublicAccessBlockInput{}
 	}
 
-	req := c.newRequest(op, input, &DeletePublicAccessBlockOutput{})
+	req := c.newRequest(op, input, &types.DeletePublicAccessBlockOutput{})
 	req.Handlers.Unmarshal.Remove(restxml.UnmarshalHandler)
 	req.Handlers.Unmarshal.PushBackNamed(protocol.UnmarshalDiscardBodyHandler)
 	return DeletePublicAccessBlockRequest{Request: req, Input: input, Copy: c.DeletePublicAccessBlockRequest}
@@ -108,8 +47,8 @@ func (c *Client) DeletePublicAccessBlockRequest(input *DeletePublicAccessBlockIn
 // DeletePublicAccessBlock API operation.
 type DeletePublicAccessBlockRequest struct {
 	*aws.Request
-	Input *DeletePublicAccessBlockInput
-	Copy  func(*DeletePublicAccessBlockInput) DeletePublicAccessBlockRequest
+	Input *types.DeletePublicAccessBlockInput
+	Copy  func(*types.DeletePublicAccessBlockInput) DeletePublicAccessBlockRequest
 }
 
 // Send marshals and sends the DeletePublicAccessBlock API request.
@@ -121,7 +60,7 @@ func (r DeletePublicAccessBlockRequest) Send(ctx context.Context) (*DeletePublic
 	}
 
 	resp := &DeletePublicAccessBlockResponse{
-		DeletePublicAccessBlockOutput: r.Request.Data.(*DeletePublicAccessBlockOutput),
+		DeletePublicAccessBlockOutput: r.Request.Data.(*types.DeletePublicAccessBlockOutput),
 		response:                      &aws.Response{Request: r.Request},
 	}
 
@@ -131,7 +70,7 @@ func (r DeletePublicAccessBlockRequest) Send(ctx context.Context) (*DeletePublic
 // DeletePublicAccessBlockResponse is the response type for the
 // DeletePublicAccessBlock API operation.
 type DeletePublicAccessBlockResponse struct {
-	*DeletePublicAccessBlockOutput
+	*types.DeletePublicAccessBlockOutput
 
 	response *aws.Response
 }

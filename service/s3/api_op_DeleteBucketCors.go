@@ -6,69 +6,10 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
-	"github.com/aws/aws-sdk-go-v2/internal/awsutil"
 	"github.com/aws/aws-sdk-go-v2/private/protocol"
 	"github.com/aws/aws-sdk-go-v2/private/protocol/restxml"
+	"github.com/aws/aws-sdk-go-v2/service/s3/types"
 )
-
-type DeleteBucketCorsInput struct {
-	_ struct{} `type:"structure"`
-
-	// Bucket is a required field
-	Bucket *string `location:"uri" locationName:"Bucket" type:"string" required:"true"`
-}
-
-// String returns the string representation
-func (s DeleteBucketCorsInput) String() string {
-	return awsutil.Prettify(s)
-}
-
-// Validate inspects the fields of the type to determine if they are valid.
-func (s *DeleteBucketCorsInput) Validate() error {
-	invalidParams := aws.ErrInvalidParams{Context: "DeleteBucketCorsInput"}
-
-	if s.Bucket == nil {
-		invalidParams.Add(aws.NewErrParamRequired("Bucket"))
-	}
-
-	if invalidParams.Len() > 0 {
-		return invalidParams
-	}
-	return nil
-}
-
-func (s *DeleteBucketCorsInput) getBucket() (v string) {
-	if s.Bucket == nil {
-		return v
-	}
-	return *s.Bucket
-}
-
-// MarshalFields encodes the AWS API shape using the passed in protocol encoder.
-func (s DeleteBucketCorsInput) MarshalFields(e protocol.FieldEncoder) error {
-
-	if s.Bucket != nil {
-		v := *s.Bucket
-
-		metadata := protocol.Metadata{}
-		e.SetValue(protocol.PathTarget, "Bucket", protocol.StringValue(v), metadata)
-	}
-	return nil
-}
-
-type DeleteBucketCorsOutput struct {
-	_ struct{} `type:"structure"`
-}
-
-// String returns the string representation
-func (s DeleteBucketCorsOutput) String() string {
-	return awsutil.Prettify(s)
-}
-
-// MarshalFields encodes the AWS API shape using the passed in protocol encoder.
-func (s DeleteBucketCorsOutput) MarshalFields(e protocol.FieldEncoder) error {
-	return nil
-}
 
 const opDeleteBucketCors = "DeleteBucketCors"
 
@@ -85,7 +26,7 @@ const opDeleteBucketCors = "DeleteBucketCors"
 //    }
 //
 // Please also see https://docs.aws.amazon.com/goto/WebAPI/s3-2006-03-01/DeleteBucketCors
-func (c *Client) DeleteBucketCorsRequest(input *DeleteBucketCorsInput) DeleteBucketCorsRequest {
+func (c *Client) DeleteBucketCorsRequest(input *types.DeleteBucketCorsInput) DeleteBucketCorsRequest {
 	op := &aws.Operation{
 		Name:       opDeleteBucketCors,
 		HTTPMethod: "DELETE",
@@ -93,10 +34,10 @@ func (c *Client) DeleteBucketCorsRequest(input *DeleteBucketCorsInput) DeleteBuc
 	}
 
 	if input == nil {
-		input = &DeleteBucketCorsInput{}
+		input = &types.DeleteBucketCorsInput{}
 	}
 
-	req := c.newRequest(op, input, &DeleteBucketCorsOutput{})
+	req := c.newRequest(op, input, &types.DeleteBucketCorsOutput{})
 	req.Handlers.Unmarshal.Remove(restxml.UnmarshalHandler)
 	req.Handlers.Unmarshal.PushBackNamed(protocol.UnmarshalDiscardBodyHandler)
 	return DeleteBucketCorsRequest{Request: req, Input: input, Copy: c.DeleteBucketCorsRequest}
@@ -106,8 +47,8 @@ func (c *Client) DeleteBucketCorsRequest(input *DeleteBucketCorsInput) DeleteBuc
 // DeleteBucketCors API operation.
 type DeleteBucketCorsRequest struct {
 	*aws.Request
-	Input *DeleteBucketCorsInput
-	Copy  func(*DeleteBucketCorsInput) DeleteBucketCorsRequest
+	Input *types.DeleteBucketCorsInput
+	Copy  func(*types.DeleteBucketCorsInput) DeleteBucketCorsRequest
 }
 
 // Send marshals and sends the DeleteBucketCors API request.
@@ -119,7 +60,7 @@ func (r DeleteBucketCorsRequest) Send(ctx context.Context) (*DeleteBucketCorsRes
 	}
 
 	resp := &DeleteBucketCorsResponse{
-		DeleteBucketCorsOutput: r.Request.Data.(*DeleteBucketCorsOutput),
+		DeleteBucketCorsOutput: r.Request.Data.(*types.DeleteBucketCorsOutput),
 		response:               &aws.Response{Request: r.Request},
 	}
 
@@ -129,7 +70,7 @@ func (r DeleteBucketCorsRequest) Send(ctx context.Context) (*DeleteBucketCorsRes
 // DeleteBucketCorsResponse is the response type for the
 // DeleteBucketCors API operation.
 type DeleteBucketCorsResponse struct {
-	*DeleteBucketCorsOutput
+	*types.DeleteBucketCorsOutput
 
 	response *aws.Response
 }

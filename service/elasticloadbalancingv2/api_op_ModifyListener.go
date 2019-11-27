@@ -4,102 +4,10 @@ package elasticloadbalancingv2
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
-	"github.com/aws/aws-sdk-go-v2/internal/awsutil"
+	"github.com/aws/aws-sdk-go-v2/service/elasticloadbalancingv2/types"
 )
-
-type ModifyListenerInput struct {
-	_ struct{} `type:"structure"`
-
-	// [HTTPS and TLS listeners] The default certificate for the listener. You must
-	// provide exactly one certificate. Set CertificateArn to the certificate ARN
-	// but do not set IsDefault.
-	//
-	// To create a certificate list, use AddListenerCertificates.
-	Certificates []Certificate `type:"list"`
-
-	// The actions for the default rule. The rule must include one forward action
-	// or one or more fixed-response actions.
-	//
-	// If the action type is forward, you specify a target group. The protocol of
-	// the target group must be HTTP or HTTPS for an Application Load Balancer.
-	// The protocol of the target group must be TCP, TLS, UDP, or TCP_UDP for a
-	// Network Load Balancer.
-	//
-	// [HTTPS listeners] If the action type is authenticate-oidc, you authenticate
-	// users through an identity provider that is OpenID Connect (OIDC) compliant.
-	//
-	// [HTTPS listeners] If the action type is authenticate-cognito, you authenticate
-	// users through the user pools supported by Amazon Cognito.
-	//
-	// [Application Load Balancer] If the action type is redirect, you redirect
-	// specified client requests from one URL to another.
-	//
-	// [Application Load Balancer] If the action type is fixed-response, you drop
-	// specified client requests and return a custom HTTP response.
-	DefaultActions []Action `type:"list"`
-
-	// The Amazon Resource Name (ARN) of the listener.
-	//
-	// ListenerArn is a required field
-	ListenerArn *string `type:"string" required:"true"`
-
-	// The port for connections from clients to the load balancer.
-	Port *int64 `min:"1" type:"integer"`
-
-	// The protocol for connections from clients to the load balancer. Application
-	// Load Balancers support the HTTP and HTTPS protocols. Network Load Balancers
-	// support the TCP, TLS, UDP, and TCP_UDP protocols.
-	Protocol ProtocolEnum `type:"string" enum:"true"`
-
-	// [HTTPS and TLS listeners] The security policy that defines which protocols
-	// and ciphers are supported. For more information, see Security Policies (https://docs.aws.amazon.com/elasticloadbalancing/latest/application/create-https-listener.html#describe-ssl-policies)
-	// in the Application Load Balancers Guide.
-	SslPolicy *string `type:"string"`
-}
-
-// String returns the string representation
-func (s ModifyListenerInput) String() string {
-	return awsutil.Prettify(s)
-}
-
-// Validate inspects the fields of the type to determine if they are valid.
-func (s *ModifyListenerInput) Validate() error {
-	invalidParams := aws.ErrInvalidParams{Context: "ModifyListenerInput"}
-
-	if s.ListenerArn == nil {
-		invalidParams.Add(aws.NewErrParamRequired("ListenerArn"))
-	}
-	if s.Port != nil && *s.Port < 1 {
-		invalidParams.Add(aws.NewErrParamMinValue("Port", 1))
-	}
-	if s.DefaultActions != nil {
-		for i, v := range s.DefaultActions {
-			if err := v.Validate(); err != nil {
-				invalidParams.AddNested(fmt.Sprintf("%s[%v]", "DefaultActions", i), err.(aws.ErrInvalidParams))
-			}
-		}
-	}
-
-	if invalidParams.Len() > 0 {
-		return invalidParams
-	}
-	return nil
-}
-
-type ModifyListenerOutput struct {
-	_ struct{} `type:"structure"`
-
-	// Information about the modified listener.
-	Listeners []Listener `type:"list"`
-}
-
-// String returns the string representation
-func (s ModifyListenerOutput) String() string {
-	return awsutil.Prettify(s)
-}
 
 const opModifyListener = "ModifyListener"
 
@@ -122,7 +30,7 @@ const opModifyListener = "ModifyListener"
 //    }
 //
 // Please also see https://docs.aws.amazon.com/goto/WebAPI/elasticloadbalancingv2-2015-12-01/ModifyListener
-func (c *Client) ModifyListenerRequest(input *ModifyListenerInput) ModifyListenerRequest {
+func (c *Client) ModifyListenerRequest(input *types.ModifyListenerInput) ModifyListenerRequest {
 	op := &aws.Operation{
 		Name:       opModifyListener,
 		HTTPMethod: "POST",
@@ -130,10 +38,10 @@ func (c *Client) ModifyListenerRequest(input *ModifyListenerInput) ModifyListene
 	}
 
 	if input == nil {
-		input = &ModifyListenerInput{}
+		input = &types.ModifyListenerInput{}
 	}
 
-	req := c.newRequest(op, input, &ModifyListenerOutput{})
+	req := c.newRequest(op, input, &types.ModifyListenerOutput{})
 	return ModifyListenerRequest{Request: req, Input: input, Copy: c.ModifyListenerRequest}
 }
 
@@ -141,8 +49,8 @@ func (c *Client) ModifyListenerRequest(input *ModifyListenerInput) ModifyListene
 // ModifyListener API operation.
 type ModifyListenerRequest struct {
 	*aws.Request
-	Input *ModifyListenerInput
-	Copy  func(*ModifyListenerInput) ModifyListenerRequest
+	Input *types.ModifyListenerInput
+	Copy  func(*types.ModifyListenerInput) ModifyListenerRequest
 }
 
 // Send marshals and sends the ModifyListener API request.
@@ -154,7 +62,7 @@ func (r ModifyListenerRequest) Send(ctx context.Context) (*ModifyListenerRespons
 	}
 
 	resp := &ModifyListenerResponse{
-		ModifyListenerOutput: r.Request.Data.(*ModifyListenerOutput),
+		ModifyListenerOutput: r.Request.Data.(*types.ModifyListenerOutput),
 		response:             &aws.Response{Request: r.Request},
 	}
 
@@ -164,7 +72,7 @@ func (r ModifyListenerRequest) Send(ctx context.Context) (*ModifyListenerRespons
 // ModifyListenerResponse is the response type for the
 // ModifyListener API operation.
 type ModifyListenerResponse struct {
-	*ModifyListenerOutput
+	*types.ModifyListenerOutput
 
 	response *aws.Response
 }

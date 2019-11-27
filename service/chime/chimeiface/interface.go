@@ -10,6 +10,7 @@ package chimeiface
 
 import (
 	"github.com/aws/aws-sdk-go-v2/service/chime"
+	"github.com/aws/aws-sdk-go-v2/service/chime/types"
 )
 
 // ClientAPI provides an interface to enable mocking the
@@ -43,7 +44,7 @@ import (
 //    type mockClientClient struct {
 //        chimeiface.ClientPI
 //    }
-//    func (m *mockClientClient) AssociatePhoneNumberWithUser(input *chime.AssociatePhoneNumberWithUserInput) (*chime.AssociatePhoneNumberWithUserOutput, error) {
+//    func (m *mockClientClient) AssociatePhoneNumberWithUser(input *types.AssociatePhoneNumberWithUserInput) (*types.AssociatePhoneNumberWithUserOutput, error) {
 //        // mock response/functionality
 //    }
 //
@@ -61,121 +62,121 @@ import (
 // and waiters. Its suggested to use the pattern above for testing, or using
 // tooling to generate mocks to satisfy the interfaces.
 type ClientAPI interface {
-	AssociatePhoneNumberWithUserRequest(*chime.AssociatePhoneNumberWithUserInput) chime.AssociatePhoneNumberWithUserRequest
+	AssociatePhoneNumberWithUserRequest(*types.AssociatePhoneNumberWithUserInput) chime.AssociatePhoneNumberWithUserRequest
 
-	AssociatePhoneNumbersWithVoiceConnectorRequest(*chime.AssociatePhoneNumbersWithVoiceConnectorInput) chime.AssociatePhoneNumbersWithVoiceConnectorRequest
+	AssociatePhoneNumbersWithVoiceConnectorRequest(*types.AssociatePhoneNumbersWithVoiceConnectorInput) chime.AssociatePhoneNumbersWithVoiceConnectorRequest
 
-	BatchDeletePhoneNumberRequest(*chime.BatchDeletePhoneNumberInput) chime.BatchDeletePhoneNumberRequest
+	BatchDeletePhoneNumberRequest(*types.BatchDeletePhoneNumberInput) chime.BatchDeletePhoneNumberRequest
 
-	BatchSuspendUserRequest(*chime.BatchSuspendUserInput) chime.BatchSuspendUserRequest
+	BatchSuspendUserRequest(*types.BatchSuspendUserInput) chime.BatchSuspendUserRequest
 
-	BatchUnsuspendUserRequest(*chime.BatchUnsuspendUserInput) chime.BatchUnsuspendUserRequest
+	BatchUnsuspendUserRequest(*types.BatchUnsuspendUserInput) chime.BatchUnsuspendUserRequest
 
-	BatchUpdatePhoneNumberRequest(*chime.BatchUpdatePhoneNumberInput) chime.BatchUpdatePhoneNumberRequest
+	BatchUpdatePhoneNumberRequest(*types.BatchUpdatePhoneNumberInput) chime.BatchUpdatePhoneNumberRequest
 
-	BatchUpdateUserRequest(*chime.BatchUpdateUserInput) chime.BatchUpdateUserRequest
+	BatchUpdateUserRequest(*types.BatchUpdateUserInput) chime.BatchUpdateUserRequest
 
-	CreateAccountRequest(*chime.CreateAccountInput) chime.CreateAccountRequest
+	CreateAccountRequest(*types.CreateAccountInput) chime.CreateAccountRequest
 
-	CreateBotRequest(*chime.CreateBotInput) chime.CreateBotRequest
+	CreateBotRequest(*types.CreateBotInput) chime.CreateBotRequest
 
-	CreatePhoneNumberOrderRequest(*chime.CreatePhoneNumberOrderInput) chime.CreatePhoneNumberOrderRequest
+	CreatePhoneNumberOrderRequest(*types.CreatePhoneNumberOrderInput) chime.CreatePhoneNumberOrderRequest
 
-	CreateVoiceConnectorRequest(*chime.CreateVoiceConnectorInput) chime.CreateVoiceConnectorRequest
+	CreateVoiceConnectorRequest(*types.CreateVoiceConnectorInput) chime.CreateVoiceConnectorRequest
 
-	DeleteAccountRequest(*chime.DeleteAccountInput) chime.DeleteAccountRequest
+	DeleteAccountRequest(*types.DeleteAccountInput) chime.DeleteAccountRequest
 
-	DeleteEventsConfigurationRequest(*chime.DeleteEventsConfigurationInput) chime.DeleteEventsConfigurationRequest
+	DeleteEventsConfigurationRequest(*types.DeleteEventsConfigurationInput) chime.DeleteEventsConfigurationRequest
 
-	DeletePhoneNumberRequest(*chime.DeletePhoneNumberInput) chime.DeletePhoneNumberRequest
+	DeletePhoneNumberRequest(*types.DeletePhoneNumberInput) chime.DeletePhoneNumberRequest
 
-	DeleteVoiceConnectorRequest(*chime.DeleteVoiceConnectorInput) chime.DeleteVoiceConnectorRequest
+	DeleteVoiceConnectorRequest(*types.DeleteVoiceConnectorInput) chime.DeleteVoiceConnectorRequest
 
-	DeleteVoiceConnectorOriginationRequest(*chime.DeleteVoiceConnectorOriginationInput) chime.DeleteVoiceConnectorOriginationRequest
+	DeleteVoiceConnectorOriginationRequest(*types.DeleteVoiceConnectorOriginationInput) chime.DeleteVoiceConnectorOriginationRequest
 
-	DeleteVoiceConnectorTerminationRequest(*chime.DeleteVoiceConnectorTerminationInput) chime.DeleteVoiceConnectorTerminationRequest
+	DeleteVoiceConnectorTerminationRequest(*types.DeleteVoiceConnectorTerminationInput) chime.DeleteVoiceConnectorTerminationRequest
 
-	DeleteVoiceConnectorTerminationCredentialsRequest(*chime.DeleteVoiceConnectorTerminationCredentialsInput) chime.DeleteVoiceConnectorTerminationCredentialsRequest
+	DeleteVoiceConnectorTerminationCredentialsRequest(*types.DeleteVoiceConnectorTerminationCredentialsInput) chime.DeleteVoiceConnectorTerminationCredentialsRequest
 
-	DisassociatePhoneNumberFromUserRequest(*chime.DisassociatePhoneNumberFromUserInput) chime.DisassociatePhoneNumberFromUserRequest
+	DisassociatePhoneNumberFromUserRequest(*types.DisassociatePhoneNumberFromUserInput) chime.DisassociatePhoneNumberFromUserRequest
 
-	DisassociatePhoneNumbersFromVoiceConnectorRequest(*chime.DisassociatePhoneNumbersFromVoiceConnectorInput) chime.DisassociatePhoneNumbersFromVoiceConnectorRequest
+	DisassociatePhoneNumbersFromVoiceConnectorRequest(*types.DisassociatePhoneNumbersFromVoiceConnectorInput) chime.DisassociatePhoneNumbersFromVoiceConnectorRequest
 
-	GetAccountRequest(*chime.GetAccountInput) chime.GetAccountRequest
+	GetAccountRequest(*types.GetAccountInput) chime.GetAccountRequest
 
-	GetAccountSettingsRequest(*chime.GetAccountSettingsInput) chime.GetAccountSettingsRequest
+	GetAccountSettingsRequest(*types.GetAccountSettingsInput) chime.GetAccountSettingsRequest
 
-	GetBotRequest(*chime.GetBotInput) chime.GetBotRequest
+	GetBotRequest(*types.GetBotInput) chime.GetBotRequest
 
-	GetEventsConfigurationRequest(*chime.GetEventsConfigurationInput) chime.GetEventsConfigurationRequest
+	GetEventsConfigurationRequest(*types.GetEventsConfigurationInput) chime.GetEventsConfigurationRequest
 
-	GetGlobalSettingsRequest(*chime.GetGlobalSettingsInput) chime.GetGlobalSettingsRequest
+	GetGlobalSettingsRequest(*types.GetGlobalSettingsInput) chime.GetGlobalSettingsRequest
 
-	GetPhoneNumberRequest(*chime.GetPhoneNumberInput) chime.GetPhoneNumberRequest
+	GetPhoneNumberRequest(*types.GetPhoneNumberInput) chime.GetPhoneNumberRequest
 
-	GetPhoneNumberOrderRequest(*chime.GetPhoneNumberOrderInput) chime.GetPhoneNumberOrderRequest
+	GetPhoneNumberOrderRequest(*types.GetPhoneNumberOrderInput) chime.GetPhoneNumberOrderRequest
 
-	GetUserRequest(*chime.GetUserInput) chime.GetUserRequest
+	GetUserRequest(*types.GetUserInput) chime.GetUserRequest
 
-	GetUserSettingsRequest(*chime.GetUserSettingsInput) chime.GetUserSettingsRequest
+	GetUserSettingsRequest(*types.GetUserSettingsInput) chime.GetUserSettingsRequest
 
-	GetVoiceConnectorRequest(*chime.GetVoiceConnectorInput) chime.GetVoiceConnectorRequest
+	GetVoiceConnectorRequest(*types.GetVoiceConnectorInput) chime.GetVoiceConnectorRequest
 
-	GetVoiceConnectorOriginationRequest(*chime.GetVoiceConnectorOriginationInput) chime.GetVoiceConnectorOriginationRequest
+	GetVoiceConnectorOriginationRequest(*types.GetVoiceConnectorOriginationInput) chime.GetVoiceConnectorOriginationRequest
 
-	GetVoiceConnectorTerminationRequest(*chime.GetVoiceConnectorTerminationInput) chime.GetVoiceConnectorTerminationRequest
+	GetVoiceConnectorTerminationRequest(*types.GetVoiceConnectorTerminationInput) chime.GetVoiceConnectorTerminationRequest
 
-	GetVoiceConnectorTerminationHealthRequest(*chime.GetVoiceConnectorTerminationHealthInput) chime.GetVoiceConnectorTerminationHealthRequest
+	GetVoiceConnectorTerminationHealthRequest(*types.GetVoiceConnectorTerminationHealthInput) chime.GetVoiceConnectorTerminationHealthRequest
 
-	InviteUsersRequest(*chime.InviteUsersInput) chime.InviteUsersRequest
+	InviteUsersRequest(*types.InviteUsersInput) chime.InviteUsersRequest
 
-	ListAccountsRequest(*chime.ListAccountsInput) chime.ListAccountsRequest
+	ListAccountsRequest(*types.ListAccountsInput) chime.ListAccountsRequest
 
-	ListBotsRequest(*chime.ListBotsInput) chime.ListBotsRequest
+	ListBotsRequest(*types.ListBotsInput) chime.ListBotsRequest
 
-	ListPhoneNumberOrdersRequest(*chime.ListPhoneNumberOrdersInput) chime.ListPhoneNumberOrdersRequest
+	ListPhoneNumberOrdersRequest(*types.ListPhoneNumberOrdersInput) chime.ListPhoneNumberOrdersRequest
 
-	ListPhoneNumbersRequest(*chime.ListPhoneNumbersInput) chime.ListPhoneNumbersRequest
+	ListPhoneNumbersRequest(*types.ListPhoneNumbersInput) chime.ListPhoneNumbersRequest
 
-	ListUsersRequest(*chime.ListUsersInput) chime.ListUsersRequest
+	ListUsersRequest(*types.ListUsersInput) chime.ListUsersRequest
 
-	ListVoiceConnectorTerminationCredentialsRequest(*chime.ListVoiceConnectorTerminationCredentialsInput) chime.ListVoiceConnectorTerminationCredentialsRequest
+	ListVoiceConnectorTerminationCredentialsRequest(*types.ListVoiceConnectorTerminationCredentialsInput) chime.ListVoiceConnectorTerminationCredentialsRequest
 
-	ListVoiceConnectorsRequest(*chime.ListVoiceConnectorsInput) chime.ListVoiceConnectorsRequest
+	ListVoiceConnectorsRequest(*types.ListVoiceConnectorsInput) chime.ListVoiceConnectorsRequest
 
-	LogoutUserRequest(*chime.LogoutUserInput) chime.LogoutUserRequest
+	LogoutUserRequest(*types.LogoutUserInput) chime.LogoutUserRequest
 
-	PutEventsConfigurationRequest(*chime.PutEventsConfigurationInput) chime.PutEventsConfigurationRequest
+	PutEventsConfigurationRequest(*types.PutEventsConfigurationInput) chime.PutEventsConfigurationRequest
 
-	PutVoiceConnectorOriginationRequest(*chime.PutVoiceConnectorOriginationInput) chime.PutVoiceConnectorOriginationRequest
+	PutVoiceConnectorOriginationRequest(*types.PutVoiceConnectorOriginationInput) chime.PutVoiceConnectorOriginationRequest
 
-	PutVoiceConnectorTerminationRequest(*chime.PutVoiceConnectorTerminationInput) chime.PutVoiceConnectorTerminationRequest
+	PutVoiceConnectorTerminationRequest(*types.PutVoiceConnectorTerminationInput) chime.PutVoiceConnectorTerminationRequest
 
-	PutVoiceConnectorTerminationCredentialsRequest(*chime.PutVoiceConnectorTerminationCredentialsInput) chime.PutVoiceConnectorTerminationCredentialsRequest
+	PutVoiceConnectorTerminationCredentialsRequest(*types.PutVoiceConnectorTerminationCredentialsInput) chime.PutVoiceConnectorTerminationCredentialsRequest
 
-	RegenerateSecurityTokenRequest(*chime.RegenerateSecurityTokenInput) chime.RegenerateSecurityTokenRequest
+	RegenerateSecurityTokenRequest(*types.RegenerateSecurityTokenInput) chime.RegenerateSecurityTokenRequest
 
-	ResetPersonalPINRequest(*chime.ResetPersonalPINInput) chime.ResetPersonalPINRequest
+	ResetPersonalPINRequest(*types.ResetPersonalPINInput) chime.ResetPersonalPINRequest
 
-	RestorePhoneNumberRequest(*chime.RestorePhoneNumberInput) chime.RestorePhoneNumberRequest
+	RestorePhoneNumberRequest(*types.RestorePhoneNumberInput) chime.RestorePhoneNumberRequest
 
-	SearchAvailablePhoneNumbersRequest(*chime.SearchAvailablePhoneNumbersInput) chime.SearchAvailablePhoneNumbersRequest
+	SearchAvailablePhoneNumbersRequest(*types.SearchAvailablePhoneNumbersInput) chime.SearchAvailablePhoneNumbersRequest
 
-	UpdateAccountRequest(*chime.UpdateAccountInput) chime.UpdateAccountRequest
+	UpdateAccountRequest(*types.UpdateAccountInput) chime.UpdateAccountRequest
 
-	UpdateAccountSettingsRequest(*chime.UpdateAccountSettingsInput) chime.UpdateAccountSettingsRequest
+	UpdateAccountSettingsRequest(*types.UpdateAccountSettingsInput) chime.UpdateAccountSettingsRequest
 
-	UpdateBotRequest(*chime.UpdateBotInput) chime.UpdateBotRequest
+	UpdateBotRequest(*types.UpdateBotInput) chime.UpdateBotRequest
 
-	UpdateGlobalSettingsRequest(*chime.UpdateGlobalSettingsInput) chime.UpdateGlobalSettingsRequest
+	UpdateGlobalSettingsRequest(*types.UpdateGlobalSettingsInput) chime.UpdateGlobalSettingsRequest
 
-	UpdatePhoneNumberRequest(*chime.UpdatePhoneNumberInput) chime.UpdatePhoneNumberRequest
+	UpdatePhoneNumberRequest(*types.UpdatePhoneNumberInput) chime.UpdatePhoneNumberRequest
 
-	UpdateUserRequest(*chime.UpdateUserInput) chime.UpdateUserRequest
+	UpdateUserRequest(*types.UpdateUserInput) chime.UpdateUserRequest
 
-	UpdateUserSettingsRequest(*chime.UpdateUserSettingsInput) chime.UpdateUserSettingsRequest
+	UpdateUserSettingsRequest(*types.UpdateUserSettingsInput) chime.UpdateUserSettingsRequest
 
-	UpdateVoiceConnectorRequest(*chime.UpdateVoiceConnectorInput) chime.UpdateVoiceConnectorRequest
+	UpdateVoiceConnectorRequest(*types.UpdateVoiceConnectorInput) chime.UpdateVoiceConnectorRequest
 }
 
 var _ ClientAPI = (*chime.Client)(nil)

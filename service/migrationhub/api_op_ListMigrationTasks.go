@@ -6,61 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
-	"github.com/aws/aws-sdk-go-v2/internal/awsutil"
+	"github.com/aws/aws-sdk-go-v2/service/migrationhub/types"
 )
-
-type ListMigrationTasksInput struct {
-	_ struct{} `type:"structure"`
-
-	// Value to specify how many results are returned per page.
-	MaxResults *int64 `min:"1" type:"integer"`
-
-	// If a NextToken was returned by a previous call, there are more results available.
-	// To retrieve the next page of results, make the call again using the returned
-	// token in NextToken.
-	NextToken *string `type:"string"`
-
-	// Filter migration tasks by discovered resource name.
-	ResourceName *string `min:"1" type:"string"`
-}
-
-// String returns the string representation
-func (s ListMigrationTasksInput) String() string {
-	return awsutil.Prettify(s)
-}
-
-// Validate inspects the fields of the type to determine if they are valid.
-func (s *ListMigrationTasksInput) Validate() error {
-	invalidParams := aws.ErrInvalidParams{Context: "ListMigrationTasksInput"}
-	if s.MaxResults != nil && *s.MaxResults < 1 {
-		invalidParams.Add(aws.NewErrParamMinValue("MaxResults", 1))
-	}
-	if s.ResourceName != nil && len(*s.ResourceName) < 1 {
-		invalidParams.Add(aws.NewErrParamMinLen("ResourceName", 1))
-	}
-
-	if invalidParams.Len() > 0 {
-		return invalidParams
-	}
-	return nil
-}
-
-type ListMigrationTasksOutput struct {
-	_ struct{} `type:"structure"`
-
-	// Lists the migration task's summary which includes: MigrationTaskName, ProgressPercent,
-	// ProgressUpdateStream, Status, and the UpdateDateTime for each task.
-	MigrationTaskSummaryList []MigrationTaskSummary `type:"list"`
-
-	// If there are more migration tasks than the max result, return the next token
-	// to be passed to the next call as a bookmark of where to start from.
-	NextToken *string `type:"string"`
-}
-
-// String returns the string representation
-func (s ListMigrationTasksOutput) String() string {
-	return awsutil.Prettify(s)
-}
 
 const opListMigrationTasks = "ListMigrationTasks"
 
@@ -85,7 +32,7 @@ const opListMigrationTasks = "ListMigrationTasks"
 //    }
 //
 // Please also see https://docs.aws.amazon.com/goto/WebAPI/AWSMigrationHub-2017-05-31/ListMigrationTasks
-func (c *Client) ListMigrationTasksRequest(input *ListMigrationTasksInput) ListMigrationTasksRequest {
+func (c *Client) ListMigrationTasksRequest(input *types.ListMigrationTasksInput) ListMigrationTasksRequest {
 	op := &aws.Operation{
 		Name:       opListMigrationTasks,
 		HTTPMethod: "POST",
@@ -93,10 +40,10 @@ func (c *Client) ListMigrationTasksRequest(input *ListMigrationTasksInput) ListM
 	}
 
 	if input == nil {
-		input = &ListMigrationTasksInput{}
+		input = &types.ListMigrationTasksInput{}
 	}
 
-	req := c.newRequest(op, input, &ListMigrationTasksOutput{})
+	req := c.newRequest(op, input, &types.ListMigrationTasksOutput{})
 	return ListMigrationTasksRequest{Request: req, Input: input, Copy: c.ListMigrationTasksRequest}
 }
 
@@ -104,8 +51,8 @@ func (c *Client) ListMigrationTasksRequest(input *ListMigrationTasksInput) ListM
 // ListMigrationTasks API operation.
 type ListMigrationTasksRequest struct {
 	*aws.Request
-	Input *ListMigrationTasksInput
-	Copy  func(*ListMigrationTasksInput) ListMigrationTasksRequest
+	Input *types.ListMigrationTasksInput
+	Copy  func(*types.ListMigrationTasksInput) ListMigrationTasksRequest
 }
 
 // Send marshals and sends the ListMigrationTasks API request.
@@ -117,7 +64,7 @@ func (r ListMigrationTasksRequest) Send(ctx context.Context) (*ListMigrationTask
 	}
 
 	resp := &ListMigrationTasksResponse{
-		ListMigrationTasksOutput: r.Request.Data.(*ListMigrationTasksOutput),
+		ListMigrationTasksOutput: r.Request.Data.(*types.ListMigrationTasksOutput),
 		response:                 &aws.Response{Request: r.Request},
 	}
 
@@ -127,7 +74,7 @@ func (r ListMigrationTasksRequest) Send(ctx context.Context) (*ListMigrationTask
 // ListMigrationTasksResponse is the response type for the
 // ListMigrationTasks API operation.
 type ListMigrationTasksResponse struct {
-	*ListMigrationTasksOutput
+	*types.ListMigrationTasksOutput
 
 	response *aws.Response
 }

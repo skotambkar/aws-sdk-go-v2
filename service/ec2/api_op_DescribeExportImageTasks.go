@@ -6,65 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
-	"github.com/aws/aws-sdk-go-v2/internal/awsutil"
+	"github.com/aws/aws-sdk-go-v2/service/ec2/types"
 )
-
-type DescribeExportImageTasksInput struct {
-	_ struct{} `type:"structure"`
-
-	// Checks whether you have the required permissions for the action, without
-	// actually making the request, and provides an error response. If you have
-	// the required permissions, the error response is DryRunOperation. Otherwise,
-	// it is UnauthorizedOperation.
-	DryRun *bool `type:"boolean"`
-
-	// The IDs of the export image tasks.
-	ExportImageTaskIds []string `locationName:"ExportImageTaskId" locationNameList:"ExportImageTaskId" type:"list"`
-
-	// Filter tasks using the task-state filter and one of the following values:
-	// active, completed, deleting, or deleted.
-	Filters []Filter `locationName:"Filter" locationNameList:"Filter" type:"list"`
-
-	// The maximum number of results to return in a single call.
-	MaxResults *int64 `min:"1" type:"integer"`
-
-	// A token that indicates the next page of results.
-	NextToken *string `type:"string"`
-}
-
-// String returns the string representation
-func (s DescribeExportImageTasksInput) String() string {
-	return awsutil.Prettify(s)
-}
-
-// Validate inspects the fields of the type to determine if they are valid.
-func (s *DescribeExportImageTasksInput) Validate() error {
-	invalidParams := aws.ErrInvalidParams{Context: "DescribeExportImageTasksInput"}
-	if s.MaxResults != nil && *s.MaxResults < 1 {
-		invalidParams.Add(aws.NewErrParamMinValue("MaxResults", 1))
-	}
-
-	if invalidParams.Len() > 0 {
-		return invalidParams
-	}
-	return nil
-}
-
-type DescribeExportImageTasksOutput struct {
-	_ struct{} `type:"structure"`
-
-	// Information about the export image tasks.
-	ExportImageTasks []ExportImageTask `locationName:"exportImageTaskSet" locationNameList:"item" type:"list"`
-
-	// The token to use to get the next page of results. This value is null when
-	// there are no more results to return.
-	NextToken *string `locationName:"nextToken" type:"string"`
-}
-
-// String returns the string representation
-func (s DescribeExportImageTasksOutput) String() string {
-	return awsutil.Prettify(s)
-}
 
 const opDescribeExportImageTasks = "DescribeExportImageTasks"
 
@@ -81,7 +24,7 @@ const opDescribeExportImageTasks = "DescribeExportImageTasks"
 //    }
 //
 // Please also see https://docs.aws.amazon.com/goto/WebAPI/ec2-2016-11-15/DescribeExportImageTasks
-func (c *Client) DescribeExportImageTasksRequest(input *DescribeExportImageTasksInput) DescribeExportImageTasksRequest {
+func (c *Client) DescribeExportImageTasksRequest(input *types.DescribeExportImageTasksInput) DescribeExportImageTasksRequest {
 	op := &aws.Operation{
 		Name:       opDescribeExportImageTasks,
 		HTTPMethod: "POST",
@@ -89,10 +32,10 @@ func (c *Client) DescribeExportImageTasksRequest(input *DescribeExportImageTasks
 	}
 
 	if input == nil {
-		input = &DescribeExportImageTasksInput{}
+		input = &types.DescribeExportImageTasksInput{}
 	}
 
-	req := c.newRequest(op, input, &DescribeExportImageTasksOutput{})
+	req := c.newRequest(op, input, &types.DescribeExportImageTasksOutput{})
 	return DescribeExportImageTasksRequest{Request: req, Input: input, Copy: c.DescribeExportImageTasksRequest}
 }
 
@@ -100,8 +43,8 @@ func (c *Client) DescribeExportImageTasksRequest(input *DescribeExportImageTasks
 // DescribeExportImageTasks API operation.
 type DescribeExportImageTasksRequest struct {
 	*aws.Request
-	Input *DescribeExportImageTasksInput
-	Copy  func(*DescribeExportImageTasksInput) DescribeExportImageTasksRequest
+	Input *types.DescribeExportImageTasksInput
+	Copy  func(*types.DescribeExportImageTasksInput) DescribeExportImageTasksRequest
 }
 
 // Send marshals and sends the DescribeExportImageTasks API request.
@@ -113,7 +56,7 @@ func (r DescribeExportImageTasksRequest) Send(ctx context.Context) (*DescribeExp
 	}
 
 	resp := &DescribeExportImageTasksResponse{
-		DescribeExportImageTasksOutput: r.Request.Data.(*DescribeExportImageTasksOutput),
+		DescribeExportImageTasksOutput: r.Request.Data.(*types.DescribeExportImageTasksOutput),
 		response:                       &aws.Response{Request: r.Request},
 	}
 
@@ -123,7 +66,7 @@ func (r DescribeExportImageTasksRequest) Send(ctx context.Context) (*DescribeExp
 // DescribeExportImageTasksResponse is the response type for the
 // DescribeExportImageTasks API operation.
 type DescribeExportImageTasksResponse struct {
-	*DescribeExportImageTasksOutput
+	*types.DescribeExportImageTasksOutput
 
 	response *aws.Response
 }

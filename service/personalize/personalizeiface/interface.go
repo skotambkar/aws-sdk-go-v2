@@ -10,6 +10,7 @@ package personalizeiface
 
 import (
 	"github.com/aws/aws-sdk-go-v2/service/personalize"
+	"github.com/aws/aws-sdk-go-v2/service/personalize/types"
 )
 
 // ClientAPI provides an interface to enable mocking the
@@ -43,7 +44,7 @@ import (
 //    type mockClientClient struct {
 //        personalizeiface.ClientPI
 //    }
-//    func (m *mockClientClient) CreateCampaign(input *personalize.CreateCampaignInput) (*personalize.CreateCampaignOutput, error) {
+//    func (m *mockClientClient) CreateCampaign(input *types.CreateCampaignInput) (*types.CreateCampaignOutput, error) {
 //        // mock response/functionality
 //    }
 //
@@ -61,77 +62,77 @@ import (
 // and waiters. Its suggested to use the pattern above for testing, or using
 // tooling to generate mocks to satisfy the interfaces.
 type ClientAPI interface {
-	CreateCampaignRequest(*personalize.CreateCampaignInput) personalize.CreateCampaignRequest
+	CreateCampaignRequest(*types.CreateCampaignInput) personalize.CreateCampaignRequest
 
-	CreateDatasetRequest(*personalize.CreateDatasetInput) personalize.CreateDatasetRequest
+	CreateDatasetRequest(*types.CreateDatasetInput) personalize.CreateDatasetRequest
 
-	CreateDatasetGroupRequest(*personalize.CreateDatasetGroupInput) personalize.CreateDatasetGroupRequest
+	CreateDatasetGroupRequest(*types.CreateDatasetGroupInput) personalize.CreateDatasetGroupRequest
 
-	CreateDatasetImportJobRequest(*personalize.CreateDatasetImportJobInput) personalize.CreateDatasetImportJobRequest
+	CreateDatasetImportJobRequest(*types.CreateDatasetImportJobInput) personalize.CreateDatasetImportJobRequest
 
-	CreateEventTrackerRequest(*personalize.CreateEventTrackerInput) personalize.CreateEventTrackerRequest
+	CreateEventTrackerRequest(*types.CreateEventTrackerInput) personalize.CreateEventTrackerRequest
 
-	CreateSchemaRequest(*personalize.CreateSchemaInput) personalize.CreateSchemaRequest
+	CreateSchemaRequest(*types.CreateSchemaInput) personalize.CreateSchemaRequest
 
-	CreateSolutionRequest(*personalize.CreateSolutionInput) personalize.CreateSolutionRequest
+	CreateSolutionRequest(*types.CreateSolutionInput) personalize.CreateSolutionRequest
 
-	CreateSolutionVersionRequest(*personalize.CreateSolutionVersionInput) personalize.CreateSolutionVersionRequest
+	CreateSolutionVersionRequest(*types.CreateSolutionVersionInput) personalize.CreateSolutionVersionRequest
 
-	DeleteCampaignRequest(*personalize.DeleteCampaignInput) personalize.DeleteCampaignRequest
+	DeleteCampaignRequest(*types.DeleteCampaignInput) personalize.DeleteCampaignRequest
 
-	DeleteDatasetRequest(*personalize.DeleteDatasetInput) personalize.DeleteDatasetRequest
+	DeleteDatasetRequest(*types.DeleteDatasetInput) personalize.DeleteDatasetRequest
 
-	DeleteDatasetGroupRequest(*personalize.DeleteDatasetGroupInput) personalize.DeleteDatasetGroupRequest
+	DeleteDatasetGroupRequest(*types.DeleteDatasetGroupInput) personalize.DeleteDatasetGroupRequest
 
-	DeleteEventTrackerRequest(*personalize.DeleteEventTrackerInput) personalize.DeleteEventTrackerRequest
+	DeleteEventTrackerRequest(*types.DeleteEventTrackerInput) personalize.DeleteEventTrackerRequest
 
-	DeleteSchemaRequest(*personalize.DeleteSchemaInput) personalize.DeleteSchemaRequest
+	DeleteSchemaRequest(*types.DeleteSchemaInput) personalize.DeleteSchemaRequest
 
-	DeleteSolutionRequest(*personalize.DeleteSolutionInput) personalize.DeleteSolutionRequest
+	DeleteSolutionRequest(*types.DeleteSolutionInput) personalize.DeleteSolutionRequest
 
-	DescribeAlgorithmRequest(*personalize.DescribeAlgorithmInput) personalize.DescribeAlgorithmRequest
+	DescribeAlgorithmRequest(*types.DescribeAlgorithmInput) personalize.DescribeAlgorithmRequest
 
-	DescribeCampaignRequest(*personalize.DescribeCampaignInput) personalize.DescribeCampaignRequest
+	DescribeCampaignRequest(*types.DescribeCampaignInput) personalize.DescribeCampaignRequest
 
-	DescribeDatasetRequest(*personalize.DescribeDatasetInput) personalize.DescribeDatasetRequest
+	DescribeDatasetRequest(*types.DescribeDatasetInput) personalize.DescribeDatasetRequest
 
-	DescribeDatasetGroupRequest(*personalize.DescribeDatasetGroupInput) personalize.DescribeDatasetGroupRequest
+	DescribeDatasetGroupRequest(*types.DescribeDatasetGroupInput) personalize.DescribeDatasetGroupRequest
 
-	DescribeDatasetImportJobRequest(*personalize.DescribeDatasetImportJobInput) personalize.DescribeDatasetImportJobRequest
+	DescribeDatasetImportJobRequest(*types.DescribeDatasetImportJobInput) personalize.DescribeDatasetImportJobRequest
 
-	DescribeEventTrackerRequest(*personalize.DescribeEventTrackerInput) personalize.DescribeEventTrackerRequest
+	DescribeEventTrackerRequest(*types.DescribeEventTrackerInput) personalize.DescribeEventTrackerRequest
 
-	DescribeFeatureTransformationRequest(*personalize.DescribeFeatureTransformationInput) personalize.DescribeFeatureTransformationRequest
+	DescribeFeatureTransformationRequest(*types.DescribeFeatureTransformationInput) personalize.DescribeFeatureTransformationRequest
 
-	DescribeRecipeRequest(*personalize.DescribeRecipeInput) personalize.DescribeRecipeRequest
+	DescribeRecipeRequest(*types.DescribeRecipeInput) personalize.DescribeRecipeRequest
 
-	DescribeSchemaRequest(*personalize.DescribeSchemaInput) personalize.DescribeSchemaRequest
+	DescribeSchemaRequest(*types.DescribeSchemaInput) personalize.DescribeSchemaRequest
 
-	DescribeSolutionRequest(*personalize.DescribeSolutionInput) personalize.DescribeSolutionRequest
+	DescribeSolutionRequest(*types.DescribeSolutionInput) personalize.DescribeSolutionRequest
 
-	DescribeSolutionVersionRequest(*personalize.DescribeSolutionVersionInput) personalize.DescribeSolutionVersionRequest
+	DescribeSolutionVersionRequest(*types.DescribeSolutionVersionInput) personalize.DescribeSolutionVersionRequest
 
-	GetSolutionMetricsRequest(*personalize.GetSolutionMetricsInput) personalize.GetSolutionMetricsRequest
+	GetSolutionMetricsRequest(*types.GetSolutionMetricsInput) personalize.GetSolutionMetricsRequest
 
-	ListCampaignsRequest(*personalize.ListCampaignsInput) personalize.ListCampaignsRequest
+	ListCampaignsRequest(*types.ListCampaignsInput) personalize.ListCampaignsRequest
 
-	ListDatasetGroupsRequest(*personalize.ListDatasetGroupsInput) personalize.ListDatasetGroupsRequest
+	ListDatasetGroupsRequest(*types.ListDatasetGroupsInput) personalize.ListDatasetGroupsRequest
 
-	ListDatasetImportJobsRequest(*personalize.ListDatasetImportJobsInput) personalize.ListDatasetImportJobsRequest
+	ListDatasetImportJobsRequest(*types.ListDatasetImportJobsInput) personalize.ListDatasetImportJobsRequest
 
-	ListDatasetsRequest(*personalize.ListDatasetsInput) personalize.ListDatasetsRequest
+	ListDatasetsRequest(*types.ListDatasetsInput) personalize.ListDatasetsRequest
 
-	ListEventTrackersRequest(*personalize.ListEventTrackersInput) personalize.ListEventTrackersRequest
+	ListEventTrackersRequest(*types.ListEventTrackersInput) personalize.ListEventTrackersRequest
 
-	ListRecipesRequest(*personalize.ListRecipesInput) personalize.ListRecipesRequest
+	ListRecipesRequest(*types.ListRecipesInput) personalize.ListRecipesRequest
 
-	ListSchemasRequest(*personalize.ListSchemasInput) personalize.ListSchemasRequest
+	ListSchemasRequest(*types.ListSchemasInput) personalize.ListSchemasRequest
 
-	ListSolutionVersionsRequest(*personalize.ListSolutionVersionsInput) personalize.ListSolutionVersionsRequest
+	ListSolutionVersionsRequest(*types.ListSolutionVersionsInput) personalize.ListSolutionVersionsRequest
 
-	ListSolutionsRequest(*personalize.ListSolutionsInput) personalize.ListSolutionsRequest
+	ListSolutionsRequest(*types.ListSolutionsInput) personalize.ListSolutionsRequest
 
-	UpdateCampaignRequest(*personalize.UpdateCampaignInput) personalize.UpdateCampaignRequest
+	UpdateCampaignRequest(*types.UpdateCampaignInput) personalize.UpdateCampaignRequest
 }
 
 var _ ClientAPI = (*personalize.Client)(nil)

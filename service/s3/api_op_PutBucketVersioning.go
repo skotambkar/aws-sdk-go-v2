@@ -6,96 +6,10 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
-	"github.com/aws/aws-sdk-go-v2/internal/awsutil"
 	"github.com/aws/aws-sdk-go-v2/private/protocol"
 	"github.com/aws/aws-sdk-go-v2/private/protocol/restxml"
+	"github.com/aws/aws-sdk-go-v2/service/s3/types"
 )
-
-type PutBucketVersioningInput struct {
-	_ struct{} `type:"structure" payload:"VersioningConfiguration"`
-
-	// Bucket is a required field
-	Bucket *string `location:"uri" locationName:"Bucket" type:"string" required:"true"`
-
-	// The concatenation of the authentication device's serial number, a space,
-	// and the value that is displayed on your authentication device.
-	MFA *string `location:"header" locationName:"x-amz-mfa" type:"string"`
-
-	// Describes the versioning state of an Amazon S3 bucket. For more information,
-	// see PUT Bucket versioning (https://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketPUTVersioningStatus.html)
-	// in the Amazon Simple Storage Service API Reference.
-	//
-	// VersioningConfiguration is a required field
-	VersioningConfiguration *VersioningConfiguration `locationName:"VersioningConfiguration" type:"structure" required:"true" xmlURI:"http://s3.amazonaws.com/doc/2006-03-01/"`
-}
-
-// String returns the string representation
-func (s PutBucketVersioningInput) String() string {
-	return awsutil.Prettify(s)
-}
-
-// Validate inspects the fields of the type to determine if they are valid.
-func (s *PutBucketVersioningInput) Validate() error {
-	invalidParams := aws.ErrInvalidParams{Context: "PutBucketVersioningInput"}
-
-	if s.Bucket == nil {
-		invalidParams.Add(aws.NewErrParamRequired("Bucket"))
-	}
-
-	if s.VersioningConfiguration == nil {
-		invalidParams.Add(aws.NewErrParamRequired("VersioningConfiguration"))
-	}
-
-	if invalidParams.Len() > 0 {
-		return invalidParams
-	}
-	return nil
-}
-
-func (s *PutBucketVersioningInput) getBucket() (v string) {
-	if s.Bucket == nil {
-		return v
-	}
-	return *s.Bucket
-}
-
-// MarshalFields encodes the AWS API shape using the passed in protocol encoder.
-func (s PutBucketVersioningInput) MarshalFields(e protocol.FieldEncoder) error {
-
-	if s.MFA != nil {
-		v := *s.MFA
-
-		metadata := protocol.Metadata{}
-		e.SetValue(protocol.HeaderTarget, "x-amz-mfa", protocol.StringValue(v), metadata)
-	}
-	if s.Bucket != nil {
-		v := *s.Bucket
-
-		metadata := protocol.Metadata{}
-		e.SetValue(protocol.PathTarget, "Bucket", protocol.StringValue(v), metadata)
-	}
-	if s.VersioningConfiguration != nil {
-		v := s.VersioningConfiguration
-
-		metadata := protocol.Metadata{XMLNamespaceURI: "http://s3.amazonaws.com/doc/2006-03-01/"}
-		e.SetFields(protocol.PayloadTarget, "VersioningConfiguration", v, metadata)
-	}
-	return nil
-}
-
-type PutBucketVersioningOutput struct {
-	_ struct{} `type:"structure"`
-}
-
-// String returns the string representation
-func (s PutBucketVersioningOutput) String() string {
-	return awsutil.Prettify(s)
-}
-
-// MarshalFields encodes the AWS API shape using the passed in protocol encoder.
-func (s PutBucketVersioningOutput) MarshalFields(e protocol.FieldEncoder) error {
-	return nil
-}
 
 const opPutBucketVersioning = "PutBucketVersioning"
 
@@ -113,7 +27,7 @@ const opPutBucketVersioning = "PutBucketVersioning"
 //    }
 //
 // Please also see https://docs.aws.amazon.com/goto/WebAPI/s3-2006-03-01/PutBucketVersioning
-func (c *Client) PutBucketVersioningRequest(input *PutBucketVersioningInput) PutBucketVersioningRequest {
+func (c *Client) PutBucketVersioningRequest(input *types.PutBucketVersioningInput) PutBucketVersioningRequest {
 	op := &aws.Operation{
 		Name:       opPutBucketVersioning,
 		HTTPMethod: "PUT",
@@ -121,10 +35,10 @@ func (c *Client) PutBucketVersioningRequest(input *PutBucketVersioningInput) Put
 	}
 
 	if input == nil {
-		input = &PutBucketVersioningInput{}
+		input = &types.PutBucketVersioningInput{}
 	}
 
-	req := c.newRequest(op, input, &PutBucketVersioningOutput{})
+	req := c.newRequest(op, input, &types.PutBucketVersioningOutput{})
 	req.Handlers.Unmarshal.Remove(restxml.UnmarshalHandler)
 	req.Handlers.Unmarshal.PushBackNamed(protocol.UnmarshalDiscardBodyHandler)
 	return PutBucketVersioningRequest{Request: req, Input: input, Copy: c.PutBucketVersioningRequest}
@@ -134,8 +48,8 @@ func (c *Client) PutBucketVersioningRequest(input *PutBucketVersioningInput) Put
 // PutBucketVersioning API operation.
 type PutBucketVersioningRequest struct {
 	*aws.Request
-	Input *PutBucketVersioningInput
-	Copy  func(*PutBucketVersioningInput) PutBucketVersioningRequest
+	Input *types.PutBucketVersioningInput
+	Copy  func(*types.PutBucketVersioningInput) PutBucketVersioningRequest
 }
 
 // Send marshals and sends the PutBucketVersioning API request.
@@ -147,7 +61,7 @@ func (r PutBucketVersioningRequest) Send(ctx context.Context) (*PutBucketVersion
 	}
 
 	resp := &PutBucketVersioningResponse{
-		PutBucketVersioningOutput: r.Request.Data.(*PutBucketVersioningOutput),
+		PutBucketVersioningOutput: r.Request.Data.(*types.PutBucketVersioningOutput),
 		response:                  &aws.Response{Request: r.Request},
 	}
 
@@ -157,7 +71,7 @@ func (r PutBucketVersioningRequest) Send(ctx context.Context) (*PutBucketVersion
 // PutBucketVersioningResponse is the response type for the
 // PutBucketVersioning API operation.
 type PutBucketVersioningResponse struct {
-	*PutBucketVersioningOutput
+	*types.PutBucketVersioningOutput
 
 	response *aws.Response
 }

@@ -6,55 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
-	"github.com/aws/aws-sdk-go-v2/internal/awsutil"
+	"github.com/aws/aws-sdk-go-v2/service/migrationhub/types"
 )
-
-type ListProgressUpdateStreamsInput struct {
-	_ struct{} `type:"structure"`
-
-	// Filter to limit the maximum number of results to list per page.
-	MaxResults *int64 `min:"1" type:"integer"`
-
-	// If a NextToken was returned by a previous call, there are more results available.
-	// To retrieve the next page of results, make the call again using the returned
-	// token in NextToken.
-	NextToken *string `type:"string"`
-}
-
-// String returns the string representation
-func (s ListProgressUpdateStreamsInput) String() string {
-	return awsutil.Prettify(s)
-}
-
-// Validate inspects the fields of the type to determine if they are valid.
-func (s *ListProgressUpdateStreamsInput) Validate() error {
-	invalidParams := aws.ErrInvalidParams{Context: "ListProgressUpdateStreamsInput"}
-	if s.MaxResults != nil && *s.MaxResults < 1 {
-		invalidParams.Add(aws.NewErrParamMinValue("MaxResults", 1))
-	}
-
-	if invalidParams.Len() > 0 {
-		return invalidParams
-	}
-	return nil
-}
-
-type ListProgressUpdateStreamsOutput struct {
-	_ struct{} `type:"structure"`
-
-	// If there are more streams created than the max result, return the next token
-	// to be passed to the next call as a bookmark of where to start from.
-	NextToken *string `type:"string"`
-
-	// List of progress update streams up to the max number of results passed in
-	// the input.
-	ProgressUpdateStreamSummaryList []ProgressUpdateStreamSummary `type:"list"`
-}
-
-// String returns the string representation
-func (s ListProgressUpdateStreamsOutput) String() string {
-	return awsutil.Prettify(s)
-}
 
 const opListProgressUpdateStreams = "ListProgressUpdateStreams"
 
@@ -72,7 +25,7 @@ const opListProgressUpdateStreams = "ListProgressUpdateStreams"
 //    }
 //
 // Please also see https://docs.aws.amazon.com/goto/WebAPI/AWSMigrationHub-2017-05-31/ListProgressUpdateStreams
-func (c *Client) ListProgressUpdateStreamsRequest(input *ListProgressUpdateStreamsInput) ListProgressUpdateStreamsRequest {
+func (c *Client) ListProgressUpdateStreamsRequest(input *types.ListProgressUpdateStreamsInput) ListProgressUpdateStreamsRequest {
 	op := &aws.Operation{
 		Name:       opListProgressUpdateStreams,
 		HTTPMethod: "POST",
@@ -80,10 +33,10 @@ func (c *Client) ListProgressUpdateStreamsRequest(input *ListProgressUpdateStrea
 	}
 
 	if input == nil {
-		input = &ListProgressUpdateStreamsInput{}
+		input = &types.ListProgressUpdateStreamsInput{}
 	}
 
-	req := c.newRequest(op, input, &ListProgressUpdateStreamsOutput{})
+	req := c.newRequest(op, input, &types.ListProgressUpdateStreamsOutput{})
 	return ListProgressUpdateStreamsRequest{Request: req, Input: input, Copy: c.ListProgressUpdateStreamsRequest}
 }
 
@@ -91,8 +44,8 @@ func (c *Client) ListProgressUpdateStreamsRequest(input *ListProgressUpdateStrea
 // ListProgressUpdateStreams API operation.
 type ListProgressUpdateStreamsRequest struct {
 	*aws.Request
-	Input *ListProgressUpdateStreamsInput
-	Copy  func(*ListProgressUpdateStreamsInput) ListProgressUpdateStreamsRequest
+	Input *types.ListProgressUpdateStreamsInput
+	Copy  func(*types.ListProgressUpdateStreamsInput) ListProgressUpdateStreamsRequest
 }
 
 // Send marshals and sends the ListProgressUpdateStreams API request.
@@ -104,7 +57,7 @@ func (r ListProgressUpdateStreamsRequest) Send(ctx context.Context) (*ListProgre
 	}
 
 	resp := &ListProgressUpdateStreamsResponse{
-		ListProgressUpdateStreamsOutput: r.Request.Data.(*ListProgressUpdateStreamsOutput),
+		ListProgressUpdateStreamsOutput: r.Request.Data.(*types.ListProgressUpdateStreamsOutput),
 		response:                        &aws.Response{Request: r.Request},
 	}
 
@@ -114,7 +67,7 @@ func (r ListProgressUpdateStreamsRequest) Send(ctx context.Context) (*ListProgre
 // ListProgressUpdateStreamsResponse is the response type for the
 // ListProgressUpdateStreams API operation.
 type ListProgressUpdateStreamsResponse struct {
-	*ListProgressUpdateStreamsOutput
+	*types.ListProgressUpdateStreamsOutput
 
 	response *aws.Response
 }

@@ -6,120 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
-	"github.com/aws/aws-sdk-go-v2/internal/awsutil"
-	"github.com/aws/aws-sdk-go-v2/private/protocol"
+	"github.com/aws/aws-sdk-go-v2/service/s3/types"
 )
-
-type GetBucketNotificationConfigurationInput struct {
-	_ struct{} `type:"structure"`
-
-	// Name of the bucket to get the notification configuration for.
-	//
-	// Bucket is a required field
-	Bucket *string `location:"uri" locationName:"Bucket" type:"string" required:"true"`
-}
-
-// String returns the string representation
-func (s GetBucketNotificationConfigurationInput) String() string {
-	return awsutil.Prettify(s)
-}
-
-// Validate inspects the fields of the type to determine if they are valid.
-func (s *GetBucketNotificationConfigurationInput) Validate() error {
-	invalidParams := aws.ErrInvalidParams{Context: "GetBucketNotificationConfigurationInput"}
-
-	if s.Bucket == nil {
-		invalidParams.Add(aws.NewErrParamRequired("Bucket"))
-	}
-
-	if invalidParams.Len() > 0 {
-		return invalidParams
-	}
-	return nil
-}
-
-func (s *GetBucketNotificationConfigurationInput) getBucket() (v string) {
-	if s.Bucket == nil {
-		return v
-	}
-	return *s.Bucket
-}
-
-// MarshalFields encodes the AWS API shape using the passed in protocol encoder.
-func (s GetBucketNotificationConfigurationInput) MarshalFields(e protocol.FieldEncoder) error {
-
-	if s.Bucket != nil {
-		v := *s.Bucket
-
-		metadata := protocol.Metadata{}
-		e.SetValue(protocol.PathTarget, "Bucket", protocol.StringValue(v), metadata)
-	}
-	return nil
-}
-
-// A container for specifying the notification configuration of the bucket.
-// If this element is empty, notifications are turned off for the bucket.
-type GetBucketNotificationConfigurationOutput struct {
-	_ struct{} `type:"structure"`
-
-	// Describes the AWS Lambda functions to invoke and the events for which to
-	// invoke them.
-	LambdaFunctionConfigurations []LambdaFunctionConfiguration `locationName:"CloudFunctionConfiguration" type:"list" flattened:"true"`
-
-	// The Amazon Simple Queue Service queues to publish messages to and the events
-	// for which to publish messages.
-	QueueConfigurations []QueueConfiguration `locationName:"QueueConfiguration" type:"list" flattened:"true"`
-
-	// The topic to which notifications are sent and the events for which notifications
-	// are generated.
-	TopicConfigurations []TopicConfiguration `locationName:"TopicConfiguration" type:"list" flattened:"true"`
-}
-
-// String returns the string representation
-func (s GetBucketNotificationConfigurationOutput) String() string {
-	return awsutil.Prettify(s)
-}
-
-// MarshalFields encodes the AWS API shape using the passed in protocol encoder.
-func (s GetBucketNotificationConfigurationOutput) MarshalFields(e protocol.FieldEncoder) error {
-	if s.LambdaFunctionConfigurations != nil {
-		v := s.LambdaFunctionConfigurations
-
-		metadata := protocol.Metadata{Flatten: true}
-		ls0 := e.List(protocol.BodyTarget, "CloudFunctionConfiguration", metadata)
-		ls0.Start()
-		for _, v1 := range v {
-			ls0.ListAddFields(v1)
-		}
-		ls0.End()
-
-	}
-	if s.QueueConfigurations != nil {
-		v := s.QueueConfigurations
-
-		metadata := protocol.Metadata{Flatten: true}
-		ls0 := e.List(protocol.BodyTarget, "QueueConfiguration", metadata)
-		ls0.Start()
-		for _, v1 := range v {
-			ls0.ListAddFields(v1)
-		}
-		ls0.End()
-
-	}
-	if s.TopicConfigurations != nil {
-		v := s.TopicConfigurations
-
-		metadata := protocol.Metadata{Flatten: true}
-		ls0 := e.List(protocol.BodyTarget, "TopicConfiguration", metadata)
-		ls0.Start()
-		for _, v1 := range v {
-			ls0.ListAddFields(v1)
-		}
-		ls0.End()
-
-	}
-	return nil
-}
 
 const opGetBucketNotificationConfiguration = "GetBucketNotificationConfiguration"
 
@@ -136,7 +24,7 @@ const opGetBucketNotificationConfiguration = "GetBucketNotificationConfiguration
 //    }
 //
 // Please also see https://docs.aws.amazon.com/goto/WebAPI/s3-2006-03-01/GetBucketNotificationConfiguration
-func (c *Client) GetBucketNotificationConfigurationRequest(input *GetBucketNotificationConfigurationInput) GetBucketNotificationConfigurationRequest {
+func (c *Client) GetBucketNotificationConfigurationRequest(input *types.GetBucketNotificationConfigurationInput) GetBucketNotificationConfigurationRequest {
 	op := &aws.Operation{
 		Name:       opGetBucketNotificationConfiguration,
 		HTTPMethod: "GET",
@@ -144,10 +32,10 @@ func (c *Client) GetBucketNotificationConfigurationRequest(input *GetBucketNotif
 	}
 
 	if input == nil {
-		input = &GetBucketNotificationConfigurationInput{}
+		input = &types.GetBucketNotificationConfigurationInput{}
 	}
 
-	req := c.newRequest(op, input, &GetBucketNotificationConfigurationOutput{})
+	req := c.newRequest(op, input, &types.GetBucketNotificationConfigurationOutput{})
 	return GetBucketNotificationConfigurationRequest{Request: req, Input: input, Copy: c.GetBucketNotificationConfigurationRequest}
 }
 
@@ -155,8 +43,8 @@ func (c *Client) GetBucketNotificationConfigurationRequest(input *GetBucketNotif
 // GetBucketNotificationConfiguration API operation.
 type GetBucketNotificationConfigurationRequest struct {
 	*aws.Request
-	Input *GetBucketNotificationConfigurationInput
-	Copy  func(*GetBucketNotificationConfigurationInput) GetBucketNotificationConfigurationRequest
+	Input *types.GetBucketNotificationConfigurationInput
+	Copy  func(*types.GetBucketNotificationConfigurationInput) GetBucketNotificationConfigurationRequest
 }
 
 // Send marshals and sends the GetBucketNotificationConfiguration API request.
@@ -168,7 +56,7 @@ func (r GetBucketNotificationConfigurationRequest) Send(ctx context.Context) (*G
 	}
 
 	resp := &GetBucketNotificationConfigurationResponse{
-		GetBucketNotificationConfigurationOutput: r.Request.Data.(*GetBucketNotificationConfigurationOutput),
+		GetBucketNotificationConfigurationOutput: r.Request.Data.(*types.GetBucketNotificationConfigurationOutput),
 		response:                                 &aws.Response{Request: r.Request},
 	}
 
@@ -178,7 +66,7 @@ func (r GetBucketNotificationConfigurationRequest) Send(ctx context.Context) (*G
 // GetBucketNotificationConfigurationResponse is the response type for the
 // GetBucketNotificationConfiguration API operation.
 type GetBucketNotificationConfigurationResponse struct {
-	*GetBucketNotificationConfigurationOutput
+	*types.GetBucketNotificationConfigurationOutput
 
 	response *aws.Response
 }

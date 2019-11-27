@@ -6,62 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
-	"github.com/aws/aws-sdk-go-v2/internal/awsutil"
+	"github.com/aws/aws-sdk-go-v2/service/ssm/types"
 )
-
-type CreateResourceDataSyncInput struct {
-	_ struct{} `type:"structure"`
-
-	// Amazon S3 configuration details for the sync.
-	//
-	// S3Destination is a required field
-	S3Destination *ResourceDataSyncS3Destination `type:"structure" required:"true"`
-
-	// A name for the configuration.
-	//
-	// SyncName is a required field
-	SyncName *string `min:"1" type:"string" required:"true"`
-}
-
-// String returns the string representation
-func (s CreateResourceDataSyncInput) String() string {
-	return awsutil.Prettify(s)
-}
-
-// Validate inspects the fields of the type to determine if they are valid.
-func (s *CreateResourceDataSyncInput) Validate() error {
-	invalidParams := aws.ErrInvalidParams{Context: "CreateResourceDataSyncInput"}
-
-	if s.S3Destination == nil {
-		invalidParams.Add(aws.NewErrParamRequired("S3Destination"))
-	}
-
-	if s.SyncName == nil {
-		invalidParams.Add(aws.NewErrParamRequired("SyncName"))
-	}
-	if s.SyncName != nil && len(*s.SyncName) < 1 {
-		invalidParams.Add(aws.NewErrParamMinLen("SyncName", 1))
-	}
-	if s.S3Destination != nil {
-		if err := s.S3Destination.Validate(); err != nil {
-			invalidParams.AddNested("S3Destination", err.(aws.ErrInvalidParams))
-		}
-	}
-
-	if invalidParams.Len() > 0 {
-		return invalidParams
-	}
-	return nil
-}
-
-type CreateResourceDataSyncOutput struct {
-	_ struct{} `type:"structure"`
-}
-
-// String returns the string representation
-func (s CreateResourceDataSyncOutput) String() string {
-	return awsutil.Prettify(s)
-}
 
 const opCreateResourceDataSync = "CreateResourceDataSync"
 
@@ -88,7 +34,7 @@ const opCreateResourceDataSync = "CreateResourceDataSync"
 //    }
 //
 // Please also see https://docs.aws.amazon.com/goto/WebAPI/ssm-2014-11-06/CreateResourceDataSync
-func (c *Client) CreateResourceDataSyncRequest(input *CreateResourceDataSyncInput) CreateResourceDataSyncRequest {
+func (c *Client) CreateResourceDataSyncRequest(input *types.CreateResourceDataSyncInput) CreateResourceDataSyncRequest {
 	op := &aws.Operation{
 		Name:       opCreateResourceDataSync,
 		HTTPMethod: "POST",
@@ -96,10 +42,10 @@ func (c *Client) CreateResourceDataSyncRequest(input *CreateResourceDataSyncInpu
 	}
 
 	if input == nil {
-		input = &CreateResourceDataSyncInput{}
+		input = &types.CreateResourceDataSyncInput{}
 	}
 
-	req := c.newRequest(op, input, &CreateResourceDataSyncOutput{})
+	req := c.newRequest(op, input, &types.CreateResourceDataSyncOutput{})
 	return CreateResourceDataSyncRequest{Request: req, Input: input, Copy: c.CreateResourceDataSyncRequest}
 }
 
@@ -107,8 +53,8 @@ func (c *Client) CreateResourceDataSyncRequest(input *CreateResourceDataSyncInpu
 // CreateResourceDataSync API operation.
 type CreateResourceDataSyncRequest struct {
 	*aws.Request
-	Input *CreateResourceDataSyncInput
-	Copy  func(*CreateResourceDataSyncInput) CreateResourceDataSyncRequest
+	Input *types.CreateResourceDataSyncInput
+	Copy  func(*types.CreateResourceDataSyncInput) CreateResourceDataSyncRequest
 }
 
 // Send marshals and sends the CreateResourceDataSync API request.
@@ -120,7 +66,7 @@ func (r CreateResourceDataSyncRequest) Send(ctx context.Context) (*CreateResourc
 	}
 
 	resp := &CreateResourceDataSyncResponse{
-		CreateResourceDataSyncOutput: r.Request.Data.(*CreateResourceDataSyncOutput),
+		CreateResourceDataSyncOutput: r.Request.Data.(*types.CreateResourceDataSyncOutput),
 		response:                     &aws.Response{Request: r.Request},
 	}
 
@@ -130,7 +76,7 @@ func (r CreateResourceDataSyncRequest) Send(ctx context.Context) (*CreateResourc
 // CreateResourceDataSyncResponse is the response type for the
 // CreateResourceDataSync API operation.
 type CreateResourceDataSyncResponse struct {
-	*CreateResourceDataSyncOutput
+	*types.CreateResourceDataSyncOutput
 
 	response *aws.Response
 }

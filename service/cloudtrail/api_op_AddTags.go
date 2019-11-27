@@ -4,64 +4,10 @@ package cloudtrail
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
-	"github.com/aws/aws-sdk-go-v2/internal/awsutil"
+	"github.com/aws/aws-sdk-go-v2/service/cloudtrail/types"
 )
-
-// Specifies the tags to add to a trail.
-type AddTagsInput struct {
-	_ struct{} `type:"structure"`
-
-	// Specifies the ARN of the trail to which one or more tags will be added. The
-	// format of a trail ARN is:
-	//
-	// arn:aws:cloudtrail:us-east-2:123456789012:trail/MyTrail
-	//
-	// ResourceId is a required field
-	ResourceId *string `type:"string" required:"true"`
-
-	// Contains a list of CloudTrail tags, up to a limit of 50
-	TagsList []Tag `type:"list"`
-}
-
-// String returns the string representation
-func (s AddTagsInput) String() string {
-	return awsutil.Prettify(s)
-}
-
-// Validate inspects the fields of the type to determine if they are valid.
-func (s *AddTagsInput) Validate() error {
-	invalidParams := aws.ErrInvalidParams{Context: "AddTagsInput"}
-
-	if s.ResourceId == nil {
-		invalidParams.Add(aws.NewErrParamRequired("ResourceId"))
-	}
-	if s.TagsList != nil {
-		for i, v := range s.TagsList {
-			if err := v.Validate(); err != nil {
-				invalidParams.AddNested(fmt.Sprintf("%s[%v]", "TagsList", i), err.(aws.ErrInvalidParams))
-			}
-		}
-	}
-
-	if invalidParams.Len() > 0 {
-		return invalidParams
-	}
-	return nil
-}
-
-// Returns the objects or data listed below if successful. Otherwise, returns
-// an error.
-type AddTagsOutput struct {
-	_ struct{} `type:"structure"`
-}
-
-// String returns the string representation
-func (s AddTagsOutput) String() string {
-	return awsutil.Prettify(s)
-}
 
 const opAddTags = "AddTags"
 
@@ -83,7 +29,7 @@ const opAddTags = "AddTags"
 //    }
 //
 // Please also see https://docs.aws.amazon.com/goto/WebAPI/cloudtrail-2013-11-01/AddTags
-func (c *Client) AddTagsRequest(input *AddTagsInput) AddTagsRequest {
+func (c *Client) AddTagsRequest(input *types.AddTagsInput) AddTagsRequest {
 	op := &aws.Operation{
 		Name:       opAddTags,
 		HTTPMethod: "POST",
@@ -91,10 +37,10 @@ func (c *Client) AddTagsRequest(input *AddTagsInput) AddTagsRequest {
 	}
 
 	if input == nil {
-		input = &AddTagsInput{}
+		input = &types.AddTagsInput{}
 	}
 
-	req := c.newRequest(op, input, &AddTagsOutput{})
+	req := c.newRequest(op, input, &types.AddTagsOutput{})
 	return AddTagsRequest{Request: req, Input: input, Copy: c.AddTagsRequest}
 }
 
@@ -102,8 +48,8 @@ func (c *Client) AddTagsRequest(input *AddTagsInput) AddTagsRequest {
 // AddTags API operation.
 type AddTagsRequest struct {
 	*aws.Request
-	Input *AddTagsInput
-	Copy  func(*AddTagsInput) AddTagsRequest
+	Input *types.AddTagsInput
+	Copy  func(*types.AddTagsInput) AddTagsRequest
 }
 
 // Send marshals and sends the AddTags API request.
@@ -115,7 +61,7 @@ func (r AddTagsRequest) Send(ctx context.Context) (*AddTagsResponse, error) {
 	}
 
 	resp := &AddTagsResponse{
-		AddTagsOutput: r.Request.Data.(*AddTagsOutput),
+		AddTagsOutput: r.Request.Data.(*types.AddTagsOutput),
 		response:      &aws.Response{Request: r.Request},
 	}
 
@@ -125,7 +71,7 @@ func (r AddTagsRequest) Send(ctx context.Context) (*AddTagsResponse, error) {
 // AddTagsResponse is the response type for the
 // AddTags API operation.
 type AddTagsResponse struct {
-	*AddTagsOutput
+	*types.AddTagsOutput
 
 	response *aws.Response
 }

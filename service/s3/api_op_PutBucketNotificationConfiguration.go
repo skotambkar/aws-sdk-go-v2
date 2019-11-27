@@ -6,90 +6,10 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
-	"github.com/aws/aws-sdk-go-v2/internal/awsutil"
 	"github.com/aws/aws-sdk-go-v2/private/protocol"
 	"github.com/aws/aws-sdk-go-v2/private/protocol/restxml"
+	"github.com/aws/aws-sdk-go-v2/service/s3/types"
 )
-
-type PutBucketNotificationConfigurationInput struct {
-	_ struct{} `type:"structure" payload:"NotificationConfiguration"`
-
-	// Bucket is a required field
-	Bucket *string `location:"uri" locationName:"Bucket" type:"string" required:"true"`
-
-	// A container for specifying the notification configuration of the bucket.
-	// If this element is empty, notifications are turned off for the bucket.
-	//
-	// NotificationConfiguration is a required field
-	NotificationConfiguration *NotificationConfiguration `locationName:"NotificationConfiguration" type:"structure" required:"true" xmlURI:"http://s3.amazonaws.com/doc/2006-03-01/"`
-}
-
-// String returns the string representation
-func (s PutBucketNotificationConfigurationInput) String() string {
-	return awsutil.Prettify(s)
-}
-
-// Validate inspects the fields of the type to determine if they are valid.
-func (s *PutBucketNotificationConfigurationInput) Validate() error {
-	invalidParams := aws.ErrInvalidParams{Context: "PutBucketNotificationConfigurationInput"}
-
-	if s.Bucket == nil {
-		invalidParams.Add(aws.NewErrParamRequired("Bucket"))
-	}
-
-	if s.NotificationConfiguration == nil {
-		invalidParams.Add(aws.NewErrParamRequired("NotificationConfiguration"))
-	}
-	if s.NotificationConfiguration != nil {
-		if err := s.NotificationConfiguration.Validate(); err != nil {
-			invalidParams.AddNested("NotificationConfiguration", err.(aws.ErrInvalidParams))
-		}
-	}
-
-	if invalidParams.Len() > 0 {
-		return invalidParams
-	}
-	return nil
-}
-
-func (s *PutBucketNotificationConfigurationInput) getBucket() (v string) {
-	if s.Bucket == nil {
-		return v
-	}
-	return *s.Bucket
-}
-
-// MarshalFields encodes the AWS API shape using the passed in protocol encoder.
-func (s PutBucketNotificationConfigurationInput) MarshalFields(e protocol.FieldEncoder) error {
-
-	if s.Bucket != nil {
-		v := *s.Bucket
-
-		metadata := protocol.Metadata{}
-		e.SetValue(protocol.PathTarget, "Bucket", protocol.StringValue(v), metadata)
-	}
-	if s.NotificationConfiguration != nil {
-		v := s.NotificationConfiguration
-
-		metadata := protocol.Metadata{XMLNamespaceURI: "http://s3.amazonaws.com/doc/2006-03-01/"}
-		e.SetFields(protocol.PayloadTarget, "NotificationConfiguration", v, metadata)
-	}
-	return nil
-}
-
-type PutBucketNotificationConfigurationOutput struct {
-	_ struct{} `type:"structure"`
-}
-
-// String returns the string representation
-func (s PutBucketNotificationConfigurationOutput) String() string {
-	return awsutil.Prettify(s)
-}
-
-// MarshalFields encodes the AWS API shape using the passed in protocol encoder.
-func (s PutBucketNotificationConfigurationOutput) MarshalFields(e protocol.FieldEncoder) error {
-	return nil
-}
 
 const opPutBucketNotificationConfiguration = "PutBucketNotificationConfiguration"
 
@@ -106,7 +26,7 @@ const opPutBucketNotificationConfiguration = "PutBucketNotificationConfiguration
 //    }
 //
 // Please also see https://docs.aws.amazon.com/goto/WebAPI/s3-2006-03-01/PutBucketNotificationConfiguration
-func (c *Client) PutBucketNotificationConfigurationRequest(input *PutBucketNotificationConfigurationInput) PutBucketNotificationConfigurationRequest {
+func (c *Client) PutBucketNotificationConfigurationRequest(input *types.PutBucketNotificationConfigurationInput) PutBucketNotificationConfigurationRequest {
 	op := &aws.Operation{
 		Name:       opPutBucketNotificationConfiguration,
 		HTTPMethod: "PUT",
@@ -114,10 +34,10 @@ func (c *Client) PutBucketNotificationConfigurationRequest(input *PutBucketNotif
 	}
 
 	if input == nil {
-		input = &PutBucketNotificationConfigurationInput{}
+		input = &types.PutBucketNotificationConfigurationInput{}
 	}
 
-	req := c.newRequest(op, input, &PutBucketNotificationConfigurationOutput{})
+	req := c.newRequest(op, input, &types.PutBucketNotificationConfigurationOutput{})
 	req.Handlers.Unmarshal.Remove(restxml.UnmarshalHandler)
 	req.Handlers.Unmarshal.PushBackNamed(protocol.UnmarshalDiscardBodyHandler)
 	return PutBucketNotificationConfigurationRequest{Request: req, Input: input, Copy: c.PutBucketNotificationConfigurationRequest}
@@ -127,8 +47,8 @@ func (c *Client) PutBucketNotificationConfigurationRequest(input *PutBucketNotif
 // PutBucketNotificationConfiguration API operation.
 type PutBucketNotificationConfigurationRequest struct {
 	*aws.Request
-	Input *PutBucketNotificationConfigurationInput
-	Copy  func(*PutBucketNotificationConfigurationInput) PutBucketNotificationConfigurationRequest
+	Input *types.PutBucketNotificationConfigurationInput
+	Copy  func(*types.PutBucketNotificationConfigurationInput) PutBucketNotificationConfigurationRequest
 }
 
 // Send marshals and sends the PutBucketNotificationConfiguration API request.
@@ -140,7 +60,7 @@ func (r PutBucketNotificationConfigurationRequest) Send(ctx context.Context) (*P
 	}
 
 	resp := &PutBucketNotificationConfigurationResponse{
-		PutBucketNotificationConfigurationOutput: r.Request.Data.(*PutBucketNotificationConfigurationOutput),
+		PutBucketNotificationConfigurationOutput: r.Request.Data.(*types.PutBucketNotificationConfigurationOutput),
 		response:                                 &aws.Response{Request: r.Request},
 	}
 
@@ -150,7 +70,7 @@ func (r PutBucketNotificationConfigurationRequest) Send(ctx context.Context) (*P
 // PutBucketNotificationConfigurationResponse is the response type for the
 // PutBucketNotificationConfiguration API operation.
 type PutBucketNotificationConfigurationResponse struct {
-	*PutBucketNotificationConfigurationOutput
+	*types.PutBucketNotificationConfigurationOutput
 
 	response *aws.Response
 }

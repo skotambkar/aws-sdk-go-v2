@@ -6,74 +6,10 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
-	"github.com/aws/aws-sdk-go-v2/internal/awsutil"
 	"github.com/aws/aws-sdk-go-v2/private/protocol"
 	"github.com/aws/aws-sdk-go-v2/private/protocol/restxml"
+	"github.com/aws/aws-sdk-go-v2/service/s3/types"
 )
-
-type DeleteBucketReplicationInput struct {
-	_ struct{} `type:"structure"`
-
-	// The bucket name.
-	//
-	// It can take a while to propagate the deletion of a replication configuration
-	// to all Amazon S3 systems.
-	//
-	// Bucket is a required field
-	Bucket *string `location:"uri" locationName:"Bucket" type:"string" required:"true"`
-}
-
-// String returns the string representation
-func (s DeleteBucketReplicationInput) String() string {
-	return awsutil.Prettify(s)
-}
-
-// Validate inspects the fields of the type to determine if they are valid.
-func (s *DeleteBucketReplicationInput) Validate() error {
-	invalidParams := aws.ErrInvalidParams{Context: "DeleteBucketReplicationInput"}
-
-	if s.Bucket == nil {
-		invalidParams.Add(aws.NewErrParamRequired("Bucket"))
-	}
-
-	if invalidParams.Len() > 0 {
-		return invalidParams
-	}
-	return nil
-}
-
-func (s *DeleteBucketReplicationInput) getBucket() (v string) {
-	if s.Bucket == nil {
-		return v
-	}
-	return *s.Bucket
-}
-
-// MarshalFields encodes the AWS API shape using the passed in protocol encoder.
-func (s DeleteBucketReplicationInput) MarshalFields(e protocol.FieldEncoder) error {
-
-	if s.Bucket != nil {
-		v := *s.Bucket
-
-		metadata := protocol.Metadata{}
-		e.SetValue(protocol.PathTarget, "Bucket", protocol.StringValue(v), metadata)
-	}
-	return nil
-}
-
-type DeleteBucketReplicationOutput struct {
-	_ struct{} `type:"structure"`
-}
-
-// String returns the string representation
-func (s DeleteBucketReplicationOutput) String() string {
-	return awsutil.Prettify(s)
-}
-
-// MarshalFields encodes the AWS API shape using the passed in protocol encoder.
-func (s DeleteBucketReplicationOutput) MarshalFields(e protocol.FieldEncoder) error {
-	return nil
-}
 
 const opDeleteBucketReplication = "DeleteBucketReplication"
 
@@ -92,7 +28,7 @@ const opDeleteBucketReplication = "DeleteBucketReplication"
 //    }
 //
 // Please also see https://docs.aws.amazon.com/goto/WebAPI/s3-2006-03-01/DeleteBucketReplication
-func (c *Client) DeleteBucketReplicationRequest(input *DeleteBucketReplicationInput) DeleteBucketReplicationRequest {
+func (c *Client) DeleteBucketReplicationRequest(input *types.DeleteBucketReplicationInput) DeleteBucketReplicationRequest {
 	op := &aws.Operation{
 		Name:       opDeleteBucketReplication,
 		HTTPMethod: "DELETE",
@@ -100,10 +36,10 @@ func (c *Client) DeleteBucketReplicationRequest(input *DeleteBucketReplicationIn
 	}
 
 	if input == nil {
-		input = &DeleteBucketReplicationInput{}
+		input = &types.DeleteBucketReplicationInput{}
 	}
 
-	req := c.newRequest(op, input, &DeleteBucketReplicationOutput{})
+	req := c.newRequest(op, input, &types.DeleteBucketReplicationOutput{})
 	req.Handlers.Unmarshal.Remove(restxml.UnmarshalHandler)
 	req.Handlers.Unmarshal.PushBackNamed(protocol.UnmarshalDiscardBodyHandler)
 	return DeleteBucketReplicationRequest{Request: req, Input: input, Copy: c.DeleteBucketReplicationRequest}
@@ -113,8 +49,8 @@ func (c *Client) DeleteBucketReplicationRequest(input *DeleteBucketReplicationIn
 // DeleteBucketReplication API operation.
 type DeleteBucketReplicationRequest struct {
 	*aws.Request
-	Input *DeleteBucketReplicationInput
-	Copy  func(*DeleteBucketReplicationInput) DeleteBucketReplicationRequest
+	Input *types.DeleteBucketReplicationInput
+	Copy  func(*types.DeleteBucketReplicationInput) DeleteBucketReplicationRequest
 }
 
 // Send marshals and sends the DeleteBucketReplication API request.
@@ -126,7 +62,7 @@ func (r DeleteBucketReplicationRequest) Send(ctx context.Context) (*DeleteBucket
 	}
 
 	resp := &DeleteBucketReplicationResponse{
-		DeleteBucketReplicationOutput: r.Request.Data.(*DeleteBucketReplicationOutput),
+		DeleteBucketReplicationOutput: r.Request.Data.(*types.DeleteBucketReplicationOutput),
 		response:                      &aws.Response{Request: r.Request},
 	}
 
@@ -136,7 +72,7 @@ func (r DeleteBucketReplicationRequest) Send(ctx context.Context) (*DeleteBucket
 // DeleteBucketReplicationResponse is the response type for the
 // DeleteBucketReplication API operation.
 type DeleteBucketReplicationResponse struct {
-	*DeleteBucketReplicationOutput
+	*types.DeleteBucketReplicationOutput
 
 	response *aws.Response
 }

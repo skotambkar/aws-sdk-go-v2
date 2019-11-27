@@ -6,94 +6,10 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
-	"github.com/aws/aws-sdk-go-v2/internal/awsutil"
 	"github.com/aws/aws-sdk-go-v2/private/protocol"
 	"github.com/aws/aws-sdk-go-v2/private/protocol/restxml"
+	"github.com/aws/aws-sdk-go-v2/service/s3/types"
 )
-
-type PutBucketPolicyInput struct {
-	_ struct{} `type:"structure" payload:"Policy"`
-
-	// Bucket is a required field
-	Bucket *string `location:"uri" locationName:"Bucket" type:"string" required:"true"`
-
-	// Set this parameter to true to confirm that you want to remove your permissions
-	// to change this bucket policy in the future.
-	ConfirmRemoveSelfBucketAccess *bool `location:"header" locationName:"x-amz-confirm-remove-self-bucket-access" type:"boolean"`
-
-	// The bucket policy as a JSON document.
-	//
-	// Policy is a required field
-	Policy *string `type:"string" required:"true"`
-}
-
-// String returns the string representation
-func (s PutBucketPolicyInput) String() string {
-	return awsutil.Prettify(s)
-}
-
-// Validate inspects the fields of the type to determine if they are valid.
-func (s *PutBucketPolicyInput) Validate() error {
-	invalidParams := aws.ErrInvalidParams{Context: "PutBucketPolicyInput"}
-
-	if s.Bucket == nil {
-		invalidParams.Add(aws.NewErrParamRequired("Bucket"))
-	}
-
-	if s.Policy == nil {
-		invalidParams.Add(aws.NewErrParamRequired("Policy"))
-	}
-
-	if invalidParams.Len() > 0 {
-		return invalidParams
-	}
-	return nil
-}
-
-func (s *PutBucketPolicyInput) getBucket() (v string) {
-	if s.Bucket == nil {
-		return v
-	}
-	return *s.Bucket
-}
-
-// MarshalFields encodes the AWS API shape using the passed in protocol encoder.
-func (s PutBucketPolicyInput) MarshalFields(e protocol.FieldEncoder) error {
-
-	if s.ConfirmRemoveSelfBucketAccess != nil {
-		v := *s.ConfirmRemoveSelfBucketAccess
-
-		metadata := protocol.Metadata{}
-		e.SetValue(protocol.HeaderTarget, "x-amz-confirm-remove-self-bucket-access", protocol.BoolValue(v), metadata)
-	}
-	if s.Bucket != nil {
-		v := *s.Bucket
-
-		metadata := protocol.Metadata{}
-		e.SetValue(protocol.PathTarget, "Bucket", protocol.StringValue(v), metadata)
-	}
-	if s.Policy != nil {
-		v := *s.Policy
-
-		metadata := protocol.Metadata{}
-		e.SetStream(protocol.PayloadTarget, "Policy", protocol.StringStream(v), metadata)
-	}
-	return nil
-}
-
-type PutBucketPolicyOutput struct {
-	_ struct{} `type:"structure"`
-}
-
-// String returns the string representation
-func (s PutBucketPolicyOutput) String() string {
-	return awsutil.Prettify(s)
-}
-
-// MarshalFields encodes the AWS API shape using the passed in protocol encoder.
-func (s PutBucketPolicyOutput) MarshalFields(e protocol.FieldEncoder) error {
-	return nil
-}
 
 const opPutBucketPolicy = "PutBucketPolicy"
 
@@ -110,7 +26,7 @@ const opPutBucketPolicy = "PutBucketPolicy"
 //    }
 //
 // Please also see https://docs.aws.amazon.com/goto/WebAPI/s3-2006-03-01/PutBucketPolicy
-func (c *Client) PutBucketPolicyRequest(input *PutBucketPolicyInput) PutBucketPolicyRequest {
+func (c *Client) PutBucketPolicyRequest(input *types.PutBucketPolicyInput) PutBucketPolicyRequest {
 	op := &aws.Operation{
 		Name:       opPutBucketPolicy,
 		HTTPMethod: "PUT",
@@ -118,10 +34,10 @@ func (c *Client) PutBucketPolicyRequest(input *PutBucketPolicyInput) PutBucketPo
 	}
 
 	if input == nil {
-		input = &PutBucketPolicyInput{}
+		input = &types.PutBucketPolicyInput{}
 	}
 
-	req := c.newRequest(op, input, &PutBucketPolicyOutput{})
+	req := c.newRequest(op, input, &types.PutBucketPolicyOutput{})
 	req.Handlers.Unmarshal.Remove(restxml.UnmarshalHandler)
 	req.Handlers.Unmarshal.PushBackNamed(protocol.UnmarshalDiscardBodyHandler)
 	return PutBucketPolicyRequest{Request: req, Input: input, Copy: c.PutBucketPolicyRequest}
@@ -131,8 +47,8 @@ func (c *Client) PutBucketPolicyRequest(input *PutBucketPolicyInput) PutBucketPo
 // PutBucketPolicy API operation.
 type PutBucketPolicyRequest struct {
 	*aws.Request
-	Input *PutBucketPolicyInput
-	Copy  func(*PutBucketPolicyInput) PutBucketPolicyRequest
+	Input *types.PutBucketPolicyInput
+	Copy  func(*types.PutBucketPolicyInput) PutBucketPolicyRequest
 }
 
 // Send marshals and sends the PutBucketPolicy API request.
@@ -144,7 +60,7 @@ func (r PutBucketPolicyRequest) Send(ctx context.Context) (*PutBucketPolicyRespo
 	}
 
 	resp := &PutBucketPolicyResponse{
-		PutBucketPolicyOutput: r.Request.Data.(*PutBucketPolicyOutput),
+		PutBucketPolicyOutput: r.Request.Data.(*types.PutBucketPolicyOutput),
 		response:              &aws.Response{Request: r.Request},
 	}
 
@@ -154,7 +70,7 @@ func (r PutBucketPolicyRequest) Send(ctx context.Context) (*PutBucketPolicyRespo
 // PutBucketPolicyResponse is the response type for the
 // PutBucketPolicy API operation.
 type PutBucketPolicyResponse struct {
-	*PutBucketPolicyOutput
+	*types.PutBucketPolicyOutput
 
 	response *aws.Response
 }

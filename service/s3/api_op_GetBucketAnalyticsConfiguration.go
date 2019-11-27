@@ -6,94 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
-	"github.com/aws/aws-sdk-go-v2/internal/awsutil"
-	"github.com/aws/aws-sdk-go-v2/private/protocol"
+	"github.com/aws/aws-sdk-go-v2/service/s3/types"
 )
-
-type GetBucketAnalyticsConfigurationInput struct {
-	_ struct{} `type:"structure"`
-
-	// The name of the bucket from which an analytics configuration is retrieved.
-	//
-	// Bucket is a required field
-	Bucket *string `location:"uri" locationName:"Bucket" type:"string" required:"true"`
-
-	// The ID that identifies the analytics configuration.
-	//
-	// Id is a required field
-	Id *string `location:"querystring" locationName:"id" type:"string" required:"true"`
-}
-
-// String returns the string representation
-func (s GetBucketAnalyticsConfigurationInput) String() string {
-	return awsutil.Prettify(s)
-}
-
-// Validate inspects the fields of the type to determine if they are valid.
-func (s *GetBucketAnalyticsConfigurationInput) Validate() error {
-	invalidParams := aws.ErrInvalidParams{Context: "GetBucketAnalyticsConfigurationInput"}
-
-	if s.Bucket == nil {
-		invalidParams.Add(aws.NewErrParamRequired("Bucket"))
-	}
-
-	if s.Id == nil {
-		invalidParams.Add(aws.NewErrParamRequired("Id"))
-	}
-
-	if invalidParams.Len() > 0 {
-		return invalidParams
-	}
-	return nil
-}
-
-func (s *GetBucketAnalyticsConfigurationInput) getBucket() (v string) {
-	if s.Bucket == nil {
-		return v
-	}
-	return *s.Bucket
-}
-
-// MarshalFields encodes the AWS API shape using the passed in protocol encoder.
-func (s GetBucketAnalyticsConfigurationInput) MarshalFields(e protocol.FieldEncoder) error {
-
-	if s.Bucket != nil {
-		v := *s.Bucket
-
-		metadata := protocol.Metadata{}
-		e.SetValue(protocol.PathTarget, "Bucket", protocol.StringValue(v), metadata)
-	}
-	if s.Id != nil {
-		v := *s.Id
-
-		metadata := protocol.Metadata{}
-		e.SetValue(protocol.QueryTarget, "id", protocol.StringValue(v), metadata)
-	}
-	return nil
-}
-
-type GetBucketAnalyticsConfigurationOutput struct {
-	_ struct{} `type:"structure" payload:"AnalyticsConfiguration"`
-
-	// The configuration and any analyses for the analytics filter.
-	AnalyticsConfiguration *AnalyticsConfiguration `type:"structure"`
-}
-
-// String returns the string representation
-func (s GetBucketAnalyticsConfigurationOutput) String() string {
-	return awsutil.Prettify(s)
-}
-
-// MarshalFields encodes the AWS API shape using the passed in protocol encoder.
-func (s GetBucketAnalyticsConfigurationOutput) MarshalFields(e protocol.FieldEncoder) error {
-	if s.AnalyticsConfiguration != nil {
-		v := s.AnalyticsConfiguration
-
-		metadata := protocol.Metadata{}
-		e.SetFields(protocol.PayloadTarget, "AnalyticsConfiguration", v, metadata)
-	}
-	return nil
-}
 
 const opGetBucketAnalyticsConfiguration = "GetBucketAnalyticsConfiguration"
 
@@ -111,7 +25,7 @@ const opGetBucketAnalyticsConfiguration = "GetBucketAnalyticsConfiguration"
 //    }
 //
 // Please also see https://docs.aws.amazon.com/goto/WebAPI/s3-2006-03-01/GetBucketAnalyticsConfiguration
-func (c *Client) GetBucketAnalyticsConfigurationRequest(input *GetBucketAnalyticsConfigurationInput) GetBucketAnalyticsConfigurationRequest {
+func (c *Client) GetBucketAnalyticsConfigurationRequest(input *types.GetBucketAnalyticsConfigurationInput) GetBucketAnalyticsConfigurationRequest {
 	op := &aws.Operation{
 		Name:       opGetBucketAnalyticsConfiguration,
 		HTTPMethod: "GET",
@@ -119,10 +33,10 @@ func (c *Client) GetBucketAnalyticsConfigurationRequest(input *GetBucketAnalytic
 	}
 
 	if input == nil {
-		input = &GetBucketAnalyticsConfigurationInput{}
+		input = &types.GetBucketAnalyticsConfigurationInput{}
 	}
 
-	req := c.newRequest(op, input, &GetBucketAnalyticsConfigurationOutput{})
+	req := c.newRequest(op, input, &types.GetBucketAnalyticsConfigurationOutput{})
 	return GetBucketAnalyticsConfigurationRequest{Request: req, Input: input, Copy: c.GetBucketAnalyticsConfigurationRequest}
 }
 
@@ -130,8 +44,8 @@ func (c *Client) GetBucketAnalyticsConfigurationRequest(input *GetBucketAnalytic
 // GetBucketAnalyticsConfiguration API operation.
 type GetBucketAnalyticsConfigurationRequest struct {
 	*aws.Request
-	Input *GetBucketAnalyticsConfigurationInput
-	Copy  func(*GetBucketAnalyticsConfigurationInput) GetBucketAnalyticsConfigurationRequest
+	Input *types.GetBucketAnalyticsConfigurationInput
+	Copy  func(*types.GetBucketAnalyticsConfigurationInput) GetBucketAnalyticsConfigurationRequest
 }
 
 // Send marshals and sends the GetBucketAnalyticsConfiguration API request.
@@ -143,7 +57,7 @@ func (r GetBucketAnalyticsConfigurationRequest) Send(ctx context.Context) (*GetB
 	}
 
 	resp := &GetBucketAnalyticsConfigurationResponse{
-		GetBucketAnalyticsConfigurationOutput: r.Request.Data.(*GetBucketAnalyticsConfigurationOutput),
+		GetBucketAnalyticsConfigurationOutput: r.Request.Data.(*types.GetBucketAnalyticsConfigurationOutput),
 		response:                              &aws.Response{Request: r.Request},
 	}
 
@@ -153,7 +67,7 @@ func (r GetBucketAnalyticsConfigurationRequest) Send(ctx context.Context) (*GetB
 // GetBucketAnalyticsConfigurationResponse is the response type for the
 // GetBucketAnalyticsConfiguration API operation.
 type GetBucketAnalyticsConfigurationResponse struct {
-	*GetBucketAnalyticsConfigurationOutput
+	*types.GetBucketAnalyticsConfigurationOutput
 
 	response *aws.Response
 }

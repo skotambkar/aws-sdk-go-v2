@@ -10,6 +10,7 @@ package quicksightiface
 
 import (
 	"github.com/aws/aws-sdk-go-v2/service/quicksight"
+	"github.com/aws/aws-sdk-go-v2/service/quicksight/types"
 )
 
 // ClientAPI provides an interface to enable mocking the
@@ -43,7 +44,7 @@ import (
 //    type mockClientClient struct {
 //        quicksightiface.ClientPI
 //    }
-//    func (m *mockClientClient) CreateGroup(input *quicksight.CreateGroupInput) (*quicksight.CreateGroupOutput, error) {
+//    func (m *mockClientClient) CreateGroup(input *types.CreateGroupInput) (*types.CreateGroupOutput, error) {
 //        // mock response/functionality
 //    }
 //
@@ -61,37 +62,37 @@ import (
 // and waiters. Its suggested to use the pattern above for testing, or using
 // tooling to generate mocks to satisfy the interfaces.
 type ClientAPI interface {
-	CreateGroupRequest(*quicksight.CreateGroupInput) quicksight.CreateGroupRequest
+	CreateGroupRequest(*types.CreateGroupInput) quicksight.CreateGroupRequest
 
-	CreateGroupMembershipRequest(*quicksight.CreateGroupMembershipInput) quicksight.CreateGroupMembershipRequest
+	CreateGroupMembershipRequest(*types.CreateGroupMembershipInput) quicksight.CreateGroupMembershipRequest
 
-	DeleteGroupRequest(*quicksight.DeleteGroupInput) quicksight.DeleteGroupRequest
+	DeleteGroupRequest(*types.DeleteGroupInput) quicksight.DeleteGroupRequest
 
-	DeleteGroupMembershipRequest(*quicksight.DeleteGroupMembershipInput) quicksight.DeleteGroupMembershipRequest
+	DeleteGroupMembershipRequest(*types.DeleteGroupMembershipInput) quicksight.DeleteGroupMembershipRequest
 
-	DeleteUserRequest(*quicksight.DeleteUserInput) quicksight.DeleteUserRequest
+	DeleteUserRequest(*types.DeleteUserInput) quicksight.DeleteUserRequest
 
-	DeleteUserByPrincipalIdRequest(*quicksight.DeleteUserByPrincipalIdInput) quicksight.DeleteUserByPrincipalIdRequest
+	DeleteUserByPrincipalIdRequest(*types.DeleteUserByPrincipalIdInput) quicksight.DeleteUserByPrincipalIdRequest
 
-	DescribeGroupRequest(*quicksight.DescribeGroupInput) quicksight.DescribeGroupRequest
+	DescribeGroupRequest(*types.DescribeGroupInput) quicksight.DescribeGroupRequest
 
-	DescribeUserRequest(*quicksight.DescribeUserInput) quicksight.DescribeUserRequest
+	DescribeUserRequest(*types.DescribeUserInput) quicksight.DescribeUserRequest
 
-	GetDashboardEmbedUrlRequest(*quicksight.GetDashboardEmbedUrlInput) quicksight.GetDashboardEmbedUrlRequest
+	GetDashboardEmbedUrlRequest(*types.GetDashboardEmbedUrlInput) quicksight.GetDashboardEmbedUrlRequest
 
-	ListGroupMembershipsRequest(*quicksight.ListGroupMembershipsInput) quicksight.ListGroupMembershipsRequest
+	ListGroupMembershipsRequest(*types.ListGroupMembershipsInput) quicksight.ListGroupMembershipsRequest
 
-	ListGroupsRequest(*quicksight.ListGroupsInput) quicksight.ListGroupsRequest
+	ListGroupsRequest(*types.ListGroupsInput) quicksight.ListGroupsRequest
 
-	ListUserGroupsRequest(*quicksight.ListUserGroupsInput) quicksight.ListUserGroupsRequest
+	ListUserGroupsRequest(*types.ListUserGroupsInput) quicksight.ListUserGroupsRequest
 
-	ListUsersRequest(*quicksight.ListUsersInput) quicksight.ListUsersRequest
+	ListUsersRequest(*types.ListUsersInput) quicksight.ListUsersRequest
 
-	RegisterUserRequest(*quicksight.RegisterUserInput) quicksight.RegisterUserRequest
+	RegisterUserRequest(*types.RegisterUserInput) quicksight.RegisterUserRequest
 
-	UpdateGroupRequest(*quicksight.UpdateGroupInput) quicksight.UpdateGroupRequest
+	UpdateGroupRequest(*types.UpdateGroupInput) quicksight.UpdateGroupRequest
 
-	UpdateUserRequest(*quicksight.UpdateUserInput) quicksight.UpdateUserRequest
+	UpdateUserRequest(*types.UpdateUserInput) quicksight.UpdateUserRequest
 }
 
 var _ ClientAPI = (*quicksight.Client)(nil)

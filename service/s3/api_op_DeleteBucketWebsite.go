@@ -6,69 +6,10 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
-	"github.com/aws/aws-sdk-go-v2/internal/awsutil"
 	"github.com/aws/aws-sdk-go-v2/private/protocol"
 	"github.com/aws/aws-sdk-go-v2/private/protocol/restxml"
+	"github.com/aws/aws-sdk-go-v2/service/s3/types"
 )
-
-type DeleteBucketWebsiteInput struct {
-	_ struct{} `type:"structure"`
-
-	// Bucket is a required field
-	Bucket *string `location:"uri" locationName:"Bucket" type:"string" required:"true"`
-}
-
-// String returns the string representation
-func (s DeleteBucketWebsiteInput) String() string {
-	return awsutil.Prettify(s)
-}
-
-// Validate inspects the fields of the type to determine if they are valid.
-func (s *DeleteBucketWebsiteInput) Validate() error {
-	invalidParams := aws.ErrInvalidParams{Context: "DeleteBucketWebsiteInput"}
-
-	if s.Bucket == nil {
-		invalidParams.Add(aws.NewErrParamRequired("Bucket"))
-	}
-
-	if invalidParams.Len() > 0 {
-		return invalidParams
-	}
-	return nil
-}
-
-func (s *DeleteBucketWebsiteInput) getBucket() (v string) {
-	if s.Bucket == nil {
-		return v
-	}
-	return *s.Bucket
-}
-
-// MarshalFields encodes the AWS API shape using the passed in protocol encoder.
-func (s DeleteBucketWebsiteInput) MarshalFields(e protocol.FieldEncoder) error {
-
-	if s.Bucket != nil {
-		v := *s.Bucket
-
-		metadata := protocol.Metadata{}
-		e.SetValue(protocol.PathTarget, "Bucket", protocol.StringValue(v), metadata)
-	}
-	return nil
-}
-
-type DeleteBucketWebsiteOutput struct {
-	_ struct{} `type:"structure"`
-}
-
-// String returns the string representation
-func (s DeleteBucketWebsiteOutput) String() string {
-	return awsutil.Prettify(s)
-}
-
-// MarshalFields encodes the AWS API shape using the passed in protocol encoder.
-func (s DeleteBucketWebsiteOutput) MarshalFields(e protocol.FieldEncoder) error {
-	return nil
-}
 
 const opDeleteBucketWebsite = "DeleteBucketWebsite"
 
@@ -85,7 +26,7 @@ const opDeleteBucketWebsite = "DeleteBucketWebsite"
 //    }
 //
 // Please also see https://docs.aws.amazon.com/goto/WebAPI/s3-2006-03-01/DeleteBucketWebsite
-func (c *Client) DeleteBucketWebsiteRequest(input *DeleteBucketWebsiteInput) DeleteBucketWebsiteRequest {
+func (c *Client) DeleteBucketWebsiteRequest(input *types.DeleteBucketWebsiteInput) DeleteBucketWebsiteRequest {
 	op := &aws.Operation{
 		Name:       opDeleteBucketWebsite,
 		HTTPMethod: "DELETE",
@@ -93,10 +34,10 @@ func (c *Client) DeleteBucketWebsiteRequest(input *DeleteBucketWebsiteInput) Del
 	}
 
 	if input == nil {
-		input = &DeleteBucketWebsiteInput{}
+		input = &types.DeleteBucketWebsiteInput{}
 	}
 
-	req := c.newRequest(op, input, &DeleteBucketWebsiteOutput{})
+	req := c.newRequest(op, input, &types.DeleteBucketWebsiteOutput{})
 	req.Handlers.Unmarshal.Remove(restxml.UnmarshalHandler)
 	req.Handlers.Unmarshal.PushBackNamed(protocol.UnmarshalDiscardBodyHandler)
 	return DeleteBucketWebsiteRequest{Request: req, Input: input, Copy: c.DeleteBucketWebsiteRequest}
@@ -106,8 +47,8 @@ func (c *Client) DeleteBucketWebsiteRequest(input *DeleteBucketWebsiteInput) Del
 // DeleteBucketWebsite API operation.
 type DeleteBucketWebsiteRequest struct {
 	*aws.Request
-	Input *DeleteBucketWebsiteInput
-	Copy  func(*DeleteBucketWebsiteInput) DeleteBucketWebsiteRequest
+	Input *types.DeleteBucketWebsiteInput
+	Copy  func(*types.DeleteBucketWebsiteInput) DeleteBucketWebsiteRequest
 }
 
 // Send marshals and sends the DeleteBucketWebsite API request.
@@ -119,7 +60,7 @@ func (r DeleteBucketWebsiteRequest) Send(ctx context.Context) (*DeleteBucketWebs
 	}
 
 	resp := &DeleteBucketWebsiteResponse{
-		DeleteBucketWebsiteOutput: r.Request.Data.(*DeleteBucketWebsiteOutput),
+		DeleteBucketWebsiteOutput: r.Request.Data.(*types.DeleteBucketWebsiteOutput),
 		response:                  &aws.Response{Request: r.Request},
 	}
 
@@ -129,7 +70,7 @@ func (r DeleteBucketWebsiteRequest) Send(ctx context.Context) (*DeleteBucketWebs
 // DeleteBucketWebsiteResponse is the response type for the
 // DeleteBucketWebsite API operation.
 type DeleteBucketWebsiteResponse struct {
-	*DeleteBucketWebsiteOutput
+	*types.DeleteBucketWebsiteOutput
 
 	response *aws.Response
 }

@@ -4,75 +4,10 @@ package marketplacemetering
 
 import (
 	"context"
-	"time"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
-	"github.com/aws/aws-sdk-go-v2/internal/awsutil"
+	"github.com/aws/aws-sdk-go-v2/service/marketplacemetering/types"
 )
-
-type RegisterUsageInput struct {
-	_ struct{} `type:"structure"`
-
-	// (Optional) To scope down the registration to a specific running software
-	// instance and guard against replay attacks.
-	Nonce *string `type:"string"`
-
-	// Product code is used to uniquely identify a product in AWS Marketplace. The
-	// product code should be the same as the one used during the publishing of
-	// a new product.
-	//
-	// ProductCode is a required field
-	ProductCode *string `min:"1" type:"string" required:"true"`
-
-	// Public Key Version provided by AWS Marketplace
-	//
-	// PublicKeyVersion is a required field
-	PublicKeyVersion *int64 `min:"1" type:"integer" required:"true"`
-}
-
-// String returns the string representation
-func (s RegisterUsageInput) String() string {
-	return awsutil.Prettify(s)
-}
-
-// Validate inspects the fields of the type to determine if they are valid.
-func (s *RegisterUsageInput) Validate() error {
-	invalidParams := aws.ErrInvalidParams{Context: "RegisterUsageInput"}
-
-	if s.ProductCode == nil {
-		invalidParams.Add(aws.NewErrParamRequired("ProductCode"))
-	}
-	if s.ProductCode != nil && len(*s.ProductCode) < 1 {
-		invalidParams.Add(aws.NewErrParamMinLen("ProductCode", 1))
-	}
-
-	if s.PublicKeyVersion == nil {
-		invalidParams.Add(aws.NewErrParamRequired("PublicKeyVersion"))
-	}
-	if s.PublicKeyVersion != nil && *s.PublicKeyVersion < 1 {
-		invalidParams.Add(aws.NewErrParamMinValue("PublicKeyVersion", 1))
-	}
-
-	if invalidParams.Len() > 0 {
-		return invalidParams
-	}
-	return nil
-}
-
-type RegisterUsageOutput struct {
-	_ struct{} `type:"structure"`
-
-	// (Optional) Only included when public key version has expired
-	PublicKeyRotationTimestamp *time.Time `type:"timestamp"`
-
-	// JWT Token
-	Signature *string `type:"string"`
-}
-
-// String returns the string representation
-func (s RegisterUsageOutput) String() string {
-	return awsutil.Prettify(s)
-}
 
 const opRegisterUsage = "RegisterUsage"
 
@@ -119,7 +54,7 @@ const opRegisterUsage = "RegisterUsage"
 //    }
 //
 // Please also see https://docs.aws.amazon.com/goto/WebAPI/meteringmarketplace-2016-01-14/RegisterUsage
-func (c *Client) RegisterUsageRequest(input *RegisterUsageInput) RegisterUsageRequest {
+func (c *Client) RegisterUsageRequest(input *types.RegisterUsageInput) RegisterUsageRequest {
 	op := &aws.Operation{
 		Name:       opRegisterUsage,
 		HTTPMethod: "POST",
@@ -127,10 +62,10 @@ func (c *Client) RegisterUsageRequest(input *RegisterUsageInput) RegisterUsageRe
 	}
 
 	if input == nil {
-		input = &RegisterUsageInput{}
+		input = &types.RegisterUsageInput{}
 	}
 
-	req := c.newRequest(op, input, &RegisterUsageOutput{})
+	req := c.newRequest(op, input, &types.RegisterUsageOutput{})
 	return RegisterUsageRequest{Request: req, Input: input, Copy: c.RegisterUsageRequest}
 }
 
@@ -138,8 +73,8 @@ func (c *Client) RegisterUsageRequest(input *RegisterUsageInput) RegisterUsageRe
 // RegisterUsage API operation.
 type RegisterUsageRequest struct {
 	*aws.Request
-	Input *RegisterUsageInput
-	Copy  func(*RegisterUsageInput) RegisterUsageRequest
+	Input *types.RegisterUsageInput
+	Copy  func(*types.RegisterUsageInput) RegisterUsageRequest
 }
 
 // Send marshals and sends the RegisterUsage API request.
@@ -151,7 +86,7 @@ func (r RegisterUsageRequest) Send(ctx context.Context) (*RegisterUsageResponse,
 	}
 
 	resp := &RegisterUsageResponse{
-		RegisterUsageOutput: r.Request.Data.(*RegisterUsageOutput),
+		RegisterUsageOutput: r.Request.Data.(*types.RegisterUsageOutput),
 		response:            &aws.Response{Request: r.Request},
 	}
 
@@ -161,7 +96,7 @@ func (r RegisterUsageRequest) Send(ctx context.Context) (*RegisterUsageResponse,
 // RegisterUsageResponse is the response type for the
 // RegisterUsage API operation.
 type RegisterUsageResponse struct {
-	*RegisterUsageOutput
+	*types.RegisterUsageOutput
 
 	response *aws.Response
 }

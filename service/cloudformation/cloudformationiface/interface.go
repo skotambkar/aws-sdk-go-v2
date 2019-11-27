@@ -13,6 +13,7 @@ import (
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/cloudformation"
+	"github.com/aws/aws-sdk-go-v2/service/cloudformation/types"
 )
 
 // ClientAPI provides an interface to enable mocking the
@@ -46,7 +47,7 @@ import (
 //    type mockClientClient struct {
 //        cloudformationiface.ClientPI
 //    }
-//    func (m *mockClientClient) CancelUpdateStack(input *cloudformation.CancelUpdateStackInput) (*cloudformation.CancelUpdateStackOutput, error) {
+//    func (m *mockClientClient) CancelUpdateStack(input *types.CancelUpdateStackInput) (*types.CancelUpdateStackOutput, error) {
 //        // mock response/functionality
 //    }
 //
@@ -64,105 +65,105 @@ import (
 // and waiters. Its suggested to use the pattern above for testing, or using
 // tooling to generate mocks to satisfy the interfaces.
 type ClientAPI interface {
-	CancelUpdateStackRequest(*cloudformation.CancelUpdateStackInput) cloudformation.CancelUpdateStackRequest
+	CancelUpdateStackRequest(*types.CancelUpdateStackInput) cloudformation.CancelUpdateStackRequest
 
-	ContinueUpdateRollbackRequest(*cloudformation.ContinueUpdateRollbackInput) cloudformation.ContinueUpdateRollbackRequest
+	ContinueUpdateRollbackRequest(*types.ContinueUpdateRollbackInput) cloudformation.ContinueUpdateRollbackRequest
 
-	CreateChangeSetRequest(*cloudformation.CreateChangeSetInput) cloudformation.CreateChangeSetRequest
+	CreateChangeSetRequest(*types.CreateChangeSetInput) cloudformation.CreateChangeSetRequest
 
-	CreateStackRequest(*cloudformation.CreateStackInput) cloudformation.CreateStackRequest
+	CreateStackRequest(*types.CreateStackInput) cloudformation.CreateStackRequest
 
-	CreateStackInstancesRequest(*cloudformation.CreateStackInstancesInput) cloudformation.CreateStackInstancesRequest
+	CreateStackInstancesRequest(*types.CreateStackInstancesInput) cloudformation.CreateStackInstancesRequest
 
-	CreateStackSetRequest(*cloudformation.CreateStackSetInput) cloudformation.CreateStackSetRequest
+	CreateStackSetRequest(*types.CreateStackSetInput) cloudformation.CreateStackSetRequest
 
-	DeleteChangeSetRequest(*cloudformation.DeleteChangeSetInput) cloudformation.DeleteChangeSetRequest
+	DeleteChangeSetRequest(*types.DeleteChangeSetInput) cloudformation.DeleteChangeSetRequest
 
-	DeleteStackRequest(*cloudformation.DeleteStackInput) cloudformation.DeleteStackRequest
+	DeleteStackRequest(*types.DeleteStackInput) cloudformation.DeleteStackRequest
 
-	DeleteStackInstancesRequest(*cloudformation.DeleteStackInstancesInput) cloudformation.DeleteStackInstancesRequest
+	DeleteStackInstancesRequest(*types.DeleteStackInstancesInput) cloudformation.DeleteStackInstancesRequest
 
-	DeleteStackSetRequest(*cloudformation.DeleteStackSetInput) cloudformation.DeleteStackSetRequest
+	DeleteStackSetRequest(*types.DeleteStackSetInput) cloudformation.DeleteStackSetRequest
 
-	DescribeAccountLimitsRequest(*cloudformation.DescribeAccountLimitsInput) cloudformation.DescribeAccountLimitsRequest
+	DescribeAccountLimitsRequest(*types.DescribeAccountLimitsInput) cloudformation.DescribeAccountLimitsRequest
 
-	DescribeChangeSetRequest(*cloudformation.DescribeChangeSetInput) cloudformation.DescribeChangeSetRequest
+	DescribeChangeSetRequest(*types.DescribeChangeSetInput) cloudformation.DescribeChangeSetRequest
 
-	DescribeStackDriftDetectionStatusRequest(*cloudformation.DescribeStackDriftDetectionStatusInput) cloudformation.DescribeStackDriftDetectionStatusRequest
+	DescribeStackDriftDetectionStatusRequest(*types.DescribeStackDriftDetectionStatusInput) cloudformation.DescribeStackDriftDetectionStatusRequest
 
-	DescribeStackEventsRequest(*cloudformation.DescribeStackEventsInput) cloudformation.DescribeStackEventsRequest
+	DescribeStackEventsRequest(*types.DescribeStackEventsInput) cloudformation.DescribeStackEventsRequest
 
-	DescribeStackInstanceRequest(*cloudformation.DescribeStackInstanceInput) cloudformation.DescribeStackInstanceRequest
+	DescribeStackInstanceRequest(*types.DescribeStackInstanceInput) cloudformation.DescribeStackInstanceRequest
 
-	DescribeStackResourceRequest(*cloudformation.DescribeStackResourceInput) cloudformation.DescribeStackResourceRequest
+	DescribeStackResourceRequest(*types.DescribeStackResourceInput) cloudformation.DescribeStackResourceRequest
 
-	DescribeStackResourceDriftsRequest(*cloudformation.DescribeStackResourceDriftsInput) cloudformation.DescribeStackResourceDriftsRequest
+	DescribeStackResourceDriftsRequest(*types.DescribeStackResourceDriftsInput) cloudformation.DescribeStackResourceDriftsRequest
 
-	DescribeStackResourcesRequest(*cloudformation.DescribeStackResourcesInput) cloudformation.DescribeStackResourcesRequest
+	DescribeStackResourcesRequest(*types.DescribeStackResourcesInput) cloudformation.DescribeStackResourcesRequest
 
-	DescribeStackSetRequest(*cloudformation.DescribeStackSetInput) cloudformation.DescribeStackSetRequest
+	DescribeStackSetRequest(*types.DescribeStackSetInput) cloudformation.DescribeStackSetRequest
 
-	DescribeStackSetOperationRequest(*cloudformation.DescribeStackSetOperationInput) cloudformation.DescribeStackSetOperationRequest
+	DescribeStackSetOperationRequest(*types.DescribeStackSetOperationInput) cloudformation.DescribeStackSetOperationRequest
 
-	DescribeStacksRequest(*cloudformation.DescribeStacksInput) cloudformation.DescribeStacksRequest
+	DescribeStacksRequest(*types.DescribeStacksInput) cloudformation.DescribeStacksRequest
 
-	DetectStackDriftRequest(*cloudformation.DetectStackDriftInput) cloudformation.DetectStackDriftRequest
+	DetectStackDriftRequest(*types.DetectStackDriftInput) cloudformation.DetectStackDriftRequest
 
-	DetectStackResourceDriftRequest(*cloudformation.DetectStackResourceDriftInput) cloudformation.DetectStackResourceDriftRequest
+	DetectStackResourceDriftRequest(*types.DetectStackResourceDriftInput) cloudformation.DetectStackResourceDriftRequest
 
-	EstimateTemplateCostRequest(*cloudformation.EstimateTemplateCostInput) cloudformation.EstimateTemplateCostRequest
+	EstimateTemplateCostRequest(*types.EstimateTemplateCostInput) cloudformation.EstimateTemplateCostRequest
 
-	ExecuteChangeSetRequest(*cloudformation.ExecuteChangeSetInput) cloudformation.ExecuteChangeSetRequest
+	ExecuteChangeSetRequest(*types.ExecuteChangeSetInput) cloudformation.ExecuteChangeSetRequest
 
-	GetStackPolicyRequest(*cloudformation.GetStackPolicyInput) cloudformation.GetStackPolicyRequest
+	GetStackPolicyRequest(*types.GetStackPolicyInput) cloudformation.GetStackPolicyRequest
 
-	GetTemplateRequest(*cloudformation.GetTemplateInput) cloudformation.GetTemplateRequest
+	GetTemplateRequest(*types.GetTemplateInput) cloudformation.GetTemplateRequest
 
-	GetTemplateSummaryRequest(*cloudformation.GetTemplateSummaryInput) cloudformation.GetTemplateSummaryRequest
+	GetTemplateSummaryRequest(*types.GetTemplateSummaryInput) cloudformation.GetTemplateSummaryRequest
 
-	ListChangeSetsRequest(*cloudformation.ListChangeSetsInput) cloudformation.ListChangeSetsRequest
+	ListChangeSetsRequest(*types.ListChangeSetsInput) cloudformation.ListChangeSetsRequest
 
-	ListExportsRequest(*cloudformation.ListExportsInput) cloudformation.ListExportsRequest
+	ListExportsRequest(*types.ListExportsInput) cloudformation.ListExportsRequest
 
-	ListImportsRequest(*cloudformation.ListImportsInput) cloudformation.ListImportsRequest
+	ListImportsRequest(*types.ListImportsInput) cloudformation.ListImportsRequest
 
-	ListStackInstancesRequest(*cloudformation.ListStackInstancesInput) cloudformation.ListStackInstancesRequest
+	ListStackInstancesRequest(*types.ListStackInstancesInput) cloudformation.ListStackInstancesRequest
 
-	ListStackResourcesRequest(*cloudformation.ListStackResourcesInput) cloudformation.ListStackResourcesRequest
+	ListStackResourcesRequest(*types.ListStackResourcesInput) cloudformation.ListStackResourcesRequest
 
-	ListStackSetOperationResultsRequest(*cloudformation.ListStackSetOperationResultsInput) cloudformation.ListStackSetOperationResultsRequest
+	ListStackSetOperationResultsRequest(*types.ListStackSetOperationResultsInput) cloudformation.ListStackSetOperationResultsRequest
 
-	ListStackSetOperationsRequest(*cloudformation.ListStackSetOperationsInput) cloudformation.ListStackSetOperationsRequest
+	ListStackSetOperationsRequest(*types.ListStackSetOperationsInput) cloudformation.ListStackSetOperationsRequest
 
-	ListStackSetsRequest(*cloudformation.ListStackSetsInput) cloudformation.ListStackSetsRequest
+	ListStackSetsRequest(*types.ListStackSetsInput) cloudformation.ListStackSetsRequest
 
-	ListStacksRequest(*cloudformation.ListStacksInput) cloudformation.ListStacksRequest
+	ListStacksRequest(*types.ListStacksInput) cloudformation.ListStacksRequest
 
-	SetStackPolicyRequest(*cloudformation.SetStackPolicyInput) cloudformation.SetStackPolicyRequest
+	SetStackPolicyRequest(*types.SetStackPolicyInput) cloudformation.SetStackPolicyRequest
 
-	SignalResourceRequest(*cloudformation.SignalResourceInput) cloudformation.SignalResourceRequest
+	SignalResourceRequest(*types.SignalResourceInput) cloudformation.SignalResourceRequest
 
-	StopStackSetOperationRequest(*cloudformation.StopStackSetOperationInput) cloudformation.StopStackSetOperationRequest
+	StopStackSetOperationRequest(*types.StopStackSetOperationInput) cloudformation.StopStackSetOperationRequest
 
-	UpdateStackRequest(*cloudformation.UpdateStackInput) cloudformation.UpdateStackRequest
+	UpdateStackRequest(*types.UpdateStackInput) cloudformation.UpdateStackRequest
 
-	UpdateStackInstancesRequest(*cloudformation.UpdateStackInstancesInput) cloudformation.UpdateStackInstancesRequest
+	UpdateStackInstancesRequest(*types.UpdateStackInstancesInput) cloudformation.UpdateStackInstancesRequest
 
-	UpdateStackSetRequest(*cloudformation.UpdateStackSetInput) cloudformation.UpdateStackSetRequest
+	UpdateStackSetRequest(*types.UpdateStackSetInput) cloudformation.UpdateStackSetRequest
 
-	UpdateTerminationProtectionRequest(*cloudformation.UpdateTerminationProtectionInput) cloudformation.UpdateTerminationProtectionRequest
+	UpdateTerminationProtectionRequest(*types.UpdateTerminationProtectionInput) cloudformation.UpdateTerminationProtectionRequest
 
-	ValidateTemplateRequest(*cloudformation.ValidateTemplateInput) cloudformation.ValidateTemplateRequest
+	ValidateTemplateRequest(*types.ValidateTemplateInput) cloudformation.ValidateTemplateRequest
 
-	WaitUntilChangeSetCreateComplete(context.Context, *cloudformation.DescribeChangeSetInput, ...aws.WaiterOption) error
+	WaitUntilChangeSetCreateComplete(context.Context, *types.DescribeChangeSetInput, ...aws.WaiterOption) error
 
-	WaitUntilStackCreateComplete(context.Context, *cloudformation.DescribeStacksInput, ...aws.WaiterOption) error
+	WaitUntilStackCreateComplete(context.Context, *types.DescribeStacksInput, ...aws.WaiterOption) error
 
-	WaitUntilStackDeleteComplete(context.Context, *cloudformation.DescribeStacksInput, ...aws.WaiterOption) error
+	WaitUntilStackDeleteComplete(context.Context, *types.DescribeStacksInput, ...aws.WaiterOption) error
 
-	WaitUntilStackExists(context.Context, *cloudformation.DescribeStacksInput, ...aws.WaiterOption) error
+	WaitUntilStackExists(context.Context, *types.DescribeStacksInput, ...aws.WaiterOption) error
 
-	WaitUntilStackUpdateComplete(context.Context, *cloudformation.DescribeStacksInput, ...aws.WaiterOption) error
+	WaitUntilStackUpdateComplete(context.Context, *types.DescribeStacksInput, ...aws.WaiterOption) error
 }
 
 var _ ClientAPI = (*cloudformation.Client)(nil)

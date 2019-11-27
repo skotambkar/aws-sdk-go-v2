@@ -6,82 +6,10 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
-	"github.com/aws/aws-sdk-go-v2/internal/awsutil"
 	"github.com/aws/aws-sdk-go-v2/private/protocol"
 	"github.com/aws/aws-sdk-go-v2/private/protocol/restxml"
+	"github.com/aws/aws-sdk-go-v2/service/s3/types"
 )
-
-type PutBucketLifecycleInput struct {
-	_ struct{} `type:"structure" payload:"LifecycleConfiguration"`
-
-	// Bucket is a required field
-	Bucket *string `location:"uri" locationName:"Bucket" type:"string" required:"true"`
-
-	LifecycleConfiguration *LifecycleConfiguration `locationName:"LifecycleConfiguration" type:"structure" xmlURI:"http://s3.amazonaws.com/doc/2006-03-01/"`
-}
-
-// String returns the string representation
-func (s PutBucketLifecycleInput) String() string {
-	return awsutil.Prettify(s)
-}
-
-// Validate inspects the fields of the type to determine if they are valid.
-func (s *PutBucketLifecycleInput) Validate() error {
-	invalidParams := aws.ErrInvalidParams{Context: "PutBucketLifecycleInput"}
-
-	if s.Bucket == nil {
-		invalidParams.Add(aws.NewErrParamRequired("Bucket"))
-	}
-	if s.LifecycleConfiguration != nil {
-		if err := s.LifecycleConfiguration.Validate(); err != nil {
-			invalidParams.AddNested("LifecycleConfiguration", err.(aws.ErrInvalidParams))
-		}
-	}
-
-	if invalidParams.Len() > 0 {
-		return invalidParams
-	}
-	return nil
-}
-
-func (s *PutBucketLifecycleInput) getBucket() (v string) {
-	if s.Bucket == nil {
-		return v
-	}
-	return *s.Bucket
-}
-
-// MarshalFields encodes the AWS API shape using the passed in protocol encoder.
-func (s PutBucketLifecycleInput) MarshalFields(e protocol.FieldEncoder) error {
-
-	if s.Bucket != nil {
-		v := *s.Bucket
-
-		metadata := protocol.Metadata{}
-		e.SetValue(protocol.PathTarget, "Bucket", protocol.StringValue(v), metadata)
-	}
-	if s.LifecycleConfiguration != nil {
-		v := s.LifecycleConfiguration
-
-		metadata := protocol.Metadata{XMLNamespaceURI: "http://s3.amazonaws.com/doc/2006-03-01/"}
-		e.SetFields(protocol.PayloadTarget, "LifecycleConfiguration", v, metadata)
-	}
-	return nil
-}
-
-type PutBucketLifecycleOutput struct {
-	_ struct{} `type:"structure"`
-}
-
-// String returns the string representation
-func (s PutBucketLifecycleOutput) String() string {
-	return awsutil.Prettify(s)
-}
-
-// MarshalFields encodes the AWS API shape using the passed in protocol encoder.
-func (s PutBucketLifecycleOutput) MarshalFields(e protocol.FieldEncoder) error {
-	return nil
-}
 
 const opPutBucketLifecycle = "PutBucketLifecycle"
 
@@ -98,7 +26,7 @@ const opPutBucketLifecycle = "PutBucketLifecycle"
 //    }
 //
 // Please also see https://docs.aws.amazon.com/goto/WebAPI/s3-2006-03-01/PutBucketLifecycle
-func (c *Client) PutBucketLifecycleRequest(input *PutBucketLifecycleInput) PutBucketLifecycleRequest {
+func (c *Client) PutBucketLifecycleRequest(input *types.PutBucketLifecycleInput) PutBucketLifecycleRequest {
 	if c.Client.Config.Logger != nil {
 		c.Client.Config.Logger.Log("This operation, PutBucketLifecycle, has been deprecated")
 	}
@@ -109,10 +37,10 @@ func (c *Client) PutBucketLifecycleRequest(input *PutBucketLifecycleInput) PutBu
 	}
 
 	if input == nil {
-		input = &PutBucketLifecycleInput{}
+		input = &types.PutBucketLifecycleInput{}
 	}
 
-	req := c.newRequest(op, input, &PutBucketLifecycleOutput{})
+	req := c.newRequest(op, input, &types.PutBucketLifecycleOutput{})
 	req.Handlers.Unmarshal.Remove(restxml.UnmarshalHandler)
 	req.Handlers.Unmarshal.PushBackNamed(protocol.UnmarshalDiscardBodyHandler)
 	return PutBucketLifecycleRequest{Request: req, Input: input, Copy: c.PutBucketLifecycleRequest}
@@ -122,8 +50,8 @@ func (c *Client) PutBucketLifecycleRequest(input *PutBucketLifecycleInput) PutBu
 // PutBucketLifecycle API operation.
 type PutBucketLifecycleRequest struct {
 	*aws.Request
-	Input *PutBucketLifecycleInput
-	Copy  func(*PutBucketLifecycleInput) PutBucketLifecycleRequest
+	Input *types.PutBucketLifecycleInput
+	Copy  func(*types.PutBucketLifecycleInput) PutBucketLifecycleRequest
 }
 
 // Send marshals and sends the PutBucketLifecycle API request.
@@ -135,7 +63,7 @@ func (r PutBucketLifecycleRequest) Send(ctx context.Context) (*PutBucketLifecycl
 	}
 
 	resp := &PutBucketLifecycleResponse{
-		PutBucketLifecycleOutput: r.Request.Data.(*PutBucketLifecycleOutput),
+		PutBucketLifecycleOutput: r.Request.Data.(*types.PutBucketLifecycleOutput),
 		response:                 &aws.Response{Request: r.Request},
 	}
 
@@ -145,7 +73,7 @@ func (r PutBucketLifecycleRequest) Send(ctx context.Context) (*PutBucketLifecycl
 // PutBucketLifecycleResponse is the response type for the
 // PutBucketLifecycle API operation.
 type PutBucketLifecycleResponse struct {
-	*PutBucketLifecycleOutput
+	*types.PutBucketLifecycleOutput
 
 	response *aws.Response
 }

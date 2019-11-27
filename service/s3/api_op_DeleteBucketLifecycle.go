@@ -6,69 +6,10 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
-	"github.com/aws/aws-sdk-go-v2/internal/awsutil"
 	"github.com/aws/aws-sdk-go-v2/private/protocol"
 	"github.com/aws/aws-sdk-go-v2/private/protocol/restxml"
+	"github.com/aws/aws-sdk-go-v2/service/s3/types"
 )
-
-type DeleteBucketLifecycleInput struct {
-	_ struct{} `type:"structure"`
-
-	// Bucket is a required field
-	Bucket *string `location:"uri" locationName:"Bucket" type:"string" required:"true"`
-}
-
-// String returns the string representation
-func (s DeleteBucketLifecycleInput) String() string {
-	return awsutil.Prettify(s)
-}
-
-// Validate inspects the fields of the type to determine if they are valid.
-func (s *DeleteBucketLifecycleInput) Validate() error {
-	invalidParams := aws.ErrInvalidParams{Context: "DeleteBucketLifecycleInput"}
-
-	if s.Bucket == nil {
-		invalidParams.Add(aws.NewErrParamRequired("Bucket"))
-	}
-
-	if invalidParams.Len() > 0 {
-		return invalidParams
-	}
-	return nil
-}
-
-func (s *DeleteBucketLifecycleInput) getBucket() (v string) {
-	if s.Bucket == nil {
-		return v
-	}
-	return *s.Bucket
-}
-
-// MarshalFields encodes the AWS API shape using the passed in protocol encoder.
-func (s DeleteBucketLifecycleInput) MarshalFields(e protocol.FieldEncoder) error {
-
-	if s.Bucket != nil {
-		v := *s.Bucket
-
-		metadata := protocol.Metadata{}
-		e.SetValue(protocol.PathTarget, "Bucket", protocol.StringValue(v), metadata)
-	}
-	return nil
-}
-
-type DeleteBucketLifecycleOutput struct {
-	_ struct{} `type:"structure"`
-}
-
-// String returns the string representation
-func (s DeleteBucketLifecycleOutput) String() string {
-	return awsutil.Prettify(s)
-}
-
-// MarshalFields encodes the AWS API shape using the passed in protocol encoder.
-func (s DeleteBucketLifecycleOutput) MarshalFields(e protocol.FieldEncoder) error {
-	return nil
-}
 
 const opDeleteBucketLifecycle = "DeleteBucketLifecycle"
 
@@ -85,7 +26,7 @@ const opDeleteBucketLifecycle = "DeleteBucketLifecycle"
 //    }
 //
 // Please also see https://docs.aws.amazon.com/goto/WebAPI/s3-2006-03-01/DeleteBucketLifecycle
-func (c *Client) DeleteBucketLifecycleRequest(input *DeleteBucketLifecycleInput) DeleteBucketLifecycleRequest {
+func (c *Client) DeleteBucketLifecycleRequest(input *types.DeleteBucketLifecycleInput) DeleteBucketLifecycleRequest {
 	op := &aws.Operation{
 		Name:       opDeleteBucketLifecycle,
 		HTTPMethod: "DELETE",
@@ -93,10 +34,10 @@ func (c *Client) DeleteBucketLifecycleRequest(input *DeleteBucketLifecycleInput)
 	}
 
 	if input == nil {
-		input = &DeleteBucketLifecycleInput{}
+		input = &types.DeleteBucketLifecycleInput{}
 	}
 
-	req := c.newRequest(op, input, &DeleteBucketLifecycleOutput{})
+	req := c.newRequest(op, input, &types.DeleteBucketLifecycleOutput{})
 	req.Handlers.Unmarshal.Remove(restxml.UnmarshalHandler)
 	req.Handlers.Unmarshal.PushBackNamed(protocol.UnmarshalDiscardBodyHandler)
 	return DeleteBucketLifecycleRequest{Request: req, Input: input, Copy: c.DeleteBucketLifecycleRequest}
@@ -106,8 +47,8 @@ func (c *Client) DeleteBucketLifecycleRequest(input *DeleteBucketLifecycleInput)
 // DeleteBucketLifecycle API operation.
 type DeleteBucketLifecycleRequest struct {
 	*aws.Request
-	Input *DeleteBucketLifecycleInput
-	Copy  func(*DeleteBucketLifecycleInput) DeleteBucketLifecycleRequest
+	Input *types.DeleteBucketLifecycleInput
+	Copy  func(*types.DeleteBucketLifecycleInput) DeleteBucketLifecycleRequest
 }
 
 // Send marshals and sends the DeleteBucketLifecycle API request.
@@ -119,7 +60,7 @@ func (r DeleteBucketLifecycleRequest) Send(ctx context.Context) (*DeleteBucketLi
 	}
 
 	resp := &DeleteBucketLifecycleResponse{
-		DeleteBucketLifecycleOutput: r.Request.Data.(*DeleteBucketLifecycleOutput),
+		DeleteBucketLifecycleOutput: r.Request.Data.(*types.DeleteBucketLifecycleOutput),
 		response:                    &aws.Response{Request: r.Request},
 	}
 
@@ -129,7 +70,7 @@ func (r DeleteBucketLifecycleRequest) Send(ctx context.Context) (*DeleteBucketLi
 // DeleteBucketLifecycleResponse is the response type for the
 // DeleteBucketLifecycle API operation.
 type DeleteBucketLifecycleResponse struct {
-	*DeleteBucketLifecycleOutput
+	*types.DeleteBucketLifecycleOutput
 
 	response *aws.Response
 }

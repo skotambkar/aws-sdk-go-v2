@@ -6,7 +6,7 @@ import (
 	"io"
 	"time"
 
-	"github.com/aws/aws-sdk-go-v2/service/s3"
+	"github.com/aws/aws-sdk-go-v2/service/s3/enums"
 )
 
 // UploadInput provides the input parameters for uploading a stream or buffer
@@ -17,7 +17,7 @@ type UploadInput struct {
 	_ struct{} `type:"structure" payload:"Body"`
 
 	// The canned ACL to apply to the object.
-	ACL s3.ObjectCannedACL `location:"header" locationName:"x-amz-acl" type:"string" enum:"true"`
+	ACL enums.ObjectCannedACL `location:"header" locationName:"x-amz-acl" type:"string" enum:"true"`
 
 	// The readable body payload to send to S3.
 	Body io.Reader
@@ -73,10 +73,10 @@ type UploadInput struct {
 	Metadata map[string]string `location:"headers" locationName:"x-amz-meta-" type:"map"`
 
 	// The Legal Hold status that you want to apply to the specified object.
-	ObjectLockLegalHoldStatus s3.ObjectLockLegalHoldStatus `location:"header" locationName:"x-amz-object-lock-legal-hold" type:"string" enum:"true"`
+	ObjectLockLegalHoldStatus enums.ObjectLockLegalHoldStatus `location:"header" locationName:"x-amz-object-lock-legal-hold" type:"string" enum:"true"`
 
 	// The object lock mode that you want to apply to this object.
-	ObjectLockMode s3.ObjectLockMode `location:"header" locationName:"x-amz-object-lock-mode" type:"string" enum:"true"`
+	ObjectLockMode enums.ObjectLockMode `location:"header" locationName:"x-amz-object-lock-mode" type:"string" enum:"true"`
 
 	// The date and time when you want this object's object lock to expire.
 	ObjectLockRetainUntilDate *time.Time `location:"header" locationName:"x-amz-object-lock-retain-until-date" type:"timestamp" timestampFormat:"iso8601"`
@@ -85,7 +85,7 @@ type UploadInput struct {
 	// request. Bucket owners need not specify this parameter in their requests.
 	// Documentation on downloading objects from requester pays buckets can be found
 	// at http://docs.aws.amazon.com/AmazonS3/latest/dev/ObjectsinRequesterPaysBuckets.html
-	RequestPayer s3.RequestPayer `location:"header" locationName:"x-amz-request-payer" type:"string" enum:"true"`
+	RequestPayer enums.RequestPayer `location:"header" locationName:"x-amz-request-payer" type:"string" enum:"true"`
 
 	// Specifies the algorithm to use to when encrypting the object (e.g., AES256).
 	SSECustomerAlgorithm *string `location:"header" locationName:"x-amz-server-side-encryption-customer-algorithm" type:"string"`
@@ -115,10 +115,10 @@ type UploadInput struct {
 
 	// The Server-side encryption algorithm used when storing this object in S3
 	// (e.g., AES256, aws:kms).
-	ServerSideEncryption s3.ServerSideEncryption `location:"header" locationName:"x-amz-server-side-encryption" type:"string" enum:"true"`
+	ServerSideEncryption enums.ServerSideEncryption `location:"header" locationName:"x-amz-server-side-encryption" type:"string" enum:"true"`
 
 	// The type of storage to use for the object. Defaults to 'STANDARD'.
-	StorageClass s3.StorageClass `location:"header" locationName:"x-amz-storage-class" type:"string" enum:"true"`
+	StorageClass enums.StorageClass `location:"header" locationName:"x-amz-storage-class" type:"string" enum:"true"`
 
 	// The tag-set for the object. The tag-set must be encoded as URL Query parameters.
 	// (For example, "Key1=Value1")

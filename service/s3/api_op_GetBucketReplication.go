@@ -6,78 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
-	"github.com/aws/aws-sdk-go-v2/internal/awsutil"
-	"github.com/aws/aws-sdk-go-v2/private/protocol"
+	"github.com/aws/aws-sdk-go-v2/service/s3/types"
 )
-
-type GetBucketReplicationInput struct {
-	_ struct{} `type:"structure"`
-
-	// Bucket is a required field
-	Bucket *string `location:"uri" locationName:"Bucket" type:"string" required:"true"`
-}
-
-// String returns the string representation
-func (s GetBucketReplicationInput) String() string {
-	return awsutil.Prettify(s)
-}
-
-// Validate inspects the fields of the type to determine if they are valid.
-func (s *GetBucketReplicationInput) Validate() error {
-	invalidParams := aws.ErrInvalidParams{Context: "GetBucketReplicationInput"}
-
-	if s.Bucket == nil {
-		invalidParams.Add(aws.NewErrParamRequired("Bucket"))
-	}
-
-	if invalidParams.Len() > 0 {
-		return invalidParams
-	}
-	return nil
-}
-
-func (s *GetBucketReplicationInput) getBucket() (v string) {
-	if s.Bucket == nil {
-		return v
-	}
-	return *s.Bucket
-}
-
-// MarshalFields encodes the AWS API shape using the passed in protocol encoder.
-func (s GetBucketReplicationInput) MarshalFields(e protocol.FieldEncoder) error {
-
-	if s.Bucket != nil {
-		v := *s.Bucket
-
-		metadata := protocol.Metadata{}
-		e.SetValue(protocol.PathTarget, "Bucket", protocol.StringValue(v), metadata)
-	}
-	return nil
-}
-
-type GetBucketReplicationOutput struct {
-	_ struct{} `type:"structure" payload:"ReplicationConfiguration"`
-
-	// A container for replication rules. You can add up to 1,000 rules. The maximum
-	// size of a replication configuration is 2 MB.
-	ReplicationConfiguration *ReplicationConfiguration `type:"structure"`
-}
-
-// String returns the string representation
-func (s GetBucketReplicationOutput) String() string {
-	return awsutil.Prettify(s)
-}
-
-// MarshalFields encodes the AWS API shape using the passed in protocol encoder.
-func (s GetBucketReplicationOutput) MarshalFields(e protocol.FieldEncoder) error {
-	if s.ReplicationConfiguration != nil {
-		v := s.ReplicationConfiguration
-
-		metadata := protocol.Metadata{}
-		e.SetFields(protocol.PayloadTarget, "ReplicationConfiguration", v, metadata)
-	}
-	return nil
-}
 
 const opGetBucketReplication = "GetBucketReplication"
 
@@ -98,7 +28,7 @@ const opGetBucketReplication = "GetBucketReplication"
 //    }
 //
 // Please also see https://docs.aws.amazon.com/goto/WebAPI/s3-2006-03-01/GetBucketReplication
-func (c *Client) GetBucketReplicationRequest(input *GetBucketReplicationInput) GetBucketReplicationRequest {
+func (c *Client) GetBucketReplicationRequest(input *types.GetBucketReplicationInput) GetBucketReplicationRequest {
 	op := &aws.Operation{
 		Name:       opGetBucketReplication,
 		HTTPMethod: "GET",
@@ -106,10 +36,10 @@ func (c *Client) GetBucketReplicationRequest(input *GetBucketReplicationInput) G
 	}
 
 	if input == nil {
-		input = &GetBucketReplicationInput{}
+		input = &types.GetBucketReplicationInput{}
 	}
 
-	req := c.newRequest(op, input, &GetBucketReplicationOutput{})
+	req := c.newRequest(op, input, &types.GetBucketReplicationOutput{})
 	return GetBucketReplicationRequest{Request: req, Input: input, Copy: c.GetBucketReplicationRequest}
 }
 
@@ -117,8 +47,8 @@ func (c *Client) GetBucketReplicationRequest(input *GetBucketReplicationInput) G
 // GetBucketReplication API operation.
 type GetBucketReplicationRequest struct {
 	*aws.Request
-	Input *GetBucketReplicationInput
-	Copy  func(*GetBucketReplicationInput) GetBucketReplicationRequest
+	Input *types.GetBucketReplicationInput
+	Copy  func(*types.GetBucketReplicationInput) GetBucketReplicationRequest
 }
 
 // Send marshals and sends the GetBucketReplication API request.
@@ -130,7 +60,7 @@ func (r GetBucketReplicationRequest) Send(ctx context.Context) (*GetBucketReplic
 	}
 
 	resp := &GetBucketReplicationResponse{
-		GetBucketReplicationOutput: r.Request.Data.(*GetBucketReplicationOutput),
+		GetBucketReplicationOutput: r.Request.Data.(*types.GetBucketReplicationOutput),
 		response:                   &aws.Response{Request: r.Request},
 	}
 
@@ -140,7 +70,7 @@ func (r GetBucketReplicationRequest) Send(ctx context.Context) (*GetBucketReplic
 // GetBucketReplicationResponse is the response type for the
 // GetBucketReplication API operation.
 type GetBucketReplicationResponse struct {
-	*GetBucketReplicationOutput
+	*types.GetBucketReplicationOutput
 
 	response *aws.Response
 }

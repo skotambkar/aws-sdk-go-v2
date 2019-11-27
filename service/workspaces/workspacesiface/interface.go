@@ -10,6 +10,7 @@ package workspacesiface
 
 import (
 	"github.com/aws/aws-sdk-go-v2/service/workspaces"
+	"github.com/aws/aws-sdk-go-v2/service/workspaces/types"
 )
 
 // ClientAPI provides an interface to enable mocking the
@@ -43,7 +44,7 @@ import (
 //    type mockClientClient struct {
 //        workspacesiface.ClientPI
 //    }
-//    func (m *mockClientClient) AssociateIpGroups(input *workspaces.AssociateIpGroupsInput) (*workspaces.AssociateIpGroupsOutput, error) {
+//    func (m *mockClientClient) AssociateIpGroups(input *types.AssociateIpGroupsInput) (*types.AssociateIpGroupsOutput, error) {
 //        // mock response/functionality
 //    }
 //
@@ -61,75 +62,75 @@ import (
 // and waiters. Its suggested to use the pattern above for testing, or using
 // tooling to generate mocks to satisfy the interfaces.
 type ClientAPI interface {
-	AssociateIpGroupsRequest(*workspaces.AssociateIpGroupsInput) workspaces.AssociateIpGroupsRequest
+	AssociateIpGroupsRequest(*types.AssociateIpGroupsInput) workspaces.AssociateIpGroupsRequest
 
-	AuthorizeIpRulesRequest(*workspaces.AuthorizeIpRulesInput) workspaces.AuthorizeIpRulesRequest
+	AuthorizeIpRulesRequest(*types.AuthorizeIpRulesInput) workspaces.AuthorizeIpRulesRequest
 
-	CopyWorkspaceImageRequest(*workspaces.CopyWorkspaceImageInput) workspaces.CopyWorkspaceImageRequest
+	CopyWorkspaceImageRequest(*types.CopyWorkspaceImageInput) workspaces.CopyWorkspaceImageRequest
 
-	CreateIpGroupRequest(*workspaces.CreateIpGroupInput) workspaces.CreateIpGroupRequest
+	CreateIpGroupRequest(*types.CreateIpGroupInput) workspaces.CreateIpGroupRequest
 
-	CreateTagsRequest(*workspaces.CreateTagsInput) workspaces.CreateTagsRequest
+	CreateTagsRequest(*types.CreateTagsInput) workspaces.CreateTagsRequest
 
-	CreateWorkspacesRequest(*workspaces.CreateWorkspacesInput) workspaces.CreateWorkspacesRequest
+	CreateWorkspacesRequest(*types.CreateWorkspacesInput) workspaces.CreateWorkspacesRequest
 
-	DeleteIpGroupRequest(*workspaces.DeleteIpGroupInput) workspaces.DeleteIpGroupRequest
+	DeleteIpGroupRequest(*types.DeleteIpGroupInput) workspaces.DeleteIpGroupRequest
 
-	DeleteTagsRequest(*workspaces.DeleteTagsInput) workspaces.DeleteTagsRequest
+	DeleteTagsRequest(*types.DeleteTagsInput) workspaces.DeleteTagsRequest
 
-	DeleteWorkspaceImageRequest(*workspaces.DeleteWorkspaceImageInput) workspaces.DeleteWorkspaceImageRequest
+	DeleteWorkspaceImageRequest(*types.DeleteWorkspaceImageInput) workspaces.DeleteWorkspaceImageRequest
 
-	DescribeAccountRequest(*workspaces.DescribeAccountInput) workspaces.DescribeAccountRequest
+	DescribeAccountRequest(*types.DescribeAccountInput) workspaces.DescribeAccountRequest
 
-	DescribeAccountModificationsRequest(*workspaces.DescribeAccountModificationsInput) workspaces.DescribeAccountModificationsRequest
+	DescribeAccountModificationsRequest(*types.DescribeAccountModificationsInput) workspaces.DescribeAccountModificationsRequest
 
-	DescribeClientPropertiesRequest(*workspaces.DescribeClientPropertiesInput) workspaces.DescribeClientPropertiesRequest
+	DescribeClientPropertiesRequest(*types.DescribeClientPropertiesInput) workspaces.DescribeClientPropertiesRequest
 
-	DescribeIpGroupsRequest(*workspaces.DescribeIpGroupsInput) workspaces.DescribeIpGroupsRequest
+	DescribeIpGroupsRequest(*types.DescribeIpGroupsInput) workspaces.DescribeIpGroupsRequest
 
-	DescribeTagsRequest(*workspaces.DescribeTagsInput) workspaces.DescribeTagsRequest
+	DescribeTagsRequest(*types.DescribeTagsInput) workspaces.DescribeTagsRequest
 
-	DescribeWorkspaceBundlesRequest(*workspaces.DescribeWorkspaceBundlesInput) workspaces.DescribeWorkspaceBundlesRequest
+	DescribeWorkspaceBundlesRequest(*types.DescribeWorkspaceBundlesInput) workspaces.DescribeWorkspaceBundlesRequest
 
-	DescribeWorkspaceDirectoriesRequest(*workspaces.DescribeWorkspaceDirectoriesInput) workspaces.DescribeWorkspaceDirectoriesRequest
+	DescribeWorkspaceDirectoriesRequest(*types.DescribeWorkspaceDirectoriesInput) workspaces.DescribeWorkspaceDirectoriesRequest
 
-	DescribeWorkspaceImagesRequest(*workspaces.DescribeWorkspaceImagesInput) workspaces.DescribeWorkspaceImagesRequest
+	DescribeWorkspaceImagesRequest(*types.DescribeWorkspaceImagesInput) workspaces.DescribeWorkspaceImagesRequest
 
-	DescribeWorkspaceSnapshotsRequest(*workspaces.DescribeWorkspaceSnapshotsInput) workspaces.DescribeWorkspaceSnapshotsRequest
+	DescribeWorkspaceSnapshotsRequest(*types.DescribeWorkspaceSnapshotsInput) workspaces.DescribeWorkspaceSnapshotsRequest
 
-	DescribeWorkspacesRequest(*workspaces.DescribeWorkspacesInput) workspaces.DescribeWorkspacesRequest
+	DescribeWorkspacesRequest(*types.DescribeWorkspacesInput) workspaces.DescribeWorkspacesRequest
 
-	DescribeWorkspacesConnectionStatusRequest(*workspaces.DescribeWorkspacesConnectionStatusInput) workspaces.DescribeWorkspacesConnectionStatusRequest
+	DescribeWorkspacesConnectionStatusRequest(*types.DescribeWorkspacesConnectionStatusInput) workspaces.DescribeWorkspacesConnectionStatusRequest
 
-	DisassociateIpGroupsRequest(*workspaces.DisassociateIpGroupsInput) workspaces.DisassociateIpGroupsRequest
+	DisassociateIpGroupsRequest(*types.DisassociateIpGroupsInput) workspaces.DisassociateIpGroupsRequest
 
-	ImportWorkspaceImageRequest(*workspaces.ImportWorkspaceImageInput) workspaces.ImportWorkspaceImageRequest
+	ImportWorkspaceImageRequest(*types.ImportWorkspaceImageInput) workspaces.ImportWorkspaceImageRequest
 
-	ListAvailableManagementCidrRangesRequest(*workspaces.ListAvailableManagementCidrRangesInput) workspaces.ListAvailableManagementCidrRangesRequest
+	ListAvailableManagementCidrRangesRequest(*types.ListAvailableManagementCidrRangesInput) workspaces.ListAvailableManagementCidrRangesRequest
 
-	ModifyAccountRequest(*workspaces.ModifyAccountInput) workspaces.ModifyAccountRequest
+	ModifyAccountRequest(*types.ModifyAccountInput) workspaces.ModifyAccountRequest
 
-	ModifyClientPropertiesRequest(*workspaces.ModifyClientPropertiesInput) workspaces.ModifyClientPropertiesRequest
+	ModifyClientPropertiesRequest(*types.ModifyClientPropertiesInput) workspaces.ModifyClientPropertiesRequest
 
-	ModifyWorkspacePropertiesRequest(*workspaces.ModifyWorkspacePropertiesInput) workspaces.ModifyWorkspacePropertiesRequest
+	ModifyWorkspacePropertiesRequest(*types.ModifyWorkspacePropertiesInput) workspaces.ModifyWorkspacePropertiesRequest
 
-	ModifyWorkspaceStateRequest(*workspaces.ModifyWorkspaceStateInput) workspaces.ModifyWorkspaceStateRequest
+	ModifyWorkspaceStateRequest(*types.ModifyWorkspaceStateInput) workspaces.ModifyWorkspaceStateRequest
 
-	RebootWorkspacesRequest(*workspaces.RebootWorkspacesInput) workspaces.RebootWorkspacesRequest
+	RebootWorkspacesRequest(*types.RebootWorkspacesInput) workspaces.RebootWorkspacesRequest
 
-	RebuildWorkspacesRequest(*workspaces.RebuildWorkspacesInput) workspaces.RebuildWorkspacesRequest
+	RebuildWorkspacesRequest(*types.RebuildWorkspacesInput) workspaces.RebuildWorkspacesRequest
 
-	RestoreWorkspaceRequest(*workspaces.RestoreWorkspaceInput) workspaces.RestoreWorkspaceRequest
+	RestoreWorkspaceRequest(*types.RestoreWorkspaceInput) workspaces.RestoreWorkspaceRequest
 
-	RevokeIpRulesRequest(*workspaces.RevokeIpRulesInput) workspaces.RevokeIpRulesRequest
+	RevokeIpRulesRequest(*types.RevokeIpRulesInput) workspaces.RevokeIpRulesRequest
 
-	StartWorkspacesRequest(*workspaces.StartWorkspacesInput) workspaces.StartWorkspacesRequest
+	StartWorkspacesRequest(*types.StartWorkspacesInput) workspaces.StartWorkspacesRequest
 
-	StopWorkspacesRequest(*workspaces.StopWorkspacesInput) workspaces.StopWorkspacesRequest
+	StopWorkspacesRequest(*types.StopWorkspacesInput) workspaces.StopWorkspacesRequest
 
-	TerminateWorkspacesRequest(*workspaces.TerminateWorkspacesInput) workspaces.TerminateWorkspacesRequest
+	TerminateWorkspacesRequest(*types.TerminateWorkspacesInput) workspaces.TerminateWorkspacesRequest
 
-	UpdateRulesOfIpGroupRequest(*workspaces.UpdateRulesOfIpGroupInput) workspaces.UpdateRulesOfIpGroupRequest
+	UpdateRulesOfIpGroupRequest(*types.UpdateRulesOfIpGroupInput) workspaces.UpdateRulesOfIpGroupRequest
 }
 
 var _ ClientAPI = (*workspaces.Client)(nil)

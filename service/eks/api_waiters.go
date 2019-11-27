@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/service/eks/types"
 )
 
 // WaitUntilClusterActive uses the Amazon EKS API operation
@@ -18,7 +19,7 @@ import (
 // the context is nil a panic will occur. In the future the SDK may create
 // sub-contexts for http.Requests. See https://golang.org/pkg/context/
 // for more information on using Contexts.
-func (c *Client) WaitUntilClusterActive(ctx context.Context, input *DescribeClusterInput, opts ...aws.WaiterOption) error {
+func (c *Client) WaitUntilClusterActive(ctx context.Context, input *types.DescribeClusterInput, opts ...aws.WaiterOption) error {
 	w := aws.Waiter{
 		Name:        "WaitUntilClusterActive",
 		MaxAttempts: 40,
@@ -42,7 +43,7 @@ func (c *Client) WaitUntilClusterActive(ctx context.Context, input *DescribeClus
 		},
 		Logger: c.Config.Logger,
 		NewRequest: func(opts []aws.Option) (*aws.Request, error) {
-			var inCpy *DescribeClusterInput
+			var inCpy *types.DescribeClusterInput
 			if input != nil {
 				tmp := *input
 				inCpy = &tmp
@@ -67,7 +68,7 @@ func (c *Client) WaitUntilClusterActive(ctx context.Context, input *DescribeClus
 // the context is nil a panic will occur. In the future the SDK may create
 // sub-contexts for http.Requests. See https://golang.org/pkg/context/
 // for more information on using Contexts.
-func (c *Client) WaitUntilClusterDeleted(ctx context.Context, input *DescribeClusterInput, opts ...aws.WaiterOption) error {
+func (c *Client) WaitUntilClusterDeleted(ctx context.Context, input *types.DescribeClusterInput, opts ...aws.WaiterOption) error {
 	w := aws.Waiter{
 		Name:        "WaitUntilClusterDeleted",
 		MaxAttempts: 40,
@@ -91,7 +92,7 @@ func (c *Client) WaitUntilClusterDeleted(ctx context.Context, input *DescribeClu
 		},
 		Logger: c.Config.Logger,
 		NewRequest: func(opts []aws.Option) (*aws.Request, error) {
-			var inCpy *DescribeClusterInput
+			var inCpy *types.DescribeClusterInput
 			if input != nil {
 				tmp := *input
 				inCpy = &tmp

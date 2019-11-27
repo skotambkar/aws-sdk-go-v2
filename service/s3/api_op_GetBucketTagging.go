@@ -6,83 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
-	"github.com/aws/aws-sdk-go-v2/internal/awsutil"
-	"github.com/aws/aws-sdk-go-v2/private/protocol"
+	"github.com/aws/aws-sdk-go-v2/service/s3/types"
 )
-
-type GetBucketTaggingInput struct {
-	_ struct{} `type:"structure"`
-
-	// Bucket is a required field
-	Bucket *string `location:"uri" locationName:"Bucket" type:"string" required:"true"`
-}
-
-// String returns the string representation
-func (s GetBucketTaggingInput) String() string {
-	return awsutil.Prettify(s)
-}
-
-// Validate inspects the fields of the type to determine if they are valid.
-func (s *GetBucketTaggingInput) Validate() error {
-	invalidParams := aws.ErrInvalidParams{Context: "GetBucketTaggingInput"}
-
-	if s.Bucket == nil {
-		invalidParams.Add(aws.NewErrParamRequired("Bucket"))
-	}
-
-	if invalidParams.Len() > 0 {
-		return invalidParams
-	}
-	return nil
-}
-
-func (s *GetBucketTaggingInput) getBucket() (v string) {
-	if s.Bucket == nil {
-		return v
-	}
-	return *s.Bucket
-}
-
-// MarshalFields encodes the AWS API shape using the passed in protocol encoder.
-func (s GetBucketTaggingInput) MarshalFields(e protocol.FieldEncoder) error {
-
-	if s.Bucket != nil {
-		v := *s.Bucket
-
-		metadata := protocol.Metadata{}
-		e.SetValue(protocol.PathTarget, "Bucket", protocol.StringValue(v), metadata)
-	}
-	return nil
-}
-
-type GetBucketTaggingOutput struct {
-	_ struct{} `type:"structure"`
-
-	// TagSet is a required field
-	TagSet []Tag `locationNameList:"Tag" type:"list" required:"true"`
-}
-
-// String returns the string representation
-func (s GetBucketTaggingOutput) String() string {
-	return awsutil.Prettify(s)
-}
-
-// MarshalFields encodes the AWS API shape using the passed in protocol encoder.
-func (s GetBucketTaggingOutput) MarshalFields(e protocol.FieldEncoder) error {
-	if s.TagSet != nil {
-		v := s.TagSet
-
-		metadata := protocol.Metadata{ListLocationName: "Tag"}
-		ls0 := e.List(protocol.BodyTarget, "TagSet", metadata)
-		ls0.Start()
-		for _, v1 := range v {
-			ls0.ListAddFields(v1)
-		}
-		ls0.End()
-
-	}
-	return nil
-}
 
 const opGetBucketTagging = "GetBucketTagging"
 
@@ -99,7 +24,7 @@ const opGetBucketTagging = "GetBucketTagging"
 //    }
 //
 // Please also see https://docs.aws.amazon.com/goto/WebAPI/s3-2006-03-01/GetBucketTagging
-func (c *Client) GetBucketTaggingRequest(input *GetBucketTaggingInput) GetBucketTaggingRequest {
+func (c *Client) GetBucketTaggingRequest(input *types.GetBucketTaggingInput) GetBucketTaggingRequest {
 	op := &aws.Operation{
 		Name:       opGetBucketTagging,
 		HTTPMethod: "GET",
@@ -107,10 +32,10 @@ func (c *Client) GetBucketTaggingRequest(input *GetBucketTaggingInput) GetBucket
 	}
 
 	if input == nil {
-		input = &GetBucketTaggingInput{}
+		input = &types.GetBucketTaggingInput{}
 	}
 
-	req := c.newRequest(op, input, &GetBucketTaggingOutput{})
+	req := c.newRequest(op, input, &types.GetBucketTaggingOutput{})
 	return GetBucketTaggingRequest{Request: req, Input: input, Copy: c.GetBucketTaggingRequest}
 }
 
@@ -118,8 +43,8 @@ func (c *Client) GetBucketTaggingRequest(input *GetBucketTaggingInput) GetBucket
 // GetBucketTagging API operation.
 type GetBucketTaggingRequest struct {
 	*aws.Request
-	Input *GetBucketTaggingInput
-	Copy  func(*GetBucketTaggingInput) GetBucketTaggingRequest
+	Input *types.GetBucketTaggingInput
+	Copy  func(*types.GetBucketTaggingInput) GetBucketTaggingRequest
 }
 
 // Send marshals and sends the GetBucketTagging API request.
@@ -131,7 +56,7 @@ func (r GetBucketTaggingRequest) Send(ctx context.Context) (*GetBucketTaggingRes
 	}
 
 	resp := &GetBucketTaggingResponse{
-		GetBucketTaggingOutput: r.Request.Data.(*GetBucketTaggingOutput),
+		GetBucketTaggingOutput: r.Request.Data.(*types.GetBucketTaggingOutput),
 		response:               &aws.Response{Request: r.Request},
 	}
 
@@ -141,7 +66,7 @@ func (r GetBucketTaggingRequest) Send(ctx context.Context) (*GetBucketTaggingRes
 // GetBucketTaggingResponse is the response type for the
 // GetBucketTagging API operation.
 type GetBucketTaggingResponse struct {
-	*GetBucketTaggingOutput
+	*types.GetBucketTaggingOutput
 
 	response *aws.Response
 }

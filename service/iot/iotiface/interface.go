@@ -10,6 +10,7 @@ package iotiface
 
 import (
 	"github.com/aws/aws-sdk-go-v2/service/iot"
+	"github.com/aws/aws-sdk-go-v2/service/iot/types"
 )
 
 // ClientAPI provides an interface to enable mocking the
@@ -43,7 +44,7 @@ import (
 //    type mockClientClient struct {
 //        iotiface.ClientPI
 //    }
-//    func (m *mockClientClient) AcceptCertificateTransfer(input *iot.AcceptCertificateTransferInput) (*iot.AcceptCertificateTransferOutput, error) {
+//    func (m *mockClientClient) AcceptCertificateTransfer(input *types.AcceptCertificateTransferInput) (*types.AcceptCertificateTransferOutput, error) {
 //        // mock response/functionality
 //    }
 //
@@ -61,361 +62,361 @@ import (
 // and waiters. Its suggested to use the pattern above for testing, or using
 // tooling to generate mocks to satisfy the interfaces.
 type ClientAPI interface {
-	AcceptCertificateTransferRequest(*iot.AcceptCertificateTransferInput) iot.AcceptCertificateTransferRequest
+	AcceptCertificateTransferRequest(*types.AcceptCertificateTransferInput) iot.AcceptCertificateTransferRequest
 
-	AddThingToBillingGroupRequest(*iot.AddThingToBillingGroupInput) iot.AddThingToBillingGroupRequest
+	AddThingToBillingGroupRequest(*types.AddThingToBillingGroupInput) iot.AddThingToBillingGroupRequest
 
-	AddThingToThingGroupRequest(*iot.AddThingToThingGroupInput) iot.AddThingToThingGroupRequest
+	AddThingToThingGroupRequest(*types.AddThingToThingGroupInput) iot.AddThingToThingGroupRequest
 
-	AssociateTargetsWithJobRequest(*iot.AssociateTargetsWithJobInput) iot.AssociateTargetsWithJobRequest
+	AssociateTargetsWithJobRequest(*types.AssociateTargetsWithJobInput) iot.AssociateTargetsWithJobRequest
 
-	AttachPolicyRequest(*iot.AttachPolicyInput) iot.AttachPolicyRequest
+	AttachPolicyRequest(*types.AttachPolicyInput) iot.AttachPolicyRequest
 
-	AttachPrincipalPolicyRequest(*iot.AttachPrincipalPolicyInput) iot.AttachPrincipalPolicyRequest
+	AttachPrincipalPolicyRequest(*types.AttachPrincipalPolicyInput) iot.AttachPrincipalPolicyRequest
 
-	AttachSecurityProfileRequest(*iot.AttachSecurityProfileInput) iot.AttachSecurityProfileRequest
+	AttachSecurityProfileRequest(*types.AttachSecurityProfileInput) iot.AttachSecurityProfileRequest
 
-	AttachThingPrincipalRequest(*iot.AttachThingPrincipalInput) iot.AttachThingPrincipalRequest
+	AttachThingPrincipalRequest(*types.AttachThingPrincipalInput) iot.AttachThingPrincipalRequest
 
-	CancelAuditMitigationActionsTaskRequest(*iot.CancelAuditMitigationActionsTaskInput) iot.CancelAuditMitigationActionsTaskRequest
+	CancelAuditMitigationActionsTaskRequest(*types.CancelAuditMitigationActionsTaskInput) iot.CancelAuditMitigationActionsTaskRequest
 
-	CancelAuditTaskRequest(*iot.CancelAuditTaskInput) iot.CancelAuditTaskRequest
+	CancelAuditTaskRequest(*types.CancelAuditTaskInput) iot.CancelAuditTaskRequest
 
-	CancelCertificateTransferRequest(*iot.CancelCertificateTransferInput) iot.CancelCertificateTransferRequest
+	CancelCertificateTransferRequest(*types.CancelCertificateTransferInput) iot.CancelCertificateTransferRequest
 
-	CancelJobRequest(*iot.CancelJobInput) iot.CancelJobRequest
+	CancelJobRequest(*types.CancelJobInput) iot.CancelJobRequest
 
-	CancelJobExecutionRequest(*iot.CancelJobExecutionInput) iot.CancelJobExecutionRequest
+	CancelJobExecutionRequest(*types.CancelJobExecutionInput) iot.CancelJobExecutionRequest
 
-	ClearDefaultAuthorizerRequest(*iot.ClearDefaultAuthorizerInput) iot.ClearDefaultAuthorizerRequest
+	ClearDefaultAuthorizerRequest(*types.ClearDefaultAuthorizerInput) iot.ClearDefaultAuthorizerRequest
 
-	CreateAuthorizerRequest(*iot.CreateAuthorizerInput) iot.CreateAuthorizerRequest
+	CreateAuthorizerRequest(*types.CreateAuthorizerInput) iot.CreateAuthorizerRequest
 
-	CreateBillingGroupRequest(*iot.CreateBillingGroupInput) iot.CreateBillingGroupRequest
+	CreateBillingGroupRequest(*types.CreateBillingGroupInput) iot.CreateBillingGroupRequest
 
-	CreateCertificateFromCsrRequest(*iot.CreateCertificateFromCsrInput) iot.CreateCertificateFromCsrRequest
+	CreateCertificateFromCsrRequest(*types.CreateCertificateFromCsrInput) iot.CreateCertificateFromCsrRequest
 
-	CreateDynamicThingGroupRequest(*iot.CreateDynamicThingGroupInput) iot.CreateDynamicThingGroupRequest
+	CreateDynamicThingGroupRequest(*types.CreateDynamicThingGroupInput) iot.CreateDynamicThingGroupRequest
 
-	CreateJobRequest(*iot.CreateJobInput) iot.CreateJobRequest
+	CreateJobRequest(*types.CreateJobInput) iot.CreateJobRequest
 
-	CreateKeysAndCertificateRequest(*iot.CreateKeysAndCertificateInput) iot.CreateKeysAndCertificateRequest
+	CreateKeysAndCertificateRequest(*types.CreateKeysAndCertificateInput) iot.CreateKeysAndCertificateRequest
 
-	CreateMitigationActionRequest(*iot.CreateMitigationActionInput) iot.CreateMitigationActionRequest
+	CreateMitigationActionRequest(*types.CreateMitigationActionInput) iot.CreateMitigationActionRequest
 
-	CreateOTAUpdateRequest(*iot.CreateOTAUpdateInput) iot.CreateOTAUpdateRequest
+	CreateOTAUpdateRequest(*types.CreateOTAUpdateInput) iot.CreateOTAUpdateRequest
 
-	CreatePolicyRequest(*iot.CreatePolicyInput) iot.CreatePolicyRequest
+	CreatePolicyRequest(*types.CreatePolicyInput) iot.CreatePolicyRequest
 
-	CreatePolicyVersionRequest(*iot.CreatePolicyVersionInput) iot.CreatePolicyVersionRequest
+	CreatePolicyVersionRequest(*types.CreatePolicyVersionInput) iot.CreatePolicyVersionRequest
 
-	CreateRoleAliasRequest(*iot.CreateRoleAliasInput) iot.CreateRoleAliasRequest
+	CreateRoleAliasRequest(*types.CreateRoleAliasInput) iot.CreateRoleAliasRequest
 
-	CreateScheduledAuditRequest(*iot.CreateScheduledAuditInput) iot.CreateScheduledAuditRequest
+	CreateScheduledAuditRequest(*types.CreateScheduledAuditInput) iot.CreateScheduledAuditRequest
 
-	CreateSecurityProfileRequest(*iot.CreateSecurityProfileInput) iot.CreateSecurityProfileRequest
+	CreateSecurityProfileRequest(*types.CreateSecurityProfileInput) iot.CreateSecurityProfileRequest
 
-	CreateStreamRequest(*iot.CreateStreamInput) iot.CreateStreamRequest
+	CreateStreamRequest(*types.CreateStreamInput) iot.CreateStreamRequest
 
-	CreateThingRequest(*iot.CreateThingInput) iot.CreateThingRequest
+	CreateThingRequest(*types.CreateThingInput) iot.CreateThingRequest
 
-	CreateThingGroupRequest(*iot.CreateThingGroupInput) iot.CreateThingGroupRequest
+	CreateThingGroupRequest(*types.CreateThingGroupInput) iot.CreateThingGroupRequest
 
-	CreateThingTypeRequest(*iot.CreateThingTypeInput) iot.CreateThingTypeRequest
+	CreateThingTypeRequest(*types.CreateThingTypeInput) iot.CreateThingTypeRequest
 
-	CreateTopicRuleRequest(*iot.CreateTopicRuleInput) iot.CreateTopicRuleRequest
+	CreateTopicRuleRequest(*types.CreateTopicRuleInput) iot.CreateTopicRuleRequest
 
-	DeleteAccountAuditConfigurationRequest(*iot.DeleteAccountAuditConfigurationInput) iot.DeleteAccountAuditConfigurationRequest
+	DeleteAccountAuditConfigurationRequest(*types.DeleteAccountAuditConfigurationInput) iot.DeleteAccountAuditConfigurationRequest
 
-	DeleteAuthorizerRequest(*iot.DeleteAuthorizerInput) iot.DeleteAuthorizerRequest
+	DeleteAuthorizerRequest(*types.DeleteAuthorizerInput) iot.DeleteAuthorizerRequest
 
-	DeleteBillingGroupRequest(*iot.DeleteBillingGroupInput) iot.DeleteBillingGroupRequest
+	DeleteBillingGroupRequest(*types.DeleteBillingGroupInput) iot.DeleteBillingGroupRequest
 
-	DeleteCACertificateRequest(*iot.DeleteCACertificateInput) iot.DeleteCACertificateRequest
+	DeleteCACertificateRequest(*types.DeleteCACertificateInput) iot.DeleteCACertificateRequest
 
-	DeleteCertificateRequest(*iot.DeleteCertificateInput) iot.DeleteCertificateRequest
+	DeleteCertificateRequest(*types.DeleteCertificateInput) iot.DeleteCertificateRequest
 
-	DeleteDynamicThingGroupRequest(*iot.DeleteDynamicThingGroupInput) iot.DeleteDynamicThingGroupRequest
+	DeleteDynamicThingGroupRequest(*types.DeleteDynamicThingGroupInput) iot.DeleteDynamicThingGroupRequest
 
-	DeleteJobRequest(*iot.DeleteJobInput) iot.DeleteJobRequest
+	DeleteJobRequest(*types.DeleteJobInput) iot.DeleteJobRequest
 
-	DeleteJobExecutionRequest(*iot.DeleteJobExecutionInput) iot.DeleteJobExecutionRequest
+	DeleteJobExecutionRequest(*types.DeleteJobExecutionInput) iot.DeleteJobExecutionRequest
 
-	DeleteMitigationActionRequest(*iot.DeleteMitigationActionInput) iot.DeleteMitigationActionRequest
+	DeleteMitigationActionRequest(*types.DeleteMitigationActionInput) iot.DeleteMitigationActionRequest
 
-	DeleteOTAUpdateRequest(*iot.DeleteOTAUpdateInput) iot.DeleteOTAUpdateRequest
+	DeleteOTAUpdateRequest(*types.DeleteOTAUpdateInput) iot.DeleteOTAUpdateRequest
 
-	DeletePolicyRequest(*iot.DeletePolicyInput) iot.DeletePolicyRequest
+	DeletePolicyRequest(*types.DeletePolicyInput) iot.DeletePolicyRequest
 
-	DeletePolicyVersionRequest(*iot.DeletePolicyVersionInput) iot.DeletePolicyVersionRequest
+	DeletePolicyVersionRequest(*types.DeletePolicyVersionInput) iot.DeletePolicyVersionRequest
 
-	DeleteRegistrationCodeRequest(*iot.DeleteRegistrationCodeInput) iot.DeleteRegistrationCodeRequest
+	DeleteRegistrationCodeRequest(*types.DeleteRegistrationCodeInput) iot.DeleteRegistrationCodeRequest
 
-	DeleteRoleAliasRequest(*iot.DeleteRoleAliasInput) iot.DeleteRoleAliasRequest
+	DeleteRoleAliasRequest(*types.DeleteRoleAliasInput) iot.DeleteRoleAliasRequest
 
-	DeleteScheduledAuditRequest(*iot.DeleteScheduledAuditInput) iot.DeleteScheduledAuditRequest
+	DeleteScheduledAuditRequest(*types.DeleteScheduledAuditInput) iot.DeleteScheduledAuditRequest
 
-	DeleteSecurityProfileRequest(*iot.DeleteSecurityProfileInput) iot.DeleteSecurityProfileRequest
+	DeleteSecurityProfileRequest(*types.DeleteSecurityProfileInput) iot.DeleteSecurityProfileRequest
 
-	DeleteStreamRequest(*iot.DeleteStreamInput) iot.DeleteStreamRequest
+	DeleteStreamRequest(*types.DeleteStreamInput) iot.DeleteStreamRequest
 
-	DeleteThingRequest(*iot.DeleteThingInput) iot.DeleteThingRequest
+	DeleteThingRequest(*types.DeleteThingInput) iot.DeleteThingRequest
 
-	DeleteThingGroupRequest(*iot.DeleteThingGroupInput) iot.DeleteThingGroupRequest
+	DeleteThingGroupRequest(*types.DeleteThingGroupInput) iot.DeleteThingGroupRequest
 
-	DeleteThingTypeRequest(*iot.DeleteThingTypeInput) iot.DeleteThingTypeRequest
+	DeleteThingTypeRequest(*types.DeleteThingTypeInput) iot.DeleteThingTypeRequest
 
-	DeleteTopicRuleRequest(*iot.DeleteTopicRuleInput) iot.DeleteTopicRuleRequest
+	DeleteTopicRuleRequest(*types.DeleteTopicRuleInput) iot.DeleteTopicRuleRequest
 
-	DeleteV2LoggingLevelRequest(*iot.DeleteV2LoggingLevelInput) iot.DeleteV2LoggingLevelRequest
+	DeleteV2LoggingLevelRequest(*types.DeleteV2LoggingLevelInput) iot.DeleteV2LoggingLevelRequest
 
-	DeprecateThingTypeRequest(*iot.DeprecateThingTypeInput) iot.DeprecateThingTypeRequest
+	DeprecateThingTypeRequest(*types.DeprecateThingTypeInput) iot.DeprecateThingTypeRequest
 
-	DescribeAccountAuditConfigurationRequest(*iot.DescribeAccountAuditConfigurationInput) iot.DescribeAccountAuditConfigurationRequest
+	DescribeAccountAuditConfigurationRequest(*types.DescribeAccountAuditConfigurationInput) iot.DescribeAccountAuditConfigurationRequest
 
-	DescribeAuditFindingRequest(*iot.DescribeAuditFindingInput) iot.DescribeAuditFindingRequest
+	DescribeAuditFindingRequest(*types.DescribeAuditFindingInput) iot.DescribeAuditFindingRequest
 
-	DescribeAuditMitigationActionsTaskRequest(*iot.DescribeAuditMitigationActionsTaskInput) iot.DescribeAuditMitigationActionsTaskRequest
+	DescribeAuditMitigationActionsTaskRequest(*types.DescribeAuditMitigationActionsTaskInput) iot.DescribeAuditMitigationActionsTaskRequest
 
-	DescribeAuditTaskRequest(*iot.DescribeAuditTaskInput) iot.DescribeAuditTaskRequest
+	DescribeAuditTaskRequest(*types.DescribeAuditTaskInput) iot.DescribeAuditTaskRequest
 
-	DescribeAuthorizerRequest(*iot.DescribeAuthorizerInput) iot.DescribeAuthorizerRequest
+	DescribeAuthorizerRequest(*types.DescribeAuthorizerInput) iot.DescribeAuthorizerRequest
 
-	DescribeBillingGroupRequest(*iot.DescribeBillingGroupInput) iot.DescribeBillingGroupRequest
+	DescribeBillingGroupRequest(*types.DescribeBillingGroupInput) iot.DescribeBillingGroupRequest
 
-	DescribeCACertificateRequest(*iot.DescribeCACertificateInput) iot.DescribeCACertificateRequest
+	DescribeCACertificateRequest(*types.DescribeCACertificateInput) iot.DescribeCACertificateRequest
 
-	DescribeCertificateRequest(*iot.DescribeCertificateInput) iot.DescribeCertificateRequest
+	DescribeCertificateRequest(*types.DescribeCertificateInput) iot.DescribeCertificateRequest
 
-	DescribeDefaultAuthorizerRequest(*iot.DescribeDefaultAuthorizerInput) iot.DescribeDefaultAuthorizerRequest
+	DescribeDefaultAuthorizerRequest(*types.DescribeDefaultAuthorizerInput) iot.DescribeDefaultAuthorizerRequest
 
-	DescribeEndpointRequest(*iot.DescribeEndpointInput) iot.DescribeEndpointRequest
+	DescribeEndpointRequest(*types.DescribeEndpointInput) iot.DescribeEndpointRequest
 
-	DescribeEventConfigurationsRequest(*iot.DescribeEventConfigurationsInput) iot.DescribeEventConfigurationsRequest
+	DescribeEventConfigurationsRequest(*types.DescribeEventConfigurationsInput) iot.DescribeEventConfigurationsRequest
 
-	DescribeIndexRequest(*iot.DescribeIndexInput) iot.DescribeIndexRequest
+	DescribeIndexRequest(*types.DescribeIndexInput) iot.DescribeIndexRequest
 
-	DescribeJobRequest(*iot.DescribeJobInput) iot.DescribeJobRequest
+	DescribeJobRequest(*types.DescribeJobInput) iot.DescribeJobRequest
 
-	DescribeJobExecutionRequest(*iot.DescribeJobExecutionInput) iot.DescribeJobExecutionRequest
+	DescribeJobExecutionRequest(*types.DescribeJobExecutionInput) iot.DescribeJobExecutionRequest
 
-	DescribeMitigationActionRequest(*iot.DescribeMitigationActionInput) iot.DescribeMitigationActionRequest
+	DescribeMitigationActionRequest(*types.DescribeMitigationActionInput) iot.DescribeMitigationActionRequest
 
-	DescribeRoleAliasRequest(*iot.DescribeRoleAliasInput) iot.DescribeRoleAliasRequest
+	DescribeRoleAliasRequest(*types.DescribeRoleAliasInput) iot.DescribeRoleAliasRequest
 
-	DescribeScheduledAuditRequest(*iot.DescribeScheduledAuditInput) iot.DescribeScheduledAuditRequest
+	DescribeScheduledAuditRequest(*types.DescribeScheduledAuditInput) iot.DescribeScheduledAuditRequest
 
-	DescribeSecurityProfileRequest(*iot.DescribeSecurityProfileInput) iot.DescribeSecurityProfileRequest
+	DescribeSecurityProfileRequest(*types.DescribeSecurityProfileInput) iot.DescribeSecurityProfileRequest
 
-	DescribeStreamRequest(*iot.DescribeStreamInput) iot.DescribeStreamRequest
+	DescribeStreamRequest(*types.DescribeStreamInput) iot.DescribeStreamRequest
 
-	DescribeThingRequest(*iot.DescribeThingInput) iot.DescribeThingRequest
+	DescribeThingRequest(*types.DescribeThingInput) iot.DescribeThingRequest
 
-	DescribeThingGroupRequest(*iot.DescribeThingGroupInput) iot.DescribeThingGroupRequest
+	DescribeThingGroupRequest(*types.DescribeThingGroupInput) iot.DescribeThingGroupRequest
 
-	DescribeThingRegistrationTaskRequest(*iot.DescribeThingRegistrationTaskInput) iot.DescribeThingRegistrationTaskRequest
+	DescribeThingRegistrationTaskRequest(*types.DescribeThingRegistrationTaskInput) iot.DescribeThingRegistrationTaskRequest
 
-	DescribeThingTypeRequest(*iot.DescribeThingTypeInput) iot.DescribeThingTypeRequest
+	DescribeThingTypeRequest(*types.DescribeThingTypeInput) iot.DescribeThingTypeRequest
 
-	DetachPolicyRequest(*iot.DetachPolicyInput) iot.DetachPolicyRequest
+	DetachPolicyRequest(*types.DetachPolicyInput) iot.DetachPolicyRequest
 
-	DetachPrincipalPolicyRequest(*iot.DetachPrincipalPolicyInput) iot.DetachPrincipalPolicyRequest
+	DetachPrincipalPolicyRequest(*types.DetachPrincipalPolicyInput) iot.DetachPrincipalPolicyRequest
 
-	DetachSecurityProfileRequest(*iot.DetachSecurityProfileInput) iot.DetachSecurityProfileRequest
+	DetachSecurityProfileRequest(*types.DetachSecurityProfileInput) iot.DetachSecurityProfileRequest
 
-	DetachThingPrincipalRequest(*iot.DetachThingPrincipalInput) iot.DetachThingPrincipalRequest
+	DetachThingPrincipalRequest(*types.DetachThingPrincipalInput) iot.DetachThingPrincipalRequest
 
-	DisableTopicRuleRequest(*iot.DisableTopicRuleInput) iot.DisableTopicRuleRequest
+	DisableTopicRuleRequest(*types.DisableTopicRuleInput) iot.DisableTopicRuleRequest
 
-	EnableTopicRuleRequest(*iot.EnableTopicRuleInput) iot.EnableTopicRuleRequest
+	EnableTopicRuleRequest(*types.EnableTopicRuleInput) iot.EnableTopicRuleRequest
 
-	GetEffectivePoliciesRequest(*iot.GetEffectivePoliciesInput) iot.GetEffectivePoliciesRequest
+	GetEffectivePoliciesRequest(*types.GetEffectivePoliciesInput) iot.GetEffectivePoliciesRequest
 
-	GetIndexingConfigurationRequest(*iot.GetIndexingConfigurationInput) iot.GetIndexingConfigurationRequest
+	GetIndexingConfigurationRequest(*types.GetIndexingConfigurationInput) iot.GetIndexingConfigurationRequest
 
-	GetJobDocumentRequest(*iot.GetJobDocumentInput) iot.GetJobDocumentRequest
+	GetJobDocumentRequest(*types.GetJobDocumentInput) iot.GetJobDocumentRequest
 
-	GetLoggingOptionsRequest(*iot.GetLoggingOptionsInput) iot.GetLoggingOptionsRequest
+	GetLoggingOptionsRequest(*types.GetLoggingOptionsInput) iot.GetLoggingOptionsRequest
 
-	GetOTAUpdateRequest(*iot.GetOTAUpdateInput) iot.GetOTAUpdateRequest
+	GetOTAUpdateRequest(*types.GetOTAUpdateInput) iot.GetOTAUpdateRequest
 
-	GetPolicyRequest(*iot.GetPolicyInput) iot.GetPolicyRequest
+	GetPolicyRequest(*types.GetPolicyInput) iot.GetPolicyRequest
 
-	GetPolicyVersionRequest(*iot.GetPolicyVersionInput) iot.GetPolicyVersionRequest
+	GetPolicyVersionRequest(*types.GetPolicyVersionInput) iot.GetPolicyVersionRequest
 
-	GetRegistrationCodeRequest(*iot.GetRegistrationCodeInput) iot.GetRegistrationCodeRequest
+	GetRegistrationCodeRequest(*types.GetRegistrationCodeInput) iot.GetRegistrationCodeRequest
 
-	GetStatisticsRequest(*iot.GetStatisticsInput) iot.GetStatisticsRequest
+	GetStatisticsRequest(*types.GetStatisticsInput) iot.GetStatisticsRequest
 
-	GetTopicRuleRequest(*iot.GetTopicRuleInput) iot.GetTopicRuleRequest
+	GetTopicRuleRequest(*types.GetTopicRuleInput) iot.GetTopicRuleRequest
 
-	GetV2LoggingOptionsRequest(*iot.GetV2LoggingOptionsInput) iot.GetV2LoggingOptionsRequest
+	GetV2LoggingOptionsRequest(*types.GetV2LoggingOptionsInput) iot.GetV2LoggingOptionsRequest
 
-	ListActiveViolationsRequest(*iot.ListActiveViolationsInput) iot.ListActiveViolationsRequest
+	ListActiveViolationsRequest(*types.ListActiveViolationsInput) iot.ListActiveViolationsRequest
 
-	ListAttachedPoliciesRequest(*iot.ListAttachedPoliciesInput) iot.ListAttachedPoliciesRequest
+	ListAttachedPoliciesRequest(*types.ListAttachedPoliciesInput) iot.ListAttachedPoliciesRequest
 
-	ListAuditFindingsRequest(*iot.ListAuditFindingsInput) iot.ListAuditFindingsRequest
+	ListAuditFindingsRequest(*types.ListAuditFindingsInput) iot.ListAuditFindingsRequest
 
-	ListAuditMitigationActionsExecutionsRequest(*iot.ListAuditMitigationActionsExecutionsInput) iot.ListAuditMitigationActionsExecutionsRequest
+	ListAuditMitigationActionsExecutionsRequest(*types.ListAuditMitigationActionsExecutionsInput) iot.ListAuditMitigationActionsExecutionsRequest
 
-	ListAuditMitigationActionsTasksRequest(*iot.ListAuditMitigationActionsTasksInput) iot.ListAuditMitigationActionsTasksRequest
+	ListAuditMitigationActionsTasksRequest(*types.ListAuditMitigationActionsTasksInput) iot.ListAuditMitigationActionsTasksRequest
 
-	ListAuditTasksRequest(*iot.ListAuditTasksInput) iot.ListAuditTasksRequest
+	ListAuditTasksRequest(*types.ListAuditTasksInput) iot.ListAuditTasksRequest
 
-	ListAuthorizersRequest(*iot.ListAuthorizersInput) iot.ListAuthorizersRequest
+	ListAuthorizersRequest(*types.ListAuthorizersInput) iot.ListAuthorizersRequest
 
-	ListBillingGroupsRequest(*iot.ListBillingGroupsInput) iot.ListBillingGroupsRequest
+	ListBillingGroupsRequest(*types.ListBillingGroupsInput) iot.ListBillingGroupsRequest
 
-	ListCACertificatesRequest(*iot.ListCACertificatesInput) iot.ListCACertificatesRequest
+	ListCACertificatesRequest(*types.ListCACertificatesInput) iot.ListCACertificatesRequest
 
-	ListCertificatesRequest(*iot.ListCertificatesInput) iot.ListCertificatesRequest
+	ListCertificatesRequest(*types.ListCertificatesInput) iot.ListCertificatesRequest
 
-	ListCertificatesByCARequest(*iot.ListCertificatesByCAInput) iot.ListCertificatesByCARequest
+	ListCertificatesByCARequest(*types.ListCertificatesByCAInput) iot.ListCertificatesByCARequest
 
-	ListIndicesRequest(*iot.ListIndicesInput) iot.ListIndicesRequest
+	ListIndicesRequest(*types.ListIndicesInput) iot.ListIndicesRequest
 
-	ListJobExecutionsForJobRequest(*iot.ListJobExecutionsForJobInput) iot.ListJobExecutionsForJobRequest
+	ListJobExecutionsForJobRequest(*types.ListJobExecutionsForJobInput) iot.ListJobExecutionsForJobRequest
 
-	ListJobExecutionsForThingRequest(*iot.ListJobExecutionsForThingInput) iot.ListJobExecutionsForThingRequest
+	ListJobExecutionsForThingRequest(*types.ListJobExecutionsForThingInput) iot.ListJobExecutionsForThingRequest
 
-	ListJobsRequest(*iot.ListJobsInput) iot.ListJobsRequest
+	ListJobsRequest(*types.ListJobsInput) iot.ListJobsRequest
 
-	ListMitigationActionsRequest(*iot.ListMitigationActionsInput) iot.ListMitigationActionsRequest
+	ListMitigationActionsRequest(*types.ListMitigationActionsInput) iot.ListMitigationActionsRequest
 
-	ListOTAUpdatesRequest(*iot.ListOTAUpdatesInput) iot.ListOTAUpdatesRequest
+	ListOTAUpdatesRequest(*types.ListOTAUpdatesInput) iot.ListOTAUpdatesRequest
 
-	ListOutgoingCertificatesRequest(*iot.ListOutgoingCertificatesInput) iot.ListOutgoingCertificatesRequest
+	ListOutgoingCertificatesRequest(*types.ListOutgoingCertificatesInput) iot.ListOutgoingCertificatesRequest
 
-	ListPoliciesRequest(*iot.ListPoliciesInput) iot.ListPoliciesRequest
+	ListPoliciesRequest(*types.ListPoliciesInput) iot.ListPoliciesRequest
 
-	ListPolicyPrincipalsRequest(*iot.ListPolicyPrincipalsInput) iot.ListPolicyPrincipalsRequest
+	ListPolicyPrincipalsRequest(*types.ListPolicyPrincipalsInput) iot.ListPolicyPrincipalsRequest
 
-	ListPolicyVersionsRequest(*iot.ListPolicyVersionsInput) iot.ListPolicyVersionsRequest
+	ListPolicyVersionsRequest(*types.ListPolicyVersionsInput) iot.ListPolicyVersionsRequest
 
-	ListPrincipalPoliciesRequest(*iot.ListPrincipalPoliciesInput) iot.ListPrincipalPoliciesRequest
+	ListPrincipalPoliciesRequest(*types.ListPrincipalPoliciesInput) iot.ListPrincipalPoliciesRequest
 
-	ListPrincipalThingsRequest(*iot.ListPrincipalThingsInput) iot.ListPrincipalThingsRequest
+	ListPrincipalThingsRequest(*types.ListPrincipalThingsInput) iot.ListPrincipalThingsRequest
 
-	ListRoleAliasesRequest(*iot.ListRoleAliasesInput) iot.ListRoleAliasesRequest
+	ListRoleAliasesRequest(*types.ListRoleAliasesInput) iot.ListRoleAliasesRequest
 
-	ListScheduledAuditsRequest(*iot.ListScheduledAuditsInput) iot.ListScheduledAuditsRequest
+	ListScheduledAuditsRequest(*types.ListScheduledAuditsInput) iot.ListScheduledAuditsRequest
 
-	ListSecurityProfilesRequest(*iot.ListSecurityProfilesInput) iot.ListSecurityProfilesRequest
+	ListSecurityProfilesRequest(*types.ListSecurityProfilesInput) iot.ListSecurityProfilesRequest
 
-	ListSecurityProfilesForTargetRequest(*iot.ListSecurityProfilesForTargetInput) iot.ListSecurityProfilesForTargetRequest
+	ListSecurityProfilesForTargetRequest(*types.ListSecurityProfilesForTargetInput) iot.ListSecurityProfilesForTargetRequest
 
-	ListStreamsRequest(*iot.ListStreamsInput) iot.ListStreamsRequest
+	ListStreamsRequest(*types.ListStreamsInput) iot.ListStreamsRequest
 
-	ListTagsForResourceRequest(*iot.ListTagsForResourceInput) iot.ListTagsForResourceRequest
+	ListTagsForResourceRequest(*types.ListTagsForResourceInput) iot.ListTagsForResourceRequest
 
-	ListTargetsForPolicyRequest(*iot.ListTargetsForPolicyInput) iot.ListTargetsForPolicyRequest
+	ListTargetsForPolicyRequest(*types.ListTargetsForPolicyInput) iot.ListTargetsForPolicyRequest
 
-	ListTargetsForSecurityProfileRequest(*iot.ListTargetsForSecurityProfileInput) iot.ListTargetsForSecurityProfileRequest
+	ListTargetsForSecurityProfileRequest(*types.ListTargetsForSecurityProfileInput) iot.ListTargetsForSecurityProfileRequest
 
-	ListThingGroupsRequest(*iot.ListThingGroupsInput) iot.ListThingGroupsRequest
+	ListThingGroupsRequest(*types.ListThingGroupsInput) iot.ListThingGroupsRequest
 
-	ListThingGroupsForThingRequest(*iot.ListThingGroupsForThingInput) iot.ListThingGroupsForThingRequest
+	ListThingGroupsForThingRequest(*types.ListThingGroupsForThingInput) iot.ListThingGroupsForThingRequest
 
-	ListThingPrincipalsRequest(*iot.ListThingPrincipalsInput) iot.ListThingPrincipalsRequest
+	ListThingPrincipalsRequest(*types.ListThingPrincipalsInput) iot.ListThingPrincipalsRequest
 
-	ListThingRegistrationTaskReportsRequest(*iot.ListThingRegistrationTaskReportsInput) iot.ListThingRegistrationTaskReportsRequest
+	ListThingRegistrationTaskReportsRequest(*types.ListThingRegistrationTaskReportsInput) iot.ListThingRegistrationTaskReportsRequest
 
-	ListThingRegistrationTasksRequest(*iot.ListThingRegistrationTasksInput) iot.ListThingRegistrationTasksRequest
+	ListThingRegistrationTasksRequest(*types.ListThingRegistrationTasksInput) iot.ListThingRegistrationTasksRequest
 
-	ListThingTypesRequest(*iot.ListThingTypesInput) iot.ListThingTypesRequest
+	ListThingTypesRequest(*types.ListThingTypesInput) iot.ListThingTypesRequest
 
-	ListThingsRequest(*iot.ListThingsInput) iot.ListThingsRequest
+	ListThingsRequest(*types.ListThingsInput) iot.ListThingsRequest
 
-	ListThingsInBillingGroupRequest(*iot.ListThingsInBillingGroupInput) iot.ListThingsInBillingGroupRequest
+	ListThingsInBillingGroupRequest(*types.ListThingsInBillingGroupInput) iot.ListThingsInBillingGroupRequest
 
-	ListThingsInThingGroupRequest(*iot.ListThingsInThingGroupInput) iot.ListThingsInThingGroupRequest
+	ListThingsInThingGroupRequest(*types.ListThingsInThingGroupInput) iot.ListThingsInThingGroupRequest
 
-	ListTopicRulesRequest(*iot.ListTopicRulesInput) iot.ListTopicRulesRequest
+	ListTopicRulesRequest(*types.ListTopicRulesInput) iot.ListTopicRulesRequest
 
-	ListV2LoggingLevelsRequest(*iot.ListV2LoggingLevelsInput) iot.ListV2LoggingLevelsRequest
+	ListV2LoggingLevelsRequest(*types.ListV2LoggingLevelsInput) iot.ListV2LoggingLevelsRequest
 
-	ListViolationEventsRequest(*iot.ListViolationEventsInput) iot.ListViolationEventsRequest
+	ListViolationEventsRequest(*types.ListViolationEventsInput) iot.ListViolationEventsRequest
 
-	RegisterCACertificateRequest(*iot.RegisterCACertificateInput) iot.RegisterCACertificateRequest
+	RegisterCACertificateRequest(*types.RegisterCACertificateInput) iot.RegisterCACertificateRequest
 
-	RegisterCertificateRequest(*iot.RegisterCertificateInput) iot.RegisterCertificateRequest
+	RegisterCertificateRequest(*types.RegisterCertificateInput) iot.RegisterCertificateRequest
 
-	RegisterThingRequest(*iot.RegisterThingInput) iot.RegisterThingRequest
+	RegisterThingRequest(*types.RegisterThingInput) iot.RegisterThingRequest
 
-	RejectCertificateTransferRequest(*iot.RejectCertificateTransferInput) iot.RejectCertificateTransferRequest
+	RejectCertificateTransferRequest(*types.RejectCertificateTransferInput) iot.RejectCertificateTransferRequest
 
-	RemoveThingFromBillingGroupRequest(*iot.RemoveThingFromBillingGroupInput) iot.RemoveThingFromBillingGroupRequest
+	RemoveThingFromBillingGroupRequest(*types.RemoveThingFromBillingGroupInput) iot.RemoveThingFromBillingGroupRequest
 
-	RemoveThingFromThingGroupRequest(*iot.RemoveThingFromThingGroupInput) iot.RemoveThingFromThingGroupRequest
+	RemoveThingFromThingGroupRequest(*types.RemoveThingFromThingGroupInput) iot.RemoveThingFromThingGroupRequest
 
-	ReplaceTopicRuleRequest(*iot.ReplaceTopicRuleInput) iot.ReplaceTopicRuleRequest
+	ReplaceTopicRuleRequest(*types.ReplaceTopicRuleInput) iot.ReplaceTopicRuleRequest
 
-	SearchIndexRequest(*iot.SearchIndexInput) iot.SearchIndexRequest
+	SearchIndexRequest(*types.SearchIndexInput) iot.SearchIndexRequest
 
-	SetDefaultAuthorizerRequest(*iot.SetDefaultAuthorizerInput) iot.SetDefaultAuthorizerRequest
+	SetDefaultAuthorizerRequest(*types.SetDefaultAuthorizerInput) iot.SetDefaultAuthorizerRequest
 
-	SetDefaultPolicyVersionRequest(*iot.SetDefaultPolicyVersionInput) iot.SetDefaultPolicyVersionRequest
+	SetDefaultPolicyVersionRequest(*types.SetDefaultPolicyVersionInput) iot.SetDefaultPolicyVersionRequest
 
-	SetLoggingOptionsRequest(*iot.SetLoggingOptionsInput) iot.SetLoggingOptionsRequest
+	SetLoggingOptionsRequest(*types.SetLoggingOptionsInput) iot.SetLoggingOptionsRequest
 
-	SetV2LoggingLevelRequest(*iot.SetV2LoggingLevelInput) iot.SetV2LoggingLevelRequest
+	SetV2LoggingLevelRequest(*types.SetV2LoggingLevelInput) iot.SetV2LoggingLevelRequest
 
-	SetV2LoggingOptionsRequest(*iot.SetV2LoggingOptionsInput) iot.SetV2LoggingOptionsRequest
+	SetV2LoggingOptionsRequest(*types.SetV2LoggingOptionsInput) iot.SetV2LoggingOptionsRequest
 
-	StartAuditMitigationActionsTaskRequest(*iot.StartAuditMitigationActionsTaskInput) iot.StartAuditMitigationActionsTaskRequest
+	StartAuditMitigationActionsTaskRequest(*types.StartAuditMitigationActionsTaskInput) iot.StartAuditMitigationActionsTaskRequest
 
-	StartOnDemandAuditTaskRequest(*iot.StartOnDemandAuditTaskInput) iot.StartOnDemandAuditTaskRequest
+	StartOnDemandAuditTaskRequest(*types.StartOnDemandAuditTaskInput) iot.StartOnDemandAuditTaskRequest
 
-	StartThingRegistrationTaskRequest(*iot.StartThingRegistrationTaskInput) iot.StartThingRegistrationTaskRequest
+	StartThingRegistrationTaskRequest(*types.StartThingRegistrationTaskInput) iot.StartThingRegistrationTaskRequest
 
-	StopThingRegistrationTaskRequest(*iot.StopThingRegistrationTaskInput) iot.StopThingRegistrationTaskRequest
+	StopThingRegistrationTaskRequest(*types.StopThingRegistrationTaskInput) iot.StopThingRegistrationTaskRequest
 
-	TagResourceRequest(*iot.TagResourceInput) iot.TagResourceRequest
+	TagResourceRequest(*types.TagResourceInput) iot.TagResourceRequest
 
-	TestAuthorizationRequest(*iot.TestAuthorizationInput) iot.TestAuthorizationRequest
+	TestAuthorizationRequest(*types.TestAuthorizationInput) iot.TestAuthorizationRequest
 
-	TestInvokeAuthorizerRequest(*iot.TestInvokeAuthorizerInput) iot.TestInvokeAuthorizerRequest
+	TestInvokeAuthorizerRequest(*types.TestInvokeAuthorizerInput) iot.TestInvokeAuthorizerRequest
 
-	TransferCertificateRequest(*iot.TransferCertificateInput) iot.TransferCertificateRequest
+	TransferCertificateRequest(*types.TransferCertificateInput) iot.TransferCertificateRequest
 
-	UntagResourceRequest(*iot.UntagResourceInput) iot.UntagResourceRequest
+	UntagResourceRequest(*types.UntagResourceInput) iot.UntagResourceRequest
 
-	UpdateAccountAuditConfigurationRequest(*iot.UpdateAccountAuditConfigurationInput) iot.UpdateAccountAuditConfigurationRequest
+	UpdateAccountAuditConfigurationRequest(*types.UpdateAccountAuditConfigurationInput) iot.UpdateAccountAuditConfigurationRequest
 
-	UpdateAuthorizerRequest(*iot.UpdateAuthorizerInput) iot.UpdateAuthorizerRequest
+	UpdateAuthorizerRequest(*types.UpdateAuthorizerInput) iot.UpdateAuthorizerRequest
 
-	UpdateBillingGroupRequest(*iot.UpdateBillingGroupInput) iot.UpdateBillingGroupRequest
+	UpdateBillingGroupRequest(*types.UpdateBillingGroupInput) iot.UpdateBillingGroupRequest
 
-	UpdateCACertificateRequest(*iot.UpdateCACertificateInput) iot.UpdateCACertificateRequest
+	UpdateCACertificateRequest(*types.UpdateCACertificateInput) iot.UpdateCACertificateRequest
 
-	UpdateCertificateRequest(*iot.UpdateCertificateInput) iot.UpdateCertificateRequest
+	UpdateCertificateRequest(*types.UpdateCertificateInput) iot.UpdateCertificateRequest
 
-	UpdateDynamicThingGroupRequest(*iot.UpdateDynamicThingGroupInput) iot.UpdateDynamicThingGroupRequest
+	UpdateDynamicThingGroupRequest(*types.UpdateDynamicThingGroupInput) iot.UpdateDynamicThingGroupRequest
 
-	UpdateEventConfigurationsRequest(*iot.UpdateEventConfigurationsInput) iot.UpdateEventConfigurationsRequest
+	UpdateEventConfigurationsRequest(*types.UpdateEventConfigurationsInput) iot.UpdateEventConfigurationsRequest
 
-	UpdateIndexingConfigurationRequest(*iot.UpdateIndexingConfigurationInput) iot.UpdateIndexingConfigurationRequest
+	UpdateIndexingConfigurationRequest(*types.UpdateIndexingConfigurationInput) iot.UpdateIndexingConfigurationRequest
 
-	UpdateJobRequest(*iot.UpdateJobInput) iot.UpdateJobRequest
+	UpdateJobRequest(*types.UpdateJobInput) iot.UpdateJobRequest
 
-	UpdateMitigationActionRequest(*iot.UpdateMitigationActionInput) iot.UpdateMitigationActionRequest
+	UpdateMitigationActionRequest(*types.UpdateMitigationActionInput) iot.UpdateMitigationActionRequest
 
-	UpdateRoleAliasRequest(*iot.UpdateRoleAliasInput) iot.UpdateRoleAliasRequest
+	UpdateRoleAliasRequest(*types.UpdateRoleAliasInput) iot.UpdateRoleAliasRequest
 
-	UpdateScheduledAuditRequest(*iot.UpdateScheduledAuditInput) iot.UpdateScheduledAuditRequest
+	UpdateScheduledAuditRequest(*types.UpdateScheduledAuditInput) iot.UpdateScheduledAuditRequest
 
-	UpdateSecurityProfileRequest(*iot.UpdateSecurityProfileInput) iot.UpdateSecurityProfileRequest
+	UpdateSecurityProfileRequest(*types.UpdateSecurityProfileInput) iot.UpdateSecurityProfileRequest
 
-	UpdateStreamRequest(*iot.UpdateStreamInput) iot.UpdateStreamRequest
+	UpdateStreamRequest(*types.UpdateStreamInput) iot.UpdateStreamRequest
 
-	UpdateThingRequest(*iot.UpdateThingInput) iot.UpdateThingRequest
+	UpdateThingRequest(*types.UpdateThingInput) iot.UpdateThingRequest
 
-	UpdateThingGroupRequest(*iot.UpdateThingGroupInput) iot.UpdateThingGroupRequest
+	UpdateThingGroupRequest(*types.UpdateThingGroupInput) iot.UpdateThingGroupRequest
 
-	UpdateThingGroupsForThingRequest(*iot.UpdateThingGroupsForThingInput) iot.UpdateThingGroupsForThingRequest
+	UpdateThingGroupsForThingRequest(*types.UpdateThingGroupsForThingInput) iot.UpdateThingGroupsForThingRequest
 
-	ValidateSecurityProfileBehaviorsRequest(*iot.ValidateSecurityProfileBehaviorsInput) iot.ValidateSecurityProfileBehaviorsRequest
+	ValidateSecurityProfileBehaviorsRequest(*types.ValidateSecurityProfileBehaviorsInput) iot.ValidateSecurityProfileBehaviorsRequest
 }
 
 var _ ClientAPI = (*iot.Client)(nil)

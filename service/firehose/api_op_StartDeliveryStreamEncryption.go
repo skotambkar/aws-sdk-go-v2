@@ -6,49 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
-	"github.com/aws/aws-sdk-go-v2/internal/awsutil"
+	"github.com/aws/aws-sdk-go-v2/service/firehose/types"
 )
-
-type StartDeliveryStreamEncryptionInput struct {
-	_ struct{} `type:"structure"`
-
-	// The name of the delivery stream for which you want to enable server-side
-	// encryption (SSE).
-	//
-	// DeliveryStreamName is a required field
-	DeliveryStreamName *string `min:"1" type:"string" required:"true"`
-}
-
-// String returns the string representation
-func (s StartDeliveryStreamEncryptionInput) String() string {
-	return awsutil.Prettify(s)
-}
-
-// Validate inspects the fields of the type to determine if they are valid.
-func (s *StartDeliveryStreamEncryptionInput) Validate() error {
-	invalidParams := aws.ErrInvalidParams{Context: "StartDeliveryStreamEncryptionInput"}
-
-	if s.DeliveryStreamName == nil {
-		invalidParams.Add(aws.NewErrParamRequired("DeliveryStreamName"))
-	}
-	if s.DeliveryStreamName != nil && len(*s.DeliveryStreamName) < 1 {
-		invalidParams.Add(aws.NewErrParamMinLen("DeliveryStreamName", 1))
-	}
-
-	if invalidParams.Len() > 0 {
-		return invalidParams
-	}
-	return nil
-}
-
-type StartDeliveryStreamEncryptionOutput struct {
-	_ struct{} `type:"structure"`
-}
-
-// String returns the string representation
-func (s StartDeliveryStreamEncryptionOutput) String() string {
-	return awsutil.Prettify(s)
-}
 
 const opStartDeliveryStreamEncryption = "StartDeliveryStreamEncryption"
 
@@ -85,7 +44,7 @@ const opStartDeliveryStreamEncryption = "StartDeliveryStreamEncryption"
 //    }
 //
 // Please also see https://docs.aws.amazon.com/goto/WebAPI/firehose-2015-08-04/StartDeliveryStreamEncryption
-func (c *Client) StartDeliveryStreamEncryptionRequest(input *StartDeliveryStreamEncryptionInput) StartDeliveryStreamEncryptionRequest {
+func (c *Client) StartDeliveryStreamEncryptionRequest(input *types.StartDeliveryStreamEncryptionInput) StartDeliveryStreamEncryptionRequest {
 	op := &aws.Operation{
 		Name:       opStartDeliveryStreamEncryption,
 		HTTPMethod: "POST",
@@ -93,10 +52,10 @@ func (c *Client) StartDeliveryStreamEncryptionRequest(input *StartDeliveryStream
 	}
 
 	if input == nil {
-		input = &StartDeliveryStreamEncryptionInput{}
+		input = &types.StartDeliveryStreamEncryptionInput{}
 	}
 
-	req := c.newRequest(op, input, &StartDeliveryStreamEncryptionOutput{})
+	req := c.newRequest(op, input, &types.StartDeliveryStreamEncryptionOutput{})
 	return StartDeliveryStreamEncryptionRequest{Request: req, Input: input, Copy: c.StartDeliveryStreamEncryptionRequest}
 }
 
@@ -104,8 +63,8 @@ func (c *Client) StartDeliveryStreamEncryptionRequest(input *StartDeliveryStream
 // StartDeliveryStreamEncryption API operation.
 type StartDeliveryStreamEncryptionRequest struct {
 	*aws.Request
-	Input *StartDeliveryStreamEncryptionInput
-	Copy  func(*StartDeliveryStreamEncryptionInput) StartDeliveryStreamEncryptionRequest
+	Input *types.StartDeliveryStreamEncryptionInput
+	Copy  func(*types.StartDeliveryStreamEncryptionInput) StartDeliveryStreamEncryptionRequest
 }
 
 // Send marshals and sends the StartDeliveryStreamEncryption API request.
@@ -117,7 +76,7 @@ func (r StartDeliveryStreamEncryptionRequest) Send(ctx context.Context) (*StartD
 	}
 
 	resp := &StartDeliveryStreamEncryptionResponse{
-		StartDeliveryStreamEncryptionOutput: r.Request.Data.(*StartDeliveryStreamEncryptionOutput),
+		StartDeliveryStreamEncryptionOutput: r.Request.Data.(*types.StartDeliveryStreamEncryptionOutput),
 		response:                            &aws.Response{Request: r.Request},
 	}
 
@@ -127,7 +86,7 @@ func (r StartDeliveryStreamEncryptionRequest) Send(ctx context.Context) (*StartD
 // StartDeliveryStreamEncryptionResponse is the response type for the
 // StartDeliveryStreamEncryption API operation.
 type StartDeliveryStreamEncryptionResponse struct {
-	*StartDeliveryStreamEncryptionOutput
+	*types.StartDeliveryStreamEncryptionOutput
 
 	response *aws.Response
 }

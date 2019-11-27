@@ -6,85 +6,10 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
-	"github.com/aws/aws-sdk-go-v2/internal/awsutil"
 	"github.com/aws/aws-sdk-go-v2/private/protocol"
 	"github.com/aws/aws-sdk-go-v2/private/protocol/restxml"
+	"github.com/aws/aws-sdk-go-v2/service/s3/types"
 )
-
-type PutBucketLifecycleConfigurationInput struct {
-	_ struct{} `type:"structure" payload:"LifecycleConfiguration"`
-
-	// Bucket is a required field
-	Bucket *string `location:"uri" locationName:"Bucket" type:"string" required:"true"`
-
-	// Specifies the lifecycle configuration for objects in an Amazon S3 bucket.
-	// For more information, see Object Lifecycle Management (https://docs.aws.amazon.com/AmazonS3/latest/dev/object-lifecycle-mgmt.html)
-	// in the Amazon Simple Storage Service Developer Guide.
-	LifecycleConfiguration *BucketLifecycleConfiguration `locationName:"LifecycleConfiguration" type:"structure" xmlURI:"http://s3.amazonaws.com/doc/2006-03-01/"`
-}
-
-// String returns the string representation
-func (s PutBucketLifecycleConfigurationInput) String() string {
-	return awsutil.Prettify(s)
-}
-
-// Validate inspects the fields of the type to determine if they are valid.
-func (s *PutBucketLifecycleConfigurationInput) Validate() error {
-	invalidParams := aws.ErrInvalidParams{Context: "PutBucketLifecycleConfigurationInput"}
-
-	if s.Bucket == nil {
-		invalidParams.Add(aws.NewErrParamRequired("Bucket"))
-	}
-	if s.LifecycleConfiguration != nil {
-		if err := s.LifecycleConfiguration.Validate(); err != nil {
-			invalidParams.AddNested("LifecycleConfiguration", err.(aws.ErrInvalidParams))
-		}
-	}
-
-	if invalidParams.Len() > 0 {
-		return invalidParams
-	}
-	return nil
-}
-
-func (s *PutBucketLifecycleConfigurationInput) getBucket() (v string) {
-	if s.Bucket == nil {
-		return v
-	}
-	return *s.Bucket
-}
-
-// MarshalFields encodes the AWS API shape using the passed in protocol encoder.
-func (s PutBucketLifecycleConfigurationInput) MarshalFields(e protocol.FieldEncoder) error {
-
-	if s.Bucket != nil {
-		v := *s.Bucket
-
-		metadata := protocol.Metadata{}
-		e.SetValue(protocol.PathTarget, "Bucket", protocol.StringValue(v), metadata)
-	}
-	if s.LifecycleConfiguration != nil {
-		v := s.LifecycleConfiguration
-
-		metadata := protocol.Metadata{XMLNamespaceURI: "http://s3.amazonaws.com/doc/2006-03-01/"}
-		e.SetFields(protocol.PayloadTarget, "LifecycleConfiguration", v, metadata)
-	}
-	return nil
-}
-
-type PutBucketLifecycleConfigurationOutput struct {
-	_ struct{} `type:"structure"`
-}
-
-// String returns the string representation
-func (s PutBucketLifecycleConfigurationOutput) String() string {
-	return awsutil.Prettify(s)
-}
-
-// MarshalFields encodes the AWS API shape using the passed in protocol encoder.
-func (s PutBucketLifecycleConfigurationOutput) MarshalFields(e protocol.FieldEncoder) error {
-	return nil
-}
 
 const opPutBucketLifecycleConfiguration = "PutBucketLifecycleConfiguration"
 
@@ -102,7 +27,7 @@ const opPutBucketLifecycleConfiguration = "PutBucketLifecycleConfiguration"
 //    }
 //
 // Please also see https://docs.aws.amazon.com/goto/WebAPI/s3-2006-03-01/PutBucketLifecycleConfiguration
-func (c *Client) PutBucketLifecycleConfigurationRequest(input *PutBucketLifecycleConfigurationInput) PutBucketLifecycleConfigurationRequest {
+func (c *Client) PutBucketLifecycleConfigurationRequest(input *types.PutBucketLifecycleConfigurationInput) PutBucketLifecycleConfigurationRequest {
 	op := &aws.Operation{
 		Name:       opPutBucketLifecycleConfiguration,
 		HTTPMethod: "PUT",
@@ -110,10 +35,10 @@ func (c *Client) PutBucketLifecycleConfigurationRequest(input *PutBucketLifecycl
 	}
 
 	if input == nil {
-		input = &PutBucketLifecycleConfigurationInput{}
+		input = &types.PutBucketLifecycleConfigurationInput{}
 	}
 
-	req := c.newRequest(op, input, &PutBucketLifecycleConfigurationOutput{})
+	req := c.newRequest(op, input, &types.PutBucketLifecycleConfigurationOutput{})
 	req.Handlers.Unmarshal.Remove(restxml.UnmarshalHandler)
 	req.Handlers.Unmarshal.PushBackNamed(protocol.UnmarshalDiscardBodyHandler)
 	return PutBucketLifecycleConfigurationRequest{Request: req, Input: input, Copy: c.PutBucketLifecycleConfigurationRequest}
@@ -123,8 +48,8 @@ func (c *Client) PutBucketLifecycleConfigurationRequest(input *PutBucketLifecycl
 // PutBucketLifecycleConfiguration API operation.
 type PutBucketLifecycleConfigurationRequest struct {
 	*aws.Request
-	Input *PutBucketLifecycleConfigurationInput
-	Copy  func(*PutBucketLifecycleConfigurationInput) PutBucketLifecycleConfigurationRequest
+	Input *types.PutBucketLifecycleConfigurationInput
+	Copy  func(*types.PutBucketLifecycleConfigurationInput) PutBucketLifecycleConfigurationRequest
 }
 
 // Send marshals and sends the PutBucketLifecycleConfiguration API request.
@@ -136,7 +61,7 @@ func (r PutBucketLifecycleConfigurationRequest) Send(ctx context.Context) (*PutB
 	}
 
 	resp := &PutBucketLifecycleConfigurationResponse{
-		PutBucketLifecycleConfigurationOutput: r.Request.Data.(*PutBucketLifecycleConfigurationOutput),
+		PutBucketLifecycleConfigurationOutput: r.Request.Data.(*types.PutBucketLifecycleConfigurationOutput),
 		response:                              &aws.Response{Request: r.Request},
 	}
 
@@ -146,7 +71,7 @@ func (r PutBucketLifecycleConfigurationRequest) Send(ctx context.Context) (*PutB
 // PutBucketLifecycleConfigurationResponse is the response type for the
 // PutBucketLifecycleConfiguration API operation.
 type PutBucketLifecycleConfigurationResponse struct {
-	*PutBucketLifecycleConfigurationOutput
+	*types.PutBucketLifecycleConfigurationOutput
 
 	response *aws.Response
 }

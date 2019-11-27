@@ -6,91 +6,10 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
-	"github.com/aws/aws-sdk-go-v2/internal/awsutil"
 	"github.com/aws/aws-sdk-go-v2/private/protocol"
 	"github.com/aws/aws-sdk-go-v2/private/protocol/restxml"
+	"github.com/aws/aws-sdk-go-v2/service/s3/types"
 )
-
-type PutPublicAccessBlockInput struct {
-	_ struct{} `type:"structure" payload:"PublicAccessBlockConfiguration"`
-
-	// The name of the Amazon S3 bucket whose PublicAccessBlock configuration you
-	// want to set.
-	//
-	// Bucket is a required field
-	Bucket *string `location:"uri" locationName:"Bucket" type:"string" required:"true"`
-
-	// The PublicAccessBlock configuration that you want to apply to this Amazon
-	// S3 bucket. You can enable the configuration options in any combination. For
-	// more information about when Amazon S3 considers a bucket or object public,
-	// see The Meaning of "Public" (https://docs.aws.amazon.com/AmazonS3/latest/dev/access-control-block-public-access.html#access-control-block-public-access-policy-status)
-	// in the Amazon Simple Storage Service Developer Guide.
-	//
-	// PublicAccessBlockConfiguration is a required field
-	PublicAccessBlockConfiguration *PublicAccessBlockConfiguration `locationName:"PublicAccessBlockConfiguration" type:"structure" required:"true" xmlURI:"http://s3.amazonaws.com/doc/2006-03-01/"`
-}
-
-// String returns the string representation
-func (s PutPublicAccessBlockInput) String() string {
-	return awsutil.Prettify(s)
-}
-
-// Validate inspects the fields of the type to determine if they are valid.
-func (s *PutPublicAccessBlockInput) Validate() error {
-	invalidParams := aws.ErrInvalidParams{Context: "PutPublicAccessBlockInput"}
-
-	if s.Bucket == nil {
-		invalidParams.Add(aws.NewErrParamRequired("Bucket"))
-	}
-
-	if s.PublicAccessBlockConfiguration == nil {
-		invalidParams.Add(aws.NewErrParamRequired("PublicAccessBlockConfiguration"))
-	}
-
-	if invalidParams.Len() > 0 {
-		return invalidParams
-	}
-	return nil
-}
-
-func (s *PutPublicAccessBlockInput) getBucket() (v string) {
-	if s.Bucket == nil {
-		return v
-	}
-	return *s.Bucket
-}
-
-// MarshalFields encodes the AWS API shape using the passed in protocol encoder.
-func (s PutPublicAccessBlockInput) MarshalFields(e protocol.FieldEncoder) error {
-
-	if s.Bucket != nil {
-		v := *s.Bucket
-
-		metadata := protocol.Metadata{}
-		e.SetValue(protocol.PathTarget, "Bucket", protocol.StringValue(v), metadata)
-	}
-	if s.PublicAccessBlockConfiguration != nil {
-		v := s.PublicAccessBlockConfiguration
-
-		metadata := protocol.Metadata{XMLNamespaceURI: "http://s3.amazonaws.com/doc/2006-03-01/"}
-		e.SetFields(protocol.PayloadTarget, "PublicAccessBlockConfiguration", v, metadata)
-	}
-	return nil
-}
-
-type PutPublicAccessBlockOutput struct {
-	_ struct{} `type:"structure"`
-}
-
-// String returns the string representation
-func (s PutPublicAccessBlockOutput) String() string {
-	return awsutil.Prettify(s)
-}
-
-// MarshalFields encodes the AWS API shape using the passed in protocol encoder.
-func (s PutPublicAccessBlockOutput) MarshalFields(e protocol.FieldEncoder) error {
-	return nil
-}
 
 const opPutPublicAccessBlock = "PutPublicAccessBlock"
 
@@ -108,7 +27,7 @@ const opPutPublicAccessBlock = "PutPublicAccessBlock"
 //    }
 //
 // Please also see https://docs.aws.amazon.com/goto/WebAPI/s3-2006-03-01/PutPublicAccessBlock
-func (c *Client) PutPublicAccessBlockRequest(input *PutPublicAccessBlockInput) PutPublicAccessBlockRequest {
+func (c *Client) PutPublicAccessBlockRequest(input *types.PutPublicAccessBlockInput) PutPublicAccessBlockRequest {
 	op := &aws.Operation{
 		Name:       opPutPublicAccessBlock,
 		HTTPMethod: "PUT",
@@ -116,10 +35,10 @@ func (c *Client) PutPublicAccessBlockRequest(input *PutPublicAccessBlockInput) P
 	}
 
 	if input == nil {
-		input = &PutPublicAccessBlockInput{}
+		input = &types.PutPublicAccessBlockInput{}
 	}
 
-	req := c.newRequest(op, input, &PutPublicAccessBlockOutput{})
+	req := c.newRequest(op, input, &types.PutPublicAccessBlockOutput{})
 	req.Handlers.Unmarshal.Remove(restxml.UnmarshalHandler)
 	req.Handlers.Unmarshal.PushBackNamed(protocol.UnmarshalDiscardBodyHandler)
 	return PutPublicAccessBlockRequest{Request: req, Input: input, Copy: c.PutPublicAccessBlockRequest}
@@ -129,8 +48,8 @@ func (c *Client) PutPublicAccessBlockRequest(input *PutPublicAccessBlockInput) P
 // PutPublicAccessBlock API operation.
 type PutPublicAccessBlockRequest struct {
 	*aws.Request
-	Input *PutPublicAccessBlockInput
-	Copy  func(*PutPublicAccessBlockInput) PutPublicAccessBlockRequest
+	Input *types.PutPublicAccessBlockInput
+	Copy  func(*types.PutPublicAccessBlockInput) PutPublicAccessBlockRequest
 }
 
 // Send marshals and sends the PutPublicAccessBlock API request.
@@ -142,7 +61,7 @@ func (r PutPublicAccessBlockRequest) Send(ctx context.Context) (*PutPublicAccess
 	}
 
 	resp := &PutPublicAccessBlockResponse{
-		PutPublicAccessBlockOutput: r.Request.Data.(*PutPublicAccessBlockOutput),
+		PutPublicAccessBlockOutput: r.Request.Data.(*types.PutPublicAccessBlockOutput),
 		response:                   &aws.Response{Request: r.Request},
 	}
 
@@ -152,7 +71,7 @@ func (r PutPublicAccessBlockRequest) Send(ctx context.Context) (*PutPublicAccess
 // PutPublicAccessBlockResponse is the response type for the
 // PutPublicAccessBlock API operation.
 type PutPublicAccessBlockResponse struct {
-	*PutPublicAccessBlockOutput
+	*types.PutPublicAccessBlockOutput
 
 	response *aws.Response
 }

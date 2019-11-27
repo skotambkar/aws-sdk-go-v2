@@ -6,87 +6,10 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
-	"github.com/aws/aws-sdk-go-v2/internal/awsutil"
 	"github.com/aws/aws-sdk-go-v2/private/protocol"
 	"github.com/aws/aws-sdk-go-v2/private/protocol/restxml"
+	"github.com/aws/aws-sdk-go-v2/service/s3/types"
 )
-
-type PutBucketTaggingInput struct {
-	_ struct{} `type:"structure" payload:"Tagging"`
-
-	// Bucket is a required field
-	Bucket *string `location:"uri" locationName:"Bucket" type:"string" required:"true"`
-
-	// Tagging is a required field
-	Tagging *Tagging `locationName:"Tagging" type:"structure" required:"true" xmlURI:"http://s3.amazonaws.com/doc/2006-03-01/"`
-}
-
-// String returns the string representation
-func (s PutBucketTaggingInput) String() string {
-	return awsutil.Prettify(s)
-}
-
-// Validate inspects the fields of the type to determine if they are valid.
-func (s *PutBucketTaggingInput) Validate() error {
-	invalidParams := aws.ErrInvalidParams{Context: "PutBucketTaggingInput"}
-
-	if s.Bucket == nil {
-		invalidParams.Add(aws.NewErrParamRequired("Bucket"))
-	}
-
-	if s.Tagging == nil {
-		invalidParams.Add(aws.NewErrParamRequired("Tagging"))
-	}
-	if s.Tagging != nil {
-		if err := s.Tagging.Validate(); err != nil {
-			invalidParams.AddNested("Tagging", err.(aws.ErrInvalidParams))
-		}
-	}
-
-	if invalidParams.Len() > 0 {
-		return invalidParams
-	}
-	return nil
-}
-
-func (s *PutBucketTaggingInput) getBucket() (v string) {
-	if s.Bucket == nil {
-		return v
-	}
-	return *s.Bucket
-}
-
-// MarshalFields encodes the AWS API shape using the passed in protocol encoder.
-func (s PutBucketTaggingInput) MarshalFields(e protocol.FieldEncoder) error {
-
-	if s.Bucket != nil {
-		v := *s.Bucket
-
-		metadata := protocol.Metadata{}
-		e.SetValue(protocol.PathTarget, "Bucket", protocol.StringValue(v), metadata)
-	}
-	if s.Tagging != nil {
-		v := s.Tagging
-
-		metadata := protocol.Metadata{XMLNamespaceURI: "http://s3.amazonaws.com/doc/2006-03-01/"}
-		e.SetFields(protocol.PayloadTarget, "Tagging", v, metadata)
-	}
-	return nil
-}
-
-type PutBucketTaggingOutput struct {
-	_ struct{} `type:"structure"`
-}
-
-// String returns the string representation
-func (s PutBucketTaggingOutput) String() string {
-	return awsutil.Prettify(s)
-}
-
-// MarshalFields encodes the AWS API shape using the passed in protocol encoder.
-func (s PutBucketTaggingOutput) MarshalFields(e protocol.FieldEncoder) error {
-	return nil
-}
 
 const opPutBucketTagging = "PutBucketTagging"
 
@@ -103,7 +26,7 @@ const opPutBucketTagging = "PutBucketTagging"
 //    }
 //
 // Please also see https://docs.aws.amazon.com/goto/WebAPI/s3-2006-03-01/PutBucketTagging
-func (c *Client) PutBucketTaggingRequest(input *PutBucketTaggingInput) PutBucketTaggingRequest {
+func (c *Client) PutBucketTaggingRequest(input *types.PutBucketTaggingInput) PutBucketTaggingRequest {
 	op := &aws.Operation{
 		Name:       opPutBucketTagging,
 		HTTPMethod: "PUT",
@@ -111,10 +34,10 @@ func (c *Client) PutBucketTaggingRequest(input *PutBucketTaggingInput) PutBucket
 	}
 
 	if input == nil {
-		input = &PutBucketTaggingInput{}
+		input = &types.PutBucketTaggingInput{}
 	}
 
-	req := c.newRequest(op, input, &PutBucketTaggingOutput{})
+	req := c.newRequest(op, input, &types.PutBucketTaggingOutput{})
 	req.Handlers.Unmarshal.Remove(restxml.UnmarshalHandler)
 	req.Handlers.Unmarshal.PushBackNamed(protocol.UnmarshalDiscardBodyHandler)
 	return PutBucketTaggingRequest{Request: req, Input: input, Copy: c.PutBucketTaggingRequest}
@@ -124,8 +47,8 @@ func (c *Client) PutBucketTaggingRequest(input *PutBucketTaggingInput) PutBucket
 // PutBucketTagging API operation.
 type PutBucketTaggingRequest struct {
 	*aws.Request
-	Input *PutBucketTaggingInput
-	Copy  func(*PutBucketTaggingInput) PutBucketTaggingRequest
+	Input *types.PutBucketTaggingInput
+	Copy  func(*types.PutBucketTaggingInput) PutBucketTaggingRequest
 }
 
 // Send marshals and sends the PutBucketTagging API request.
@@ -137,7 +60,7 @@ func (r PutBucketTaggingRequest) Send(ctx context.Context) (*PutBucketTaggingRes
 	}
 
 	resp := &PutBucketTaggingResponse{
-		PutBucketTaggingOutput: r.Request.Data.(*PutBucketTaggingOutput),
+		PutBucketTaggingOutput: r.Request.Data.(*types.PutBucketTaggingOutput),
 		response:               &aws.Response{Request: r.Request},
 	}
 
@@ -147,7 +70,7 @@ func (r PutBucketTaggingRequest) Send(ctx context.Context) (*PutBucketTaggingRes
 // PutBucketTaggingResponse is the response type for the
 // PutBucketTagging API operation.
 type PutBucketTaggingResponse struct {
-	*PutBucketTaggingOutput
+	*types.PutBucketTaggingOutput
 
 	response *aws.Response
 }

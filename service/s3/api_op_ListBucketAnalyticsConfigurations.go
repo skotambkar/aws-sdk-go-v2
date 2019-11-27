@@ -6,126 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
-	"github.com/aws/aws-sdk-go-v2/internal/awsutil"
-	"github.com/aws/aws-sdk-go-v2/private/protocol"
+	"github.com/aws/aws-sdk-go-v2/service/s3/types"
 )
-
-type ListBucketAnalyticsConfigurationsInput struct {
-	_ struct{} `type:"structure"`
-
-	// The name of the bucket from which analytics configurations are retrieved.
-	//
-	// Bucket is a required field
-	Bucket *string `location:"uri" locationName:"Bucket" type:"string" required:"true"`
-
-	// The ContinuationToken that represents a placeholder from where this request
-	// should begin.
-	ContinuationToken *string `location:"querystring" locationName:"continuation-token" type:"string"`
-}
-
-// String returns the string representation
-func (s ListBucketAnalyticsConfigurationsInput) String() string {
-	return awsutil.Prettify(s)
-}
-
-// Validate inspects the fields of the type to determine if they are valid.
-func (s *ListBucketAnalyticsConfigurationsInput) Validate() error {
-	invalidParams := aws.ErrInvalidParams{Context: "ListBucketAnalyticsConfigurationsInput"}
-
-	if s.Bucket == nil {
-		invalidParams.Add(aws.NewErrParamRequired("Bucket"))
-	}
-
-	if invalidParams.Len() > 0 {
-		return invalidParams
-	}
-	return nil
-}
-
-func (s *ListBucketAnalyticsConfigurationsInput) getBucket() (v string) {
-	if s.Bucket == nil {
-		return v
-	}
-	return *s.Bucket
-}
-
-// MarshalFields encodes the AWS API shape using the passed in protocol encoder.
-func (s ListBucketAnalyticsConfigurationsInput) MarshalFields(e protocol.FieldEncoder) error {
-
-	if s.Bucket != nil {
-		v := *s.Bucket
-
-		metadata := protocol.Metadata{}
-		e.SetValue(protocol.PathTarget, "Bucket", protocol.StringValue(v), metadata)
-	}
-	if s.ContinuationToken != nil {
-		v := *s.ContinuationToken
-
-		metadata := protocol.Metadata{}
-		e.SetValue(protocol.QueryTarget, "continuation-token", protocol.StringValue(v), metadata)
-	}
-	return nil
-}
-
-type ListBucketAnalyticsConfigurationsOutput struct {
-	_ struct{} `type:"structure"`
-
-	// The list of analytics configurations for a bucket.
-	AnalyticsConfigurationList []AnalyticsConfiguration `locationName:"AnalyticsConfiguration" type:"list" flattened:"true"`
-
-	// The ContinuationToken that represents where this request began.
-	ContinuationToken *string `type:"string"`
-
-	// Indicates whether the returned list of analytics configurations is complete.
-	// A value of true indicates that the list is not complete and the NextContinuationToken
-	// will be provided for a subsequent request.
-	IsTruncated *bool `type:"boolean"`
-
-	// NextContinuationToken is sent when isTruncated is true, which indicates that
-	// there are more analytics configurations to list. The next request must include
-	// this NextContinuationToken. The token is obfuscated and is not a usable value.
-	NextContinuationToken *string `type:"string"`
-}
-
-// String returns the string representation
-func (s ListBucketAnalyticsConfigurationsOutput) String() string {
-	return awsutil.Prettify(s)
-}
-
-// MarshalFields encodes the AWS API shape using the passed in protocol encoder.
-func (s ListBucketAnalyticsConfigurationsOutput) MarshalFields(e protocol.FieldEncoder) error {
-	if s.AnalyticsConfigurationList != nil {
-		v := s.AnalyticsConfigurationList
-
-		metadata := protocol.Metadata{Flatten: true}
-		ls0 := e.List(protocol.BodyTarget, "AnalyticsConfiguration", metadata)
-		ls0.Start()
-		for _, v1 := range v {
-			ls0.ListAddFields(v1)
-		}
-		ls0.End()
-
-	}
-	if s.ContinuationToken != nil {
-		v := *s.ContinuationToken
-
-		metadata := protocol.Metadata{}
-		e.SetValue(protocol.BodyTarget, "ContinuationToken", protocol.StringValue(v), metadata)
-	}
-	if s.IsTruncated != nil {
-		v := *s.IsTruncated
-
-		metadata := protocol.Metadata{}
-		e.SetValue(protocol.BodyTarget, "IsTruncated", protocol.BoolValue(v), metadata)
-	}
-	if s.NextContinuationToken != nil {
-		v := *s.NextContinuationToken
-
-		metadata := protocol.Metadata{}
-		e.SetValue(protocol.BodyTarget, "NextContinuationToken", protocol.StringValue(v), metadata)
-	}
-	return nil
-}
 
 const opListBucketAnalyticsConfigurations = "ListBucketAnalyticsConfigurations"
 
@@ -142,7 +24,7 @@ const opListBucketAnalyticsConfigurations = "ListBucketAnalyticsConfigurations"
 //    }
 //
 // Please also see https://docs.aws.amazon.com/goto/WebAPI/s3-2006-03-01/ListBucketAnalyticsConfigurations
-func (c *Client) ListBucketAnalyticsConfigurationsRequest(input *ListBucketAnalyticsConfigurationsInput) ListBucketAnalyticsConfigurationsRequest {
+func (c *Client) ListBucketAnalyticsConfigurationsRequest(input *types.ListBucketAnalyticsConfigurationsInput) ListBucketAnalyticsConfigurationsRequest {
 	op := &aws.Operation{
 		Name:       opListBucketAnalyticsConfigurations,
 		HTTPMethod: "GET",
@@ -150,10 +32,10 @@ func (c *Client) ListBucketAnalyticsConfigurationsRequest(input *ListBucketAnaly
 	}
 
 	if input == nil {
-		input = &ListBucketAnalyticsConfigurationsInput{}
+		input = &types.ListBucketAnalyticsConfigurationsInput{}
 	}
 
-	req := c.newRequest(op, input, &ListBucketAnalyticsConfigurationsOutput{})
+	req := c.newRequest(op, input, &types.ListBucketAnalyticsConfigurationsOutput{})
 	return ListBucketAnalyticsConfigurationsRequest{Request: req, Input: input, Copy: c.ListBucketAnalyticsConfigurationsRequest}
 }
 
@@ -161,8 +43,8 @@ func (c *Client) ListBucketAnalyticsConfigurationsRequest(input *ListBucketAnaly
 // ListBucketAnalyticsConfigurations API operation.
 type ListBucketAnalyticsConfigurationsRequest struct {
 	*aws.Request
-	Input *ListBucketAnalyticsConfigurationsInput
-	Copy  func(*ListBucketAnalyticsConfigurationsInput) ListBucketAnalyticsConfigurationsRequest
+	Input *types.ListBucketAnalyticsConfigurationsInput
+	Copy  func(*types.ListBucketAnalyticsConfigurationsInput) ListBucketAnalyticsConfigurationsRequest
 }
 
 // Send marshals and sends the ListBucketAnalyticsConfigurations API request.
@@ -174,7 +56,7 @@ func (r ListBucketAnalyticsConfigurationsRequest) Send(ctx context.Context) (*Li
 	}
 
 	resp := &ListBucketAnalyticsConfigurationsResponse{
-		ListBucketAnalyticsConfigurationsOutput: r.Request.Data.(*ListBucketAnalyticsConfigurationsOutput),
+		ListBucketAnalyticsConfigurationsOutput: r.Request.Data.(*types.ListBucketAnalyticsConfigurationsOutput),
 		response:                                &aws.Response{Request: r.Request},
 	}
 
@@ -184,7 +66,7 @@ func (r ListBucketAnalyticsConfigurationsRequest) Send(ctx context.Context) (*Li
 // ListBucketAnalyticsConfigurationsResponse is the response type for the
 // ListBucketAnalyticsConfigurations API operation.
 type ListBucketAnalyticsConfigurationsResponse struct {
-	*ListBucketAnalyticsConfigurationsOutput
+	*types.ListBucketAnalyticsConfigurationsOutput
 
 	response *aws.Response
 }

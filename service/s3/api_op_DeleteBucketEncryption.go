@@ -6,72 +6,10 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
-	"github.com/aws/aws-sdk-go-v2/internal/awsutil"
 	"github.com/aws/aws-sdk-go-v2/private/protocol"
 	"github.com/aws/aws-sdk-go-v2/private/protocol/restxml"
+	"github.com/aws/aws-sdk-go-v2/service/s3/types"
 )
-
-type DeleteBucketEncryptionInput struct {
-	_ struct{} `type:"structure"`
-
-	// The name of the bucket containing the server-side encryption configuration
-	// to delete.
-	//
-	// Bucket is a required field
-	Bucket *string `location:"uri" locationName:"Bucket" type:"string" required:"true"`
-}
-
-// String returns the string representation
-func (s DeleteBucketEncryptionInput) String() string {
-	return awsutil.Prettify(s)
-}
-
-// Validate inspects the fields of the type to determine if they are valid.
-func (s *DeleteBucketEncryptionInput) Validate() error {
-	invalidParams := aws.ErrInvalidParams{Context: "DeleteBucketEncryptionInput"}
-
-	if s.Bucket == nil {
-		invalidParams.Add(aws.NewErrParamRequired("Bucket"))
-	}
-
-	if invalidParams.Len() > 0 {
-		return invalidParams
-	}
-	return nil
-}
-
-func (s *DeleteBucketEncryptionInput) getBucket() (v string) {
-	if s.Bucket == nil {
-		return v
-	}
-	return *s.Bucket
-}
-
-// MarshalFields encodes the AWS API shape using the passed in protocol encoder.
-func (s DeleteBucketEncryptionInput) MarshalFields(e protocol.FieldEncoder) error {
-
-	if s.Bucket != nil {
-		v := *s.Bucket
-
-		metadata := protocol.Metadata{}
-		e.SetValue(protocol.PathTarget, "Bucket", protocol.StringValue(v), metadata)
-	}
-	return nil
-}
-
-type DeleteBucketEncryptionOutput struct {
-	_ struct{} `type:"structure"`
-}
-
-// String returns the string representation
-func (s DeleteBucketEncryptionOutput) String() string {
-	return awsutil.Prettify(s)
-}
-
-// MarshalFields encodes the AWS API shape using the passed in protocol encoder.
-func (s DeleteBucketEncryptionOutput) MarshalFields(e protocol.FieldEncoder) error {
-	return nil
-}
 
 const opDeleteBucketEncryption = "DeleteBucketEncryption"
 
@@ -88,7 +26,7 @@ const opDeleteBucketEncryption = "DeleteBucketEncryption"
 //    }
 //
 // Please also see https://docs.aws.amazon.com/goto/WebAPI/s3-2006-03-01/DeleteBucketEncryption
-func (c *Client) DeleteBucketEncryptionRequest(input *DeleteBucketEncryptionInput) DeleteBucketEncryptionRequest {
+func (c *Client) DeleteBucketEncryptionRequest(input *types.DeleteBucketEncryptionInput) DeleteBucketEncryptionRequest {
 	op := &aws.Operation{
 		Name:       opDeleteBucketEncryption,
 		HTTPMethod: "DELETE",
@@ -96,10 +34,10 @@ func (c *Client) DeleteBucketEncryptionRequest(input *DeleteBucketEncryptionInpu
 	}
 
 	if input == nil {
-		input = &DeleteBucketEncryptionInput{}
+		input = &types.DeleteBucketEncryptionInput{}
 	}
 
-	req := c.newRequest(op, input, &DeleteBucketEncryptionOutput{})
+	req := c.newRequest(op, input, &types.DeleteBucketEncryptionOutput{})
 	req.Handlers.Unmarshal.Remove(restxml.UnmarshalHandler)
 	req.Handlers.Unmarshal.PushBackNamed(protocol.UnmarshalDiscardBodyHandler)
 	return DeleteBucketEncryptionRequest{Request: req, Input: input, Copy: c.DeleteBucketEncryptionRequest}
@@ -109,8 +47,8 @@ func (c *Client) DeleteBucketEncryptionRequest(input *DeleteBucketEncryptionInpu
 // DeleteBucketEncryption API operation.
 type DeleteBucketEncryptionRequest struct {
 	*aws.Request
-	Input *DeleteBucketEncryptionInput
-	Copy  func(*DeleteBucketEncryptionInput) DeleteBucketEncryptionRequest
+	Input *types.DeleteBucketEncryptionInput
+	Copy  func(*types.DeleteBucketEncryptionInput) DeleteBucketEncryptionRequest
 }
 
 // Send marshals and sends the DeleteBucketEncryption API request.
@@ -122,7 +60,7 @@ func (r DeleteBucketEncryptionRequest) Send(ctx context.Context) (*DeleteBucketE
 	}
 
 	resp := &DeleteBucketEncryptionResponse{
-		DeleteBucketEncryptionOutput: r.Request.Data.(*DeleteBucketEncryptionOutput),
+		DeleteBucketEncryptionOutput: r.Request.Data.(*types.DeleteBucketEncryptionOutput),
 		response:                     &aws.Response{Request: r.Request},
 	}
 
@@ -132,7 +70,7 @@ func (r DeleteBucketEncryptionRequest) Send(ctx context.Context) (*DeleteBucketE
 // DeleteBucketEncryptionResponse is the response type for the
 // DeleteBucketEncryption API operation.
 type DeleteBucketEncryptionResponse struct {
-	*DeleteBucketEncryptionOutput
+	*types.DeleteBucketEncryptionOutput
 
 	response *aws.Response
 }

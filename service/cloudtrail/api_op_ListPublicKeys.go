@@ -4,52 +4,10 @@ package cloudtrail
 
 import (
 	"context"
-	"time"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
-	"github.com/aws/aws-sdk-go-v2/internal/awsutil"
+	"github.com/aws/aws-sdk-go-v2/service/cloudtrail/types"
 )
-
-// Requests the public keys for a specified time range.
-type ListPublicKeysInput struct {
-	_ struct{} `type:"structure"`
-
-	// Optionally specifies, in UTC, the end of the time range to look up public
-	// keys for CloudTrail digest files. If not specified, the current time is used.
-	EndTime *time.Time `type:"timestamp"`
-
-	// Reserved for future use.
-	NextToken *string `type:"string"`
-
-	// Optionally specifies, in UTC, the start of the time range to look up public
-	// keys for CloudTrail digest files. If not specified, the current time is used,
-	// and the current public key is returned.
-	StartTime *time.Time `type:"timestamp"`
-}
-
-// String returns the string representation
-func (s ListPublicKeysInput) String() string {
-	return awsutil.Prettify(s)
-}
-
-// Returns the objects or data listed below if successful. Otherwise, returns
-// an error.
-type ListPublicKeysOutput struct {
-	_ struct{} `type:"structure"`
-
-	// Reserved for future use.
-	NextToken *string `type:"string"`
-
-	// Contains an array of PublicKey objects.
-	//
-	// The returned public keys may have validity time ranges that overlap.
-	PublicKeyList []PublicKey `type:"list"`
-}
-
-// String returns the string representation
-func (s ListPublicKeysOutput) String() string {
-	return awsutil.Prettify(s)
-}
 
 const opListPublicKeys = "ListPublicKeys"
 
@@ -73,7 +31,7 @@ const opListPublicKeys = "ListPublicKeys"
 //    }
 //
 // Please also see https://docs.aws.amazon.com/goto/WebAPI/cloudtrail-2013-11-01/ListPublicKeys
-func (c *Client) ListPublicKeysRequest(input *ListPublicKeysInput) ListPublicKeysRequest {
+func (c *Client) ListPublicKeysRequest(input *types.ListPublicKeysInput) ListPublicKeysRequest {
 	op := &aws.Operation{
 		Name:       opListPublicKeys,
 		HTTPMethod: "POST",
@@ -81,10 +39,10 @@ func (c *Client) ListPublicKeysRequest(input *ListPublicKeysInput) ListPublicKey
 	}
 
 	if input == nil {
-		input = &ListPublicKeysInput{}
+		input = &types.ListPublicKeysInput{}
 	}
 
-	req := c.newRequest(op, input, &ListPublicKeysOutput{})
+	req := c.newRequest(op, input, &types.ListPublicKeysOutput{})
 	return ListPublicKeysRequest{Request: req, Input: input, Copy: c.ListPublicKeysRequest}
 }
 
@@ -92,8 +50,8 @@ func (c *Client) ListPublicKeysRequest(input *ListPublicKeysInput) ListPublicKey
 // ListPublicKeys API operation.
 type ListPublicKeysRequest struct {
 	*aws.Request
-	Input *ListPublicKeysInput
-	Copy  func(*ListPublicKeysInput) ListPublicKeysRequest
+	Input *types.ListPublicKeysInput
+	Copy  func(*types.ListPublicKeysInput) ListPublicKeysRequest
 }
 
 // Send marshals and sends the ListPublicKeys API request.
@@ -105,7 +63,7 @@ func (r ListPublicKeysRequest) Send(ctx context.Context) (*ListPublicKeysRespons
 	}
 
 	resp := &ListPublicKeysResponse{
-		ListPublicKeysOutput: r.Request.Data.(*ListPublicKeysOutput),
+		ListPublicKeysOutput: r.Request.Data.(*types.ListPublicKeysOutput),
 		response:             &aws.Response{Request: r.Request},
 	}
 
@@ -115,7 +73,7 @@ func (r ListPublicKeysRequest) Send(ctx context.Context) (*ListPublicKeysRespons
 // ListPublicKeysResponse is the response type for the
 // ListPublicKeys API operation.
 type ListPublicKeysResponse struct {
-	*ListPublicKeysOutput
+	*types.ListPublicKeysOutput
 
 	response *aws.Response
 }

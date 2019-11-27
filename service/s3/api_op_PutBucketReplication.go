@@ -6,99 +6,10 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
-	"github.com/aws/aws-sdk-go-v2/internal/awsutil"
 	"github.com/aws/aws-sdk-go-v2/private/protocol"
 	"github.com/aws/aws-sdk-go-v2/private/protocol/restxml"
+	"github.com/aws/aws-sdk-go-v2/service/s3/types"
 )
-
-type PutBucketReplicationInput struct {
-	_ struct{} `type:"structure" payload:"ReplicationConfiguration"`
-
-	// Bucket is a required field
-	Bucket *string `location:"uri" locationName:"Bucket" type:"string" required:"true"`
-
-	// A container for replication rules. You can add up to 1,000 rules. The maximum
-	// size of a replication configuration is 2 MB.
-	//
-	// ReplicationConfiguration is a required field
-	ReplicationConfiguration *ReplicationConfiguration `locationName:"ReplicationConfiguration" type:"structure" required:"true" xmlURI:"http://s3.amazonaws.com/doc/2006-03-01/"`
-
-	// A token that allows Amazon S3 object lock to be enabled for an existing bucket.
-	Token *string `location:"header" locationName:"x-amz-bucket-object-lock-token" type:"string"`
-}
-
-// String returns the string representation
-func (s PutBucketReplicationInput) String() string {
-	return awsutil.Prettify(s)
-}
-
-// Validate inspects the fields of the type to determine if they are valid.
-func (s *PutBucketReplicationInput) Validate() error {
-	invalidParams := aws.ErrInvalidParams{Context: "PutBucketReplicationInput"}
-
-	if s.Bucket == nil {
-		invalidParams.Add(aws.NewErrParamRequired("Bucket"))
-	}
-
-	if s.ReplicationConfiguration == nil {
-		invalidParams.Add(aws.NewErrParamRequired("ReplicationConfiguration"))
-	}
-	if s.ReplicationConfiguration != nil {
-		if err := s.ReplicationConfiguration.Validate(); err != nil {
-			invalidParams.AddNested("ReplicationConfiguration", err.(aws.ErrInvalidParams))
-		}
-	}
-
-	if invalidParams.Len() > 0 {
-		return invalidParams
-	}
-	return nil
-}
-
-func (s *PutBucketReplicationInput) getBucket() (v string) {
-	if s.Bucket == nil {
-		return v
-	}
-	return *s.Bucket
-}
-
-// MarshalFields encodes the AWS API shape using the passed in protocol encoder.
-func (s PutBucketReplicationInput) MarshalFields(e protocol.FieldEncoder) error {
-
-	if s.Token != nil {
-		v := *s.Token
-
-		metadata := protocol.Metadata{}
-		e.SetValue(protocol.HeaderTarget, "x-amz-bucket-object-lock-token", protocol.StringValue(v), metadata)
-	}
-	if s.Bucket != nil {
-		v := *s.Bucket
-
-		metadata := protocol.Metadata{}
-		e.SetValue(protocol.PathTarget, "Bucket", protocol.StringValue(v), metadata)
-	}
-	if s.ReplicationConfiguration != nil {
-		v := s.ReplicationConfiguration
-
-		metadata := protocol.Metadata{XMLNamespaceURI: "http://s3.amazonaws.com/doc/2006-03-01/"}
-		e.SetFields(protocol.PayloadTarget, "ReplicationConfiguration", v, metadata)
-	}
-	return nil
-}
-
-type PutBucketReplicationOutput struct {
-	_ struct{} `type:"structure"`
-}
-
-// String returns the string representation
-func (s PutBucketReplicationOutput) String() string {
-	return awsutil.Prettify(s)
-}
-
-// MarshalFields encodes the AWS API shape using the passed in protocol encoder.
-func (s PutBucketReplicationOutput) MarshalFields(e protocol.FieldEncoder) error {
-	return nil
-}
 
 const opPutBucketReplication = "PutBucketReplication"
 
@@ -117,7 +28,7 @@ const opPutBucketReplication = "PutBucketReplication"
 //    }
 //
 // Please also see https://docs.aws.amazon.com/goto/WebAPI/s3-2006-03-01/PutBucketReplication
-func (c *Client) PutBucketReplicationRequest(input *PutBucketReplicationInput) PutBucketReplicationRequest {
+func (c *Client) PutBucketReplicationRequest(input *types.PutBucketReplicationInput) PutBucketReplicationRequest {
 	op := &aws.Operation{
 		Name:       opPutBucketReplication,
 		HTTPMethod: "PUT",
@@ -125,10 +36,10 @@ func (c *Client) PutBucketReplicationRequest(input *PutBucketReplicationInput) P
 	}
 
 	if input == nil {
-		input = &PutBucketReplicationInput{}
+		input = &types.PutBucketReplicationInput{}
 	}
 
-	req := c.newRequest(op, input, &PutBucketReplicationOutput{})
+	req := c.newRequest(op, input, &types.PutBucketReplicationOutput{})
 	req.Handlers.Unmarshal.Remove(restxml.UnmarshalHandler)
 	req.Handlers.Unmarshal.PushBackNamed(protocol.UnmarshalDiscardBodyHandler)
 	return PutBucketReplicationRequest{Request: req, Input: input, Copy: c.PutBucketReplicationRequest}
@@ -138,8 +49,8 @@ func (c *Client) PutBucketReplicationRequest(input *PutBucketReplicationInput) P
 // PutBucketReplication API operation.
 type PutBucketReplicationRequest struct {
 	*aws.Request
-	Input *PutBucketReplicationInput
-	Copy  func(*PutBucketReplicationInput) PutBucketReplicationRequest
+	Input *types.PutBucketReplicationInput
+	Copy  func(*types.PutBucketReplicationInput) PutBucketReplicationRequest
 }
 
 // Send marshals and sends the PutBucketReplication API request.
@@ -151,7 +62,7 @@ func (r PutBucketReplicationRequest) Send(ctx context.Context) (*PutBucketReplic
 	}
 
 	resp := &PutBucketReplicationResponse{
-		PutBucketReplicationOutput: r.Request.Data.(*PutBucketReplicationOutput),
+		PutBucketReplicationOutput: r.Request.Data.(*types.PutBucketReplicationOutput),
 		response:                   &aws.Response{Request: r.Request},
 	}
 
@@ -161,7 +72,7 @@ func (r PutBucketReplicationRequest) Send(ctx context.Context) (*PutBucketReplic
 // PutBucketReplicationResponse is the response type for the
 // PutBucketReplication API operation.
 type PutBucketReplicationResponse struct {
-	*PutBucketReplicationOutput
+	*types.PutBucketReplicationOutput
 
 	response *aws.Response
 }

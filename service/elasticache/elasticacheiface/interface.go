@@ -13,6 +13,7 @@ import (
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/elasticache"
+	"github.com/aws/aws-sdk-go-v2/service/elasticache/types"
 )
 
 // ClientAPI provides an interface to enable mocking the
@@ -46,7 +47,7 @@ import (
 //    type mockClientClient struct {
 //        elasticacheiface.ClientPI
 //    }
-//    func (m *mockClientClient) AddTagsToResource(input *elasticache.AddTagsToResourceInput) (*elasticache.AddTagsToResourceOutput, error) {
+//    func (m *mockClientClient) AddTagsToResource(input *types.AddTagsToResourceInput) (*types.AddTagsToResourceOutput, error) {
 //        // mock response/functionality
 //    }
 //
@@ -64,105 +65,105 @@ import (
 // and waiters. Its suggested to use the pattern above for testing, or using
 // tooling to generate mocks to satisfy the interfaces.
 type ClientAPI interface {
-	AddTagsToResourceRequest(*elasticache.AddTagsToResourceInput) elasticache.AddTagsToResourceRequest
+	AddTagsToResourceRequest(*types.AddTagsToResourceInput) elasticache.AddTagsToResourceRequest
 
-	AuthorizeCacheSecurityGroupIngressRequest(*elasticache.AuthorizeCacheSecurityGroupIngressInput) elasticache.AuthorizeCacheSecurityGroupIngressRequest
+	AuthorizeCacheSecurityGroupIngressRequest(*types.AuthorizeCacheSecurityGroupIngressInput) elasticache.AuthorizeCacheSecurityGroupIngressRequest
 
-	BatchApplyUpdateActionRequest(*elasticache.BatchApplyUpdateActionInput) elasticache.BatchApplyUpdateActionRequest
+	BatchApplyUpdateActionRequest(*types.BatchApplyUpdateActionInput) elasticache.BatchApplyUpdateActionRequest
 
-	BatchStopUpdateActionRequest(*elasticache.BatchStopUpdateActionInput) elasticache.BatchStopUpdateActionRequest
+	BatchStopUpdateActionRequest(*types.BatchStopUpdateActionInput) elasticache.BatchStopUpdateActionRequest
 
-	CopySnapshotRequest(*elasticache.CopySnapshotInput) elasticache.CopySnapshotRequest
+	CopySnapshotRequest(*types.CopySnapshotInput) elasticache.CopySnapshotRequest
 
-	CreateCacheClusterRequest(*elasticache.CreateCacheClusterInput) elasticache.CreateCacheClusterRequest
+	CreateCacheClusterRequest(*types.CreateCacheClusterInput) elasticache.CreateCacheClusterRequest
 
-	CreateCacheParameterGroupRequest(*elasticache.CreateCacheParameterGroupInput) elasticache.CreateCacheParameterGroupRequest
+	CreateCacheParameterGroupRequest(*types.CreateCacheParameterGroupInput) elasticache.CreateCacheParameterGroupRequest
 
-	CreateCacheSecurityGroupRequest(*elasticache.CreateCacheSecurityGroupInput) elasticache.CreateCacheSecurityGroupRequest
+	CreateCacheSecurityGroupRequest(*types.CreateCacheSecurityGroupInput) elasticache.CreateCacheSecurityGroupRequest
 
-	CreateCacheSubnetGroupRequest(*elasticache.CreateCacheSubnetGroupInput) elasticache.CreateCacheSubnetGroupRequest
+	CreateCacheSubnetGroupRequest(*types.CreateCacheSubnetGroupInput) elasticache.CreateCacheSubnetGroupRequest
 
-	CreateReplicationGroupRequest(*elasticache.CreateReplicationGroupInput) elasticache.CreateReplicationGroupRequest
+	CreateReplicationGroupRequest(*types.CreateReplicationGroupInput) elasticache.CreateReplicationGroupRequest
 
-	CreateSnapshotRequest(*elasticache.CreateSnapshotInput) elasticache.CreateSnapshotRequest
+	CreateSnapshotRequest(*types.CreateSnapshotInput) elasticache.CreateSnapshotRequest
 
-	DecreaseReplicaCountRequest(*elasticache.DecreaseReplicaCountInput) elasticache.DecreaseReplicaCountRequest
+	DecreaseReplicaCountRequest(*types.DecreaseReplicaCountInput) elasticache.DecreaseReplicaCountRequest
 
-	DeleteCacheClusterRequest(*elasticache.DeleteCacheClusterInput) elasticache.DeleteCacheClusterRequest
+	DeleteCacheClusterRequest(*types.DeleteCacheClusterInput) elasticache.DeleteCacheClusterRequest
 
-	DeleteCacheParameterGroupRequest(*elasticache.DeleteCacheParameterGroupInput) elasticache.DeleteCacheParameterGroupRequest
+	DeleteCacheParameterGroupRequest(*types.DeleteCacheParameterGroupInput) elasticache.DeleteCacheParameterGroupRequest
 
-	DeleteCacheSecurityGroupRequest(*elasticache.DeleteCacheSecurityGroupInput) elasticache.DeleteCacheSecurityGroupRequest
+	DeleteCacheSecurityGroupRequest(*types.DeleteCacheSecurityGroupInput) elasticache.DeleteCacheSecurityGroupRequest
 
-	DeleteCacheSubnetGroupRequest(*elasticache.DeleteCacheSubnetGroupInput) elasticache.DeleteCacheSubnetGroupRequest
+	DeleteCacheSubnetGroupRequest(*types.DeleteCacheSubnetGroupInput) elasticache.DeleteCacheSubnetGroupRequest
 
-	DeleteReplicationGroupRequest(*elasticache.DeleteReplicationGroupInput) elasticache.DeleteReplicationGroupRequest
+	DeleteReplicationGroupRequest(*types.DeleteReplicationGroupInput) elasticache.DeleteReplicationGroupRequest
 
-	DeleteSnapshotRequest(*elasticache.DeleteSnapshotInput) elasticache.DeleteSnapshotRequest
+	DeleteSnapshotRequest(*types.DeleteSnapshotInput) elasticache.DeleteSnapshotRequest
 
-	DescribeCacheClustersRequest(*elasticache.DescribeCacheClustersInput) elasticache.DescribeCacheClustersRequest
+	DescribeCacheClustersRequest(*types.DescribeCacheClustersInput) elasticache.DescribeCacheClustersRequest
 
-	DescribeCacheEngineVersionsRequest(*elasticache.DescribeCacheEngineVersionsInput) elasticache.DescribeCacheEngineVersionsRequest
+	DescribeCacheEngineVersionsRequest(*types.DescribeCacheEngineVersionsInput) elasticache.DescribeCacheEngineVersionsRequest
 
-	DescribeCacheParameterGroupsRequest(*elasticache.DescribeCacheParameterGroupsInput) elasticache.DescribeCacheParameterGroupsRequest
+	DescribeCacheParameterGroupsRequest(*types.DescribeCacheParameterGroupsInput) elasticache.DescribeCacheParameterGroupsRequest
 
-	DescribeCacheParametersRequest(*elasticache.DescribeCacheParametersInput) elasticache.DescribeCacheParametersRequest
+	DescribeCacheParametersRequest(*types.DescribeCacheParametersInput) elasticache.DescribeCacheParametersRequest
 
-	DescribeCacheSecurityGroupsRequest(*elasticache.DescribeCacheSecurityGroupsInput) elasticache.DescribeCacheSecurityGroupsRequest
+	DescribeCacheSecurityGroupsRequest(*types.DescribeCacheSecurityGroupsInput) elasticache.DescribeCacheSecurityGroupsRequest
 
-	DescribeCacheSubnetGroupsRequest(*elasticache.DescribeCacheSubnetGroupsInput) elasticache.DescribeCacheSubnetGroupsRequest
+	DescribeCacheSubnetGroupsRequest(*types.DescribeCacheSubnetGroupsInput) elasticache.DescribeCacheSubnetGroupsRequest
 
-	DescribeEngineDefaultParametersRequest(*elasticache.DescribeEngineDefaultParametersInput) elasticache.DescribeEngineDefaultParametersRequest
+	DescribeEngineDefaultParametersRequest(*types.DescribeEngineDefaultParametersInput) elasticache.DescribeEngineDefaultParametersRequest
 
-	DescribeEventsRequest(*elasticache.DescribeEventsInput) elasticache.DescribeEventsRequest
+	DescribeEventsRequest(*types.DescribeEventsInput) elasticache.DescribeEventsRequest
 
-	DescribeReplicationGroupsRequest(*elasticache.DescribeReplicationGroupsInput) elasticache.DescribeReplicationGroupsRequest
+	DescribeReplicationGroupsRequest(*types.DescribeReplicationGroupsInput) elasticache.DescribeReplicationGroupsRequest
 
-	DescribeReservedCacheNodesRequest(*elasticache.DescribeReservedCacheNodesInput) elasticache.DescribeReservedCacheNodesRequest
+	DescribeReservedCacheNodesRequest(*types.DescribeReservedCacheNodesInput) elasticache.DescribeReservedCacheNodesRequest
 
-	DescribeReservedCacheNodesOfferingsRequest(*elasticache.DescribeReservedCacheNodesOfferingsInput) elasticache.DescribeReservedCacheNodesOfferingsRequest
+	DescribeReservedCacheNodesOfferingsRequest(*types.DescribeReservedCacheNodesOfferingsInput) elasticache.DescribeReservedCacheNodesOfferingsRequest
 
-	DescribeServiceUpdatesRequest(*elasticache.DescribeServiceUpdatesInput) elasticache.DescribeServiceUpdatesRequest
+	DescribeServiceUpdatesRequest(*types.DescribeServiceUpdatesInput) elasticache.DescribeServiceUpdatesRequest
 
-	DescribeSnapshotsRequest(*elasticache.DescribeSnapshotsInput) elasticache.DescribeSnapshotsRequest
+	DescribeSnapshotsRequest(*types.DescribeSnapshotsInput) elasticache.DescribeSnapshotsRequest
 
-	DescribeUpdateActionsRequest(*elasticache.DescribeUpdateActionsInput) elasticache.DescribeUpdateActionsRequest
+	DescribeUpdateActionsRequest(*types.DescribeUpdateActionsInput) elasticache.DescribeUpdateActionsRequest
 
-	IncreaseReplicaCountRequest(*elasticache.IncreaseReplicaCountInput) elasticache.IncreaseReplicaCountRequest
+	IncreaseReplicaCountRequest(*types.IncreaseReplicaCountInput) elasticache.IncreaseReplicaCountRequest
 
-	ListAllowedNodeTypeModificationsRequest(*elasticache.ListAllowedNodeTypeModificationsInput) elasticache.ListAllowedNodeTypeModificationsRequest
+	ListAllowedNodeTypeModificationsRequest(*types.ListAllowedNodeTypeModificationsInput) elasticache.ListAllowedNodeTypeModificationsRequest
 
-	ListTagsForResourceRequest(*elasticache.ListTagsForResourceInput) elasticache.ListTagsForResourceRequest
+	ListTagsForResourceRequest(*types.ListTagsForResourceInput) elasticache.ListTagsForResourceRequest
 
-	ModifyCacheClusterRequest(*elasticache.ModifyCacheClusterInput) elasticache.ModifyCacheClusterRequest
+	ModifyCacheClusterRequest(*types.ModifyCacheClusterInput) elasticache.ModifyCacheClusterRequest
 
-	ModifyCacheParameterGroupRequest(*elasticache.ModifyCacheParameterGroupInput) elasticache.ModifyCacheParameterGroupRequest
+	ModifyCacheParameterGroupRequest(*types.ModifyCacheParameterGroupInput) elasticache.ModifyCacheParameterGroupRequest
 
-	ModifyCacheSubnetGroupRequest(*elasticache.ModifyCacheSubnetGroupInput) elasticache.ModifyCacheSubnetGroupRequest
+	ModifyCacheSubnetGroupRequest(*types.ModifyCacheSubnetGroupInput) elasticache.ModifyCacheSubnetGroupRequest
 
-	ModifyReplicationGroupRequest(*elasticache.ModifyReplicationGroupInput) elasticache.ModifyReplicationGroupRequest
+	ModifyReplicationGroupRequest(*types.ModifyReplicationGroupInput) elasticache.ModifyReplicationGroupRequest
 
-	ModifyReplicationGroupShardConfigurationRequest(*elasticache.ModifyReplicationGroupShardConfigurationInput) elasticache.ModifyReplicationGroupShardConfigurationRequest
+	ModifyReplicationGroupShardConfigurationRequest(*types.ModifyReplicationGroupShardConfigurationInput) elasticache.ModifyReplicationGroupShardConfigurationRequest
 
-	PurchaseReservedCacheNodesOfferingRequest(*elasticache.PurchaseReservedCacheNodesOfferingInput) elasticache.PurchaseReservedCacheNodesOfferingRequest
+	PurchaseReservedCacheNodesOfferingRequest(*types.PurchaseReservedCacheNodesOfferingInput) elasticache.PurchaseReservedCacheNodesOfferingRequest
 
-	RebootCacheClusterRequest(*elasticache.RebootCacheClusterInput) elasticache.RebootCacheClusterRequest
+	RebootCacheClusterRequest(*types.RebootCacheClusterInput) elasticache.RebootCacheClusterRequest
 
-	RemoveTagsFromResourceRequest(*elasticache.RemoveTagsFromResourceInput) elasticache.RemoveTagsFromResourceRequest
+	RemoveTagsFromResourceRequest(*types.RemoveTagsFromResourceInput) elasticache.RemoveTagsFromResourceRequest
 
-	ResetCacheParameterGroupRequest(*elasticache.ResetCacheParameterGroupInput) elasticache.ResetCacheParameterGroupRequest
+	ResetCacheParameterGroupRequest(*types.ResetCacheParameterGroupInput) elasticache.ResetCacheParameterGroupRequest
 
-	RevokeCacheSecurityGroupIngressRequest(*elasticache.RevokeCacheSecurityGroupIngressInput) elasticache.RevokeCacheSecurityGroupIngressRequest
+	RevokeCacheSecurityGroupIngressRequest(*types.RevokeCacheSecurityGroupIngressInput) elasticache.RevokeCacheSecurityGroupIngressRequest
 
-	TestFailoverRequest(*elasticache.TestFailoverInput) elasticache.TestFailoverRequest
+	TestFailoverRequest(*types.TestFailoverInput) elasticache.TestFailoverRequest
 
-	WaitUntilCacheClusterAvailable(context.Context, *elasticache.DescribeCacheClustersInput, ...aws.WaiterOption) error
+	WaitUntilCacheClusterAvailable(context.Context, *types.DescribeCacheClustersInput, ...aws.WaiterOption) error
 
-	WaitUntilCacheClusterDeleted(context.Context, *elasticache.DescribeCacheClustersInput, ...aws.WaiterOption) error
+	WaitUntilCacheClusterDeleted(context.Context, *types.DescribeCacheClustersInput, ...aws.WaiterOption) error
 
-	WaitUntilReplicationGroupAvailable(context.Context, *elasticache.DescribeReplicationGroupsInput, ...aws.WaiterOption) error
+	WaitUntilReplicationGroupAvailable(context.Context, *types.DescribeReplicationGroupsInput, ...aws.WaiterOption) error
 
-	WaitUntilReplicationGroupDeleted(context.Context, *elasticache.DescribeReplicationGroupsInput, ...aws.WaiterOption) error
+	WaitUntilReplicationGroupDeleted(context.Context, *types.DescribeReplicationGroupsInput, ...aws.WaiterOption) error
 }
 
 var _ ClientAPI = (*elasticache.Client)(nil)

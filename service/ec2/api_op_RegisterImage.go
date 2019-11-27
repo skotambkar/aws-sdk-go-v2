@@ -6,114 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
-	"github.com/aws/aws-sdk-go-v2/internal/awsutil"
+	"github.com/aws/aws-sdk-go-v2/service/ec2/types"
 )
-
-// Contains the parameters for RegisterImage.
-type RegisterImageInput struct {
-	_ struct{} `type:"structure"`
-
-	// The architecture of the AMI.
-	//
-	// Default: For Amazon EBS-backed AMIs, i386. For instance store-backed AMIs,
-	// the architecture specified in the manifest file.
-	Architecture ArchitectureValues `locationName:"architecture" type:"string" enum:"true"`
-
-	// The billing product codes. Your account must be authorized to specify billing
-	// product codes. Otherwise, you can use the AWS Marketplace to bill for the
-	// use of an AMI.
-	BillingProducts []string `locationName:"BillingProduct" locationNameList:"item" type:"list"`
-
-	// The block device mapping entries.
-	BlockDeviceMappings []BlockDeviceMapping `locationName:"BlockDeviceMapping" locationNameList:"BlockDeviceMapping" type:"list"`
-
-	// A description for your AMI.
-	Description *string `locationName:"description" type:"string"`
-
-	// Checks whether you have the required permissions for the action, without
-	// actually making the request, and provides an error response. If you have
-	// the required permissions, the error response is DryRunOperation. Otherwise,
-	// it is UnauthorizedOperation.
-	DryRun *bool `locationName:"dryRun" type:"boolean"`
-
-	// Set to true to enable enhanced networking with ENA for the AMI and any instances
-	// that you launch from the AMI.
-	//
-	// This option is supported only for HVM AMIs. Specifying this option with a
-	// PV AMI can make instances launched from the AMI unreachable.
-	EnaSupport *bool `locationName:"enaSupport" type:"boolean"`
-
-	// The full path to your AMI manifest in Amazon S3 storage. The specified bucket
-	// must have the aws-exec-read canned access control list (ACL) to ensure that
-	// it can be accessed by Amazon EC2. For more information, see Canned ACLs (https://docs.aws.amazon.com/AmazonS3/latest/dev/acl-overview.html#canned-acl)
-	// in the Amazon S3 Service Developer Guide.
-	ImageLocation *string `type:"string"`
-
-	// The ID of the kernel.
-	KernelId *string `locationName:"kernelId" type:"string"`
-
-	// A name for your AMI.
-	//
-	// Constraints: 3-128 alphanumeric characters, parentheses (()), square brackets
-	// ([]), spaces ( ), periods (.), slashes (/), dashes (-), single quotes ('),
-	// at-signs (@), or underscores(_)
-	//
-	// Name is a required field
-	Name *string `locationName:"name" type:"string" required:"true"`
-
-	// The ID of the RAM disk.
-	RamdiskId *string `locationName:"ramdiskId" type:"string"`
-
-	// The device name of the root device volume (for example, /dev/sda1).
-	RootDeviceName *string `locationName:"rootDeviceName" type:"string"`
-
-	// Set to simple to enable enhanced networking with the Intel 82599 Virtual
-	// Function interface for the AMI and any instances that you launch from the
-	// AMI.
-	//
-	// There is no way to disable sriovNetSupport at this time.
-	//
-	// This option is supported only for HVM AMIs. Specifying this option with a
-	// PV AMI can make instances launched from the AMI unreachable.
-	SriovNetSupport *string `locationName:"sriovNetSupport" type:"string"`
-
-	// The type of virtualization (hvm | paravirtual).
-	//
-	// Default: paravirtual
-	VirtualizationType *string `locationName:"virtualizationType" type:"string"`
-}
-
-// String returns the string representation
-func (s RegisterImageInput) String() string {
-	return awsutil.Prettify(s)
-}
-
-// Validate inspects the fields of the type to determine if they are valid.
-func (s *RegisterImageInput) Validate() error {
-	invalidParams := aws.ErrInvalidParams{Context: "RegisterImageInput"}
-
-	if s.Name == nil {
-		invalidParams.Add(aws.NewErrParamRequired("Name"))
-	}
-
-	if invalidParams.Len() > 0 {
-		return invalidParams
-	}
-	return nil
-}
-
-// Contains the output of RegisterImage.
-type RegisterImageOutput struct {
-	_ struct{} `type:"structure"`
-
-	// The ID of the newly registered AMI.
-	ImageId *string `locationName:"imageId" type:"string"`
-}
-
-// String returns the string representation
-func (s RegisterImageOutput) String() string {
-	return awsutil.Prettify(s)
-}
 
 const opRegisterImage = "RegisterImage"
 
@@ -161,7 +55,7 @@ const opRegisterImage = "RegisterImage"
 //    }
 //
 // Please also see https://docs.aws.amazon.com/goto/WebAPI/ec2-2016-11-15/RegisterImage
-func (c *Client) RegisterImageRequest(input *RegisterImageInput) RegisterImageRequest {
+func (c *Client) RegisterImageRequest(input *types.RegisterImageInput) RegisterImageRequest {
 	op := &aws.Operation{
 		Name:       opRegisterImage,
 		HTTPMethod: "POST",
@@ -169,10 +63,10 @@ func (c *Client) RegisterImageRequest(input *RegisterImageInput) RegisterImageRe
 	}
 
 	if input == nil {
-		input = &RegisterImageInput{}
+		input = &types.RegisterImageInput{}
 	}
 
-	req := c.newRequest(op, input, &RegisterImageOutput{})
+	req := c.newRequest(op, input, &types.RegisterImageOutput{})
 	return RegisterImageRequest{Request: req, Input: input, Copy: c.RegisterImageRequest}
 }
 
@@ -180,8 +74,8 @@ func (c *Client) RegisterImageRequest(input *RegisterImageInput) RegisterImageRe
 // RegisterImage API operation.
 type RegisterImageRequest struct {
 	*aws.Request
-	Input *RegisterImageInput
-	Copy  func(*RegisterImageInput) RegisterImageRequest
+	Input *types.RegisterImageInput
+	Copy  func(*types.RegisterImageInput) RegisterImageRequest
 }
 
 // Send marshals and sends the RegisterImage API request.
@@ -193,7 +87,7 @@ func (r RegisterImageRequest) Send(ctx context.Context) (*RegisterImageResponse,
 	}
 
 	resp := &RegisterImageResponse{
-		RegisterImageOutput: r.Request.Data.(*RegisterImageOutput),
+		RegisterImageOutput: r.Request.Data.(*types.RegisterImageOutput),
 		response:            &aws.Response{Request: r.Request},
 	}
 
@@ -203,7 +97,7 @@ func (r RegisterImageRequest) Send(ctx context.Context) (*RegisterImageResponse,
 // RegisterImageResponse is the response type for the
 // RegisterImage API operation.
 type RegisterImageResponse struct {
-	*RegisterImageOutput
+	*types.RegisterImageOutput
 
 	response *aws.Response
 }

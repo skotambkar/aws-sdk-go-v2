@@ -6,86 +6,10 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
-	"github.com/aws/aws-sdk-go-v2/internal/awsutil"
 	"github.com/aws/aws-sdk-go-v2/private/protocol"
 	"github.com/aws/aws-sdk-go-v2/private/protocol/restxml"
+	"github.com/aws/aws-sdk-go-v2/service/s3/types"
 )
-
-type PutBucketAccelerateConfigurationInput struct {
-	_ struct{} `type:"structure" payload:"AccelerateConfiguration"`
-
-	// Specifies the Accelerate Configuration you want to set for the bucket.
-	//
-	// AccelerateConfiguration is a required field
-	AccelerateConfiguration *AccelerateConfiguration `locationName:"AccelerateConfiguration" type:"structure" required:"true" xmlURI:"http://s3.amazonaws.com/doc/2006-03-01/"`
-
-	// Name of the bucket for which the accelerate configuration is set.
-	//
-	// Bucket is a required field
-	Bucket *string `location:"uri" locationName:"Bucket" type:"string" required:"true"`
-}
-
-// String returns the string representation
-func (s PutBucketAccelerateConfigurationInput) String() string {
-	return awsutil.Prettify(s)
-}
-
-// Validate inspects the fields of the type to determine if they are valid.
-func (s *PutBucketAccelerateConfigurationInput) Validate() error {
-	invalidParams := aws.ErrInvalidParams{Context: "PutBucketAccelerateConfigurationInput"}
-
-	if s.AccelerateConfiguration == nil {
-		invalidParams.Add(aws.NewErrParamRequired("AccelerateConfiguration"))
-	}
-
-	if s.Bucket == nil {
-		invalidParams.Add(aws.NewErrParamRequired("Bucket"))
-	}
-
-	if invalidParams.Len() > 0 {
-		return invalidParams
-	}
-	return nil
-}
-
-func (s *PutBucketAccelerateConfigurationInput) getBucket() (v string) {
-	if s.Bucket == nil {
-		return v
-	}
-	return *s.Bucket
-}
-
-// MarshalFields encodes the AWS API shape using the passed in protocol encoder.
-func (s PutBucketAccelerateConfigurationInput) MarshalFields(e protocol.FieldEncoder) error {
-
-	if s.Bucket != nil {
-		v := *s.Bucket
-
-		metadata := protocol.Metadata{}
-		e.SetValue(protocol.PathTarget, "Bucket", protocol.StringValue(v), metadata)
-	}
-	if s.AccelerateConfiguration != nil {
-		v := s.AccelerateConfiguration
-
-		metadata := protocol.Metadata{XMLNamespaceURI: "http://s3.amazonaws.com/doc/2006-03-01/"}
-		e.SetFields(protocol.PayloadTarget, "AccelerateConfiguration", v, metadata)
-	}
-	return nil
-}
-
-type PutBucketAccelerateConfigurationOutput struct {
-	_ struct{} `type:"structure"`
-}
-
-// String returns the string representation
-func (s PutBucketAccelerateConfigurationOutput) String() string {
-	return awsutil.Prettify(s)
-}
-
-// MarshalFields encodes the AWS API shape using the passed in protocol encoder.
-func (s PutBucketAccelerateConfigurationOutput) MarshalFields(e protocol.FieldEncoder) error {
-	return nil
-}
 
 const opPutBucketAccelerateConfiguration = "PutBucketAccelerateConfiguration"
 
@@ -102,7 +26,7 @@ const opPutBucketAccelerateConfiguration = "PutBucketAccelerateConfiguration"
 //    }
 //
 // Please also see https://docs.aws.amazon.com/goto/WebAPI/s3-2006-03-01/PutBucketAccelerateConfiguration
-func (c *Client) PutBucketAccelerateConfigurationRequest(input *PutBucketAccelerateConfigurationInput) PutBucketAccelerateConfigurationRequest {
+func (c *Client) PutBucketAccelerateConfigurationRequest(input *types.PutBucketAccelerateConfigurationInput) PutBucketAccelerateConfigurationRequest {
 	op := &aws.Operation{
 		Name:       opPutBucketAccelerateConfiguration,
 		HTTPMethod: "PUT",
@@ -110,10 +34,10 @@ func (c *Client) PutBucketAccelerateConfigurationRequest(input *PutBucketAcceler
 	}
 
 	if input == nil {
-		input = &PutBucketAccelerateConfigurationInput{}
+		input = &types.PutBucketAccelerateConfigurationInput{}
 	}
 
-	req := c.newRequest(op, input, &PutBucketAccelerateConfigurationOutput{})
+	req := c.newRequest(op, input, &types.PutBucketAccelerateConfigurationOutput{})
 	req.Handlers.Unmarshal.Remove(restxml.UnmarshalHandler)
 	req.Handlers.Unmarshal.PushBackNamed(protocol.UnmarshalDiscardBodyHandler)
 	return PutBucketAccelerateConfigurationRequest{Request: req, Input: input, Copy: c.PutBucketAccelerateConfigurationRequest}
@@ -123,8 +47,8 @@ func (c *Client) PutBucketAccelerateConfigurationRequest(input *PutBucketAcceler
 // PutBucketAccelerateConfiguration API operation.
 type PutBucketAccelerateConfigurationRequest struct {
 	*aws.Request
-	Input *PutBucketAccelerateConfigurationInput
-	Copy  func(*PutBucketAccelerateConfigurationInput) PutBucketAccelerateConfigurationRequest
+	Input *types.PutBucketAccelerateConfigurationInput
+	Copy  func(*types.PutBucketAccelerateConfigurationInput) PutBucketAccelerateConfigurationRequest
 }
 
 // Send marshals and sends the PutBucketAccelerateConfiguration API request.
@@ -136,7 +60,7 @@ func (r PutBucketAccelerateConfigurationRequest) Send(ctx context.Context) (*Put
 	}
 
 	resp := &PutBucketAccelerateConfigurationResponse{
-		PutBucketAccelerateConfigurationOutput: r.Request.Data.(*PutBucketAccelerateConfigurationOutput),
+		PutBucketAccelerateConfigurationOutput: r.Request.Data.(*types.PutBucketAccelerateConfigurationOutput),
 		response:                               &aws.Response{Request: r.Request},
 	}
 
@@ -146,7 +70,7 @@ func (r PutBucketAccelerateConfigurationRequest) Send(ctx context.Context) (*Put
 // PutBucketAccelerateConfigurationResponse is the response type for the
 // PutBucketAccelerateConfiguration API operation.
 type PutBucketAccelerateConfigurationResponse struct {
-	*PutBucketAccelerateConfigurationOutput
+	*types.PutBucketAccelerateConfigurationOutput
 
 	response *aws.Response
 }

@@ -6,60 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
-	"github.com/aws/aws-sdk-go-v2/internal/awsutil"
+	"github.com/aws/aws-sdk-go-v2/service/cloudtrail/types"
 )
-
-// Specifies a list of trail tags to return.
-type ListTagsInput struct {
-	_ struct{} `type:"structure"`
-
-	// Reserved for future use.
-	NextToken *string `type:"string"`
-
-	// Specifies a list of trail ARNs whose tags will be listed. The list has a
-	// limit of 20 ARNs. The format of a trail ARN is:
-	//
-	// arn:aws:cloudtrail:us-east-2:123456789012:trail/MyTrail
-	//
-	// ResourceIdList is a required field
-	ResourceIdList []string `type:"list" required:"true"`
-}
-
-// String returns the string representation
-func (s ListTagsInput) String() string {
-	return awsutil.Prettify(s)
-}
-
-// Validate inspects the fields of the type to determine if they are valid.
-func (s *ListTagsInput) Validate() error {
-	invalidParams := aws.ErrInvalidParams{Context: "ListTagsInput"}
-
-	if s.ResourceIdList == nil {
-		invalidParams.Add(aws.NewErrParamRequired("ResourceIdList"))
-	}
-
-	if invalidParams.Len() > 0 {
-		return invalidParams
-	}
-	return nil
-}
-
-// Returns the objects or data listed below if successful. Otherwise, returns
-// an error.
-type ListTagsOutput struct {
-	_ struct{} `type:"structure"`
-
-	// Reserved for future use.
-	NextToken *string `type:"string"`
-
-	// A list of resource tags.
-	ResourceTagList []ResourceTag `type:"list"`
-}
-
-// String returns the string representation
-func (s ListTagsOutput) String() string {
-	return awsutil.Prettify(s)
-}
 
 const opListTags = "ListTags"
 
@@ -76,7 +24,7 @@ const opListTags = "ListTags"
 //    }
 //
 // Please also see https://docs.aws.amazon.com/goto/WebAPI/cloudtrail-2013-11-01/ListTags
-func (c *Client) ListTagsRequest(input *ListTagsInput) ListTagsRequest {
+func (c *Client) ListTagsRequest(input *types.ListTagsInput) ListTagsRequest {
 	op := &aws.Operation{
 		Name:       opListTags,
 		HTTPMethod: "POST",
@@ -84,10 +32,10 @@ func (c *Client) ListTagsRequest(input *ListTagsInput) ListTagsRequest {
 	}
 
 	if input == nil {
-		input = &ListTagsInput{}
+		input = &types.ListTagsInput{}
 	}
 
-	req := c.newRequest(op, input, &ListTagsOutput{})
+	req := c.newRequest(op, input, &types.ListTagsOutput{})
 	return ListTagsRequest{Request: req, Input: input, Copy: c.ListTagsRequest}
 }
 
@@ -95,8 +43,8 @@ func (c *Client) ListTagsRequest(input *ListTagsInput) ListTagsRequest {
 // ListTags API operation.
 type ListTagsRequest struct {
 	*aws.Request
-	Input *ListTagsInput
-	Copy  func(*ListTagsInput) ListTagsRequest
+	Input *types.ListTagsInput
+	Copy  func(*types.ListTagsInput) ListTagsRequest
 }
 
 // Send marshals and sends the ListTags API request.
@@ -108,7 +56,7 @@ func (r ListTagsRequest) Send(ctx context.Context) (*ListTagsResponse, error) {
 	}
 
 	resp := &ListTagsResponse{
-		ListTagsOutput: r.Request.Data.(*ListTagsOutput),
+		ListTagsOutput: r.Request.Data.(*types.ListTagsOutput),
 		response:       &aws.Response{Request: r.Request},
 	}
 
@@ -118,7 +66,7 @@ func (r ListTagsRequest) Send(ctx context.Context) (*ListTagsResponse, error) {
 // ListTagsResponse is the response type for the
 // ListTags API operation.
 type ListTagsResponse struct {
-	*ListTagsOutput
+	*types.ListTagsOutput
 
 	response *aws.Response
 }

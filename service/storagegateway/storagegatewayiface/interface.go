@@ -10,6 +10,7 @@ package storagegatewayiface
 
 import (
 	"github.com/aws/aws-sdk-go-v2/service/storagegateway"
+	"github.com/aws/aws-sdk-go-v2/service/storagegateway/types"
 )
 
 // ClientAPI provides an interface to enable mocking the
@@ -43,7 +44,7 @@ import (
 //    type mockClientClient struct {
 //        storagegatewayiface.ClientPI
 //    }
-//    func (m *mockClientClient) ActivateGateway(input *storagegateway.ActivateGatewayInput) (*storagegateway.ActivateGatewayOutput, error) {
+//    func (m *mockClientClient) ActivateGateway(input *types.ActivateGatewayInput) (*types.ActivateGatewayOutput, error) {
 //        // mock response/functionality
 //    }
 //
@@ -61,151 +62,151 @@ import (
 // and waiters. Its suggested to use the pattern above for testing, or using
 // tooling to generate mocks to satisfy the interfaces.
 type ClientAPI interface {
-	ActivateGatewayRequest(*storagegateway.ActivateGatewayInput) storagegateway.ActivateGatewayRequest
+	ActivateGatewayRequest(*types.ActivateGatewayInput) storagegateway.ActivateGatewayRequest
 
-	AddCacheRequest(*storagegateway.AddCacheInput) storagegateway.AddCacheRequest
+	AddCacheRequest(*types.AddCacheInput) storagegateway.AddCacheRequest
 
-	AddTagsToResourceRequest(*storagegateway.AddTagsToResourceInput) storagegateway.AddTagsToResourceRequest
+	AddTagsToResourceRequest(*types.AddTagsToResourceInput) storagegateway.AddTagsToResourceRequest
 
-	AddUploadBufferRequest(*storagegateway.AddUploadBufferInput) storagegateway.AddUploadBufferRequest
+	AddUploadBufferRequest(*types.AddUploadBufferInput) storagegateway.AddUploadBufferRequest
 
-	AddWorkingStorageRequest(*storagegateway.AddWorkingStorageInput) storagegateway.AddWorkingStorageRequest
+	AddWorkingStorageRequest(*types.AddWorkingStorageInput) storagegateway.AddWorkingStorageRequest
 
-	AssignTapePoolRequest(*storagegateway.AssignTapePoolInput) storagegateway.AssignTapePoolRequest
+	AssignTapePoolRequest(*types.AssignTapePoolInput) storagegateway.AssignTapePoolRequest
 
-	AttachVolumeRequest(*storagegateway.AttachVolumeInput) storagegateway.AttachVolumeRequest
+	AttachVolumeRequest(*types.AttachVolumeInput) storagegateway.AttachVolumeRequest
 
-	CancelArchivalRequest(*storagegateway.CancelArchivalInput) storagegateway.CancelArchivalRequest
+	CancelArchivalRequest(*types.CancelArchivalInput) storagegateway.CancelArchivalRequest
 
-	CancelRetrievalRequest(*storagegateway.CancelRetrievalInput) storagegateway.CancelRetrievalRequest
+	CancelRetrievalRequest(*types.CancelRetrievalInput) storagegateway.CancelRetrievalRequest
 
-	CreateCachediSCSIVolumeRequest(*storagegateway.CreateCachediSCSIVolumeInput) storagegateway.CreateCachediSCSIVolumeRequest
+	CreateCachediSCSIVolumeRequest(*types.CreateCachediSCSIVolumeInput) storagegateway.CreateCachediSCSIVolumeRequest
 
-	CreateNFSFileShareRequest(*storagegateway.CreateNFSFileShareInput) storagegateway.CreateNFSFileShareRequest
+	CreateNFSFileShareRequest(*types.CreateNFSFileShareInput) storagegateway.CreateNFSFileShareRequest
 
-	CreateSMBFileShareRequest(*storagegateway.CreateSMBFileShareInput) storagegateway.CreateSMBFileShareRequest
+	CreateSMBFileShareRequest(*types.CreateSMBFileShareInput) storagegateway.CreateSMBFileShareRequest
 
-	CreateSnapshotRequest(*storagegateway.CreateSnapshotInput) storagegateway.CreateSnapshotRequest
+	CreateSnapshotRequest(*types.CreateSnapshotInput) storagegateway.CreateSnapshotRequest
 
-	CreateSnapshotFromVolumeRecoveryPointRequest(*storagegateway.CreateSnapshotFromVolumeRecoveryPointInput) storagegateway.CreateSnapshotFromVolumeRecoveryPointRequest
+	CreateSnapshotFromVolumeRecoveryPointRequest(*types.CreateSnapshotFromVolumeRecoveryPointInput) storagegateway.CreateSnapshotFromVolumeRecoveryPointRequest
 
-	CreateStorediSCSIVolumeRequest(*storagegateway.CreateStorediSCSIVolumeInput) storagegateway.CreateStorediSCSIVolumeRequest
+	CreateStorediSCSIVolumeRequest(*types.CreateStorediSCSIVolumeInput) storagegateway.CreateStorediSCSIVolumeRequest
 
-	CreateTapeWithBarcodeRequest(*storagegateway.CreateTapeWithBarcodeInput) storagegateway.CreateTapeWithBarcodeRequest
+	CreateTapeWithBarcodeRequest(*types.CreateTapeWithBarcodeInput) storagegateway.CreateTapeWithBarcodeRequest
 
-	CreateTapesRequest(*storagegateway.CreateTapesInput) storagegateway.CreateTapesRequest
+	CreateTapesRequest(*types.CreateTapesInput) storagegateway.CreateTapesRequest
 
-	DeleteBandwidthRateLimitRequest(*storagegateway.DeleteBandwidthRateLimitInput) storagegateway.DeleteBandwidthRateLimitRequest
+	DeleteBandwidthRateLimitRequest(*types.DeleteBandwidthRateLimitInput) storagegateway.DeleteBandwidthRateLimitRequest
 
-	DeleteChapCredentialsRequest(*storagegateway.DeleteChapCredentialsInput) storagegateway.DeleteChapCredentialsRequest
+	DeleteChapCredentialsRequest(*types.DeleteChapCredentialsInput) storagegateway.DeleteChapCredentialsRequest
 
-	DeleteFileShareRequest(*storagegateway.DeleteFileShareInput) storagegateway.DeleteFileShareRequest
+	DeleteFileShareRequest(*types.DeleteFileShareInput) storagegateway.DeleteFileShareRequest
 
-	DeleteGatewayRequest(*storagegateway.DeleteGatewayInput) storagegateway.DeleteGatewayRequest
+	DeleteGatewayRequest(*types.DeleteGatewayInput) storagegateway.DeleteGatewayRequest
 
-	DeleteSnapshotScheduleRequest(*storagegateway.DeleteSnapshotScheduleInput) storagegateway.DeleteSnapshotScheduleRequest
+	DeleteSnapshotScheduleRequest(*types.DeleteSnapshotScheduleInput) storagegateway.DeleteSnapshotScheduleRequest
 
-	DeleteTapeRequest(*storagegateway.DeleteTapeInput) storagegateway.DeleteTapeRequest
+	DeleteTapeRequest(*types.DeleteTapeInput) storagegateway.DeleteTapeRequest
 
-	DeleteTapeArchiveRequest(*storagegateway.DeleteTapeArchiveInput) storagegateway.DeleteTapeArchiveRequest
+	DeleteTapeArchiveRequest(*types.DeleteTapeArchiveInput) storagegateway.DeleteTapeArchiveRequest
 
-	DeleteVolumeRequest(*storagegateway.DeleteVolumeInput) storagegateway.DeleteVolumeRequest
+	DeleteVolumeRequest(*types.DeleteVolumeInput) storagegateway.DeleteVolumeRequest
 
-	DescribeBandwidthRateLimitRequest(*storagegateway.DescribeBandwidthRateLimitInput) storagegateway.DescribeBandwidthRateLimitRequest
+	DescribeBandwidthRateLimitRequest(*types.DescribeBandwidthRateLimitInput) storagegateway.DescribeBandwidthRateLimitRequest
 
-	DescribeCacheRequest(*storagegateway.DescribeCacheInput) storagegateway.DescribeCacheRequest
+	DescribeCacheRequest(*types.DescribeCacheInput) storagegateway.DescribeCacheRequest
 
-	DescribeCachediSCSIVolumesRequest(*storagegateway.DescribeCachediSCSIVolumesInput) storagegateway.DescribeCachediSCSIVolumesRequest
+	DescribeCachediSCSIVolumesRequest(*types.DescribeCachediSCSIVolumesInput) storagegateway.DescribeCachediSCSIVolumesRequest
 
-	DescribeChapCredentialsRequest(*storagegateway.DescribeChapCredentialsInput) storagegateway.DescribeChapCredentialsRequest
+	DescribeChapCredentialsRequest(*types.DescribeChapCredentialsInput) storagegateway.DescribeChapCredentialsRequest
 
-	DescribeGatewayInformationRequest(*storagegateway.DescribeGatewayInformationInput) storagegateway.DescribeGatewayInformationRequest
+	DescribeGatewayInformationRequest(*types.DescribeGatewayInformationInput) storagegateway.DescribeGatewayInformationRequest
 
-	DescribeMaintenanceStartTimeRequest(*storagegateway.DescribeMaintenanceStartTimeInput) storagegateway.DescribeMaintenanceStartTimeRequest
+	DescribeMaintenanceStartTimeRequest(*types.DescribeMaintenanceStartTimeInput) storagegateway.DescribeMaintenanceStartTimeRequest
 
-	DescribeNFSFileSharesRequest(*storagegateway.DescribeNFSFileSharesInput) storagegateway.DescribeNFSFileSharesRequest
+	DescribeNFSFileSharesRequest(*types.DescribeNFSFileSharesInput) storagegateway.DescribeNFSFileSharesRequest
 
-	DescribeSMBFileSharesRequest(*storagegateway.DescribeSMBFileSharesInput) storagegateway.DescribeSMBFileSharesRequest
+	DescribeSMBFileSharesRequest(*types.DescribeSMBFileSharesInput) storagegateway.DescribeSMBFileSharesRequest
 
-	DescribeSMBSettingsRequest(*storagegateway.DescribeSMBSettingsInput) storagegateway.DescribeSMBSettingsRequest
+	DescribeSMBSettingsRequest(*types.DescribeSMBSettingsInput) storagegateway.DescribeSMBSettingsRequest
 
-	DescribeSnapshotScheduleRequest(*storagegateway.DescribeSnapshotScheduleInput) storagegateway.DescribeSnapshotScheduleRequest
+	DescribeSnapshotScheduleRequest(*types.DescribeSnapshotScheduleInput) storagegateway.DescribeSnapshotScheduleRequest
 
-	DescribeStorediSCSIVolumesRequest(*storagegateway.DescribeStorediSCSIVolumesInput) storagegateway.DescribeStorediSCSIVolumesRequest
+	DescribeStorediSCSIVolumesRequest(*types.DescribeStorediSCSIVolumesInput) storagegateway.DescribeStorediSCSIVolumesRequest
 
-	DescribeTapeArchivesRequest(*storagegateway.DescribeTapeArchivesInput) storagegateway.DescribeTapeArchivesRequest
+	DescribeTapeArchivesRequest(*types.DescribeTapeArchivesInput) storagegateway.DescribeTapeArchivesRequest
 
-	DescribeTapeRecoveryPointsRequest(*storagegateway.DescribeTapeRecoveryPointsInput) storagegateway.DescribeTapeRecoveryPointsRequest
+	DescribeTapeRecoveryPointsRequest(*types.DescribeTapeRecoveryPointsInput) storagegateway.DescribeTapeRecoveryPointsRequest
 
-	DescribeTapesRequest(*storagegateway.DescribeTapesInput) storagegateway.DescribeTapesRequest
+	DescribeTapesRequest(*types.DescribeTapesInput) storagegateway.DescribeTapesRequest
 
-	DescribeUploadBufferRequest(*storagegateway.DescribeUploadBufferInput) storagegateway.DescribeUploadBufferRequest
+	DescribeUploadBufferRequest(*types.DescribeUploadBufferInput) storagegateway.DescribeUploadBufferRequest
 
-	DescribeVTLDevicesRequest(*storagegateway.DescribeVTLDevicesInput) storagegateway.DescribeVTLDevicesRequest
+	DescribeVTLDevicesRequest(*types.DescribeVTLDevicesInput) storagegateway.DescribeVTLDevicesRequest
 
-	DescribeWorkingStorageRequest(*storagegateway.DescribeWorkingStorageInput) storagegateway.DescribeWorkingStorageRequest
+	DescribeWorkingStorageRequest(*types.DescribeWorkingStorageInput) storagegateway.DescribeWorkingStorageRequest
 
-	DetachVolumeRequest(*storagegateway.DetachVolumeInput) storagegateway.DetachVolumeRequest
+	DetachVolumeRequest(*types.DetachVolumeInput) storagegateway.DetachVolumeRequest
 
-	DisableGatewayRequest(*storagegateway.DisableGatewayInput) storagegateway.DisableGatewayRequest
+	DisableGatewayRequest(*types.DisableGatewayInput) storagegateway.DisableGatewayRequest
 
-	JoinDomainRequest(*storagegateway.JoinDomainInput) storagegateway.JoinDomainRequest
+	JoinDomainRequest(*types.JoinDomainInput) storagegateway.JoinDomainRequest
 
-	ListFileSharesRequest(*storagegateway.ListFileSharesInput) storagegateway.ListFileSharesRequest
+	ListFileSharesRequest(*types.ListFileSharesInput) storagegateway.ListFileSharesRequest
 
-	ListGatewaysRequest(*storagegateway.ListGatewaysInput) storagegateway.ListGatewaysRequest
+	ListGatewaysRequest(*types.ListGatewaysInput) storagegateway.ListGatewaysRequest
 
-	ListLocalDisksRequest(*storagegateway.ListLocalDisksInput) storagegateway.ListLocalDisksRequest
+	ListLocalDisksRequest(*types.ListLocalDisksInput) storagegateway.ListLocalDisksRequest
 
-	ListTagsForResourceRequest(*storagegateway.ListTagsForResourceInput) storagegateway.ListTagsForResourceRequest
+	ListTagsForResourceRequest(*types.ListTagsForResourceInput) storagegateway.ListTagsForResourceRequest
 
-	ListTapesRequest(*storagegateway.ListTapesInput) storagegateway.ListTapesRequest
+	ListTapesRequest(*types.ListTapesInput) storagegateway.ListTapesRequest
 
-	ListVolumeInitiatorsRequest(*storagegateway.ListVolumeInitiatorsInput) storagegateway.ListVolumeInitiatorsRequest
+	ListVolumeInitiatorsRequest(*types.ListVolumeInitiatorsInput) storagegateway.ListVolumeInitiatorsRequest
 
-	ListVolumeRecoveryPointsRequest(*storagegateway.ListVolumeRecoveryPointsInput) storagegateway.ListVolumeRecoveryPointsRequest
+	ListVolumeRecoveryPointsRequest(*types.ListVolumeRecoveryPointsInput) storagegateway.ListVolumeRecoveryPointsRequest
 
-	ListVolumesRequest(*storagegateway.ListVolumesInput) storagegateway.ListVolumesRequest
+	ListVolumesRequest(*types.ListVolumesInput) storagegateway.ListVolumesRequest
 
-	NotifyWhenUploadedRequest(*storagegateway.NotifyWhenUploadedInput) storagegateway.NotifyWhenUploadedRequest
+	NotifyWhenUploadedRequest(*types.NotifyWhenUploadedInput) storagegateway.NotifyWhenUploadedRequest
 
-	RefreshCacheRequest(*storagegateway.RefreshCacheInput) storagegateway.RefreshCacheRequest
+	RefreshCacheRequest(*types.RefreshCacheInput) storagegateway.RefreshCacheRequest
 
-	RemoveTagsFromResourceRequest(*storagegateway.RemoveTagsFromResourceInput) storagegateway.RemoveTagsFromResourceRequest
+	RemoveTagsFromResourceRequest(*types.RemoveTagsFromResourceInput) storagegateway.RemoveTagsFromResourceRequest
 
-	ResetCacheRequest(*storagegateway.ResetCacheInput) storagegateway.ResetCacheRequest
+	ResetCacheRequest(*types.ResetCacheInput) storagegateway.ResetCacheRequest
 
-	RetrieveTapeArchiveRequest(*storagegateway.RetrieveTapeArchiveInput) storagegateway.RetrieveTapeArchiveRequest
+	RetrieveTapeArchiveRequest(*types.RetrieveTapeArchiveInput) storagegateway.RetrieveTapeArchiveRequest
 
-	RetrieveTapeRecoveryPointRequest(*storagegateway.RetrieveTapeRecoveryPointInput) storagegateway.RetrieveTapeRecoveryPointRequest
+	RetrieveTapeRecoveryPointRequest(*types.RetrieveTapeRecoveryPointInput) storagegateway.RetrieveTapeRecoveryPointRequest
 
-	SetLocalConsolePasswordRequest(*storagegateway.SetLocalConsolePasswordInput) storagegateway.SetLocalConsolePasswordRequest
+	SetLocalConsolePasswordRequest(*types.SetLocalConsolePasswordInput) storagegateway.SetLocalConsolePasswordRequest
 
-	SetSMBGuestPasswordRequest(*storagegateway.SetSMBGuestPasswordInput) storagegateway.SetSMBGuestPasswordRequest
+	SetSMBGuestPasswordRequest(*types.SetSMBGuestPasswordInput) storagegateway.SetSMBGuestPasswordRequest
 
-	ShutdownGatewayRequest(*storagegateway.ShutdownGatewayInput) storagegateway.ShutdownGatewayRequest
+	ShutdownGatewayRequest(*types.ShutdownGatewayInput) storagegateway.ShutdownGatewayRequest
 
-	StartGatewayRequest(*storagegateway.StartGatewayInput) storagegateway.StartGatewayRequest
+	StartGatewayRequest(*types.StartGatewayInput) storagegateway.StartGatewayRequest
 
-	UpdateBandwidthRateLimitRequest(*storagegateway.UpdateBandwidthRateLimitInput) storagegateway.UpdateBandwidthRateLimitRequest
+	UpdateBandwidthRateLimitRequest(*types.UpdateBandwidthRateLimitInput) storagegateway.UpdateBandwidthRateLimitRequest
 
-	UpdateChapCredentialsRequest(*storagegateway.UpdateChapCredentialsInput) storagegateway.UpdateChapCredentialsRequest
+	UpdateChapCredentialsRequest(*types.UpdateChapCredentialsInput) storagegateway.UpdateChapCredentialsRequest
 
-	UpdateGatewayInformationRequest(*storagegateway.UpdateGatewayInformationInput) storagegateway.UpdateGatewayInformationRequest
+	UpdateGatewayInformationRequest(*types.UpdateGatewayInformationInput) storagegateway.UpdateGatewayInformationRequest
 
-	UpdateGatewaySoftwareNowRequest(*storagegateway.UpdateGatewaySoftwareNowInput) storagegateway.UpdateGatewaySoftwareNowRequest
+	UpdateGatewaySoftwareNowRequest(*types.UpdateGatewaySoftwareNowInput) storagegateway.UpdateGatewaySoftwareNowRequest
 
-	UpdateMaintenanceStartTimeRequest(*storagegateway.UpdateMaintenanceStartTimeInput) storagegateway.UpdateMaintenanceStartTimeRequest
+	UpdateMaintenanceStartTimeRequest(*types.UpdateMaintenanceStartTimeInput) storagegateway.UpdateMaintenanceStartTimeRequest
 
-	UpdateNFSFileShareRequest(*storagegateway.UpdateNFSFileShareInput) storagegateway.UpdateNFSFileShareRequest
+	UpdateNFSFileShareRequest(*types.UpdateNFSFileShareInput) storagegateway.UpdateNFSFileShareRequest
 
-	UpdateSMBFileShareRequest(*storagegateway.UpdateSMBFileShareInput) storagegateway.UpdateSMBFileShareRequest
+	UpdateSMBFileShareRequest(*types.UpdateSMBFileShareInput) storagegateway.UpdateSMBFileShareRequest
 
-	UpdateSMBSecurityStrategyRequest(*storagegateway.UpdateSMBSecurityStrategyInput) storagegateway.UpdateSMBSecurityStrategyRequest
+	UpdateSMBSecurityStrategyRequest(*types.UpdateSMBSecurityStrategyInput) storagegateway.UpdateSMBSecurityStrategyRequest
 
-	UpdateSnapshotScheduleRequest(*storagegateway.UpdateSnapshotScheduleInput) storagegateway.UpdateSnapshotScheduleRequest
+	UpdateSnapshotScheduleRequest(*types.UpdateSnapshotScheduleInput) storagegateway.UpdateSnapshotScheduleRequest
 
-	UpdateVTLDeviceTypeRequest(*storagegateway.UpdateVTLDeviceTypeInput) storagegateway.UpdateVTLDeviceTypeRequest
+	UpdateVTLDeviceTypeRequest(*types.UpdateVTLDeviceTypeInput) storagegateway.UpdateVTLDeviceTypeRequest
 }
 
 var _ ClientAPI = (*storagegateway.Client)(nil)

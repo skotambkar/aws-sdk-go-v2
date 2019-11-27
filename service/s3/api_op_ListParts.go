@@ -4,275 +4,10 @@ package s3
 
 import (
 	"context"
-	"time"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
-	"github.com/aws/aws-sdk-go-v2/internal/awsutil"
-	"github.com/aws/aws-sdk-go-v2/private/protocol"
+	"github.com/aws/aws-sdk-go-v2/service/s3/types"
 )
-
-type ListPartsInput struct {
-	_ struct{} `type:"structure"`
-
-	// Bucket is a required field
-	Bucket *string `location:"uri" locationName:"Bucket" type:"string" required:"true"`
-
-	// Key is a required field
-	Key *string `location:"uri" locationName:"Key" min:"1" type:"string" required:"true"`
-
-	// Sets the maximum number of parts to return.
-	MaxParts *int64 `location:"querystring" locationName:"max-parts" type:"integer"`
-
-	// Specifies the part after which listing should begin. Only parts with higher
-	// part numbers will be listed.
-	PartNumberMarker *int64 `location:"querystring" locationName:"part-number-marker" type:"integer"`
-
-	// Confirms that the requester knows that she or he will be charged for the
-	// request. Bucket owners need not specify this parameter in their requests.
-	// Documentation on downloading objects from requester pays buckets can be found
-	// at http://docs.aws.amazon.com/AmazonS3/latest/dev/ObjectsinRequesterPaysBuckets.html
-	RequestPayer RequestPayer `location:"header" locationName:"x-amz-request-payer" type:"string" enum:"true"`
-
-	// Upload ID identifying the multipart upload whose parts are being listed.
-	//
-	// UploadId is a required field
-	UploadId *string `location:"querystring" locationName:"uploadId" type:"string" required:"true"`
-}
-
-// String returns the string representation
-func (s ListPartsInput) String() string {
-	return awsutil.Prettify(s)
-}
-
-// Validate inspects the fields of the type to determine if they are valid.
-func (s *ListPartsInput) Validate() error {
-	invalidParams := aws.ErrInvalidParams{Context: "ListPartsInput"}
-
-	if s.Bucket == nil {
-		invalidParams.Add(aws.NewErrParamRequired("Bucket"))
-	}
-
-	if s.Key == nil {
-		invalidParams.Add(aws.NewErrParamRequired("Key"))
-	}
-	if s.Key != nil && len(*s.Key) < 1 {
-		invalidParams.Add(aws.NewErrParamMinLen("Key", 1))
-	}
-
-	if s.UploadId == nil {
-		invalidParams.Add(aws.NewErrParamRequired("UploadId"))
-	}
-
-	if invalidParams.Len() > 0 {
-		return invalidParams
-	}
-	return nil
-}
-
-func (s *ListPartsInput) getBucket() (v string) {
-	if s.Bucket == nil {
-		return v
-	}
-	return *s.Bucket
-}
-
-// MarshalFields encodes the AWS API shape using the passed in protocol encoder.
-func (s ListPartsInput) MarshalFields(e protocol.FieldEncoder) error {
-
-	if len(s.RequestPayer) > 0 {
-		v := s.RequestPayer
-
-		metadata := protocol.Metadata{}
-		e.SetValue(protocol.HeaderTarget, "x-amz-request-payer", v, metadata)
-	}
-	if s.Bucket != nil {
-		v := *s.Bucket
-
-		metadata := protocol.Metadata{}
-		e.SetValue(protocol.PathTarget, "Bucket", protocol.StringValue(v), metadata)
-	}
-	if s.Key != nil {
-		v := *s.Key
-
-		metadata := protocol.Metadata{}
-		e.SetValue(protocol.PathTarget, "Key", protocol.StringValue(v), metadata)
-	}
-	if s.MaxParts != nil {
-		v := *s.MaxParts
-
-		metadata := protocol.Metadata{}
-		e.SetValue(protocol.QueryTarget, "max-parts", protocol.Int64Value(v), metadata)
-	}
-	if s.PartNumberMarker != nil {
-		v := *s.PartNumberMarker
-
-		metadata := protocol.Metadata{}
-		e.SetValue(protocol.QueryTarget, "part-number-marker", protocol.Int64Value(v), metadata)
-	}
-	if s.UploadId != nil {
-		v := *s.UploadId
-
-		metadata := protocol.Metadata{}
-		e.SetValue(protocol.QueryTarget, "uploadId", protocol.StringValue(v), metadata)
-	}
-	return nil
-}
-
-type ListPartsOutput struct {
-	_ struct{} `type:"structure"`
-
-	// Date when multipart upload will become eligible for abort operation by lifecycle.
-	AbortDate *time.Time `location:"header" locationName:"x-amz-abort-date" type:"timestamp"`
-
-	// Id of the lifecycle rule that makes a multipart upload eligible for abort
-	// operation.
-	AbortRuleId *string `location:"header" locationName:"x-amz-abort-rule-id" type:"string"`
-
-	// Name of the bucket to which the multipart upload was initiated.
-	Bucket *string `type:"string"`
-
-	// Identifies who initiated the multipart upload.
-	Initiator *Initiator `type:"structure"`
-
-	// Indicates whether the returned list of parts is truncated.
-	IsTruncated *bool `type:"boolean"`
-
-	// Object key for which the multipart upload was initiated.
-	Key *string `min:"1" type:"string"`
-
-	// Maximum number of parts that were allowed in the response.
-	MaxParts *int64 `type:"integer"`
-
-	// When a list is truncated, this element specifies the last part in the list,
-	// as well as the value to use for the part-number-marker request parameter
-	// in a subsequent request.
-	NextPartNumberMarker *int64 `type:"integer"`
-
-	Owner *Owner `type:"structure"`
-
-	// Part number after which listing begins.
-	PartNumberMarker *int64 `type:"integer"`
-
-	Parts []Part `locationName:"Part" type:"list" flattened:"true"`
-
-	// If present, indicates that the requester was successfully charged for the
-	// request.
-	RequestCharged RequestCharged `location:"header" locationName:"x-amz-request-charged" type:"string" enum:"true"`
-
-	// The class of storage used to store the object.
-	StorageClass StorageClass `type:"string" enum:"true"`
-
-	// Upload ID identifying the multipart upload whose parts are being listed.
-	UploadId *string `type:"string"`
-}
-
-// String returns the string representation
-func (s ListPartsOutput) String() string {
-	return awsutil.Prettify(s)
-}
-
-func (s *ListPartsOutput) getBucket() (v string) {
-	if s.Bucket == nil {
-		return v
-	}
-	return *s.Bucket
-}
-
-// MarshalFields encodes the AWS API shape using the passed in protocol encoder.
-func (s ListPartsOutput) MarshalFields(e protocol.FieldEncoder) error {
-	if s.Bucket != nil {
-		v := *s.Bucket
-
-		metadata := protocol.Metadata{}
-		e.SetValue(protocol.BodyTarget, "Bucket", protocol.StringValue(v), metadata)
-	}
-	if s.Initiator != nil {
-		v := s.Initiator
-
-		metadata := protocol.Metadata{}
-		e.SetFields(protocol.BodyTarget, "Initiator", v, metadata)
-	}
-	if s.IsTruncated != nil {
-		v := *s.IsTruncated
-
-		metadata := protocol.Metadata{}
-		e.SetValue(protocol.BodyTarget, "IsTruncated", protocol.BoolValue(v), metadata)
-	}
-	if s.Key != nil {
-		v := *s.Key
-
-		metadata := protocol.Metadata{}
-		e.SetValue(protocol.BodyTarget, "Key", protocol.StringValue(v), metadata)
-	}
-	if s.MaxParts != nil {
-		v := *s.MaxParts
-
-		metadata := protocol.Metadata{}
-		e.SetValue(protocol.BodyTarget, "MaxParts", protocol.Int64Value(v), metadata)
-	}
-	if s.NextPartNumberMarker != nil {
-		v := *s.NextPartNumberMarker
-
-		metadata := protocol.Metadata{}
-		e.SetValue(protocol.BodyTarget, "NextPartNumberMarker", protocol.Int64Value(v), metadata)
-	}
-	if s.Owner != nil {
-		v := s.Owner
-
-		metadata := protocol.Metadata{}
-		e.SetFields(protocol.BodyTarget, "Owner", v, metadata)
-	}
-	if s.PartNumberMarker != nil {
-		v := *s.PartNumberMarker
-
-		metadata := protocol.Metadata{}
-		e.SetValue(protocol.BodyTarget, "PartNumberMarker", protocol.Int64Value(v), metadata)
-	}
-	if s.Parts != nil {
-		v := s.Parts
-
-		metadata := protocol.Metadata{Flatten: true}
-		ls0 := e.List(protocol.BodyTarget, "Part", metadata)
-		ls0.Start()
-		for _, v1 := range v {
-			ls0.ListAddFields(v1)
-		}
-		ls0.End()
-
-	}
-	if len(s.StorageClass) > 0 {
-		v := s.StorageClass
-
-		metadata := protocol.Metadata{}
-		e.SetValue(protocol.BodyTarget, "StorageClass", v, metadata)
-	}
-	if s.UploadId != nil {
-		v := *s.UploadId
-
-		metadata := protocol.Metadata{}
-		e.SetValue(protocol.BodyTarget, "UploadId", protocol.StringValue(v), metadata)
-	}
-	if s.AbortDate != nil {
-		v := *s.AbortDate
-
-		metadata := protocol.Metadata{}
-		e.SetValue(protocol.HeaderTarget, "x-amz-abort-date",
-			protocol.TimeValue{V: v, Format: protocol.RFC822TimeFormatName, QuotedFormatTime: false}, metadata)
-	}
-	if s.AbortRuleId != nil {
-		v := *s.AbortRuleId
-
-		metadata := protocol.Metadata{}
-		e.SetValue(protocol.HeaderTarget, "x-amz-abort-rule-id", protocol.StringValue(v), metadata)
-	}
-	if len(s.RequestCharged) > 0 {
-		v := s.RequestCharged
-
-		metadata := protocol.Metadata{}
-		e.SetValue(protocol.HeaderTarget, "x-amz-request-charged", v, metadata)
-	}
-	return nil
-}
 
 const opListParts = "ListParts"
 
@@ -289,7 +24,7 @@ const opListParts = "ListParts"
 //    }
 //
 // Please also see https://docs.aws.amazon.com/goto/WebAPI/s3-2006-03-01/ListParts
-func (c *Client) ListPartsRequest(input *ListPartsInput) ListPartsRequest {
+func (c *Client) ListPartsRequest(input *types.ListPartsInput) ListPartsRequest {
 	op := &aws.Operation{
 		Name:       opListParts,
 		HTTPMethod: "GET",
@@ -303,10 +38,10 @@ func (c *Client) ListPartsRequest(input *ListPartsInput) ListPartsRequest {
 	}
 
 	if input == nil {
-		input = &ListPartsInput{}
+		input = &types.ListPartsInput{}
 	}
 
-	req := c.newRequest(op, input, &ListPartsOutput{})
+	req := c.newRequest(op, input, &types.ListPartsOutput{})
 	return ListPartsRequest{Request: req, Input: input, Copy: c.ListPartsRequest}
 }
 
@@ -314,8 +49,8 @@ func (c *Client) ListPartsRequest(input *ListPartsInput) ListPartsRequest {
 // ListParts API operation.
 type ListPartsRequest struct {
 	*aws.Request
-	Input *ListPartsInput
-	Copy  func(*ListPartsInput) ListPartsRequest
+	Input *types.ListPartsInput
+	Copy  func(*types.ListPartsInput) ListPartsRequest
 }
 
 // Send marshals and sends the ListParts API request.
@@ -327,7 +62,7 @@ func (r ListPartsRequest) Send(ctx context.Context) (*ListPartsResponse, error) 
 	}
 
 	resp := &ListPartsResponse{
-		ListPartsOutput: r.Request.Data.(*ListPartsOutput),
+		ListPartsOutput: r.Request.Data.(*types.ListPartsOutput),
 		response:        &aws.Response{Request: r.Request},
 	}
 
@@ -357,7 +92,7 @@ func NewListPartsPaginator(req ListPartsRequest) ListPartsPaginator {
 	return ListPartsPaginator{
 		Pager: aws.Pager{
 			NewRequest: func(ctx context.Context) (*aws.Request, error) {
-				var inCpy *ListPartsInput
+				var inCpy *types.ListPartsInput
 				if req.Input != nil {
 					tmp := *req.Input
 					inCpy = &tmp
@@ -377,14 +112,14 @@ type ListPartsPaginator struct {
 	aws.Pager
 }
 
-func (p *ListPartsPaginator) CurrentPage() *ListPartsOutput {
-	return p.Pager.CurrentPage().(*ListPartsOutput)
+func (p *ListPartsPaginator) CurrentPage() *types.ListPartsOutput {
+	return p.Pager.CurrentPage().(*types.ListPartsOutput)
 }
 
 // ListPartsResponse is the response type for the
 // ListParts API operation.
 type ListPartsResponse struct {
-	*ListPartsOutput
+	*types.ListPartsOutput
 
 	response *aws.Response
 }

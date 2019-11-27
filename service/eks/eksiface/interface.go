@@ -13,6 +13,7 @@ import (
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/eks"
+	"github.com/aws/aws-sdk-go-v2/service/eks/types"
 )
 
 // ClientAPI provides an interface to enable mocking the
@@ -46,7 +47,7 @@ import (
 //    type mockClientClient struct {
 //        eksiface.ClientPI
 //    }
-//    func (m *mockClientClient) CreateCluster(input *eks.CreateClusterInput) (*eks.CreateClusterOutput, error) {
+//    func (m *mockClientClient) CreateCluster(input *types.CreateClusterInput) (*types.CreateClusterOutput, error) {
 //        // mock response/functionality
 //    }
 //
@@ -64,31 +65,31 @@ import (
 // and waiters. Its suggested to use the pattern above for testing, or using
 // tooling to generate mocks to satisfy the interfaces.
 type ClientAPI interface {
-	CreateClusterRequest(*eks.CreateClusterInput) eks.CreateClusterRequest
+	CreateClusterRequest(*types.CreateClusterInput) eks.CreateClusterRequest
 
-	DeleteClusterRequest(*eks.DeleteClusterInput) eks.DeleteClusterRequest
+	DeleteClusterRequest(*types.DeleteClusterInput) eks.DeleteClusterRequest
 
-	DescribeClusterRequest(*eks.DescribeClusterInput) eks.DescribeClusterRequest
+	DescribeClusterRequest(*types.DescribeClusterInput) eks.DescribeClusterRequest
 
-	DescribeUpdateRequest(*eks.DescribeUpdateInput) eks.DescribeUpdateRequest
+	DescribeUpdateRequest(*types.DescribeUpdateInput) eks.DescribeUpdateRequest
 
-	ListClustersRequest(*eks.ListClustersInput) eks.ListClustersRequest
+	ListClustersRequest(*types.ListClustersInput) eks.ListClustersRequest
 
-	ListTagsForResourceRequest(*eks.ListTagsForResourceInput) eks.ListTagsForResourceRequest
+	ListTagsForResourceRequest(*types.ListTagsForResourceInput) eks.ListTagsForResourceRequest
 
-	ListUpdatesRequest(*eks.ListUpdatesInput) eks.ListUpdatesRequest
+	ListUpdatesRequest(*types.ListUpdatesInput) eks.ListUpdatesRequest
 
-	TagResourceRequest(*eks.TagResourceInput) eks.TagResourceRequest
+	TagResourceRequest(*types.TagResourceInput) eks.TagResourceRequest
 
-	UntagResourceRequest(*eks.UntagResourceInput) eks.UntagResourceRequest
+	UntagResourceRequest(*types.UntagResourceInput) eks.UntagResourceRequest
 
-	UpdateClusterConfigRequest(*eks.UpdateClusterConfigInput) eks.UpdateClusterConfigRequest
+	UpdateClusterConfigRequest(*types.UpdateClusterConfigInput) eks.UpdateClusterConfigRequest
 
-	UpdateClusterVersionRequest(*eks.UpdateClusterVersionInput) eks.UpdateClusterVersionRequest
+	UpdateClusterVersionRequest(*types.UpdateClusterVersionInput) eks.UpdateClusterVersionRequest
 
-	WaitUntilClusterActive(context.Context, *eks.DescribeClusterInput, ...aws.WaiterOption) error
+	WaitUntilClusterActive(context.Context, *types.DescribeClusterInput, ...aws.WaiterOption) error
 
-	WaitUntilClusterDeleted(context.Context, *eks.DescribeClusterInput, ...aws.WaiterOption) error
+	WaitUntilClusterDeleted(context.Context, *types.DescribeClusterInput, ...aws.WaiterOption) error
 }
 
 var _ ClientAPI = (*eks.Client)(nil)

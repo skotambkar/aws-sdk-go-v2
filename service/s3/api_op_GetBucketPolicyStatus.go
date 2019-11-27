@@ -6,79 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
-	"github.com/aws/aws-sdk-go-v2/internal/awsutil"
-	"github.com/aws/aws-sdk-go-v2/private/protocol"
+	"github.com/aws/aws-sdk-go-v2/service/s3/types"
 )
-
-type GetBucketPolicyStatusInput struct {
-	_ struct{} `type:"structure"`
-
-	// The name of the Amazon S3 bucket whose policy status you want to retrieve.
-	//
-	// Bucket is a required field
-	Bucket *string `location:"uri" locationName:"Bucket" type:"string" required:"true"`
-}
-
-// String returns the string representation
-func (s GetBucketPolicyStatusInput) String() string {
-	return awsutil.Prettify(s)
-}
-
-// Validate inspects the fields of the type to determine if they are valid.
-func (s *GetBucketPolicyStatusInput) Validate() error {
-	invalidParams := aws.ErrInvalidParams{Context: "GetBucketPolicyStatusInput"}
-
-	if s.Bucket == nil {
-		invalidParams.Add(aws.NewErrParamRequired("Bucket"))
-	}
-
-	if invalidParams.Len() > 0 {
-		return invalidParams
-	}
-	return nil
-}
-
-func (s *GetBucketPolicyStatusInput) getBucket() (v string) {
-	if s.Bucket == nil {
-		return v
-	}
-	return *s.Bucket
-}
-
-// MarshalFields encodes the AWS API shape using the passed in protocol encoder.
-func (s GetBucketPolicyStatusInput) MarshalFields(e protocol.FieldEncoder) error {
-
-	if s.Bucket != nil {
-		v := *s.Bucket
-
-		metadata := protocol.Metadata{}
-		e.SetValue(protocol.PathTarget, "Bucket", protocol.StringValue(v), metadata)
-	}
-	return nil
-}
-
-type GetBucketPolicyStatusOutput struct {
-	_ struct{} `type:"structure" payload:"PolicyStatus"`
-
-	// The policy status for the specified bucket.
-	PolicyStatus *PolicyStatus `type:"structure"`
-}
-
-// String returns the string representation
-func (s GetBucketPolicyStatusOutput) String() string {
-	return awsutil.Prettify(s)
-}
-
-// MarshalFields encodes the AWS API shape using the passed in protocol encoder.
-func (s GetBucketPolicyStatusOutput) MarshalFields(e protocol.FieldEncoder) error {
-	if s.PolicyStatus != nil {
-		v := s.PolicyStatus
-
-		metadata := protocol.Metadata{}
-		e.SetFields(protocol.PayloadTarget, "PolicyStatus", v, metadata)
-	}
-	return nil
-}
 
 const opGetBucketPolicyStatus = "GetBucketPolicyStatus"
 
@@ -96,7 +25,7 @@ const opGetBucketPolicyStatus = "GetBucketPolicyStatus"
 //    }
 //
 // Please also see https://docs.aws.amazon.com/goto/WebAPI/s3-2006-03-01/GetBucketPolicyStatus
-func (c *Client) GetBucketPolicyStatusRequest(input *GetBucketPolicyStatusInput) GetBucketPolicyStatusRequest {
+func (c *Client) GetBucketPolicyStatusRequest(input *types.GetBucketPolicyStatusInput) GetBucketPolicyStatusRequest {
 	op := &aws.Operation{
 		Name:       opGetBucketPolicyStatus,
 		HTTPMethod: "GET",
@@ -104,10 +33,10 @@ func (c *Client) GetBucketPolicyStatusRequest(input *GetBucketPolicyStatusInput)
 	}
 
 	if input == nil {
-		input = &GetBucketPolicyStatusInput{}
+		input = &types.GetBucketPolicyStatusInput{}
 	}
 
-	req := c.newRequest(op, input, &GetBucketPolicyStatusOutput{})
+	req := c.newRequest(op, input, &types.GetBucketPolicyStatusOutput{})
 	return GetBucketPolicyStatusRequest{Request: req, Input: input, Copy: c.GetBucketPolicyStatusRequest}
 }
 
@@ -115,8 +44,8 @@ func (c *Client) GetBucketPolicyStatusRequest(input *GetBucketPolicyStatusInput)
 // GetBucketPolicyStatus API operation.
 type GetBucketPolicyStatusRequest struct {
 	*aws.Request
-	Input *GetBucketPolicyStatusInput
-	Copy  func(*GetBucketPolicyStatusInput) GetBucketPolicyStatusRequest
+	Input *types.GetBucketPolicyStatusInput
+	Copy  func(*types.GetBucketPolicyStatusInput) GetBucketPolicyStatusRequest
 }
 
 // Send marshals and sends the GetBucketPolicyStatus API request.
@@ -128,7 +57,7 @@ func (r GetBucketPolicyStatusRequest) Send(ctx context.Context) (*GetBucketPolic
 	}
 
 	resp := &GetBucketPolicyStatusResponse{
-		GetBucketPolicyStatusOutput: r.Request.Data.(*GetBucketPolicyStatusOutput),
+		GetBucketPolicyStatusOutput: r.Request.Data.(*types.GetBucketPolicyStatusOutput),
 		response:                    &aws.Response{Request: r.Request},
 	}
 
@@ -138,7 +67,7 @@ func (r GetBucketPolicyStatusRequest) Send(ctx context.Context) (*GetBucketPolic
 // GetBucketPolicyStatusResponse is the response type for the
 // GetBucketPolicyStatus API operation.
 type GetBucketPolicyStatusResponse struct {
-	*GetBucketPolicyStatusOutput
+	*types.GetBucketPolicyStatusOutput
 
 	response *aws.Response
 }

@@ -6,86 +6,10 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
-	"github.com/aws/aws-sdk-go-v2/internal/awsutil"
 	"github.com/aws/aws-sdk-go-v2/private/protocol"
 	"github.com/aws/aws-sdk-go-v2/private/protocol/restxml"
+	"github.com/aws/aws-sdk-go-v2/service/s3/types"
 )
-
-type DeleteBucketInventoryConfigurationInput struct {
-	_ struct{} `type:"structure"`
-
-	// The name of the bucket containing the inventory configuration to delete.
-	//
-	// Bucket is a required field
-	Bucket *string `location:"uri" locationName:"Bucket" type:"string" required:"true"`
-
-	// The ID used to identify the inventory configuration.
-	//
-	// Id is a required field
-	Id *string `location:"querystring" locationName:"id" type:"string" required:"true"`
-}
-
-// String returns the string representation
-func (s DeleteBucketInventoryConfigurationInput) String() string {
-	return awsutil.Prettify(s)
-}
-
-// Validate inspects the fields of the type to determine if they are valid.
-func (s *DeleteBucketInventoryConfigurationInput) Validate() error {
-	invalidParams := aws.ErrInvalidParams{Context: "DeleteBucketInventoryConfigurationInput"}
-
-	if s.Bucket == nil {
-		invalidParams.Add(aws.NewErrParamRequired("Bucket"))
-	}
-
-	if s.Id == nil {
-		invalidParams.Add(aws.NewErrParamRequired("Id"))
-	}
-
-	if invalidParams.Len() > 0 {
-		return invalidParams
-	}
-	return nil
-}
-
-func (s *DeleteBucketInventoryConfigurationInput) getBucket() (v string) {
-	if s.Bucket == nil {
-		return v
-	}
-	return *s.Bucket
-}
-
-// MarshalFields encodes the AWS API shape using the passed in protocol encoder.
-func (s DeleteBucketInventoryConfigurationInput) MarshalFields(e protocol.FieldEncoder) error {
-
-	if s.Bucket != nil {
-		v := *s.Bucket
-
-		metadata := protocol.Metadata{}
-		e.SetValue(protocol.PathTarget, "Bucket", protocol.StringValue(v), metadata)
-	}
-	if s.Id != nil {
-		v := *s.Id
-
-		metadata := protocol.Metadata{}
-		e.SetValue(protocol.QueryTarget, "id", protocol.StringValue(v), metadata)
-	}
-	return nil
-}
-
-type DeleteBucketInventoryConfigurationOutput struct {
-	_ struct{} `type:"structure"`
-}
-
-// String returns the string representation
-func (s DeleteBucketInventoryConfigurationOutput) String() string {
-	return awsutil.Prettify(s)
-}
-
-// MarshalFields encodes the AWS API shape using the passed in protocol encoder.
-func (s DeleteBucketInventoryConfigurationOutput) MarshalFields(e protocol.FieldEncoder) error {
-	return nil
-}
 
 const opDeleteBucketInventoryConfiguration = "DeleteBucketInventoryConfiguration"
 
@@ -103,7 +27,7 @@ const opDeleteBucketInventoryConfiguration = "DeleteBucketInventoryConfiguration
 //    }
 //
 // Please also see https://docs.aws.amazon.com/goto/WebAPI/s3-2006-03-01/DeleteBucketInventoryConfiguration
-func (c *Client) DeleteBucketInventoryConfigurationRequest(input *DeleteBucketInventoryConfigurationInput) DeleteBucketInventoryConfigurationRequest {
+func (c *Client) DeleteBucketInventoryConfigurationRequest(input *types.DeleteBucketInventoryConfigurationInput) DeleteBucketInventoryConfigurationRequest {
 	op := &aws.Operation{
 		Name:       opDeleteBucketInventoryConfiguration,
 		HTTPMethod: "DELETE",
@@ -111,10 +35,10 @@ func (c *Client) DeleteBucketInventoryConfigurationRequest(input *DeleteBucketIn
 	}
 
 	if input == nil {
-		input = &DeleteBucketInventoryConfigurationInput{}
+		input = &types.DeleteBucketInventoryConfigurationInput{}
 	}
 
-	req := c.newRequest(op, input, &DeleteBucketInventoryConfigurationOutput{})
+	req := c.newRequest(op, input, &types.DeleteBucketInventoryConfigurationOutput{})
 	req.Handlers.Unmarshal.Remove(restxml.UnmarshalHandler)
 	req.Handlers.Unmarshal.PushBackNamed(protocol.UnmarshalDiscardBodyHandler)
 	return DeleteBucketInventoryConfigurationRequest{Request: req, Input: input, Copy: c.DeleteBucketInventoryConfigurationRequest}
@@ -124,8 +48,8 @@ func (c *Client) DeleteBucketInventoryConfigurationRequest(input *DeleteBucketIn
 // DeleteBucketInventoryConfiguration API operation.
 type DeleteBucketInventoryConfigurationRequest struct {
 	*aws.Request
-	Input *DeleteBucketInventoryConfigurationInput
-	Copy  func(*DeleteBucketInventoryConfigurationInput) DeleteBucketInventoryConfigurationRequest
+	Input *types.DeleteBucketInventoryConfigurationInput
+	Copy  func(*types.DeleteBucketInventoryConfigurationInput) DeleteBucketInventoryConfigurationRequest
 }
 
 // Send marshals and sends the DeleteBucketInventoryConfiguration API request.
@@ -137,7 +61,7 @@ func (r DeleteBucketInventoryConfigurationRequest) Send(ctx context.Context) (*D
 	}
 
 	resp := &DeleteBucketInventoryConfigurationResponse{
-		DeleteBucketInventoryConfigurationOutput: r.Request.Data.(*DeleteBucketInventoryConfigurationOutput),
+		DeleteBucketInventoryConfigurationOutput: r.Request.Data.(*types.DeleteBucketInventoryConfigurationOutput),
 		response:                                 &aws.Response{Request: r.Request},
 	}
 
@@ -147,7 +71,7 @@ func (r DeleteBucketInventoryConfigurationRequest) Send(ctx context.Context) (*D
 // DeleteBucketInventoryConfigurationResponse is the response type for the
 // DeleteBucketInventoryConfiguration API operation.
 type DeleteBucketInventoryConfigurationResponse struct {
-	*DeleteBucketInventoryConfigurationOutput
+	*types.DeleteBucketInventoryConfigurationOutput
 
 	response *aws.Response
 }

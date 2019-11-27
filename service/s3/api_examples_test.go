@@ -12,6 +12,8 @@ import (
 	"github.com/aws/aws-sdk-go-v2/aws/awserr"
 	"github.com/aws/aws-sdk-go-v2/aws/external"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
+	"github.com/aws/aws-sdk-go-v2/service/s3/enums"
+	"github.com/aws/aws-sdk-go-v2/service/s3/types"
 )
 
 var _ time.Duration
@@ -36,7 +38,7 @@ func ExampleClient_AbortMultipartUploadRequest_shared00() {
 	}
 
 	svc := s3.New(cfg)
-	input := &s3.AbortMultipartUploadInput{
+	input := &types.AbortMultipartUploadInput{
 		Bucket:   aws.String("examplebucket"),
 		Key:      aws.String("bigobject"),
 		UploadId: aws.String("xadcOB_7YPBOJuoFiQ9cz4P3Pe6FIZwO4f7wN93uHsNBEw97pl5eNwzExg0LAT2dUN91cOmrEQHDsP3WA60CEg--"),
@@ -73,11 +75,11 @@ func ExampleClient_CompleteMultipartUploadRequest_shared00() {
 	}
 
 	svc := s3.New(cfg)
-	input := &s3.CompleteMultipartUploadInput{
+	input := &types.CompleteMultipartUploadInput{
 		Bucket: aws.String("examplebucket"),
 		Key:    aws.String("bigobject"),
-		MultipartUpload: &s3.CompletedMultipartUpload{
-			Parts: []s3.CompletedPart{
+		MultipartUpload: &types.CompletedMultipartUpload{
+			Parts: []types.CompletedPart{
 				{
 					ETag:       aws.String("\"d8c2eafd90c266e19ab9dcacc479f8af\""),
 					PartNumber: aws.Int64(1),
@@ -120,7 +122,7 @@ func ExampleClient_CopyObjectRequest_shared00() {
 	}
 
 	svc := s3.New(cfg)
-	input := &s3.CopyObjectInput{
+	input := &types.CopyObjectInput{
 		Bucket:     aws.String("destinationbucket"),
 		CopySource: aws.String("/sourcebucket/HappyFacejpg"),
 		Key:        aws.String("HappyFaceCopyjpg"),
@@ -158,10 +160,10 @@ func ExampleClient_CreateBucketRequest_shared00() {
 	}
 
 	svc := s3.New(cfg)
-	input := &s3.CreateBucketInput{
+	input := &types.CreateBucketInput{
 		Bucket: aws.String("examplebucket"),
-		CreateBucketConfiguration: &s3.CreateBucketConfiguration{
-			LocationConstraint: s3.BucketLocationConstraintEuWest1,
+		CreateBucketConfiguration: &types.CreateBucketConfiguration{
+			LocationConstraint: enums.BucketLocationConstraintEuWest1,
 		},
 	}
 
@@ -198,7 +200,7 @@ func ExampleClient_CreateBucketRequest_shared01() {
 	}
 
 	svc := s3.New(cfg)
-	input := &s3.CreateBucketInput{
+	input := &types.CreateBucketInput{
 		Bucket: aws.String("examplebucket"),
 	}
 
@@ -235,7 +237,7 @@ func ExampleClient_CreateMultipartUploadRequest_shared00() {
 	}
 
 	svc := s3.New(cfg)
-	input := &s3.CreateMultipartUploadInput{
+	input := &types.CreateMultipartUploadInput{
 		Bucket: aws.String("examplebucket"),
 		Key:    aws.String("largeobject"),
 	}
@@ -269,7 +271,7 @@ func ExampleClient_DeleteBucketRequest_shared00() {
 	}
 
 	svc := s3.New(cfg)
-	input := &s3.DeleteBucketInput{
+	input := &types.DeleteBucketInput{
 		Bucket: aws.String("forrandall2"),
 	}
 
@@ -302,7 +304,7 @@ func ExampleClient_DeleteBucketCorsRequest_shared00() {
 	}
 
 	svc := s3.New(cfg)
-	input := &s3.DeleteBucketCorsInput{
+	input := &types.DeleteBucketCorsInput{
 		Bucket: aws.String("examplebucket"),
 	}
 
@@ -335,7 +337,7 @@ func ExampleClient_DeleteBucketLifecycleRequest_shared00() {
 	}
 
 	svc := s3.New(cfg)
-	input := &s3.DeleteBucketLifecycleInput{
+	input := &types.DeleteBucketLifecycleInput{
 		Bucket: aws.String("examplebucket"),
 	}
 
@@ -368,7 +370,7 @@ func ExampleClient_DeleteBucketPolicyRequest_shared00() {
 	}
 
 	svc := s3.New(cfg)
-	input := &s3.DeleteBucketPolicyInput{
+	input := &types.DeleteBucketPolicyInput{
 		Bucket: aws.String("examplebucket"),
 	}
 
@@ -401,7 +403,7 @@ func ExampleClient_DeleteBucketReplicationRequest_shared00() {
 	}
 
 	svc := s3.New(cfg)
-	input := &s3.DeleteBucketReplicationInput{
+	input := &types.DeleteBucketReplicationInput{
 		Bucket: aws.String("example"),
 	}
 
@@ -434,7 +436,7 @@ func ExampleClient_DeleteBucketTaggingRequest_shared00() {
 	}
 
 	svc := s3.New(cfg)
-	input := &s3.DeleteBucketTaggingInput{
+	input := &types.DeleteBucketTaggingInput{
 		Bucket: aws.String("examplebucket"),
 	}
 
@@ -467,7 +469,7 @@ func ExampleClient_DeleteBucketWebsiteRequest_shared00() {
 	}
 
 	svc := s3.New(cfg)
-	input := &s3.DeleteBucketWebsiteInput{
+	input := &types.DeleteBucketWebsiteInput{
 		Bucket: aws.String("examplebucket"),
 	}
 
@@ -500,7 +502,7 @@ func ExampleClient_DeleteObjectRequest_shared00() {
 	}
 
 	svc := s3.New(cfg)
-	input := &s3.DeleteObjectInput{
+	input := &types.DeleteObjectInput{
 		Bucket: aws.String("ExampleBucket"),
 		Key:    aws.String("HappyFace.jpg"),
 	}
@@ -534,7 +536,7 @@ func ExampleClient_DeleteObjectRequest_shared01() {
 	}
 
 	svc := s3.New(cfg)
-	input := &s3.DeleteObjectInput{
+	input := &types.DeleteObjectInput{
 		Bucket: aws.String("examplebucket"),
 		Key:    aws.String("objectkey.jpg"),
 	}
@@ -570,7 +572,7 @@ func ExampleClient_DeleteObjectTaggingRequest_shared00() {
 	}
 
 	svc := s3.New(cfg)
-	input := &s3.DeleteObjectTaggingInput{
+	input := &types.DeleteObjectTaggingInput{
 		Bucket: aws.String("examplebucket"),
 		Key:    aws.String("HappyFace.jpg"),
 	}
@@ -605,7 +607,7 @@ func ExampleClient_DeleteObjectTaggingRequest_shared01() {
 	}
 
 	svc := s3.New(cfg)
-	input := &s3.DeleteObjectTaggingInput{
+	input := &types.DeleteObjectTaggingInput{
 		Bucket:    aws.String("examplebucket"),
 		Key:       aws.String("HappyFace.jpg"),
 		VersionId: aws.String("ydlaNkwWm0SfKJR.T1b1fIdPRbldTYRI"),
@@ -642,10 +644,10 @@ func ExampleClient_DeleteObjectsRequest_shared00() {
 	}
 
 	svc := s3.New(cfg)
-	input := &s3.DeleteObjectsInput{
+	input := &types.DeleteObjectsInput{
 		Bucket: aws.String("examplebucket"),
-		Delete: &s3.Delete{
-			Objects: []s3.ObjectIdentifier{
+		Delete: &types.Delete{
+			Objects: []types.ObjectIdentifier{
 				{
 					Key:       aws.String("HappyFace.jpg"),
 					VersionId: aws.String("2LWg7lQLnY41.maGB5Z6SWW.dcq0vx7b"),
@@ -690,10 +692,10 @@ func ExampleClient_DeleteObjectsRequest_shared01() {
 	}
 
 	svc := s3.New(cfg)
-	input := &s3.DeleteObjectsInput{
+	input := &types.DeleteObjectsInput{
 		Bucket: aws.String("examplebucket"),
-		Delete: &s3.Delete{
-			Objects: []s3.ObjectIdentifier{
+		Delete: &types.Delete{
+			Objects: []types.ObjectIdentifier{
 				{
 					Key: aws.String("objectkey1"),
 				},
@@ -735,7 +737,7 @@ func ExampleClient_GetBucketCorsRequest_shared00() {
 	}
 
 	svc := s3.New(cfg)
-	input := &s3.GetBucketCorsInput{
+	input := &types.GetBucketCorsInput{
 		Bucket: aws.String("examplebucket"),
 	}
 
@@ -768,7 +770,7 @@ func ExampleClient_GetBucketLifecycleRequest_shared00() {
 	}
 
 	svc := s3.New(cfg)
-	input := &s3.GetBucketLifecycleInput{
+	input := &types.GetBucketLifecycleInput{
 		Bucket: aws.String("acl1"),
 	}
 
@@ -801,7 +803,7 @@ func ExampleClient_GetBucketLifecycleConfigurationRequest_shared00() {
 	}
 
 	svc := s3.New(cfg)
-	input := &s3.GetBucketLifecycleConfigurationInput{
+	input := &types.GetBucketLifecycleConfigurationInput{
 		Bucket: aws.String("examplebucket"),
 	}
 
@@ -834,7 +836,7 @@ func ExampleClient_GetBucketLocationRequest_shared00() {
 	}
 
 	svc := s3.New(cfg)
-	input := &s3.GetBucketLocationInput{
+	input := &types.GetBucketLocationInput{
 		Bucket: aws.String("examplebucket"),
 	}
 
@@ -867,7 +869,7 @@ func ExampleClient_GetBucketNotificationRequest_shared00() {
 	}
 
 	svc := s3.New(cfg)
-	input := &s3.GetBucketNotificationInput{
+	input := &types.GetBucketNotificationInput{
 		Bucket: aws.String("examplebucket"),
 	}
 
@@ -900,7 +902,7 @@ func ExampleClient_GetBucketNotificationRequest_shared01() {
 	}
 
 	svc := s3.New(cfg)
-	input := &s3.GetBucketNotificationInput{
+	input := &types.GetBucketNotificationInput{
 		Bucket: aws.String("examplebucket"),
 	}
 
@@ -933,7 +935,7 @@ func ExampleClient_GetBucketPolicyRequest_shared00() {
 	}
 
 	svc := s3.New(cfg)
-	input := &s3.GetBucketPolicyInput{
+	input := &types.GetBucketPolicyInput{
 		Bucket: aws.String("examplebucket"),
 	}
 
@@ -966,7 +968,7 @@ func ExampleClient_GetBucketReplicationRequest_shared00() {
 	}
 
 	svc := s3.New(cfg)
-	input := &s3.GetBucketReplicationInput{
+	input := &types.GetBucketReplicationInput{
 		Bucket: aws.String("examplebucket"),
 	}
 
@@ -999,7 +1001,7 @@ func ExampleClient_GetBucketRequestPaymentRequest_shared00() {
 	}
 
 	svc := s3.New(cfg)
-	input := &s3.GetBucketRequestPaymentInput{
+	input := &types.GetBucketRequestPaymentInput{
 		Bucket: aws.String("examplebucket"),
 	}
 
@@ -1032,7 +1034,7 @@ func ExampleClient_GetBucketTaggingRequest_shared00() {
 	}
 
 	svc := s3.New(cfg)
-	input := &s3.GetBucketTaggingInput{
+	input := &types.GetBucketTaggingInput{
 		Bucket: aws.String("examplebucket"),
 	}
 
@@ -1065,7 +1067,7 @@ func ExampleClient_GetBucketVersioningRequest_shared00() {
 	}
 
 	svc := s3.New(cfg)
-	input := &s3.GetBucketVersioningInput{
+	input := &types.GetBucketVersioningInput{
 		Bucket: aws.String("examplebucket"),
 	}
 
@@ -1098,7 +1100,7 @@ func ExampleClient_GetBucketWebsiteRequest_shared00() {
 	}
 
 	svc := s3.New(cfg)
-	input := &s3.GetBucketWebsiteInput{
+	input := &types.GetBucketWebsiteInput{
 		Bucket: aws.String("examplebucket"),
 	}
 
@@ -1131,7 +1133,7 @@ func ExampleClient_GetObjectRequest_shared00() {
 	}
 
 	svc := s3.New(cfg)
-	input := &s3.GetObjectInput{
+	input := &types.GetObjectInput{
 		Bucket: aws.String("examplebucket"),
 		Key:    aws.String("HappyFace.jpg"),
 	}
@@ -1168,7 +1170,7 @@ func ExampleClient_GetObjectRequest_shared01() {
 	}
 
 	svc := s3.New(cfg)
-	input := &s3.GetObjectInput{
+	input := &types.GetObjectInput{
 		Bucket: aws.String("examplebucket"),
 		Key:    aws.String("SampleFile.txt"),
 		Range:  aws.String("bytes=0-9"),
@@ -1205,7 +1207,7 @@ func ExampleClient_GetObjectAclRequest_shared00() {
 	}
 
 	svc := s3.New(cfg)
-	input := &s3.GetObjectAclInput{
+	input := &types.GetObjectAclInput{
 		Bucket: aws.String("examplebucket"),
 		Key:    aws.String("HappyFace.jpg"),
 	}
@@ -1242,7 +1244,7 @@ func ExampleClient_GetObjectTaggingRequest_shared00() {
 	}
 
 	svc := s3.New(cfg)
-	input := &s3.GetObjectTaggingInput{
+	input := &types.GetObjectTaggingInput{
 		Bucket:    aws.String("examplebucket"),
 		Key:       aws.String("exampleobject"),
 		VersionId: aws.String("ydlaNkwWm0SfKJR.T1b1fIdPRbldTYRI"),
@@ -1277,7 +1279,7 @@ func ExampleClient_GetObjectTaggingRequest_shared01() {
 	}
 
 	svc := s3.New(cfg)
-	input := &s3.GetObjectTaggingInput{
+	input := &types.GetObjectTaggingInput{
 		Bucket: aws.String("examplebucket"),
 		Key:    aws.String("HappyFace.jpg"),
 	}
@@ -1311,7 +1313,7 @@ func ExampleClient_GetObjectTorrentRequest_shared00() {
 	}
 
 	svc := s3.New(cfg)
-	input := &s3.GetObjectTorrentInput{
+	input := &types.GetObjectTorrentInput{
 		Bucket: aws.String("examplebucket"),
 		Key:    aws.String("HappyFace.jpg"),
 	}
@@ -1345,7 +1347,7 @@ func ExampleClient_HeadBucketRequest_shared00() {
 	}
 
 	svc := s3.New(cfg)
-	input := &s3.HeadBucketInput{
+	input := &types.HeadBucketInput{
 		Bucket: aws.String("acl1"),
 	}
 
@@ -1380,7 +1382,7 @@ func ExampleClient_HeadObjectRequest_shared00() {
 	}
 
 	svc := s3.New(cfg)
-	input := &s3.HeadObjectInput{
+	input := &types.HeadObjectInput{
 		Bucket: aws.String("examplebucket"),
 		Key:    aws.String("HappyFace.jpg"),
 	}
@@ -1417,7 +1419,7 @@ func ExampleClient_ListBucketsRequest_shared00() {
 	}
 
 	svc := s3.New(cfg)
-	input := &s3.ListBucketsInput{}
+	input := &types.ListBucketsInput{}
 
 	req := svc.ListBucketsRequest(input)
 	result, err := req.Send(context.Background())
@@ -1449,7 +1451,7 @@ func ExampleClient_ListMultipartUploadsRequest_shared00() {
 	}
 
 	svc := s3.New(cfg)
-	input := &s3.ListMultipartUploadsInput{
+	input := &types.ListMultipartUploadsInput{
 		Bucket:         aws.String("examplebucket"),
 		KeyMarker:      aws.String("nextkeyfrompreviousresponse"),
 		MaxUploads:     aws.Int64(2),
@@ -1485,7 +1487,7 @@ func ExampleClient_ListMultipartUploadsRequest_shared01() {
 	}
 
 	svc := s3.New(cfg)
-	input := &s3.ListMultipartUploadsInput{
+	input := &types.ListMultipartUploadsInput{
 		Bucket: aws.String("examplebucket"),
 	}
 
@@ -1521,7 +1523,7 @@ func ExampleClient_ListObjectVersionsRequest_shared00() {
 	}
 
 	svc := s3.New(cfg)
-	input := &s3.ListObjectVersionsInput{
+	input := &types.ListObjectVersionsInput{
 		Bucket: aws.String("examplebucket"),
 		Prefix: aws.String("HappyFace.jpg"),
 	}
@@ -1555,7 +1557,7 @@ func ExampleClient_ListObjectsRequest_shared00() {
 	}
 
 	svc := s3.New(cfg)
-	input := &s3.ListObjectsInput{
+	input := &types.ListObjectsInput{
 		Bucket:  aws.String("examplebucket"),
 		MaxKeys: aws.Int64(2),
 	}
@@ -1592,7 +1594,7 @@ func ExampleClient_ListObjectsV2Request_shared00() {
 	}
 
 	svc := s3.New(cfg)
-	input := &s3.ListObjectsV2Input{
+	input := &types.ListObjectsV2Input{
 		Bucket:  aws.String("examplebucket"),
 		MaxKeys: aws.Int64(2),
 	}
@@ -1628,7 +1630,7 @@ func ExampleClient_ListPartsRequest_shared00() {
 	}
 
 	svc := s3.New(cfg)
-	input := &s3.ListPartsInput{
+	input := &types.ListPartsInput{
 		Bucket:   aws.String("examplebucket"),
 		Key:      aws.String("bigobject"),
 		UploadId: aws.String("example7YPBOJuoFiQ9cz4P3Pe6FIZwO4f7wN93uHsNBEw97pl5eNwzExg0LAT2dUN91cOmrEQHDsP3WA60CEg--"),
@@ -1666,7 +1668,7 @@ func ExampleClient_PutBucketAclRequest_shared00() {
 	}
 
 	svc := s3.New(cfg)
-	input := &s3.PutBucketAclInput{
+	input := &types.PutBucketAclInput{
 		Bucket:           aws.String("examplebucket"),
 		GrantFullControl: aws.String("id=examplee7a2f25102679df27bb0ae12b3f85be6f290b936c4393484"),
 		GrantWrite:       aws.String("uri=http://acs.amazonaws.com/groups/s3/LogDelivery"),
@@ -1702,10 +1704,10 @@ func ExampleClient_PutBucketCorsRequest_shared00() {
 	}
 
 	svc := s3.New(cfg)
-	input := &s3.PutBucketCorsInput{
+	input := &types.PutBucketCorsInput{
 		Bucket: aws.String(""),
-		CORSConfiguration: &s3.CORSConfiguration{
-			CORSRules: []s3.CORSRule{
+		CORSConfiguration: &types.CORSConfiguration{
+			CORSRules: []types.CORSRule{
 				{
 					AllowedHeaders: []string{
 						"*",
@@ -1769,17 +1771,17 @@ func ExampleClient_PutBucketLifecycleConfigurationRequest_shared00() {
 	}
 
 	svc := s3.New(cfg)
-	input := &s3.PutBucketLifecycleConfigurationInput{
+	input := &types.PutBucketLifecycleConfigurationInput{
 		Bucket: aws.String("examplebucket"),
-		LifecycleConfiguration: &s3.BucketLifecycleConfiguration{
-			Rules: []s3.LifecycleRule{
+		LifecycleConfiguration: &types.BucketLifecycleConfiguration{
+			Rules: []types.LifecycleRule{
 				{
 					ID:     aws.String("TestOnly"),
-					Status: s3.ExpirationStatusEnabled,
-					Transitions: []s3.Transition{
+					Status: enums.ExpirationStatusEnabled,
+					Transitions: []types.Transition{
 						{
 							Days:         aws.Int64(365),
-							StorageClass: s3.TransitionStorageClassGlacier,
+							StorageClass: enums.TransitionStorageClassGlacier,
 						},
 					},
 				},
@@ -1818,14 +1820,14 @@ func ExampleClient_PutBucketLoggingRequest_shared00() {
 	}
 
 	svc := s3.New(cfg)
-	input := &s3.PutBucketLoggingInput{
+	input := &types.PutBucketLoggingInput{
 		Bucket: aws.String("sourcebucket"),
-		BucketLoggingStatus: &s3.BucketLoggingStatus{
-			LoggingEnabled: &s3.LoggingEnabled{
+		BucketLoggingStatus: &types.BucketLoggingStatus{
+			LoggingEnabled: &types.LoggingEnabled{
 				TargetBucket: aws.String("targetbucket"),
-				TargetGrants: []s3.TargetGrant{
+				TargetGrants: []types.TargetGrant{
 					{
-						Permission: s3.BucketLogsPermissionRead,
+						Permission: enums.BucketLogsPermissionRead,
 					},
 				},
 				TargetPrefix: aws.String("MyBucketLogs/"),
@@ -1863,13 +1865,13 @@ func ExampleClient_PutBucketNotificationConfigurationRequest_shared00() {
 	}
 
 	svc := s3.New(cfg)
-	input := &s3.PutBucketNotificationConfigurationInput{
+	input := &types.PutBucketNotificationConfigurationInput{
 		Bucket: aws.String("examplebucket"),
-		NotificationConfiguration: &s3.NotificationConfiguration{
-			TopicConfigurations: []s3.TopicConfiguration{
+		NotificationConfiguration: &types.NotificationConfiguration{
+			TopicConfigurations: []types.TopicConfiguration{
 				{
-					Events: []s3.Event{
-						s3.EventS3ObjectCreated,
+					Events: []enums.Event{
+						enums.EventS3ObjectCreated,
 					},
 					TopicArn: aws.String("arn:aws:sns:us-west-2:123456789012:s3-notification-topic"),
 				},
@@ -1906,7 +1908,7 @@ func ExampleClient_PutBucketPolicyRequest_shared00() {
 	}
 
 	svc := s3.New(cfg)
-	input := &s3.PutBucketPolicyInput{
+	input := &types.PutBucketPolicyInput{
 		Bucket: aws.String("examplebucket"),
 		Policy: aws.String("{\"Version\": \"2012-10-17\", \"Statement\": [{ \"Sid\": \"id-1\",\"Effect\": \"Allow\",\"Principal\": {\"AWS\": \"arn:aws:iam::123456789012:root\"}, \"Action\": [ \"s3:PutObject\",\"s3:PutObjectAcl\"], \"Resource\": [\"arn:aws:s3:::acl3/*\" ] } ]}"),
 	}
@@ -1940,14 +1942,14 @@ func ExampleClient_PutBucketReplicationRequest_shared00() {
 	}
 
 	svc := s3.New(cfg)
-	input := &s3.PutBucketReplicationInput{
+	input := &types.PutBucketReplicationInput{
 		Bucket: aws.String("examplebucket"),
-		ReplicationConfiguration: &s3.ReplicationConfiguration{
+		ReplicationConfiguration: &types.ReplicationConfiguration{
 			Role: aws.String("arn:aws:iam::123456789012:role/examplerole"),
-			Rules: []s3.ReplicationRule{
+			Rules: []types.ReplicationRule{
 				{
 					Prefix: aws.String(""),
-					Status: s3.ReplicationRuleStatusEnabled,
+					Status: enums.ReplicationRuleStatusEnabled,
 				},
 			},
 		},
@@ -1983,10 +1985,10 @@ func ExampleClient_PutBucketRequestPaymentRequest_shared00() {
 	}
 
 	svc := s3.New(cfg)
-	input := &s3.PutBucketRequestPaymentInput{
+	input := &types.PutBucketRequestPaymentInput{
 		Bucket: aws.String("examplebucket"),
-		RequestPaymentConfiguration: &s3.RequestPaymentConfiguration{
-			Payer: s3.PayerRequester,
+		RequestPaymentConfiguration: &types.RequestPaymentConfiguration{
+			Payer: enums.PayerRequester,
 		},
 	}
 
@@ -2019,10 +2021,10 @@ func ExampleClient_PutBucketTaggingRequest_shared00() {
 	}
 
 	svc := s3.New(cfg)
-	input := &s3.PutBucketTaggingInput{
+	input := &types.PutBucketTaggingInput{
 		Bucket: aws.String("examplebucket"),
-		Tagging: &s3.Tagging{
-			TagSet: []s3.Tag{
+		Tagging: &types.Tagging{
+			TagSet: []types.Tag{
 				{
 					Key:   aws.String("Key1"),
 					Value: aws.String("Value1"),
@@ -2065,11 +2067,11 @@ func ExampleClient_PutBucketVersioningRequest_shared00() {
 	}
 
 	svc := s3.New(cfg)
-	input := &s3.PutBucketVersioningInput{
+	input := &types.PutBucketVersioningInput{
 		Bucket: aws.String("examplebucket"),
-		VersioningConfiguration: &s3.VersioningConfiguration{
-			MFADelete: s3.MFADeleteDisabled,
-			Status:    s3.BucketVersioningStatusEnabled,
+		VersioningConfiguration: &types.VersioningConfiguration{
+			MFADelete: enums.MFADeleteDisabled,
+			Status:    enums.BucketVersioningStatusEnabled,
 		},
 	}
 
@@ -2102,13 +2104,13 @@ func ExampleClient_PutBucketWebsiteRequest_shared00() {
 	}
 
 	svc := s3.New(cfg)
-	input := &s3.PutBucketWebsiteInput{
+	input := &types.PutBucketWebsiteInput{
 		Bucket: aws.String("examplebucket"),
-		WebsiteConfiguration: &s3.WebsiteConfiguration{
-			ErrorDocument: &s3.ErrorDocument{
+		WebsiteConfiguration: &types.WebsiteConfiguration{
+			ErrorDocument: &types.ErrorDocument{
 				Key: aws.String("error.html"),
 			},
-			IndexDocument: &s3.IndexDocument{
+			IndexDocument: &types.IndexDocument{
 				Suffix: aws.String("index.html"),
 			},
 		},
@@ -2145,8 +2147,8 @@ func ExampleClient_PutObjectRequest_shared00() {
 	}
 
 	svc := s3.New(cfg)
-	input := &s3.PutObjectInput{
-		ACL:    s3.ObjectCannedACLAuthenticatedRead,
+	input := &types.PutObjectInput{
+		ACL:    enums.ObjectCannedACLAuthenticatedRead,
 		Body:   aws.ReadSeekCloser(strings.NewReader("filetoupload")),
 		Bucket: aws.String("examplebucket"),
 		Key:    aws.String("exampleobject"),
@@ -2182,7 +2184,7 @@ func ExampleClient_PutObjectRequest_shared01() {
 	}
 
 	svc := s3.New(cfg)
-	input := &s3.PutObjectInput{
+	input := &types.PutObjectInput{
 		Body:    aws.ReadSeekCloser(strings.NewReader("c:\\HappyFace.jpg")),
 		Bucket:  aws.String("examplebucket"),
 		Key:     aws.String("HappyFace.jpg"),
@@ -2219,7 +2221,7 @@ func ExampleClient_PutObjectRequest_shared02() {
 	}
 
 	svc := s3.New(cfg)
-	input := &s3.PutObjectInput{
+	input := &types.PutObjectInput{
 		Body:   aws.ReadSeekCloser(strings.NewReader("filetoupload")),
 		Bucket: aws.String("examplebucket"),
 		Key:    aws.String("exampleobject"),
@@ -2260,11 +2262,11 @@ func ExampleClient_PutObjectRequest_shared03() {
 	}
 
 	svc := s3.New(cfg)
-	input := &s3.PutObjectInput{
+	input := &types.PutObjectInput{
 		Body:                 aws.ReadSeekCloser(strings.NewReader("filetoupload")),
 		Bucket:               aws.String("examplebucket"),
 		Key:                  aws.String("exampleobject"),
-		ServerSideEncryption: s3.ServerSideEncryptionAes256,
+		ServerSideEncryption: enums.ServerSideEncryptionAes256,
 		Tagging:              aws.String("key1=value1&key2=value2"),
 	}
 
@@ -2298,7 +2300,7 @@ func ExampleClient_PutObjectRequest_shared04() {
 	}
 
 	svc := s3.New(cfg)
-	input := &s3.PutObjectInput{
+	input := &types.PutObjectInput{
 		Body:   aws.ReadSeekCloser(strings.NewReader("filetoupload")),
 		Bucket: aws.String("examplebucket"),
 		Key:    aws.String("objectkey"),
@@ -2335,7 +2337,7 @@ func ExampleClient_PutObjectRequest_shared05() {
 	}
 
 	svc := s3.New(cfg)
-	input := &s3.PutObjectInput{
+	input := &types.PutObjectInput{
 		Body:   aws.ReadSeekCloser(strings.NewReader("HappyFace.jpg")),
 		Bucket: aws.String("examplebucket"),
 		Key:    aws.String("HappyFace.jpg"),
@@ -2371,12 +2373,12 @@ func ExampleClient_PutObjectRequest_shared06() {
 	}
 
 	svc := s3.New(cfg)
-	input := &s3.PutObjectInput{
+	input := &types.PutObjectInput{
 		Body:                 aws.ReadSeekCloser(strings.NewReader("HappyFace.jpg")),
 		Bucket:               aws.String("examplebucket"),
 		Key:                  aws.String("HappyFace.jpg"),
-		ServerSideEncryption: s3.ServerSideEncryptionAes256,
-		StorageClass:         s3.StorageClassStandardIa,
+		ServerSideEncryption: enums.ServerSideEncryptionAes256,
+		StorageClass:         enums.StorageClassStandardIa,
 	}
 
 	req := svc.PutObjectRequest(input)
@@ -2409,8 +2411,8 @@ func ExampleClient_PutObjectAclRequest_shared00() {
 	}
 
 	svc := s3.New(cfg)
-	input := &s3.PutObjectAclInput{
-		AccessControlPolicy: &s3.AccessControlPolicy{},
+	input := &types.PutObjectAclInput{
+		AccessControlPolicy: &types.AccessControlPolicy{},
 		Bucket:              aws.String("examplebucket"),
 		GrantFullControl:    aws.String("emailaddress=user1@example.com,emailaddress=user2@example.com"),
 		GrantRead:           aws.String("uri=http://acs.amazonaws.com/groups/global/AllUsers"),
@@ -2448,11 +2450,11 @@ func ExampleClient_PutObjectTaggingRequest_shared00() {
 	}
 
 	svc := s3.New(cfg)
-	input := &s3.PutObjectTaggingInput{
+	input := &types.PutObjectTaggingInput{
 		Bucket: aws.String("examplebucket"),
 		Key:    aws.String("HappyFace.jpg"),
-		Tagging: &s3.Tagging{
-			TagSet: []s3.Tag{
+		Tagging: &types.Tagging{
+			TagSet: []types.Tag{
 				{
 					Key:   aws.String("Key3"),
 					Value: aws.String("Value3"),
@@ -2495,13 +2497,13 @@ func ExampleClient_RestoreObjectRequest_shared00() {
 	}
 
 	svc := s3.New(cfg)
-	input := &s3.RestoreObjectInput{
+	input := &types.RestoreObjectInput{
 		Bucket: aws.String("examplebucket"),
 		Key:    aws.String("archivedobjectkey"),
-		RestoreRequest: &s3.RestoreRequest{
+		RestoreRequest: &types.RestoreRequest{
 			Days: aws.Int64(1),
-			GlacierJobParameters: &s3.GlacierJobParameters{
-				Tier: s3.TierExpedited,
+			GlacierJobParameters: &types.GlacierJobParameters{
+				Tier: enums.TierExpedited,
 			},
 		},
 	}
@@ -2539,7 +2541,7 @@ func ExampleClient_UploadPartRequest_shared00() {
 	}
 
 	svc := s3.New(cfg)
-	input := &s3.UploadPartInput{
+	input := &types.UploadPartInput{
 		Body:       aws.ReadSeekCloser(strings.NewReader("fileToUpload")),
 		Bucket:     aws.String("examplebucket"),
 		Key:        aws.String("examplelargeobject"),
@@ -2577,7 +2579,7 @@ func ExampleClient_UploadPartCopyRequest_shared00() {
 	}
 
 	svc := s3.New(cfg)
-	input := &s3.UploadPartCopyInput{
+	input := &types.UploadPartCopyInput{
 		Bucket:     aws.String("examplebucket"),
 		CopySource: aws.String("/bucketname/sourceobjectkey"),
 		Key:        aws.String("examplelargeobject"),
@@ -2615,7 +2617,7 @@ func ExampleClient_UploadPartCopyRequest_shared01() {
 	}
 
 	svc := s3.New(cfg)
-	input := &s3.UploadPartCopyInput{
+	input := &types.UploadPartCopyInput{
 		Bucket:          aws.String("examplebucket"),
 		CopySource:      aws.String("/bucketname/sourceobjectkey"),
 		CopySourceRange: aws.String("bytes=1-100000"),

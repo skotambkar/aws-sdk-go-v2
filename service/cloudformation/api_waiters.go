@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/service/cloudformation/types"
 )
 
 // WaitUntilChangeSetCreateComplete uses the AWS CloudFormation API operation
@@ -18,7 +19,7 @@ import (
 // the context is nil a panic will occur. In the future the SDK may create
 // sub-contexts for http.Requests. See https://golang.org/pkg/context/
 // for more information on using Contexts.
-func (c *Client) WaitUntilChangeSetCreateComplete(ctx context.Context, input *DescribeChangeSetInput, opts ...aws.WaiterOption) error {
+func (c *Client) WaitUntilChangeSetCreateComplete(ctx context.Context, input *types.DescribeChangeSetInput, opts ...aws.WaiterOption) error {
 	w := aws.Waiter{
 		Name:        "WaitUntilChangeSetCreateComplete",
 		MaxAttempts: 120,
@@ -42,7 +43,7 @@ func (c *Client) WaitUntilChangeSetCreateComplete(ctx context.Context, input *De
 		},
 		Logger: c.Config.Logger,
 		NewRequest: func(opts []aws.Option) (*aws.Request, error) {
-			var inCpy *DescribeChangeSetInput
+			var inCpy *types.DescribeChangeSetInput
 			if input != nil {
 				tmp := *input
 				inCpy = &tmp
@@ -67,7 +68,7 @@ func (c *Client) WaitUntilChangeSetCreateComplete(ctx context.Context, input *De
 // the context is nil a panic will occur. In the future the SDK may create
 // sub-contexts for http.Requests. See https://golang.org/pkg/context/
 // for more information on using Contexts.
-func (c *Client) WaitUntilStackCreateComplete(ctx context.Context, input *DescribeStacksInput, opts ...aws.WaiterOption) error {
+func (c *Client) WaitUntilStackCreateComplete(ctx context.Context, input *types.DescribeStacksInput, opts ...aws.WaiterOption) error {
 	w := aws.Waiter{
 		Name:        "WaitUntilStackCreateComplete",
 		MaxAttempts: 120,
@@ -111,7 +112,7 @@ func (c *Client) WaitUntilStackCreateComplete(ctx context.Context, input *Descri
 		},
 		Logger: c.Config.Logger,
 		NewRequest: func(opts []aws.Option) (*aws.Request, error) {
-			var inCpy *DescribeStacksInput
+			var inCpy *types.DescribeStacksInput
 			if input != nil {
 				tmp := *input
 				inCpy = &tmp
@@ -136,7 +137,7 @@ func (c *Client) WaitUntilStackCreateComplete(ctx context.Context, input *Descri
 // the context is nil a panic will occur. In the future the SDK may create
 // sub-contexts for http.Requests. See https://golang.org/pkg/context/
 // for more information on using Contexts.
-func (c *Client) WaitUntilStackDeleteComplete(ctx context.Context, input *DescribeStacksInput, opts ...aws.WaiterOption) error {
+func (c *Client) WaitUntilStackDeleteComplete(ctx context.Context, input *types.DescribeStacksInput, opts ...aws.WaiterOption) error {
 	w := aws.Waiter{
 		Name:        "WaitUntilStackDeleteComplete",
 		MaxAttempts: 120,
@@ -180,7 +181,7 @@ func (c *Client) WaitUntilStackDeleteComplete(ctx context.Context, input *Descri
 		},
 		Logger: c.Config.Logger,
 		NewRequest: func(opts []aws.Option) (*aws.Request, error) {
-			var inCpy *DescribeStacksInput
+			var inCpy *types.DescribeStacksInput
 			if input != nil {
 				tmp := *input
 				inCpy = &tmp
@@ -205,7 +206,7 @@ func (c *Client) WaitUntilStackDeleteComplete(ctx context.Context, input *Descri
 // the context is nil a panic will occur. In the future the SDK may create
 // sub-contexts for http.Requests. See https://golang.org/pkg/context/
 // for more information on using Contexts.
-func (c *Client) WaitUntilStackExists(ctx context.Context, input *DescribeStacksInput, opts ...aws.WaiterOption) error {
+func (c *Client) WaitUntilStackExists(ctx context.Context, input *types.DescribeStacksInput, opts ...aws.WaiterOption) error {
 	w := aws.Waiter{
 		Name:        "WaitUntilStackExists",
 		MaxAttempts: 20,
@@ -224,7 +225,7 @@ func (c *Client) WaitUntilStackExists(ctx context.Context, input *DescribeStacks
 		},
 		Logger: c.Config.Logger,
 		NewRequest: func(opts []aws.Option) (*aws.Request, error) {
-			var inCpy *DescribeStacksInput
+			var inCpy *types.DescribeStacksInput
 			if input != nil {
 				tmp := *input
 				inCpy = &tmp
@@ -249,7 +250,7 @@ func (c *Client) WaitUntilStackExists(ctx context.Context, input *DescribeStacks
 // the context is nil a panic will occur. In the future the SDK may create
 // sub-contexts for http.Requests. See https://golang.org/pkg/context/
 // for more information on using Contexts.
-func (c *Client) WaitUntilStackUpdateComplete(ctx context.Context, input *DescribeStacksInput, opts ...aws.WaiterOption) error {
+func (c *Client) WaitUntilStackUpdateComplete(ctx context.Context, input *types.DescribeStacksInput, opts ...aws.WaiterOption) error {
 	w := aws.Waiter{
 		Name:        "WaitUntilStackUpdateComplete",
 		MaxAttempts: 120,
@@ -283,7 +284,7 @@ func (c *Client) WaitUntilStackUpdateComplete(ctx context.Context, input *Descri
 		},
 		Logger: c.Config.Logger,
 		NewRequest: func(opts []aws.Option) (*aws.Request, error) {
-			var inCpy *DescribeStacksInput
+			var inCpy *types.DescribeStacksInput
 			if input != nil {
 				tmp := *input
 				inCpy = &tmp

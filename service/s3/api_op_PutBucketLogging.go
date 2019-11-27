@@ -6,87 +6,10 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
-	"github.com/aws/aws-sdk-go-v2/internal/awsutil"
 	"github.com/aws/aws-sdk-go-v2/private/protocol"
 	"github.com/aws/aws-sdk-go-v2/private/protocol/restxml"
+	"github.com/aws/aws-sdk-go-v2/service/s3/types"
 )
-
-type PutBucketLoggingInput struct {
-	_ struct{} `type:"structure" payload:"BucketLoggingStatus"`
-
-	// Bucket is a required field
-	Bucket *string `location:"uri" locationName:"Bucket" type:"string" required:"true"`
-
-	// BucketLoggingStatus is a required field
-	BucketLoggingStatus *BucketLoggingStatus `locationName:"BucketLoggingStatus" type:"structure" required:"true" xmlURI:"http://s3.amazonaws.com/doc/2006-03-01/"`
-}
-
-// String returns the string representation
-func (s PutBucketLoggingInput) String() string {
-	return awsutil.Prettify(s)
-}
-
-// Validate inspects the fields of the type to determine if they are valid.
-func (s *PutBucketLoggingInput) Validate() error {
-	invalidParams := aws.ErrInvalidParams{Context: "PutBucketLoggingInput"}
-
-	if s.Bucket == nil {
-		invalidParams.Add(aws.NewErrParamRequired("Bucket"))
-	}
-
-	if s.BucketLoggingStatus == nil {
-		invalidParams.Add(aws.NewErrParamRequired("BucketLoggingStatus"))
-	}
-	if s.BucketLoggingStatus != nil {
-		if err := s.BucketLoggingStatus.Validate(); err != nil {
-			invalidParams.AddNested("BucketLoggingStatus", err.(aws.ErrInvalidParams))
-		}
-	}
-
-	if invalidParams.Len() > 0 {
-		return invalidParams
-	}
-	return nil
-}
-
-func (s *PutBucketLoggingInput) getBucket() (v string) {
-	if s.Bucket == nil {
-		return v
-	}
-	return *s.Bucket
-}
-
-// MarshalFields encodes the AWS API shape using the passed in protocol encoder.
-func (s PutBucketLoggingInput) MarshalFields(e protocol.FieldEncoder) error {
-
-	if s.Bucket != nil {
-		v := *s.Bucket
-
-		metadata := protocol.Metadata{}
-		e.SetValue(protocol.PathTarget, "Bucket", protocol.StringValue(v), metadata)
-	}
-	if s.BucketLoggingStatus != nil {
-		v := s.BucketLoggingStatus
-
-		metadata := protocol.Metadata{XMLNamespaceURI: "http://s3.amazonaws.com/doc/2006-03-01/"}
-		e.SetFields(protocol.PayloadTarget, "BucketLoggingStatus", v, metadata)
-	}
-	return nil
-}
-
-type PutBucketLoggingOutput struct {
-	_ struct{} `type:"structure"`
-}
-
-// String returns the string representation
-func (s PutBucketLoggingOutput) String() string {
-	return awsutil.Prettify(s)
-}
-
-// MarshalFields encodes the AWS API shape using the passed in protocol encoder.
-func (s PutBucketLoggingOutput) MarshalFields(e protocol.FieldEncoder) error {
-	return nil
-}
 
 const opPutBucketLogging = "PutBucketLogging"
 
@@ -105,7 +28,7 @@ const opPutBucketLogging = "PutBucketLogging"
 //    }
 //
 // Please also see https://docs.aws.amazon.com/goto/WebAPI/s3-2006-03-01/PutBucketLogging
-func (c *Client) PutBucketLoggingRequest(input *PutBucketLoggingInput) PutBucketLoggingRequest {
+func (c *Client) PutBucketLoggingRequest(input *types.PutBucketLoggingInput) PutBucketLoggingRequest {
 	op := &aws.Operation{
 		Name:       opPutBucketLogging,
 		HTTPMethod: "PUT",
@@ -113,10 +36,10 @@ func (c *Client) PutBucketLoggingRequest(input *PutBucketLoggingInput) PutBucket
 	}
 
 	if input == nil {
-		input = &PutBucketLoggingInput{}
+		input = &types.PutBucketLoggingInput{}
 	}
 
-	req := c.newRequest(op, input, &PutBucketLoggingOutput{})
+	req := c.newRequest(op, input, &types.PutBucketLoggingOutput{})
 	req.Handlers.Unmarshal.Remove(restxml.UnmarshalHandler)
 	req.Handlers.Unmarshal.PushBackNamed(protocol.UnmarshalDiscardBodyHandler)
 	return PutBucketLoggingRequest{Request: req, Input: input, Copy: c.PutBucketLoggingRequest}
@@ -126,8 +49,8 @@ func (c *Client) PutBucketLoggingRequest(input *PutBucketLoggingInput) PutBucket
 // PutBucketLogging API operation.
 type PutBucketLoggingRequest struct {
 	*aws.Request
-	Input *PutBucketLoggingInput
-	Copy  func(*PutBucketLoggingInput) PutBucketLoggingRequest
+	Input *types.PutBucketLoggingInput
+	Copy  func(*types.PutBucketLoggingInput) PutBucketLoggingRequest
 }
 
 // Send marshals and sends the PutBucketLogging API request.
@@ -139,7 +62,7 @@ func (r PutBucketLoggingRequest) Send(ctx context.Context) (*PutBucketLoggingRes
 	}
 
 	resp := &PutBucketLoggingResponse{
-		PutBucketLoggingOutput: r.Request.Data.(*PutBucketLoggingOutput),
+		PutBucketLoggingOutput: r.Request.Data.(*types.PutBucketLoggingOutput),
 		response:               &aws.Response{Request: r.Request},
 	}
 
@@ -149,7 +72,7 @@ func (r PutBucketLoggingRequest) Send(ctx context.Context) (*PutBucketLoggingRes
 // PutBucketLoggingResponse is the response type for the
 // PutBucketLogging API operation.
 type PutBucketLoggingResponse struct {
-	*PutBucketLoggingOutput
+	*types.PutBucketLoggingOutput
 
 	response *aws.Response
 }

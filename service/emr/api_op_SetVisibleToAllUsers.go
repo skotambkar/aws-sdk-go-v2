@@ -6,65 +6,10 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
-	"github.com/aws/aws-sdk-go-v2/internal/awsutil"
 	"github.com/aws/aws-sdk-go-v2/private/protocol"
 	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/emr/types"
 )
-
-// This member will be deprecated.
-//
-// The input to the SetVisibleToAllUsers action.
-type SetVisibleToAllUsersInput struct {
-	_ struct{} `type:"structure"`
-
-	// Identifiers of the job flows to receive the new visibility setting.
-	//
-	// JobFlowIds is a required field
-	JobFlowIds []string `type:"list" required:"true"`
-
-	// This member will be deprecated.
-	//
-	// Whether the specified clusters are visible to all IAM users of the AWS account
-	// associated with the cluster. If this value is set to True, all IAM users
-	// of that AWS account can view and, if they have the proper IAM policy permissions
-	// set, manage the clusters. If it is set to False, only the IAM user that created
-	// a cluster can view and manage it.
-	//
-	// VisibleToAllUsers is a required field
-	VisibleToAllUsers *bool `type:"boolean" required:"true"`
-}
-
-// String returns the string representation
-func (s SetVisibleToAllUsersInput) String() string {
-	return awsutil.Prettify(s)
-}
-
-// Validate inspects the fields of the type to determine if they are valid.
-func (s *SetVisibleToAllUsersInput) Validate() error {
-	invalidParams := aws.ErrInvalidParams{Context: "SetVisibleToAllUsersInput"}
-
-	if s.JobFlowIds == nil {
-		invalidParams.Add(aws.NewErrParamRequired("JobFlowIds"))
-	}
-
-	if s.VisibleToAllUsers == nil {
-		invalidParams.Add(aws.NewErrParamRequired("VisibleToAllUsers"))
-	}
-
-	if invalidParams.Len() > 0 {
-		return invalidParams
-	}
-	return nil
-}
-
-type SetVisibleToAllUsersOutput struct {
-	_ struct{} `type:"structure"`
-}
-
-// String returns the string representation
-func (s SetVisibleToAllUsersOutput) String() string {
-	return awsutil.Prettify(s)
-}
 
 const opSetVisibleToAllUsers = "SetVisibleToAllUsers"
 
@@ -88,7 +33,7 @@ const opSetVisibleToAllUsers = "SetVisibleToAllUsers"
 //    }
 //
 // Please also see https://docs.aws.amazon.com/goto/WebAPI/elasticmapreduce-2009-03-31/SetVisibleToAllUsers
-func (c *Client) SetVisibleToAllUsersRequest(input *SetVisibleToAllUsersInput) SetVisibleToAllUsersRequest {
+func (c *Client) SetVisibleToAllUsersRequest(input *types.SetVisibleToAllUsersInput) SetVisibleToAllUsersRequest {
 	op := &aws.Operation{
 		Name:       opSetVisibleToAllUsers,
 		HTTPMethod: "POST",
@@ -96,10 +41,10 @@ func (c *Client) SetVisibleToAllUsersRequest(input *SetVisibleToAllUsersInput) S
 	}
 
 	if input == nil {
-		input = &SetVisibleToAllUsersInput{}
+		input = &types.SetVisibleToAllUsersInput{}
 	}
 
-	req := c.newRequest(op, input, &SetVisibleToAllUsersOutput{})
+	req := c.newRequest(op, input, &types.SetVisibleToAllUsersOutput{})
 	req.Handlers.Unmarshal.Remove(jsonrpc.UnmarshalHandler)
 	req.Handlers.Unmarshal.PushBackNamed(protocol.UnmarshalDiscardBodyHandler)
 	return SetVisibleToAllUsersRequest{Request: req, Input: input, Copy: c.SetVisibleToAllUsersRequest}
@@ -109,8 +54,8 @@ func (c *Client) SetVisibleToAllUsersRequest(input *SetVisibleToAllUsersInput) S
 // SetVisibleToAllUsers API operation.
 type SetVisibleToAllUsersRequest struct {
 	*aws.Request
-	Input *SetVisibleToAllUsersInput
-	Copy  func(*SetVisibleToAllUsersInput) SetVisibleToAllUsersRequest
+	Input *types.SetVisibleToAllUsersInput
+	Copy  func(*types.SetVisibleToAllUsersInput) SetVisibleToAllUsersRequest
 }
 
 // Send marshals and sends the SetVisibleToAllUsers API request.
@@ -122,7 +67,7 @@ func (r SetVisibleToAllUsersRequest) Send(ctx context.Context) (*SetVisibleToAll
 	}
 
 	resp := &SetVisibleToAllUsersResponse{
-		SetVisibleToAllUsersOutput: r.Request.Data.(*SetVisibleToAllUsersOutput),
+		SetVisibleToAllUsersOutput: r.Request.Data.(*types.SetVisibleToAllUsersOutput),
 		response:                   &aws.Response{Request: r.Request},
 	}
 
@@ -132,7 +77,7 @@ func (r SetVisibleToAllUsersRequest) Send(ctx context.Context) (*SetVisibleToAll
 // SetVisibleToAllUsersResponse is the response type for the
 // SetVisibleToAllUsers API operation.
 type SetVisibleToAllUsersResponse struct {
-	*SetVisibleToAllUsersOutput
+	*types.SetVisibleToAllUsersOutput
 
 	response *aws.Response
 }
