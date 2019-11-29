@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/sms/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/sms/types"
 )
 
@@ -38,6 +40,10 @@ func (c *Client) CreateReplicationJobRequest(input *types.CreateReplicationJobIn
 	}
 
 	req := c.newRequest(op, input, &types.CreateReplicationJobOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.CreateReplicationJobMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return CreateReplicationJobRequest{Request: req, Input: input, Copy: c.CreateReplicationJobRequest}
 }
 

@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/snowball/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/snowball/types"
 )
 
@@ -38,6 +40,10 @@ func (c *Client) ListClusterJobsRequest(input *types.ListClusterJobsInput) ListC
 	}
 
 	req := c.newRequest(op, input, &types.ListClusterJobsOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.ListClusterJobsMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return ListClusterJobsRequest{Request: req, Input: input, Copy: c.ListClusterJobsRequest}
 }
 

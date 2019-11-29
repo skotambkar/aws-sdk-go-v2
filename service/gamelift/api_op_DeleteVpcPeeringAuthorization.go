@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/gamelift/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/gamelift/types"
 )
 
@@ -49,6 +51,10 @@ func (c *Client) DeleteVpcPeeringAuthorizationRequest(input *types.DeleteVpcPeer
 	}
 
 	req := c.newRequest(op, input, &types.DeleteVpcPeeringAuthorizationOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.DeleteVpcPeeringAuthorizationMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return DeleteVpcPeeringAuthorizationRequest{Request: req, Input: input, Copy: c.DeleteVpcPeeringAuthorizationRequest}
 }
 

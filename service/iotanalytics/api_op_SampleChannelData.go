@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/restjson"
+	"github.com/aws/aws-sdk-go-v2/service/iotanalytics/internal/aws_restjson"
 	"github.com/aws/aws-sdk-go-v2/service/iotanalytics/types"
 )
 
@@ -37,6 +39,10 @@ func (c *Client) SampleChannelDataRequest(input *types.SampleChannelDataInput) S
 	}
 
 	req := c.newRequest(op, input, &types.SampleChannelDataOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(restjson.BuildHandler.Name, aws_restjson.SampleChannelDataMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return SampleChannelDataRequest{Request: req, Input: input, Copy: c.SampleChannelDataRequest}
 }
 

@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/query"
+	"github.com/aws/aws-sdk-go-v2/service/elasticloadbalancingv2/internal/aws_query"
 	"github.com/aws/aws-sdk-go-v2/service/elasticloadbalancingv2/types"
 )
 
@@ -44,6 +46,10 @@ func (c *Client) DescribeListenerCertificatesRequest(input *types.DescribeListen
 	}
 
 	req := c.newRequest(op, input, &types.DescribeListenerCertificatesOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(query.BuildHandler.Name, aws_query.DescribeListenerCertificatesMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return DescribeListenerCertificatesRequest{Request: req, Input: input, Copy: c.DescribeListenerCertificatesRequest}
 }
 

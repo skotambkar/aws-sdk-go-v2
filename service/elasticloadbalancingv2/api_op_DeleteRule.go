@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/query"
+	"github.com/aws/aws-sdk-go-v2/service/elasticloadbalancingv2/internal/aws_query"
 	"github.com/aws/aws-sdk-go-v2/service/elasticloadbalancingv2/types"
 )
 
@@ -36,6 +38,10 @@ func (c *Client) DeleteRuleRequest(input *types.DeleteRuleInput) DeleteRuleReque
 	}
 
 	req := c.newRequest(op, input, &types.DeleteRuleOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(query.BuildHandler.Name, aws_query.DeleteRuleMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return DeleteRuleRequest{Request: req, Input: input, Copy: c.DeleteRuleRequest}
 }
 

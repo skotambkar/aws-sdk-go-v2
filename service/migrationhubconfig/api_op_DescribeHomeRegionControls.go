@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/migrationhubconfig/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/migrationhubconfig/types"
 )
 
@@ -43,6 +45,10 @@ func (c *Client) DescribeHomeRegionControlsRequest(input *types.DescribeHomeRegi
 	}
 
 	req := c.newRequest(op, input, &types.DescribeHomeRegionControlsOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.DescribeHomeRegionControlsMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return DescribeHomeRegionControlsRequest{Request: req, Input: input, Copy: c.DescribeHomeRegionControlsRequest}
 }
 

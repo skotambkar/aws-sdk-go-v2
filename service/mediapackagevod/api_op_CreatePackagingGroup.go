@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/restjson"
+	"github.com/aws/aws-sdk-go-v2/service/mediapackagevod/internal/aws_restjson"
 	"github.com/aws/aws-sdk-go-v2/service/mediapackagevod/types"
 )
 
@@ -36,6 +38,10 @@ func (c *Client) CreatePackagingGroupRequest(input *types.CreatePackagingGroupIn
 	}
 
 	req := c.newRequest(op, input, &types.CreatePackagingGroupOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(restjson.BuildHandler.Name, aws_restjson.CreatePackagingGroupMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return CreatePackagingGroupRequest{Request: req, Input: input, Copy: c.CreatePackagingGroupRequest}
 }
 

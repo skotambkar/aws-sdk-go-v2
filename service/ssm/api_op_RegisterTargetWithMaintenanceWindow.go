@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/ssm/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/ssm/types"
 )
 
@@ -36,6 +38,10 @@ func (c *Client) RegisterTargetWithMaintenanceWindowRequest(input *types.Registe
 	}
 
 	req := c.newRequest(op, input, &types.RegisterTargetWithMaintenanceWindowOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.RegisterTargetWithMaintenanceWindowMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return RegisterTargetWithMaintenanceWindowRequest{Request: req, Input: input, Copy: c.RegisterTargetWithMaintenanceWindowRequest}
 }
 

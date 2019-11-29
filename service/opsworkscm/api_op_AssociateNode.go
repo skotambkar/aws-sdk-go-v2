@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/opsworkscm/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/opsworkscm/types"
 )
 
@@ -56,6 +58,10 @@ func (c *Client) AssociateNodeRequest(input *types.AssociateNodeInput) Associate
 	}
 
 	req := c.newRequest(op, input, &types.AssociateNodeOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.AssociateNodeMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return AssociateNodeRequest{Request: req, Input: input, Copy: c.AssociateNodeRequest}
 }
 

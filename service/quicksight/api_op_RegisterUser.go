@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/restjson"
+	"github.com/aws/aws-sdk-go-v2/service/quicksight/internal/aws_restjson"
 	"github.com/aws/aws-sdk-go-v2/service/quicksight/types"
 )
 
@@ -43,6 +45,10 @@ func (c *Client) RegisterUserRequest(input *types.RegisterUserInput) RegisterUse
 	}
 
 	req := c.newRequest(op, input, &types.RegisterUserOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(restjson.BuildHandler.Name, aws_restjson.RegisterUserMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return RegisterUserRequest{Request: req, Input: input, Copy: c.RegisterUserRequest}
 }
 

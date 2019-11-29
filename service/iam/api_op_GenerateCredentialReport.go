@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/query"
+	"github.com/aws/aws-sdk-go-v2/service/iam/internal/aws_query"
 	"github.com/aws/aws-sdk-go-v2/service/iam/types"
 )
 
@@ -38,6 +40,10 @@ func (c *Client) GenerateCredentialReportRequest(input *types.GenerateCredential
 	}
 
 	req := c.newRequest(op, input, &types.GenerateCredentialReportOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(query.BuildHandler.Name, aws_query.GenerateCredentialReportMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return GenerateCredentialReportRequest{Request: req, Input: input, Copy: c.GenerateCredentialReportRequest}
 }
 

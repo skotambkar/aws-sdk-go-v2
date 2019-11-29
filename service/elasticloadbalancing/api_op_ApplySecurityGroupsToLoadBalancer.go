@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/query"
+	"github.com/aws/aws-sdk-go-v2/service/elasticloadbalancing/internal/aws_query"
 	"github.com/aws/aws-sdk-go-v2/service/elasticloadbalancing/types"
 )
 
@@ -41,6 +43,10 @@ func (c *Client) ApplySecurityGroupsToLoadBalancerRequest(input *types.ApplySecu
 	}
 
 	req := c.newRequest(op, input, &types.ApplySecurityGroupsToLoadBalancerOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(query.BuildHandler.Name, aws_query.ApplySecurityGroupsToLoadBalancerMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return ApplySecurityGroupsToLoadBalancerRequest{Request: req, Input: input, Copy: c.ApplySecurityGroupsToLoadBalancerRequest}
 }
 

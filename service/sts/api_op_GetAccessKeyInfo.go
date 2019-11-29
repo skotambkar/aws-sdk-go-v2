@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/query"
+	"github.com/aws/aws-sdk-go-v2/service/sts/internal/aws_query"
 	"github.com/aws/aws-sdk-go-v2/service/sts/types"
 )
 
@@ -58,6 +60,10 @@ func (c *Client) GetAccessKeyInfoRequest(input *types.GetAccessKeyInfoInput) Get
 	}
 
 	req := c.newRequest(op, input, &types.GetAccessKeyInfoOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(query.BuildHandler.Name, aws_query.GetAccessKeyInfoMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return GetAccessKeyInfoRequest{Request: req, Input: input, Copy: c.GetAccessKeyInfoRequest}
 }
 

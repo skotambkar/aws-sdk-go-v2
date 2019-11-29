@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/alexaforbusiness/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/alexaforbusiness/types"
 )
 
@@ -36,6 +38,10 @@ func (c *Client) DeleteDeviceRequest(input *types.DeleteDeviceInput) DeleteDevic
 	}
 
 	req := c.newRequest(op, input, &types.DeleteDeviceOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.DeleteDeviceMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return DeleteDeviceRequest{Request: req, Input: input, Copy: c.DeleteDeviceRequest}
 }
 

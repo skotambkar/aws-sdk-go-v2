@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/query"
+	"github.com/aws/aws-sdk-go-v2/service/elasticache/internal/aws_query"
 	"github.com/aws/aws-sdk-go-v2/service/elasticache/types"
 )
 
@@ -43,6 +45,10 @@ func (c *Client) DescribeReservedCacheNodesRequest(input *types.DescribeReserved
 	}
 
 	req := c.newRequest(op, input, &types.DescribeReservedCacheNodesOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(query.BuildHandler.Name, aws_query.DescribeReservedCacheNodesMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return DescribeReservedCacheNodesRequest{Request: req, Input: input, Copy: c.DescribeReservedCacheNodesRequest}
 }
 

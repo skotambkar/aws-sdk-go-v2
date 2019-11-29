@@ -8,6 +8,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/private/protocol"
 	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/swf/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/swf/types"
 )
 
@@ -56,6 +57,10 @@ func (c *Client) RegisterDomainRequest(input *types.RegisterDomainInput) Registe
 	}
 
 	req := c.newRequest(op, input, &types.RegisterDomainOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.RegisterDomainMarshaler{Input: input}.GetNamedBuildHandler())
+
 	req.Handlers.Unmarshal.Remove(jsonrpc.UnmarshalHandler)
 	req.Handlers.Unmarshal.PushBackNamed(protocol.UnmarshalDiscardBodyHandler)
 	return RegisterDomainRequest{Request: req, Input: input, Copy: c.RegisterDomainRequest}

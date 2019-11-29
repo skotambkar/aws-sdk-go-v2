@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/query"
+	"github.com/aws/aws-sdk-go-v2/service/iam/internal/aws_query"
 	"github.com/aws/aws-sdk-go-v2/service/iam/types"
 )
 
@@ -55,6 +57,10 @@ func (c *Client) GetRolePolicyRequest(input *types.GetRolePolicyInput) GetRolePo
 	}
 
 	req := c.newRequest(op, input, &types.GetRolePolicyOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(query.BuildHandler.Name, aws_query.GetRolePolicyMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return GetRolePolicyRequest{Request: req, Input: input, Copy: c.GetRolePolicyRequest}
 }
 

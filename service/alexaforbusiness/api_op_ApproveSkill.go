@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/alexaforbusiness/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/alexaforbusiness/types"
 )
 
@@ -38,6 +40,10 @@ func (c *Client) ApproveSkillRequest(input *types.ApproveSkillInput) ApproveSkil
 	}
 
 	req := c.newRequest(op, input, &types.ApproveSkillOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.ApproveSkillMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return ApproveSkillRequest{Request: req, Input: input, Copy: c.ApproveSkillRequest}
 }
 

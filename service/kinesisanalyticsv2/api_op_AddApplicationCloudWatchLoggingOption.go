@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/kinesisanalyticsv2/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/kinesisanalyticsv2/types"
 )
 
@@ -37,6 +39,10 @@ func (c *Client) AddApplicationCloudWatchLoggingOptionRequest(input *types.AddAp
 	}
 
 	req := c.newRequest(op, input, &types.AddApplicationCloudWatchLoggingOptionOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.AddApplicationCloudWatchLoggingOptionMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return AddApplicationCloudWatchLoggingOptionRequest{Request: req, Input: input, Copy: c.AddApplicationCloudWatchLoggingOptionRequest}
 }
 

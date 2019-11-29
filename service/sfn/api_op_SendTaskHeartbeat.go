@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/sfn/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/sfn/types"
 )
 
@@ -50,6 +52,10 @@ func (c *Client) SendTaskHeartbeatRequest(input *types.SendTaskHeartbeatInput) S
 	}
 
 	req := c.newRequest(op, input, &types.SendTaskHeartbeatOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.SendTaskHeartbeatMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return SendTaskHeartbeatRequest{Request: req, Input: input, Copy: c.SendTaskHeartbeatRequest}
 }
 

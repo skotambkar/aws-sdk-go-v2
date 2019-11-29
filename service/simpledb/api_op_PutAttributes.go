@@ -8,6 +8,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/private/protocol"
 	"github.com/aws/aws-sdk-go-v2/private/protocol/query"
+	"github.com/aws/aws-sdk-go-v2/service/simpledb/internal/aws_query"
 	"github.com/aws/aws-sdk-go-v2/service/simpledb/types"
 )
 
@@ -70,6 +71,10 @@ func (c *Client) PutAttributesRequest(input *types.PutAttributesInput) PutAttrib
 	}
 
 	req := c.newRequest(op, input, &types.PutAttributesOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(query.BuildHandler.Name, aws_query.PutAttributesMarshaler{Input: input}.GetNamedBuildHandler())
+
 	req.Handlers.Unmarshal.Remove(query.UnmarshalHandler)
 	req.Handlers.Unmarshal.PushBackNamed(protocol.UnmarshalDiscardBodyHandler)
 	return PutAttributesRequest{Request: req, Input: input, Copy: c.PutAttributesRequest}

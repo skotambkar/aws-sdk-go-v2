@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/ecr/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/ecr/types"
 )
 
@@ -44,6 +46,10 @@ func (c *Client) BatchDeleteImageRequest(input *types.BatchDeleteImageInput) Bat
 	}
 
 	req := c.newRequest(op, input, &types.BatchDeleteImageOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.BatchDeleteImageMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return BatchDeleteImageRequest{Request: req, Input: input, Copy: c.BatchDeleteImageRequest}
 }
 

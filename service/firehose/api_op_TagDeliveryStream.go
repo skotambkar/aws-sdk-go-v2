@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/firehose/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/firehose/types"
 )
 
@@ -47,6 +49,10 @@ func (c *Client) TagDeliveryStreamRequest(input *types.TagDeliveryStreamInput) T
 	}
 
 	req := c.newRequest(op, input, &types.TagDeliveryStreamOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.TagDeliveryStreamMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return TagDeliveryStreamRequest{Request: req, Input: input, Copy: c.TagDeliveryStreamRequest}
 }
 

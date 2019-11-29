@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/licensemanager/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/licensemanager/types"
 )
 
@@ -38,6 +40,10 @@ func (c *Client) ListUsageForLicenseConfigurationRequest(input *types.ListUsageF
 	}
 
 	req := c.newRequest(op, input, &types.ListUsageForLicenseConfigurationOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.ListUsageForLicenseConfigurationMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return ListUsageForLicenseConfigurationRequest{Request: req, Input: input, Copy: c.ListUsageForLicenseConfigurationRequest}
 }
 

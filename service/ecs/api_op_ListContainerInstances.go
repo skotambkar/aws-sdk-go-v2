@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/ecs/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/ecs/types"
 )
 
@@ -46,6 +48,10 @@ func (c *Client) ListContainerInstancesRequest(input *types.ListContainerInstanc
 	}
 
 	req := c.newRequest(op, input, &types.ListContainerInstancesOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.ListContainerInstancesMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return ListContainerInstancesRequest{Request: req, Input: input, Copy: c.ListContainerInstancesRequest}
 }
 

@@ -8,6 +8,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/private/protocol"
 	"github.com/aws/aws-sdk-go-v2/private/protocol/query"
+	"github.com/aws/aws-sdk-go-v2/service/ses/internal/aws_query"
 	"github.com/aws/aws-sdk-go-v2/service/ses/types"
 )
 
@@ -39,6 +40,10 @@ func (c *Client) DeleteVerifiedEmailAddressRequest(input *types.DeleteVerifiedEm
 	}
 
 	req := c.newRequest(op, input, &types.DeleteVerifiedEmailAddressOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(query.BuildHandler.Name, aws_query.DeleteVerifiedEmailAddressMarshaler{Input: input}.GetNamedBuildHandler())
+
 	req.Handlers.Unmarshal.Remove(query.UnmarshalHandler)
 	req.Handlers.Unmarshal.PushBackNamed(protocol.UnmarshalDiscardBodyHandler)
 	return DeleteVerifiedEmailAddressRequest{Request: req, Input: input, Copy: c.DeleteVerifiedEmailAddressRequest}

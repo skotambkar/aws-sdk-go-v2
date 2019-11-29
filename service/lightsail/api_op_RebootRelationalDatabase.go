@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/lightsail/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/lightsail/types"
 )
 
@@ -40,6 +42,10 @@ func (c *Client) RebootRelationalDatabaseRequest(input *types.RebootRelationalDa
 	}
 
 	req := c.newRequest(op, input, &types.RebootRelationalDatabaseOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.RebootRelationalDatabaseMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return RebootRelationalDatabaseRequest{Request: req, Input: input, Copy: c.RebootRelationalDatabaseRequest}
 }
 

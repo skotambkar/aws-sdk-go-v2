@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/directconnect/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/directconnect/types"
 )
 
@@ -45,6 +47,10 @@ func (c *Client) AllocateHostedConnectionRequest(input *types.AllocateHostedConn
 	}
 
 	req := c.newRequest(op, input, &types.AllocateHostedConnectionOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.AllocateHostedConnectionMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return AllocateHostedConnectionRequest{Request: req, Input: input, Copy: c.AllocateHostedConnectionRequest}
 }
 

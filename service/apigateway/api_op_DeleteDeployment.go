@@ -8,6 +8,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/private/protocol"
 	"github.com/aws/aws-sdk-go-v2/private/protocol/restjson"
+	"github.com/aws/aws-sdk-go-v2/service/apigateway/internal/aws_restjson"
 	"github.com/aws/aws-sdk-go-v2/service/apigateway/types"
 )
 
@@ -37,6 +38,10 @@ func (c *Client) DeleteDeploymentRequest(input *types.DeleteDeploymentInput) Del
 	}
 
 	req := c.newRequest(op, input, &types.DeleteDeploymentOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(restjson.BuildHandler.Name, aws_restjson.DeleteDeploymentMarshaler{Input: input}.GetNamedBuildHandler())
+
 	req.Handlers.Unmarshal.Remove(restjson.UnmarshalHandler)
 	req.Handlers.Unmarshal.PushBackNamed(protocol.UnmarshalDiscardBodyHandler)
 	return DeleteDeploymentRequest{Request: req, Input: input, Copy: c.DeleteDeploymentRequest}

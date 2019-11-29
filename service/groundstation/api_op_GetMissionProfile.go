@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/restjson"
+	"github.com/aws/aws-sdk-go-v2/service/groundstation/internal/aws_restjson"
 	"github.com/aws/aws-sdk-go-v2/service/groundstation/types"
 )
 
@@ -36,6 +38,10 @@ func (c *Client) GetMissionProfileRequest(input *types.GetMissionProfileInput) G
 	}
 
 	req := c.newRequest(op, input, &types.GetMissionProfileOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(restjson.BuildHandler.Name, aws_restjson.GetMissionProfileMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return GetMissionProfileRequest{Request: req, Input: input, Copy: c.GetMissionProfileRequest}
 }
 

@@ -8,6 +8,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/private/protocol"
 	"github.com/aws/aws-sdk-go-v2/private/protocol/restxml"
+	"github.com/aws/aws-sdk-go-v2/service/s3/internal/aws_restxml"
 	"github.com/aws/aws-sdk-go-v2/service/s3/types"
 )
 
@@ -52,6 +53,10 @@ func (c *Client) DeletePublicAccessBlockRequest(input *types.DeletePublicAccessB
 	}
 
 	req := c.newRequest(op, input, &types.DeletePublicAccessBlockOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(restxml.BuildHandler.Name, aws_restxml.DeletePublicAccessBlockMarshaler{Input: input}.GetNamedBuildHandler())
+
 	req.Handlers.Unmarshal.Remove(restxml.UnmarshalHandler)
 	req.Handlers.Unmarshal.PushBackNamed(protocol.UnmarshalDiscardBodyHandler)
 	return DeletePublicAccessBlockRequest{Request: req, Input: input, Copy: c.DeletePublicAccessBlockRequest}

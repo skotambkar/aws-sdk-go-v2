@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/restjson"
+	"github.com/aws/aws-sdk-go-v2/service/kinesisvideoarchivedmedia/internal/aws_restjson"
 	"github.com/aws/aws-sdk-go-v2/service/kinesisvideoarchivedmedia/types"
 )
 
@@ -181,6 +183,10 @@ func (c *Client) GetHLSStreamingSessionURLRequest(input *types.GetHLSStreamingSe
 	}
 
 	req := c.newRequest(op, input, &types.GetHLSStreamingSessionURLOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(restjson.BuildHandler.Name, aws_restjson.GetHLSStreamingSessionURLMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return GetHLSStreamingSessionURLRequest{Request: req, Input: input, Copy: c.GetHLSStreamingSessionURLRequest}
 }
 

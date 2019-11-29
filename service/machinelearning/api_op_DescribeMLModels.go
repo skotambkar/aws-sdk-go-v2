@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/machinelearning/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/machinelearning/types"
 )
 
@@ -40,6 +42,10 @@ func (c *Client) DescribeMLModelsRequest(input *types.DescribeMLModelsInput) Des
 	}
 
 	req := c.newRequest(op, input, &types.DescribeMLModelsOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.DescribeMLModelsMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return DescribeMLModelsRequest{Request: req, Input: input, Copy: c.DescribeMLModelsRequest}
 }
 

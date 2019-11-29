@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/restjson"
+	"github.com/aws/aws-sdk-go-v2/service/glacier/internal/aws_restjson"
 	"github.com/aws/aws-sdk-go-v2/service/glacier/types"
 )
 
@@ -53,6 +55,10 @@ func (c *Client) DescribeVaultRequest(input *types.DescribeVaultInput) DescribeV
 	}
 
 	req := c.newRequest(op, input, &types.DescribeVaultOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(restjson.BuildHandler.Name, aws_restjson.DescribeVaultMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return DescribeVaultRequest{Request: req, Input: input, Copy: c.DescribeVaultRequest}
 }
 

@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/budgets/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/budgets/types"
 )
 
@@ -38,6 +40,10 @@ func (c *Client) DescribeBudgetRequest(input *types.DescribeBudgetInput) Describ
 	}
 
 	req := c.newRequest(op, input, &types.DescribeBudgetOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.DescribeBudgetMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return DescribeBudgetRequest{Request: req, Input: input, Copy: c.DescribeBudgetRequest}
 }
 

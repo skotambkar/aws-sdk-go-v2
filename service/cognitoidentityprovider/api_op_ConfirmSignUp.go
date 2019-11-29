@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/cognitoidentityprovider/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/cognitoidentityprovider/types"
 )
 
@@ -37,6 +39,10 @@ func (c *Client) ConfirmSignUpRequest(input *types.ConfirmSignUpInput) ConfirmSi
 	}
 
 	req := c.newRequest(op, input, &types.ConfirmSignUpOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.ConfirmSignUpMarshaler{Input: input}.GetNamedBuildHandler())
+
 	req.Config.Credentials = aws.AnonymousCredentials
 	return ConfirmSignUpRequest{Request: req, Input: input, Copy: c.ConfirmSignUpRequest}
 }

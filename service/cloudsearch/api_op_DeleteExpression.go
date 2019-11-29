@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/query"
+	"github.com/aws/aws-sdk-go-v2/service/cloudsearch/internal/aws_query"
 	"github.com/aws/aws-sdk-go-v2/service/cloudsearch/types"
 )
 
@@ -36,6 +38,10 @@ func (c *Client) DeleteExpressionRequest(input *types.DeleteExpressionInput) Del
 	}
 
 	req := c.newRequest(op, input, &types.DeleteExpressionOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(query.BuildHandler.Name, aws_query.DeleteExpressionMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return DeleteExpressionRequest{Request: req, Input: input, Copy: c.DeleteExpressionRequest}
 }
 

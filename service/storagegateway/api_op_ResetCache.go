@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/storagegateway/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/storagegateway/types"
 )
 
@@ -47,6 +49,10 @@ func (c *Client) ResetCacheRequest(input *types.ResetCacheInput) ResetCacheReque
 	}
 
 	req := c.newRequest(op, input, &types.ResetCacheOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.ResetCacheMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return ResetCacheRequest{Request: req, Input: input, Copy: c.ResetCacheRequest}
 }
 

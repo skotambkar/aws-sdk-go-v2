@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/restjson"
+	"github.com/aws/aws-sdk-go-v2/service/ssooidc/internal/aws_restjson"
 	"github.com/aws/aws-sdk-go-v2/service/ssooidc/types"
 )
 
@@ -37,6 +39,10 @@ func (c *Client) RegisterClientRequest(input *types.RegisterClientInput) Registe
 	}
 
 	req := c.newRequest(op, input, &types.RegisterClientOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(restjson.BuildHandler.Name, aws_restjson.RegisterClientMarshaler{Input: input}.GetNamedBuildHandler())
+
 	req.Config.Credentials = aws.AnonymousCredentials
 	return RegisterClientRequest{Request: req, Input: input, Copy: c.RegisterClientRequest}
 }

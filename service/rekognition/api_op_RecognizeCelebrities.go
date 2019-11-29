@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/rekognition/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/rekognition/types"
 )
 
@@ -63,6 +65,10 @@ func (c *Client) RecognizeCelebritiesRequest(input *types.RecognizeCelebritiesIn
 	}
 
 	req := c.newRequest(op, input, &types.RecognizeCelebritiesOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.RecognizeCelebritiesMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return RecognizeCelebritiesRequest{Request: req, Input: input, Copy: c.RecognizeCelebritiesRequest}
 }
 

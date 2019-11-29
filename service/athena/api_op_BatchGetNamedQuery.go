@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/athena/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/athena/types"
 )
 
@@ -44,6 +46,10 @@ func (c *Client) BatchGetNamedQueryRequest(input *types.BatchGetNamedQueryInput)
 	}
 
 	req := c.newRequest(op, input, &types.BatchGetNamedQueryOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.BatchGetNamedQueryMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return BatchGetNamedQueryRequest{Request: req, Input: input, Copy: c.BatchGetNamedQueryRequest}
 }
 

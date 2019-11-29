@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/directoryservice/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/directoryservice/types"
 )
 
@@ -44,6 +46,10 @@ func (c *Client) RestoreFromSnapshotRequest(input *types.RestoreFromSnapshotInpu
 	}
 
 	req := c.newRequest(op, input, &types.RestoreFromSnapshotOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.RestoreFromSnapshotMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return RestoreFromSnapshotRequest{Request: req, Input: input, Copy: c.RestoreFromSnapshotRequest}
 }
 

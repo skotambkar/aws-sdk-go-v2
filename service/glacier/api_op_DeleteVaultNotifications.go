@@ -8,6 +8,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/private/protocol"
 	"github.com/aws/aws-sdk-go-v2/private/protocol/restjson"
+	"github.com/aws/aws-sdk-go-v2/service/glacier/internal/aws_restjson"
 	"github.com/aws/aws-sdk-go-v2/service/glacier/types"
 )
 
@@ -50,6 +51,10 @@ func (c *Client) DeleteVaultNotificationsRequest(input *types.DeleteVaultNotific
 	}
 
 	req := c.newRequest(op, input, &types.DeleteVaultNotificationsOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(restjson.BuildHandler.Name, aws_restjson.DeleteVaultNotificationsMarshaler{Input: input}.GetNamedBuildHandler())
+
 	req.Handlers.Unmarshal.Remove(restjson.UnmarshalHandler)
 	req.Handlers.Unmarshal.PushBackNamed(protocol.UnmarshalDiscardBodyHandler)
 	return DeleteVaultNotificationsRequest{Request: req, Input: input, Copy: c.DeleteVaultNotificationsRequest}

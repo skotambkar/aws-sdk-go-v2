@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/restjson"
+	"github.com/aws/aws-sdk-go-v2/service/pinpoint/internal/aws_restjson"
 	"github.com/aws/aws-sdk-go-v2/service/pinpoint/types"
 )
 
@@ -37,6 +39,10 @@ func (c *Client) UpdateApnsChannelRequest(input *types.UpdateApnsChannelInput) U
 	}
 
 	req := c.newRequest(op, input, &types.UpdateApnsChannelOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(restjson.BuildHandler.Name, aws_restjson.UpdateApnsChannelMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return UpdateApnsChannelRequest{Request: req, Input: input, Copy: c.UpdateApnsChannelRequest}
 }
 

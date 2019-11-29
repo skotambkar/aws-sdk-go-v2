@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/ssm/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/ssm/types"
 )
 
@@ -39,6 +41,10 @@ func (c *Client) DeleteActivationRequest(input *types.DeleteActivationInput) Del
 	}
 
 	req := c.newRequest(op, input, &types.DeleteActivationOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.DeleteActivationMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return DeleteActivationRequest{Request: req, Input: input, Copy: c.DeleteActivationRequest}
 }
 

@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/servicecatalog/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/servicecatalog/types"
 )
 
@@ -38,6 +40,10 @@ func (c *Client) ListStackInstancesForProvisionedProductRequest(input *types.Lis
 	}
 
 	req := c.newRequest(op, input, &types.ListStackInstancesForProvisionedProductOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.ListStackInstancesForProvisionedProductMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return ListStackInstancesForProvisionedProductRequest{Request: req, Input: input, Copy: c.ListStackInstancesForProvisionedProductRequest}
 }
 

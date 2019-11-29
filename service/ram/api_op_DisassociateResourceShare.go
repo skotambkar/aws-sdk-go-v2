@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/restjson"
+	"github.com/aws/aws-sdk-go-v2/service/ram/internal/aws_restjson"
 	"github.com/aws/aws-sdk-go-v2/service/ram/types"
 )
 
@@ -37,6 +39,10 @@ func (c *Client) DisassociateResourceShareRequest(input *types.DisassociateResou
 	}
 
 	req := c.newRequest(op, input, &types.DisassociateResourceShareOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(restjson.BuildHandler.Name, aws_restjson.DisassociateResourceShareMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return DisassociateResourceShareRequest{Request: req, Input: input, Copy: c.DisassociateResourceShareRequest}
 }
 

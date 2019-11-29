@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/restjson"
+	"github.com/aws/aws-sdk-go-v2/service/glacier/internal/aws_restjson"
 	"github.com/aws/aws-sdk-go-v2/service/glacier/types"
 )
 
@@ -77,6 +79,10 @@ func (c *Client) GetJobOutputRequest(input *types.GetJobOutputInput) GetJobOutpu
 	}
 
 	req := c.newRequest(op, input, &types.GetJobOutputOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(restjson.BuildHandler.Name, aws_restjson.GetJobOutputMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return GetJobOutputRequest{Request: req, Input: input, Copy: c.GetJobOutputRequest}
 }
 

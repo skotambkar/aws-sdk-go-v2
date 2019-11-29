@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/restxml"
+	"github.com/aws/aws-sdk-go-v2/service/s3/internal/aws_restxml"
 	"github.com/aws/aws-sdk-go-v2/service/s3/types"
 )
 
@@ -220,6 +222,10 @@ func (c *Client) RestoreObjectRequest(input *types.RestoreObjectInput) RestoreOb
 	}
 
 	req := c.newRequest(op, input, &types.RestoreObjectOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(restxml.BuildHandler.Name, aws_restxml.RestoreObjectMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return RestoreObjectRequest{Request: req, Input: input, Copy: c.RestoreObjectRequest}
 }
 

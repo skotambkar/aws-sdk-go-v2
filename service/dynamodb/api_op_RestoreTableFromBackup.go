@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/dynamodb/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb/types"
 )
 
@@ -53,6 +55,10 @@ func (c *Client) RestoreTableFromBackupRequest(input *types.RestoreTableFromBack
 	}
 
 	req := c.newRequest(op, input, &types.RestoreTableFromBackupOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.RestoreTableFromBackupMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return RestoreTableFromBackupRequest{Request: req, Input: input, Copy: c.RestoreTableFromBackupRequest}
 }
 

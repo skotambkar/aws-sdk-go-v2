@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/snowball/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/snowball/types"
 )
 
@@ -37,6 +39,10 @@ func (c *Client) GetSoftwareUpdatesRequest(input *types.GetSoftwareUpdatesInput)
 	}
 
 	req := c.newRequest(op, input, &types.GetSoftwareUpdatesOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.GetSoftwareUpdatesMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return GetSoftwareUpdatesRequest{Request: req, Input: input, Copy: c.GetSoftwareUpdatesRequest}
 }
 

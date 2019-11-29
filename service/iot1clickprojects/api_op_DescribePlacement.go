@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/restjson"
+	"github.com/aws/aws-sdk-go-v2/service/iot1clickprojects/internal/aws_restjson"
 	"github.com/aws/aws-sdk-go-v2/service/iot1clickprojects/types"
 )
 
@@ -36,6 +38,10 @@ func (c *Client) DescribePlacementRequest(input *types.DescribePlacementInput) D
 	}
 
 	req := c.newRequest(op, input, &types.DescribePlacementOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(restjson.BuildHandler.Name, aws_restjson.DescribePlacementMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return DescribePlacementRequest{Request: req, Input: input, Copy: c.DescribePlacementRequest}
 }
 

@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/servicecatalog/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/servicecatalog/types"
 )
 
@@ -36,6 +38,10 @@ func (c *Client) DescribeConstraintRequest(input *types.DescribeConstraintInput)
 	}
 
 	req := c.newRequest(op, input, &types.DescribeConstraintOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.DescribeConstraintMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return DescribeConstraintRequest{Request: req, Input: input, Copy: c.DescribeConstraintRequest}
 }
 

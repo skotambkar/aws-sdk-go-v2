@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/restjson"
+	"github.com/aws/aws-sdk-go-v2/service/robomaker/internal/aws_restjson"
 	"github.com/aws/aws-sdk-go-v2/service/robomaker/types"
 )
 
@@ -43,6 +45,10 @@ func (c *Client) ListSimulationApplicationsRequest(input *types.ListSimulationAp
 	}
 
 	req := c.newRequest(op, input, &types.ListSimulationApplicationsOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(restjson.BuildHandler.Name, aws_restjson.ListSimulationApplicationsMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return ListSimulationApplicationsRequest{Request: req, Input: input, Copy: c.ListSimulationApplicationsRequest}
 }
 

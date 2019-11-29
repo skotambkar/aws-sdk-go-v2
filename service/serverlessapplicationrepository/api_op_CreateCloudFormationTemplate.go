@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/restjson"
+	"github.com/aws/aws-sdk-go-v2/service/serverlessapplicationrepository/internal/aws_restjson"
 	"github.com/aws/aws-sdk-go-v2/service/serverlessapplicationrepository/types"
 )
 
@@ -36,6 +38,10 @@ func (c *Client) CreateCloudFormationTemplateRequest(input *types.CreateCloudFor
 	}
 
 	req := c.newRequest(op, input, &types.CreateCloudFormationTemplateOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(restjson.BuildHandler.Name, aws_restjson.CreateCloudFormationTemplateMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return CreateCloudFormationTemplateRequest{Request: req, Input: input, Copy: c.CreateCloudFormationTemplateRequest}
 }
 

@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/mturk/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/mturk/types"
 )
 
@@ -54,6 +56,10 @@ func (c *Client) DeleteHITRequest(input *types.DeleteHITInput) DeleteHITRequest 
 	}
 
 	req := c.newRequest(op, input, &types.DeleteHITOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.DeleteHITMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return DeleteHITRequest{Request: req, Input: input, Copy: c.DeleteHITRequest}
 }
 

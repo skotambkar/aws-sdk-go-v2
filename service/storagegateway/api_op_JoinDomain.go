@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/storagegateway/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/storagegateway/types"
 )
 
@@ -37,6 +39,10 @@ func (c *Client) JoinDomainRequest(input *types.JoinDomainInput) JoinDomainReque
 	}
 
 	req := c.newRequest(op, input, &types.JoinDomainOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.JoinDomainMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return JoinDomainRequest{Request: req, Input: input, Copy: c.JoinDomainRequest}
 }
 

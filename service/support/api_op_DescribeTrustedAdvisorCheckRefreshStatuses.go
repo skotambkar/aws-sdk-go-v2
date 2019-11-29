@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/support/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/support/types"
 )
 
@@ -41,6 +43,10 @@ func (c *Client) DescribeTrustedAdvisorCheckRefreshStatusesRequest(input *types.
 	}
 
 	req := c.newRequest(op, input, &types.DescribeTrustedAdvisorCheckRefreshStatusesOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.DescribeTrustedAdvisorCheckRefreshStatusesMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return DescribeTrustedAdvisorCheckRefreshStatusesRequest{Request: req, Input: input, Copy: c.DescribeTrustedAdvisorCheckRefreshStatusesRequest}
 }
 

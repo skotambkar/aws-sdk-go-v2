@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/emr/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/emr/types"
 )
 
@@ -36,6 +38,10 @@ func (c *Client) AddInstanceGroupsRequest(input *types.AddInstanceGroupsInput) A
 	}
 
 	req := c.newRequest(op, input, &types.AddInstanceGroupsOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.AddInstanceGroupsMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return AddInstanceGroupsRequest{Request: req, Input: input, Copy: c.AddInstanceGroupsRequest}
 }
 

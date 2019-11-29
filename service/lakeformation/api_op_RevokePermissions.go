@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/lakeformation/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/lakeformation/types"
 )
 
@@ -37,6 +39,10 @@ func (c *Client) RevokePermissionsRequest(input *types.RevokePermissionsInput) R
 	}
 
 	req := c.newRequest(op, input, &types.RevokePermissionsOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.RevokePermissionsMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return RevokePermissionsRequest{Request: req, Input: input, Copy: c.RevokePermissionsRequest}
 }
 

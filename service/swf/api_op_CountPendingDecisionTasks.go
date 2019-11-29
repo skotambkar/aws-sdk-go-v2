@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/swf/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/swf/types"
 )
 
@@ -58,6 +60,10 @@ func (c *Client) CountPendingDecisionTasksRequest(input *types.CountPendingDecis
 	}
 
 	req := c.newRequest(op, input, &types.CountPendingDecisionTasksOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.CountPendingDecisionTasksMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return CountPendingDecisionTasksRequest{Request: req, Input: input, Copy: c.CountPendingDecisionTasksRequest}
 }
 

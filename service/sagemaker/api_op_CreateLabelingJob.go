@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/sagemaker/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/sagemaker/types"
 )
 
@@ -63,6 +65,10 @@ func (c *Client) CreateLabelingJobRequest(input *types.CreateLabelingJobInput) C
 	}
 
 	req := c.newRequest(op, input, &types.CreateLabelingJobOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.CreateLabelingJobMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return CreateLabelingJobRequest{Request: req, Input: input, Copy: c.CreateLabelingJobRequest}
 }
 

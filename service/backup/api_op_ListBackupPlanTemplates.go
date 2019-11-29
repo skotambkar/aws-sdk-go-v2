@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/restjson"
+	"github.com/aws/aws-sdk-go-v2/service/backup/internal/aws_restjson"
 	"github.com/aws/aws-sdk-go-v2/service/backup/types"
 )
 
@@ -43,6 +45,10 @@ func (c *Client) ListBackupPlanTemplatesRequest(input *types.ListBackupPlanTempl
 	}
 
 	req := c.newRequest(op, input, &types.ListBackupPlanTemplatesOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(restjson.BuildHandler.Name, aws_restjson.ListBackupPlanTemplatesMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return ListBackupPlanTemplatesRequest{Request: req, Input: input, Copy: c.ListBackupPlanTemplatesRequest}
 }
 

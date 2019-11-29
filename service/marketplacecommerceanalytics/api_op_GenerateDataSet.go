@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/marketplacecommerceanalytics/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/marketplacecommerceanalytics/types"
 )
 
@@ -45,6 +47,10 @@ func (c *Client) GenerateDataSetRequest(input *types.GenerateDataSetInput) Gener
 	}
 
 	req := c.newRequest(op, input, &types.GenerateDataSetOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.GenerateDataSetMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return GenerateDataSetRequest{Request: req, Input: input, Copy: c.GenerateDataSetRequest}
 }
 

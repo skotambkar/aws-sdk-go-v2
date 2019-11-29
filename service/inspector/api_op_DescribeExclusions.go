@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/inspector/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/inspector/types"
 )
 
@@ -36,6 +38,10 @@ func (c *Client) DescribeExclusionsRequest(input *types.DescribeExclusionsInput)
 	}
 
 	req := c.newRequest(op, input, &types.DescribeExclusionsOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.DescribeExclusionsMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return DescribeExclusionsRequest{Request: req, Input: input, Copy: c.DescribeExclusionsRequest}
 }
 

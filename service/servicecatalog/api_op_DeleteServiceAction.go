@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/servicecatalog/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/servicecatalog/types"
 )
 
@@ -36,6 +38,10 @@ func (c *Client) DeleteServiceActionRequest(input *types.DeleteServiceActionInpu
 	}
 
 	req := c.newRequest(op, input, &types.DeleteServiceActionOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.DeleteServiceActionMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return DeleteServiceActionRequest{Request: req, Input: input, Copy: c.DeleteServiceActionRequest}
 }
 

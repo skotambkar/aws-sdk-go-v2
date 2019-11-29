@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/servicecatalog/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/servicecatalog/types"
 )
 
@@ -36,6 +38,10 @@ func (c *Client) BatchAssociateServiceActionWithProvisioningArtifactRequest(inpu
 	}
 
 	req := c.newRequest(op, input, &types.BatchAssociateServiceActionWithProvisioningArtifactOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.BatchAssociateServiceActionWithProvisioningArtifactMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return BatchAssociateServiceActionWithProvisioningArtifactRequest{Request: req, Input: input, Copy: c.BatchAssociateServiceActionWithProvisioningArtifactRequest}
 }
 

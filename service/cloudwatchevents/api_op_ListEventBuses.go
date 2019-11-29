@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/cloudwatchevents/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/cloudwatchevents/types"
 )
 
@@ -39,6 +41,10 @@ func (c *Client) ListEventBusesRequest(input *types.ListEventBusesInput) ListEve
 	}
 
 	req := c.newRequest(op, input, &types.ListEventBusesOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.ListEventBusesMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return ListEventBusesRequest{Request: req, Input: input, Copy: c.ListEventBusesRequest}
 }
 

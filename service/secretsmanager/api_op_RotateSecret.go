@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/secretsmanager/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/secretsmanager/types"
 )
 
@@ -91,6 +93,10 @@ func (c *Client) RotateSecretRequest(input *types.RotateSecretInput) RotateSecre
 	}
 
 	req := c.newRequest(op, input, &types.RotateSecretOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.RotateSecretMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return RotateSecretRequest{Request: req, Input: input, Copy: c.RotateSecretRequest}
 }
 

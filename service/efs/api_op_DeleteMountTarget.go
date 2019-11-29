@@ -8,6 +8,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/private/protocol"
 	"github.com/aws/aws-sdk-go-v2/private/protocol/restjson"
+	"github.com/aws/aws-sdk-go-v2/service/efs/internal/aws_restjson"
 	"github.com/aws/aws-sdk-go-v2/service/efs/types"
 )
 
@@ -62,6 +63,10 @@ func (c *Client) DeleteMountTargetRequest(input *types.DeleteMountTargetInput) D
 	}
 
 	req := c.newRequest(op, input, &types.DeleteMountTargetOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(restjson.BuildHandler.Name, aws_restjson.DeleteMountTargetMarshaler{Input: input}.GetNamedBuildHandler())
+
 	req.Handlers.Unmarshal.Remove(restjson.UnmarshalHandler)
 	req.Handlers.Unmarshal.PushBackNamed(protocol.UnmarshalDiscardBodyHandler)
 	return DeleteMountTargetRequest{Request: req, Input: input, Copy: c.DeleteMountTargetRequest}

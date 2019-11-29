@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/autoscalingplans/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/autoscalingplans/types"
 )
 
@@ -36,6 +38,10 @@ func (c *Client) DescribeScalingPlansRequest(input *types.DescribeScalingPlansIn
 	}
 
 	req := c.newRequest(op, input, &types.DescribeScalingPlansOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.DescribeScalingPlansMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return DescribeScalingPlansRequest{Request: req, Input: input, Copy: c.DescribeScalingPlansRequest}
 }
 

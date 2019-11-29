@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/appstream/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/appstream/types"
 )
 
@@ -36,6 +38,10 @@ func (c *Client) CreateUsageReportSubscriptionRequest(input *types.CreateUsageRe
 	}
 
 	req := c.newRequest(op, input, &types.CreateUsageReportSubscriptionOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.CreateUsageReportSubscriptionMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return CreateUsageReportSubscriptionRequest{Request: req, Input: input, Copy: c.CreateUsageReportSubscriptionRequest}
 }
 

@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/restjson"
+	"github.com/aws/aws-sdk-go-v2/service/appmesh/internal/aws_restjson"
 	"github.com/aws/aws-sdk-go-v2/service/appmesh/types"
 )
 
@@ -55,6 +57,10 @@ func (c *Client) CreateVirtualNodeRequest(input *types.CreateVirtualNodeInput) C
 	}
 
 	req := c.newRequest(op, input, &types.CreateVirtualNodeOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(restjson.BuildHandler.Name, aws_restjson.CreateVirtualNodeMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return CreateVirtualNodeRequest{Request: req, Input: input, Copy: c.CreateVirtualNodeRequest}
 }
 

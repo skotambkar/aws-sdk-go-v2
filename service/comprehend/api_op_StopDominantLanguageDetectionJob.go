@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/comprehend/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/comprehend/types"
 )
 
@@ -47,6 +49,10 @@ func (c *Client) StopDominantLanguageDetectionJobRequest(input *types.StopDomina
 	}
 
 	req := c.newRequest(op, input, &types.StopDominantLanguageDetectionJobOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.StopDominantLanguageDetectionJobMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return StopDominantLanguageDetectionJobRequest{Request: req, Input: input, Copy: c.StopDominantLanguageDetectionJobRequest}
 }
 

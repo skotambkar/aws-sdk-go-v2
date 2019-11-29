@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/restjson"
+	"github.com/aws/aws-sdk-go-v2/service/elastictranscoder/internal/aws_restjson"
 	"github.com/aws/aws-sdk-go-v2/service/elastictranscoder/types"
 )
 
@@ -38,6 +40,10 @@ func (c *Client) DeletePipelineRequest(input *types.DeletePipelineInput) DeleteP
 	}
 
 	req := c.newRequest(op, input, &types.DeletePipelineOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(restjson.BuildHandler.Name, aws_restjson.DeletePipelineMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return DeletePipelineRequest{Request: req, Input: input, Copy: c.DeletePipelineRequest}
 }
 

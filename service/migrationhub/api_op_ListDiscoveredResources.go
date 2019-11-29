@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/migrationhub/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/migrationhub/types"
 )
 
@@ -42,6 +44,10 @@ func (c *Client) ListDiscoveredResourcesRequest(input *types.ListDiscoveredResou
 	}
 
 	req := c.newRequest(op, input, &types.ListDiscoveredResourcesOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.ListDiscoveredResourcesMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return ListDiscoveredResourcesRequest{Request: req, Input: input, Copy: c.ListDiscoveredResourcesRequest}
 }
 

@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/configservice/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/configservice/types"
 )
 
@@ -37,6 +39,10 @@ func (c *Client) GetComplianceSummaryByConfigRuleRequest(input *types.GetComplia
 	}
 
 	req := c.newRequest(op, input, &types.GetComplianceSummaryByConfigRuleOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.GetComplianceSummaryByConfigRuleMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return GetComplianceSummaryByConfigRuleRequest{Request: req, Input: input, Copy: c.GetComplianceSummaryByConfigRuleRequest}
 }
 

@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/restjson"
+	"github.com/aws/aws-sdk-go-v2/service/kinesisvideo/internal/aws_restjson"
 	"github.com/aws/aws-sdk-go-v2/service/kinesisvideo/types"
 )
 
@@ -56,6 +58,10 @@ func (c *Client) UpdateDataRetentionRequest(input *types.UpdateDataRetentionInpu
 	}
 
 	req := c.newRequest(op, input, &types.UpdateDataRetentionOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(restjson.BuildHandler.Name, aws_restjson.UpdateDataRetentionMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return UpdateDataRetentionRequest{Request: req, Input: input, Copy: c.UpdateDataRetentionRequest}
 }
 

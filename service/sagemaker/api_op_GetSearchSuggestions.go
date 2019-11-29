@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/sagemaker/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/sagemaker/types"
 )
 
@@ -39,6 +41,10 @@ func (c *Client) GetSearchSuggestionsRequest(input *types.GetSearchSuggestionsIn
 	}
 
 	req := c.newRequest(op, input, &types.GetSearchSuggestionsOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.GetSearchSuggestionsMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return GetSearchSuggestionsRequest{Request: req, Input: input, Copy: c.GetSearchSuggestionsRequest}
 }
 

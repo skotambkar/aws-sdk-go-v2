@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/rekognition/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/rekognition/types"
 )
 
@@ -52,6 +54,10 @@ func (c *Client) SearchFacesRequest(input *types.SearchFacesInput) SearchFacesRe
 	}
 
 	req := c.newRequest(op, input, &types.SearchFacesOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.SearchFacesMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return SearchFacesRequest{Request: req, Input: input, Copy: c.SearchFacesRequest}
 }
 

@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/lakeformation/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/lakeformation/types"
 )
 
@@ -36,6 +38,10 @@ func (c *Client) PutDataLakeSettingsRequest(input *types.PutDataLakeSettingsInpu
 	}
 
 	req := c.newRequest(op, input, &types.PutDataLakeSettingsOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.PutDataLakeSettingsMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return PutDataLakeSettingsRequest{Request: req, Input: input, Copy: c.PutDataLakeSettingsRequest}
 }
 

@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/restjson"
+	"github.com/aws/aws-sdk-go-v2/service/mediapackage/internal/aws_restjson"
 	"github.com/aws/aws-sdk-go-v2/service/mediapackage/types"
 )
 
@@ -36,6 +38,10 @@ func (c *Client) DeleteChannelRequest(input *types.DeleteChannelInput) DeleteCha
 	}
 
 	req := c.newRequest(op, input, &types.DeleteChannelOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(restjson.BuildHandler.Name, aws_restjson.DeleteChannelMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return DeleteChannelRequest{Request: req, Input: input, Copy: c.DeleteChannelRequest}
 }
 

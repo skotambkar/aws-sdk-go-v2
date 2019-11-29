@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/restjson"
+	"github.com/aws/aws-sdk-go-v2/service/iotjobsdataplane/internal/aws_restjson"
 	"github.com/aws/aws-sdk-go-v2/service/iotjobsdataplane/types"
 )
 
@@ -36,6 +38,10 @@ func (c *Client) GetPendingJobExecutionsRequest(input *types.GetPendingJobExecut
 	}
 
 	req := c.newRequest(op, input, &types.GetPendingJobExecutionsOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(restjson.BuildHandler.Name, aws_restjson.GetPendingJobExecutionsMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return GetPendingJobExecutionsRequest{Request: req, Input: input, Copy: c.GetPendingJobExecutionsRequest}
 }
 

@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/restjson"
+	"github.com/aws/aws-sdk-go-v2/service/ioteventsdata/internal/aws_restjson"
 	"github.com/aws/aws-sdk-go-v2/service/ioteventsdata/types"
 )
 
@@ -41,6 +43,10 @@ func (c *Client) BatchPutMessageRequest(input *types.BatchPutMessageInput) Batch
 	}
 
 	req := c.newRequest(op, input, &types.BatchPutMessageOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(restjson.BuildHandler.Name, aws_restjson.BatchPutMessageMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return BatchPutMessageRequest{Request: req, Input: input, Copy: c.BatchPutMessageRequest}
 }
 

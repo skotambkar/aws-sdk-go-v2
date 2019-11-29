@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/dynamodb/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb/types"
 )
 
@@ -69,6 +71,10 @@ func (c *Client) ScanRequest(input *types.ScanInput) ScanRequest {
 	}
 
 	req := c.newRequest(op, input, &types.ScanOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.ScanMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return ScanRequest{Request: req, Input: input, Copy: c.ScanRequest}
 }
 

@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/ecr/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/ecr/types"
 )
 
@@ -40,6 +42,10 @@ func (c *Client) UploadLayerPartRequest(input *types.UploadLayerPartInput) Uploa
 	}
 
 	req := c.newRequest(op, input, &types.UploadLayerPartOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.UploadLayerPartMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return UploadLayerPartRequest{Request: req, Input: input, Copy: c.UploadLayerPartRequest}
 }
 

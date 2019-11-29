@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/ecr/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/ecr/types"
 )
 
@@ -42,6 +44,10 @@ func (c *Client) DescribeImageScanFindingsRequest(input *types.DescribeImageScan
 	}
 
 	req := c.newRequest(op, input, &types.DescribeImageScanFindingsOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.DescribeImageScanFindingsMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return DescribeImageScanFindingsRequest{Request: req, Input: input, Copy: c.DescribeImageScanFindingsRequest}
 }
 

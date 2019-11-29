@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/fsx/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/fsx/types"
 )
 
@@ -36,6 +38,10 @@ func (c *Client) UpdateFileSystemRequest(input *types.UpdateFileSystemInput) Upd
 	}
 
 	req := c.newRequest(op, input, &types.UpdateFileSystemOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.UpdateFileSystemMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return UpdateFileSystemRequest{Request: req, Input: input, Copy: c.UpdateFileSystemRequest}
 }
 

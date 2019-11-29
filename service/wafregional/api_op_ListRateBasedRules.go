@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/wafregional/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/wafregional/types"
 )
 
@@ -36,6 +38,10 @@ func (c *Client) ListRateBasedRulesRequest(input *types.ListRateBasedRulesInput)
 	}
 
 	req := c.newRequest(op, input, &types.ListRateBasedRulesOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.ListRateBasedRulesMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return ListRateBasedRulesRequest{Request: req, Input: input, Copy: c.ListRateBasedRulesRequest}
 }
 

@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/gamelift/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/gamelift/types"
 )
 
@@ -64,6 +66,10 @@ func (c *Client) StartFleetActionsRequest(input *types.StartFleetActionsInput) S
 	}
 
 	req := c.newRequest(op, input, &types.StartFleetActionsOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.StartFleetActionsMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return StartFleetActionsRequest{Request: req, Input: input, Copy: c.StartFleetActionsRequest}
 }
 

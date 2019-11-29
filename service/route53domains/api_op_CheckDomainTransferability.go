@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/route53domains/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/route53domains/types"
 )
 
@@ -36,6 +38,10 @@ func (c *Client) CheckDomainTransferabilityRequest(input *types.CheckDomainTrans
 	}
 
 	req := c.newRequest(op, input, &types.CheckDomainTransferabilityOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.CheckDomainTransferabilityMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return CheckDomainTransferabilityRequest{Request: req, Input: input, Copy: c.CheckDomainTransferabilityRequest}
 }
 

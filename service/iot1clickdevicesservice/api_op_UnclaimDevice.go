@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/restjson"
+	"github.com/aws/aws-sdk-go-v2/service/iot1clickdevicesservice/internal/aws_restjson"
 	"github.com/aws/aws-sdk-go-v2/service/iot1clickdevicesservice/types"
 )
 
@@ -36,6 +38,10 @@ func (c *Client) UnclaimDeviceRequest(input *types.UnclaimDeviceInput) UnclaimDe
 	}
 
 	req := c.newRequest(op, input, &types.UnclaimDeviceOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(restjson.BuildHandler.Name, aws_restjson.UnclaimDeviceMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return UnclaimDeviceRequest{Request: req, Input: input, Copy: c.UnclaimDeviceRequest}
 }
 

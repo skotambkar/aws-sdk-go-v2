@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/transfer/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/transfer/types"
 )
 
@@ -40,6 +42,10 @@ func (c *Client) TestIdentityProviderRequest(input *types.TestIdentityProviderIn
 	}
 
 	req := c.newRequest(op, input, &types.TestIdentityProviderOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.TestIdentityProviderMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return TestIdentityProviderRequest{Request: req, Input: input, Copy: c.TestIdentityProviderRequest}
 }
 

@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/query"
+	"github.com/aws/aws-sdk-go-v2/service/rds/internal/aws_query"
 	"github.com/aws/aws-sdk-go-v2/service/rds/types"
 )
 
@@ -39,6 +41,10 @@ func (c *Client) DeleteGlobalClusterRequest(input *types.DeleteGlobalClusterInpu
 	}
 
 	req := c.newRequest(op, input, &types.DeleteGlobalClusterOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(query.BuildHandler.Name, aws_query.DeleteGlobalClusterMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return DeleteGlobalClusterRequest{Request: req, Input: input, Copy: c.DeleteGlobalClusterRequest}
 }
 

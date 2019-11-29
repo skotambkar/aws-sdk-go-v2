@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/restjson"
+	"github.com/aws/aws-sdk-go-v2/service/medialive/internal/aws_restjson"
 	"github.com/aws/aws-sdk-go-v2/service/medialive/types"
 )
 
@@ -36,6 +38,10 @@ func (c *Client) DeleteInputSecurityGroupRequest(input *types.DeleteInputSecurit
 	}
 
 	req := c.newRequest(op, input, &types.DeleteInputSecurityGroupOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(restjson.BuildHandler.Name, aws_restjson.DeleteInputSecurityGroupMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return DeleteInputSecurityGroupRequest{Request: req, Input: input, Copy: c.DeleteInputSecurityGroupRequest}
 }
 

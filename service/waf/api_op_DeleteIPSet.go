@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/waf/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/waf/types"
 )
 
@@ -49,6 +51,10 @@ func (c *Client) DeleteIPSetRequest(input *types.DeleteIPSetInput) DeleteIPSetRe
 	}
 
 	req := c.newRequest(op, input, &types.DeleteIPSetOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.DeleteIPSetMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return DeleteIPSetRequest{Request: req, Input: input, Copy: c.DeleteIPSetRequest}
 }
 

@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/codebuild/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/codebuild/types"
 )
 
@@ -38,6 +40,10 @@ func (c *Client) UpdateWebhookRequest(input *types.UpdateWebhookInput) UpdateWeb
 	}
 
 	req := c.newRequest(op, input, &types.UpdateWebhookOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.UpdateWebhookMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return UpdateWebhookRequest{Request: req, Input: input, Copy: c.UpdateWebhookRequest}
 }
 

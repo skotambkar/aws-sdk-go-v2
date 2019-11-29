@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/query"
+	"github.com/aws/aws-sdk-go-v2/service/sqs/internal/aws_query"
 	"github.com/aws/aws-sdk-go-v2/service/sqs/types"
 )
 
@@ -42,6 +44,10 @@ func (c *Client) ListQueueTagsRequest(input *types.ListQueueTagsInput) ListQueue
 	}
 
 	req := c.newRequest(op, input, &types.ListQueueTagsOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(query.BuildHandler.Name, aws_query.ListQueueTagsMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return ListQueueTagsRequest{Request: req, Input: input, Copy: c.ListQueueTagsRequest}
 }
 

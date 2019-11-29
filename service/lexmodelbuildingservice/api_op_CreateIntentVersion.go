@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/restjson"
+	"github.com/aws/aws-sdk-go-v2/service/lexmodelbuildingservice/internal/aws_restjson"
 	"github.com/aws/aws-sdk-go-v2/service/lexmodelbuildingservice/types"
 )
 
@@ -48,6 +50,10 @@ func (c *Client) CreateIntentVersionRequest(input *types.CreateIntentVersionInpu
 	}
 
 	req := c.newRequest(op, input, &types.CreateIntentVersionOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(restjson.BuildHandler.Name, aws_restjson.CreateIntentVersionMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return CreateIntentVersionRequest{Request: req, Input: input, Copy: c.CreateIntentVersionRequest}
 }
 

@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/restjson"
+	"github.com/aws/aws-sdk-go-v2/service/greengrass/internal/aws_restjson"
 	"github.com/aws/aws-sdk-go-v2/service/greengrass/types"
 )
 
@@ -37,6 +39,10 @@ func (c *Client) CreateDeviceDefinitionRequest(input *types.CreateDeviceDefiniti
 	}
 
 	req := c.newRequest(op, input, &types.CreateDeviceDefinitionOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(restjson.BuildHandler.Name, aws_restjson.CreateDeviceDefinitionMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return CreateDeviceDefinitionRequest{Request: req, Input: input, Copy: c.CreateDeviceDefinitionRequest}
 }
 

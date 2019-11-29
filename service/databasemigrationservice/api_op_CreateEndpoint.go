@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/databasemigrationservice/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/databasemigrationservice/types"
 )
 
@@ -36,6 +38,10 @@ func (c *Client) CreateEndpointRequest(input *types.CreateEndpointInput) CreateE
 	}
 
 	req := c.newRequest(op, input, &types.CreateEndpointOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.CreateEndpointMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return CreateEndpointRequest{Request: req, Input: input, Copy: c.CreateEndpointRequest}
 }
 

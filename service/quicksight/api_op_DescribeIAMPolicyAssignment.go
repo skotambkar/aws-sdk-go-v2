@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/restjson"
+	"github.com/aws/aws-sdk-go-v2/service/quicksight/internal/aws_restjson"
 	"github.com/aws/aws-sdk-go-v2/service/quicksight/types"
 )
 
@@ -41,6 +43,10 @@ func (c *Client) DescribeIAMPolicyAssignmentRequest(input *types.DescribeIAMPoli
 	}
 
 	req := c.newRequest(op, input, &types.DescribeIAMPolicyAssignmentOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(restjson.BuildHandler.Name, aws_restjson.DescribeIAMPolicyAssignmentMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return DescribeIAMPolicyAssignmentRequest{Request: req, Input: input, Copy: c.DescribeIAMPolicyAssignmentRequest}
 }
 

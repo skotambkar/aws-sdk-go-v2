@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/query"
+	"github.com/aws/aws-sdk-go-v2/service/iam/internal/aws_query"
 	"github.com/aws/aws-sdk-go-v2/service/iam/types"
 )
 
@@ -51,6 +53,10 @@ func (c *Client) ListUserPoliciesRequest(input *types.ListUserPoliciesInput) Lis
 	}
 
 	req := c.newRequest(op, input, &types.ListUserPoliciesOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(query.BuildHandler.Name, aws_query.ListUserPoliciesMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return ListUserPoliciesRequest{Request: req, Input: input, Copy: c.ListUserPoliciesRequest}
 }
 

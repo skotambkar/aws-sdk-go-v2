@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/sfn/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/sfn/types"
 )
 
@@ -51,6 +53,10 @@ func (c *Client) ListStateMachinesRequest(input *types.ListStateMachinesInput) L
 	}
 
 	req := c.newRequest(op, input, &types.ListStateMachinesOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.ListStateMachinesMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return ListStateMachinesRequest{Request: req, Input: input, Copy: c.ListStateMachinesRequest}
 }
 

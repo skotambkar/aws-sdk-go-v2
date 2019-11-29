@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/query"
+	"github.com/aws/aws-sdk-go-v2/service/elasticbeanstalk/internal/aws_query"
 	"github.com/aws/aws-sdk-go-v2/service/elasticbeanstalk/types"
 )
 
@@ -37,6 +39,10 @@ func (c *Client) CreateApplicationRequest(input *types.CreateApplicationInput) C
 	}
 
 	req := c.newRequest(op, input, &types.CreateApplicationOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(query.BuildHandler.Name, aws_query.CreateApplicationMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return CreateApplicationRequest{Request: req, Input: input, Copy: c.CreateApplicationRequest}
 }
 

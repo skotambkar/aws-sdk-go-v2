@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/restjson"
+	"github.com/aws/aws-sdk-go-v2/service/kinesisvideo/internal/aws_restjson"
 	"github.com/aws/aws-sdk-go-v2/service/kinesisvideo/types"
 )
 
@@ -40,6 +42,10 @@ func (c *Client) UntagStreamRequest(input *types.UntagStreamInput) UntagStreamRe
 	}
 
 	req := c.newRequest(op, input, &types.UntagStreamOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(restjson.BuildHandler.Name, aws_restjson.UntagStreamMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return UntagStreamRequest{Request: req, Input: input, Copy: c.UntagStreamRequest}
 }
 

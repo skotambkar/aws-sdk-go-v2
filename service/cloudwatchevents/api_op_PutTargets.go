@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/cloudwatchevents/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/cloudwatchevents/types"
 )
 
@@ -138,6 +140,10 @@ func (c *Client) PutTargetsRequest(input *types.PutTargetsInput) PutTargetsReque
 	}
 
 	req := c.newRequest(op, input, &types.PutTargetsOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.PutTargetsMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return PutTargetsRequest{Request: req, Input: input, Copy: c.PutTargetsRequest}
 }
 

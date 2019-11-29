@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/restxml"
+	"github.com/aws/aws-sdk-go-v2/service/s3control/internal/aws_restxml"
 	"github.com/aws/aws-sdk-go-v2/service/s3control/types"
 )
 
@@ -37,6 +39,10 @@ func (c *Client) DescribeJobRequest(input *types.DescribeJobInput) DescribeJobRe
 	}
 
 	req := c.newRequest(op, input, &types.DescribeJobOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(restxml.BuildHandler.Name, aws_restxml.DescribeJobMarshaler{Input: input}.GetNamedBuildHandler())
+
 	req.Handlers.Build.PushBackNamed(buildPrefixHostHandler("AccountID", aws.StringValue(input.AccountId)))
 	req.Handlers.Build.PushBackNamed(buildRemoveHeaderHandler("X-Amz-Account-Id"))
 	return DescribeJobRequest{Request: req, Input: input, Copy: c.DescribeJobRequest}

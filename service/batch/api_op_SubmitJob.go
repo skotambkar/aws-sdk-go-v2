@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/restjson"
+	"github.com/aws/aws-sdk-go-v2/service/batch/internal/aws_restjson"
 	"github.com/aws/aws-sdk-go-v2/service/batch/types"
 )
 
@@ -37,6 +39,10 @@ func (c *Client) SubmitJobRequest(input *types.SubmitJobInput) SubmitJobRequest 
 	}
 
 	req := c.newRequest(op, input, &types.SubmitJobOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(restjson.BuildHandler.Name, aws_restjson.SubmitJobMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return SubmitJobRequest{Request: req, Input: input, Copy: c.SubmitJobRequest}
 }
 

@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/devicefarm/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/devicefarm/types"
 )
 
@@ -38,6 +40,10 @@ func (c *Client) DeleteRunRequest(input *types.DeleteRunInput) DeleteRunRequest 
 	}
 
 	req := c.newRequest(op, input, &types.DeleteRunOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.DeleteRunMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return DeleteRunRequest{Request: req, Input: input, Copy: c.DeleteRunRequest}
 }
 

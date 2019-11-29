@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/inspector/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/inspector/types"
 )
 
@@ -44,6 +46,10 @@ func (c *Client) ListEventSubscriptionsRequest(input *types.ListEventSubscriptio
 	}
 
 	req := c.newRequest(op, input, &types.ListEventSubscriptionsOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.ListEventSubscriptionsMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return ListEventSubscriptionsRequest{Request: req, Input: input, Copy: c.ListEventSubscriptionsRequest}
 }
 

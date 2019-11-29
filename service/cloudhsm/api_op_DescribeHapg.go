@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/cloudhsm/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/cloudhsm/types"
 )
 
@@ -45,6 +47,10 @@ func (c *Client) DescribeHapgRequest(input *types.DescribeHapgInput) DescribeHap
 	}
 
 	req := c.newRequest(op, input, &types.DescribeHapgOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.DescribeHapgMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return DescribeHapgRequest{Request: req, Input: input, Copy: c.DescribeHapgRequest}
 }
 

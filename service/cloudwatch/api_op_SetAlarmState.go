@@ -8,6 +8,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/private/protocol"
 	"github.com/aws/aws-sdk-go-v2/private/protocol/query"
+	"github.com/aws/aws-sdk-go-v2/service/cloudwatch/internal/aws_query"
 	"github.com/aws/aws-sdk-go-v2/service/cloudwatch/types"
 )
 
@@ -45,6 +46,10 @@ func (c *Client) SetAlarmStateRequest(input *types.SetAlarmStateInput) SetAlarmS
 	}
 
 	req := c.newRequest(op, input, &types.SetAlarmStateOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(query.BuildHandler.Name, aws_query.SetAlarmStateMarshaler{Input: input}.GetNamedBuildHandler())
+
 	req.Handlers.Unmarshal.Remove(query.UnmarshalHandler)
 	req.Handlers.Unmarshal.PushBackNamed(protocol.UnmarshalDiscardBodyHandler)
 	return SetAlarmStateRequest{Request: req, Input: input, Copy: c.SetAlarmStateRequest}

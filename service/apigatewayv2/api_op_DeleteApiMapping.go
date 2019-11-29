@@ -8,6 +8,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/private/protocol"
 	"github.com/aws/aws-sdk-go-v2/private/protocol/restjson"
+	"github.com/aws/aws-sdk-go-v2/service/apigatewayv2/internal/aws_restjson"
 	"github.com/aws/aws-sdk-go-v2/service/apigatewayv2/types"
 )
 
@@ -38,6 +39,10 @@ func (c *Client) DeleteApiMappingRequest(input *types.DeleteApiMappingInput) Del
 	}
 
 	req := c.newRequest(op, input, &types.DeleteApiMappingOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(restjson.BuildHandler.Name, aws_restjson.DeleteApiMappingMarshaler{Input: input}.GetNamedBuildHandler())
+
 	req.Handlers.Unmarshal.Remove(restjson.UnmarshalHandler)
 	req.Handlers.Unmarshal.PushBackNamed(protocol.UnmarshalDiscardBodyHandler)
 	return DeleteApiMappingRequest{Request: req, Input: input, Copy: c.DeleteApiMappingRequest}

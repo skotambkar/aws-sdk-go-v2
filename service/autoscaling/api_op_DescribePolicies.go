@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/query"
+	"github.com/aws/aws-sdk-go-v2/service/autoscaling/internal/aws_query"
 	"github.com/aws/aws-sdk-go-v2/service/autoscaling/types"
 )
 
@@ -42,6 +44,10 @@ func (c *Client) DescribePoliciesRequest(input *types.DescribePoliciesInput) Des
 	}
 
 	req := c.newRequest(op, input, &types.DescribePoliciesOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(query.BuildHandler.Name, aws_query.DescribePoliciesMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return DescribePoliciesRequest{Request: req, Input: input, Copy: c.DescribePoliciesRequest}
 }
 

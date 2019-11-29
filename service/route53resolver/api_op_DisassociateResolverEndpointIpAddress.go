@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/route53resolver/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/route53resolver/types"
 )
 
@@ -40,6 +42,10 @@ func (c *Client) DisassociateResolverEndpointIpAddressRequest(input *types.Disas
 	}
 
 	req := c.newRequest(op, input, &types.DisassociateResolverEndpointIpAddressOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.DisassociateResolverEndpointIpAddressMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return DisassociateResolverEndpointIpAddressRequest{Request: req, Input: input, Copy: c.DisassociateResolverEndpointIpAddressRequest}
 }
 

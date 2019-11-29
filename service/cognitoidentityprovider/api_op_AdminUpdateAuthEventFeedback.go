@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/cognitoidentityprovider/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/cognitoidentityprovider/types"
 )
 
@@ -38,6 +40,10 @@ func (c *Client) AdminUpdateAuthEventFeedbackRequest(input *types.AdminUpdateAut
 	}
 
 	req := c.newRequest(op, input, &types.AdminUpdateAuthEventFeedbackOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.AdminUpdateAuthEventFeedbackMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return AdminUpdateAuthEventFeedbackRequest{Request: req, Input: input, Copy: c.AdminUpdateAuthEventFeedbackRequest}
 }
 

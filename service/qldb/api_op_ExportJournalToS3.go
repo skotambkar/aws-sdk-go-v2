@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/restjson"
+	"github.com/aws/aws-sdk-go-v2/service/qldb/internal/aws_restjson"
 	"github.com/aws/aws-sdk-go-v2/service/qldb/types"
 )
 
@@ -45,6 +47,10 @@ func (c *Client) ExportJournalToS3Request(input *types.ExportJournalToS3Input) E
 	}
 
 	req := c.newRequest(op, input, &types.ExportJournalToS3Output{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(restjson.BuildHandler.Name, aws_restjson.ExportJournalToS3Marshaler{Input: input}.GetNamedBuildHandler())
+
 	return ExportJournalToS3Request{Request: req, Input: input, Copy: c.ExportJournalToS3Request}
 }
 

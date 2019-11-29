@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/restjson"
+	"github.com/aws/aws-sdk-go-v2/service/ssooidc/internal/aws_restjson"
 	"github.com/aws/aws-sdk-go-v2/service/ssooidc/types"
 )
 
@@ -37,6 +39,10 @@ func (c *Client) StartDeviceAuthorizationRequest(input *types.StartDeviceAuthori
 	}
 
 	req := c.newRequest(op, input, &types.StartDeviceAuthorizationOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(restjson.BuildHandler.Name, aws_restjson.StartDeviceAuthorizationMarshaler{Input: input}.GetNamedBuildHandler())
+
 	req.Config.Credentials = aws.AnonymousCredentials
 	return StartDeviceAuthorizationRequest{Request: req, Input: input, Copy: c.StartDeviceAuthorizationRequest}
 }

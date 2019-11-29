@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/restjson"
+	"github.com/aws/aws-sdk-go-v2/service/greengrass/internal/aws_restjson"
 	"github.com/aws/aws-sdk-go-v2/service/greengrass/types"
 )
 
@@ -36,6 +38,10 @@ func (c *Client) ListGroupVersionsRequest(input *types.ListGroupVersionsInput) L
 	}
 
 	req := c.newRequest(op, input, &types.ListGroupVersionsOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(restjson.BuildHandler.Name, aws_restjson.ListGroupVersionsMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return ListGroupVersionsRequest{Request: req, Input: input, Copy: c.ListGroupVersionsRequest}
 }
 

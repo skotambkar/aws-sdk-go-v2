@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/migrationhub/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/migrationhub/types"
 )
 
@@ -43,6 +45,10 @@ func (c *Client) ListProgressUpdateStreamsRequest(input *types.ListProgressUpdat
 	}
 
 	req := c.newRequest(op, input, &types.ListProgressUpdateStreamsOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.ListProgressUpdateStreamsMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return ListProgressUpdateStreamsRequest{Request: req, Input: input, Copy: c.ListProgressUpdateStreamsRequest}
 }
 

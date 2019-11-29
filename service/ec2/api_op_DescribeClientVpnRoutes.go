@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/ec2query"
+	"github.com/aws/aws-sdk-go-v2/service/ec2/internal/aws_ec2query"
 	"github.com/aws/aws-sdk-go-v2/service/ec2/types"
 )
 
@@ -42,6 +44,10 @@ func (c *Client) DescribeClientVpnRoutesRequest(input *types.DescribeClientVpnRo
 	}
 
 	req := c.newRequest(op, input, &types.DescribeClientVpnRoutesOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(ec2query.BuildHandler.Name, aws_ec2query.DescribeClientVpnRoutesMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return DescribeClientVpnRoutesRequest{Request: req, Input: input, Copy: c.DescribeClientVpnRoutesRequest}
 }
 

@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/restjson"
+	"github.com/aws/aws-sdk-go-v2/service/elastictranscoder/internal/aws_restjson"
 	"github.com/aws/aws-sdk-go-v2/service/elastictranscoder/types"
 )
 
@@ -41,6 +43,10 @@ func (c *Client) ListPresetsRequest(input *types.ListPresetsInput) ListPresetsRe
 	}
 
 	req := c.newRequest(op, input, &types.ListPresetsOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(restjson.BuildHandler.Name, aws_restjson.ListPresetsMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return ListPresetsRequest{Request: req, Input: input, Copy: c.ListPresetsRequest}
 }
 

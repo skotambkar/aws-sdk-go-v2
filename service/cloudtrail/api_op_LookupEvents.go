@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/cloudtrail/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/cloudtrail/types"
 )
 
@@ -77,6 +79,10 @@ func (c *Client) LookupEventsRequest(input *types.LookupEventsInput) LookupEvent
 	}
 
 	req := c.newRequest(op, input, &types.LookupEventsOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.LookupEventsMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return LookupEventsRequest{Request: req, Input: input, Copy: c.LookupEventsRequest}
 }
 

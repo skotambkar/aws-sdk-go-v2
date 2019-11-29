@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/restjson"
+	"github.com/aws/aws-sdk-go-v2/service/pinpoint/internal/aws_restjson"
 	"github.com/aws/aws-sdk-go-v2/service/pinpoint/types"
 )
 
@@ -39,6 +41,10 @@ func (c *Client) UpdateEndpointRequest(input *types.UpdateEndpointInput) UpdateE
 	}
 
 	req := c.newRequest(op, input, &types.UpdateEndpointOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(restjson.BuildHandler.Name, aws_restjson.UpdateEndpointMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return UpdateEndpointRequest{Request: req, Input: input, Copy: c.UpdateEndpointRequest}
 }
 

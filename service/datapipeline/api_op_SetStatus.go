@@ -8,6 +8,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/private/protocol"
 	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/datapipeline/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/datapipeline/types"
 )
 
@@ -42,6 +43,10 @@ func (c *Client) SetStatusRequest(input *types.SetStatusInput) SetStatusRequest 
 	}
 
 	req := c.newRequest(op, input, &types.SetStatusOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.SetStatusMarshaler{Input: input}.GetNamedBuildHandler())
+
 	req.Handlers.Unmarshal.Remove(jsonrpc.UnmarshalHandler)
 	req.Handlers.Unmarshal.PushBackNamed(protocol.UnmarshalDiscardBodyHandler)
 	return SetStatusRequest{Request: req, Input: input, Copy: c.SetStatusRequest}

@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/restjson"
+	"github.com/aws/aws-sdk-go-v2/service/groundstation/internal/aws_restjson"
 	"github.com/aws/aws-sdk-go-v2/service/groundstation/types"
 )
 
@@ -42,6 +44,10 @@ func (c *Client) ListSatellitesRequest(input *types.ListSatellitesInput) ListSat
 	}
 
 	req := c.newRequest(op, input, &types.ListSatellitesOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(restjson.BuildHandler.Name, aws_restjson.ListSatellitesMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return ListSatellitesRequest{Request: req, Input: input, Copy: c.ListSatellitesRequest}
 }
 

@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/kinesisanalytics/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/kinesisanalytics/types"
 )
 
@@ -51,6 +53,10 @@ func (c *Client) DeleteApplicationReferenceDataSourceRequest(input *types.Delete
 	}
 
 	req := c.newRequest(op, input, &types.DeleteApplicationReferenceDataSourceOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.DeleteApplicationReferenceDataSourceMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return DeleteApplicationReferenceDataSourceRequest{Request: req, Input: input, Copy: c.DeleteApplicationReferenceDataSourceRequest}
 }
 

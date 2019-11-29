@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/restjson"
+	"github.com/aws/aws-sdk-go-v2/service/lexmodelbuildingservice/internal/aws_restjson"
 	"github.com/aws/aws-sdk-go-v2/service/lexmodelbuildingservice/types"
 )
 
@@ -52,6 +54,10 @@ func (c *Client) GetBotVersionsRequest(input *types.GetBotVersionsInput) GetBotV
 	}
 
 	req := c.newRequest(op, input, &types.GetBotVersionsOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(restjson.BuildHandler.Name, aws_restjson.GetBotVersionsMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return GetBotVersionsRequest{Request: req, Input: input, Copy: c.GetBotVersionsRequest}
 }
 

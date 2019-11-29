@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/transcribe/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/transcribe/types"
 )
 
@@ -36,6 +38,10 @@ func (c *Client) GetVocabularyRequest(input *types.GetVocabularyInput) GetVocabu
 	}
 
 	req := c.newRequest(op, input, &types.GetVocabularyOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.GetVocabularyMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return GetVocabularyRequest{Request: req, Input: input, Copy: c.GetVocabularyRequest}
 }
 

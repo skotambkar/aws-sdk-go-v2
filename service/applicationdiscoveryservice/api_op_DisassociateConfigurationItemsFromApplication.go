@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/applicationdiscoveryservice/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/applicationdiscoveryservice/types"
 )
 
@@ -36,6 +38,10 @@ func (c *Client) DisassociateConfigurationItemsFromApplicationRequest(input *typ
 	}
 
 	req := c.newRequest(op, input, &types.DisassociateConfigurationItemsFromApplicationOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.DisassociateConfigurationItemsFromApplicationMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return DisassociateConfigurationItemsFromApplicationRequest{Request: req, Input: input, Copy: c.DisassociateConfigurationItemsFromApplicationRequest}
 }
 

@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/cognitoidentity/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/cognitoidentity/types"
 )
 
@@ -39,6 +41,10 @@ func (c *Client) GetIdRequest(input *types.GetIdInput) GetIdRequest {
 	}
 
 	req := c.newRequest(op, input, &types.GetIdOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.GetIdMarshaler{Input: input}.GetNamedBuildHandler())
+
 	req.Config.Credentials = aws.AnonymousCredentials
 	return GetIdRequest{Request: req, Input: input, Copy: c.GetIdRequest}
 }

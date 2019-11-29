@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/dynamodb/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb/types"
 )
 
@@ -50,6 +52,10 @@ func (c *Client) CreateTableRequest(input *types.CreateTableInput) CreateTableRe
 	}
 
 	req := c.newRequest(op, input, &types.CreateTableOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.CreateTableMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return CreateTableRequest{Request: req, Input: input, Copy: c.CreateTableRequest}
 }
 

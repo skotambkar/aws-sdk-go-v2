@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/swf/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/swf/types"
 )
 
@@ -78,6 +80,10 @@ func (c *Client) RecordActivityTaskHeartbeatRequest(input *types.RecordActivityT
 	}
 
 	req := c.newRequest(op, input, &types.RecordActivityTaskHeartbeatOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.RecordActivityTaskHeartbeatMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return RecordActivityTaskHeartbeatRequest{Request: req, Input: input, Copy: c.RecordActivityTaskHeartbeatRequest}
 }
 

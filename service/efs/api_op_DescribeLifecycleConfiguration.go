@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/restjson"
+	"github.com/aws/aws-sdk-go-v2/service/efs/internal/aws_restjson"
 	"github.com/aws/aws-sdk-go-v2/service/efs/types"
 )
 
@@ -43,6 +45,10 @@ func (c *Client) DescribeLifecycleConfigurationRequest(input *types.DescribeLife
 	}
 
 	req := c.newRequest(op, input, &types.DescribeLifecycleConfigurationOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(restjson.BuildHandler.Name, aws_restjson.DescribeLifecycleConfigurationMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return DescribeLifecycleConfigurationRequest{Request: req, Input: input, Copy: c.DescribeLifecycleConfigurationRequest}
 }
 

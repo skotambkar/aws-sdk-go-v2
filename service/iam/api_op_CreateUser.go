@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/query"
+	"github.com/aws/aws-sdk-go-v2/service/iam/internal/aws_query"
 	"github.com/aws/aws-sdk-go-v2/service/iam/types"
 )
 
@@ -40,6 +42,10 @@ func (c *Client) CreateUserRequest(input *types.CreateUserInput) CreateUserReque
 	}
 
 	req := c.newRequest(op, input, &types.CreateUserOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(query.BuildHandler.Name, aws_query.CreateUserMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return CreateUserRequest{Request: req, Input: input, Copy: c.CreateUserRequest}
 }
 

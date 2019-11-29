@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/mturk/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/mturk/types"
 )
 
@@ -39,6 +41,10 @@ func (c *Client) UpdateHITTypeOfHITRequest(input *types.UpdateHITTypeOfHITInput)
 	}
 
 	req := c.newRequest(op, input, &types.UpdateHITTypeOfHITOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.UpdateHITTypeOfHITMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return UpdateHITTypeOfHITRequest{Request: req, Input: input, Copy: c.UpdateHITTypeOfHITRequest}
 }
 

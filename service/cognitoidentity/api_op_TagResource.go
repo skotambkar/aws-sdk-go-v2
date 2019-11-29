@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/cognitoidentity/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/cognitoidentity/types"
 )
 
@@ -53,6 +55,10 @@ func (c *Client) TagResourceRequest(input *types.TagResourceInput) TagResourceRe
 	}
 
 	req := c.newRequest(op, input, &types.TagResourceOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.TagResourceMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return TagResourceRequest{Request: req, Input: input, Copy: c.TagResourceRequest}
 }
 

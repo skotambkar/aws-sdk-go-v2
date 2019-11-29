@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/query"
+	"github.com/aws/aws-sdk-go-v2/service/cloudsearch/internal/aws_query"
 	"github.com/aws/aws-sdk-go-v2/service/cloudsearch/types"
 )
 
@@ -38,6 +40,10 @@ func (c *Client) DescribeAvailabilityOptionsRequest(input *types.DescribeAvailab
 	}
 
 	req := c.newRequest(op, input, &types.DescribeAvailabilityOptionsOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(query.BuildHandler.Name, aws_query.DescribeAvailabilityOptionsMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return DescribeAvailabilityOptionsRequest{Request: req, Input: input, Copy: c.DescribeAvailabilityOptionsRequest}
 }
 

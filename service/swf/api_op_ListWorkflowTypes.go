@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/swf/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/swf/types"
 )
 
@@ -61,6 +63,10 @@ func (c *Client) ListWorkflowTypesRequest(input *types.ListWorkflowTypesInput) L
 	}
 
 	req := c.newRequest(op, input, &types.ListWorkflowTypesOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.ListWorkflowTypesMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return ListWorkflowTypesRequest{Request: req, Input: input, Copy: c.ListWorkflowTypesRequest}
 }
 

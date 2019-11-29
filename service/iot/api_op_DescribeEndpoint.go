@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/restjson"
+	"github.com/aws/aws-sdk-go-v2/service/iot/internal/aws_restjson"
 	"github.com/aws/aws-sdk-go-v2/service/iot/types"
 )
 
@@ -34,6 +36,10 @@ func (c *Client) DescribeEndpointRequest(input *types.DescribeEndpointInput) Des
 	}
 
 	req := c.newRequest(op, input, &types.DescribeEndpointOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(restjson.BuildHandler.Name, aws_restjson.DescribeEndpointMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return DescribeEndpointRequest{Request: req, Input: input, Copy: c.DescribeEndpointRequest}
 }
 

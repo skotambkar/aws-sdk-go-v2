@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/query"
+	"github.com/aws/aws-sdk-go-v2/service/cloudformation/internal/aws_query"
 	"github.com/aws/aws-sdk-go-v2/service/cloudformation/types"
 )
 
@@ -36,6 +38,10 @@ func (c *Client) StopStackSetOperationRequest(input *types.StopStackSetOperation
 	}
 
 	req := c.newRequest(op, input, &types.StopStackSetOperationOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(query.BuildHandler.Name, aws_query.StopStackSetOperationMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return StopStackSetOperationRequest{Request: req, Input: input, Copy: c.StopStackSetOperationRequest}
 }
 

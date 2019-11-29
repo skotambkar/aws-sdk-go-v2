@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/query"
+	"github.com/aws/aws-sdk-go-v2/service/redshift/internal/aws_query"
 	"github.com/aws/aws-sdk-go-v2/service/redshift/types"
 )
 
@@ -54,6 +56,10 @@ func (c *Client) DescribeHsmConfigurationsRequest(input *types.DescribeHsmConfig
 	}
 
 	req := c.newRequest(op, input, &types.DescribeHsmConfigurationsOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(query.BuildHandler.Name, aws_query.DescribeHsmConfigurationsMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return DescribeHsmConfigurationsRequest{Request: req, Input: input, Copy: c.DescribeHsmConfigurationsRequest}
 }
 

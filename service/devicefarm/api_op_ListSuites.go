@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/devicefarm/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/devicefarm/types"
 )
 
@@ -42,6 +44,10 @@ func (c *Client) ListSuitesRequest(input *types.ListSuitesInput) ListSuitesReque
 	}
 
 	req := c.newRequest(op, input, &types.ListSuitesOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.ListSuitesMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return ListSuitesRequest{Request: req, Input: input, Copy: c.ListSuitesRequest}
 }
 

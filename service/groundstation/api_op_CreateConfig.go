@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/restjson"
+	"github.com/aws/aws-sdk-go-v2/service/groundstation/internal/aws_restjson"
 	"github.com/aws/aws-sdk-go-v2/service/groundstation/types"
 )
 
@@ -38,6 +40,10 @@ func (c *Client) CreateConfigRequest(input *types.CreateConfigInput) CreateConfi
 	}
 
 	req := c.newRequest(op, input, &types.CreateConfigOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(restjson.BuildHandler.Name, aws_restjson.CreateConfigMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return CreateConfigRequest{Request: req, Input: input, Copy: c.CreateConfigRequest}
 }
 

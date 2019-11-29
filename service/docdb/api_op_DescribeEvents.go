@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/query"
+	"github.com/aws/aws-sdk-go-v2/service/docdb/internal/aws_query"
 	"github.com/aws/aws-sdk-go-v2/service/docdb/types"
 )
 
@@ -46,6 +48,10 @@ func (c *Client) DescribeEventsRequest(input *types.DescribeEventsInput) Describ
 	}
 
 	req := c.newRequest(op, input, &types.DescribeEventsOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(query.BuildHandler.Name, aws_query.DescribeEventsMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return DescribeEventsRequest{Request: req, Input: input, Copy: c.DescribeEventsRequest}
 }
 

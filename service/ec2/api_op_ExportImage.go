@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/ec2query"
+	"github.com/aws/aws-sdk-go-v2/service/ec2/internal/aws_ec2query"
 	"github.com/aws/aws-sdk-go-v2/service/ec2/types"
 )
 
@@ -38,6 +40,10 @@ func (c *Client) ExportImageRequest(input *types.ExportImageInput) ExportImageRe
 	}
 
 	req := c.newRequest(op, input, &types.ExportImageOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(ec2query.BuildHandler.Name, aws_ec2query.ExportImageMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return ExportImageRequest{Request: req, Input: input, Copy: c.ExportImageRequest}
 }
 

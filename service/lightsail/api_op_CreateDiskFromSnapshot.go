@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/lightsail/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/lightsail/types"
 )
 
@@ -42,6 +44,10 @@ func (c *Client) CreateDiskFromSnapshotRequest(input *types.CreateDiskFromSnapsh
 	}
 
 	req := c.newRequest(op, input, &types.CreateDiskFromSnapshotOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.CreateDiskFromSnapshotMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return CreateDiskFromSnapshotRequest{Request: req, Input: input, Copy: c.CreateDiskFromSnapshotRequest}
 }
 

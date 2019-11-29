@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/globalaccelerator/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/globalaccelerator/types"
 )
 
@@ -37,6 +39,10 @@ func (c *Client) UpdateAcceleratorAttributesRequest(input *types.UpdateAccelerat
 	}
 
 	req := c.newRequest(op, input, &types.UpdateAcceleratorAttributesOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.UpdateAcceleratorAttributesMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return UpdateAcceleratorAttributesRequest{Request: req, Input: input, Copy: c.UpdateAcceleratorAttributesRequest}
 }
 

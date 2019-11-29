@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/directconnect/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/directconnect/types"
 )
 
@@ -36,6 +38,10 @@ func (c *Client) DescribeLagsRequest(input *types.DescribeLagsInput) DescribeLag
 	}
 
 	req := c.newRequest(op, input, &types.DescribeLagsOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.DescribeLagsMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return DescribeLagsRequest{Request: req, Input: input, Copy: c.DescribeLagsRequest}
 }
 

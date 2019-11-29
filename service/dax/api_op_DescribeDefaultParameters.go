@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/dax/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/dax/types"
 )
 
@@ -36,6 +38,10 @@ func (c *Client) DescribeDefaultParametersRequest(input *types.DescribeDefaultPa
 	}
 
 	req := c.newRequest(op, input, &types.DescribeDefaultParametersOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.DescribeDefaultParametersMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return DescribeDefaultParametersRequest{Request: req, Input: input, Copy: c.DescribeDefaultParametersRequest}
 }
 

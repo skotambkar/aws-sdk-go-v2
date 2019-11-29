@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/query"
+	"github.com/aws/aws-sdk-go-v2/service/cloudwatch/internal/aws_query"
 	"github.com/aws/aws-sdk-go-v2/service/cloudwatch/types"
 )
 
@@ -48,6 +50,10 @@ func (c *Client) ListDashboardsRequest(input *types.ListDashboardsInput) ListDas
 	}
 
 	req := c.newRequest(op, input, &types.ListDashboardsOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(query.BuildHandler.Name, aws_query.ListDashboardsMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return ListDashboardsRequest{Request: req, Input: input, Copy: c.ListDashboardsRequest}
 }
 

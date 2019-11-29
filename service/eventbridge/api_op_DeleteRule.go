@@ -8,6 +8,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/private/protocol"
 	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/eventbridge/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/eventbridge/types"
 )
 
@@ -49,6 +50,10 @@ func (c *Client) DeleteRuleRequest(input *types.DeleteRuleInput) DeleteRuleReque
 	}
 
 	req := c.newRequest(op, input, &types.DeleteRuleOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.DeleteRuleMarshaler{Input: input}.GetNamedBuildHandler())
+
 	req.Handlers.Unmarshal.Remove(jsonrpc.UnmarshalHandler)
 	req.Handlers.Unmarshal.PushBackNamed(protocol.UnmarshalDiscardBodyHandler)
 	return DeleteRuleRequest{Request: req, Input: input, Copy: c.DeleteRuleRequest}

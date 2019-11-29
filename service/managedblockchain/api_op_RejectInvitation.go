@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/restjson"
+	"github.com/aws/aws-sdk-go-v2/service/managedblockchain/internal/aws_restjson"
 	"github.com/aws/aws-sdk-go-v2/service/managedblockchain/types"
 )
 
@@ -38,6 +40,10 @@ func (c *Client) RejectInvitationRequest(input *types.RejectInvitationInput) Rej
 	}
 
 	req := c.newRequest(op, input, &types.RejectInvitationOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(restjson.BuildHandler.Name, aws_restjson.RejectInvitationMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return RejectInvitationRequest{Request: req, Input: input, Copy: c.RejectInvitationRequest}
 }
 

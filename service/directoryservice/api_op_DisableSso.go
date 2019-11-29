@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/directoryservice/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/directoryservice/types"
 )
 
@@ -36,6 +38,10 @@ func (c *Client) DisableSsoRequest(input *types.DisableSsoInput) DisableSsoReque
 	}
 
 	req := c.newRequest(op, input, &types.DisableSsoOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.DisableSsoMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return DisableSsoRequest{Request: req, Input: input, Copy: c.DisableSsoRequest}
 }
 

@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/restjson"
+	"github.com/aws/aws-sdk-go-v2/service/elasticsearchservice/internal/aws_restjson"
 	"github.com/aws/aws-sdk-go-v2/service/elasticsearchservice/types"
 )
 
@@ -34,6 +36,10 @@ func (c *Client) PurchaseReservedElasticsearchInstanceOfferingRequest(input *typ
 	}
 
 	req := c.newRequest(op, input, &types.PurchaseReservedElasticsearchInstanceOfferingOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(restjson.BuildHandler.Name, aws_restjson.PurchaseReservedElasticsearchInstanceOfferingMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return PurchaseReservedElasticsearchInstanceOfferingRequest{Request: req, Input: input, Copy: c.PurchaseReservedElasticsearchInstanceOfferingRequest}
 }
 

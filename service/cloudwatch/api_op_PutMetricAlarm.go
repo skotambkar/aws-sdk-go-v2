@@ -8,6 +8,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/private/protocol"
 	"github.com/aws/aws-sdk-go-v2/private/protocol/query"
+	"github.com/aws/aws-sdk-go-v2/service/cloudwatch/internal/aws_query"
 	"github.com/aws/aws-sdk-go-v2/service/cloudwatch/types"
 )
 
@@ -80,6 +81,10 @@ func (c *Client) PutMetricAlarmRequest(input *types.PutMetricAlarmInput) PutMetr
 	}
 
 	req := c.newRequest(op, input, &types.PutMetricAlarmOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(query.BuildHandler.Name, aws_query.PutMetricAlarmMarshaler{Input: input}.GetNamedBuildHandler())
+
 	req.Handlers.Unmarshal.Remove(query.UnmarshalHandler)
 	req.Handlers.Unmarshal.PushBackNamed(protocol.UnmarshalDiscardBodyHandler)
 	return PutMetricAlarmRequest{Request: req, Input: input, Copy: c.PutMetricAlarmRequest}

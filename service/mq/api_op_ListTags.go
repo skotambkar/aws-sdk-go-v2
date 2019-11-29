@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/restjson"
+	"github.com/aws/aws-sdk-go-v2/service/mq/internal/aws_restjson"
 	"github.com/aws/aws-sdk-go-v2/service/mq/types"
 )
 
@@ -36,6 +38,10 @@ func (c *Client) ListTagsRequest(input *types.ListTagsInput) ListTagsRequest {
 	}
 
 	req := c.newRequest(op, input, &types.ListTagsOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(restjson.BuildHandler.Name, aws_restjson.ListTagsMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return ListTagsRequest{Request: req, Input: input, Copy: c.ListTagsRequest}
 }
 

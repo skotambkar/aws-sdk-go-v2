@@ -8,6 +8,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/private/protocol"
 	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/organizations/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/organizations/types"
 )
 
@@ -41,6 +42,10 @@ func (c *Client) MoveAccountRequest(input *types.MoveAccountInput) MoveAccountRe
 	}
 
 	req := c.newRequest(op, input, &types.MoveAccountOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.MoveAccountMarshaler{Input: input}.GetNamedBuildHandler())
+
 	req.Handlers.Unmarshal.Remove(jsonrpc.UnmarshalHandler)
 	req.Handlers.Unmarshal.PushBackNamed(protocol.UnmarshalDiscardBodyHandler)
 	return MoveAccountRequest{Request: req, Input: input, Copy: c.MoveAccountRequest}

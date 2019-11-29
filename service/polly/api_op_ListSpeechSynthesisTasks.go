@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/restjson"
+	"github.com/aws/aws-sdk-go-v2/service/polly/internal/aws_restjson"
 	"github.com/aws/aws-sdk-go-v2/service/polly/types"
 )
 
@@ -44,6 +46,10 @@ func (c *Client) ListSpeechSynthesisTasksRequest(input *types.ListSpeechSynthesi
 	}
 
 	req := c.newRequest(op, input, &types.ListSpeechSynthesisTasksOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(restjson.BuildHandler.Name, aws_restjson.ListSpeechSynthesisTasksMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return ListSpeechSynthesisTasksRequest{Request: req, Input: input, Copy: c.ListSpeechSynthesisTasksRequest}
 }
 

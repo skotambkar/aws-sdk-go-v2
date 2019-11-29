@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/restjson"
+	"github.com/aws/aws-sdk-go-v2/service/iot/internal/aws_restjson"
 	"github.com/aws/aws-sdk-go-v2/service/iot/types"
 )
 
@@ -35,6 +37,10 @@ func (c *Client) UpdateScheduledAuditRequest(input *types.UpdateScheduledAuditIn
 	}
 
 	req := c.newRequest(op, input, &types.UpdateScheduledAuditOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(restjson.BuildHandler.Name, aws_restjson.UpdateScheduledAuditMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return UpdateScheduledAuditRequest{Request: req, Input: input, Copy: c.UpdateScheduledAuditRequest}
 }
 

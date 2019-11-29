@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/waf/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/waf/types"
 )
 
@@ -36,6 +38,10 @@ func (c *Client) ListByteMatchSetsRequest(input *types.ListByteMatchSetsInput) L
 	}
 
 	req := c.newRequest(op, input, &types.ListByteMatchSetsOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.ListByteMatchSetsMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return ListByteMatchSetsRequest{Request: req, Input: input, Copy: c.ListByteMatchSetsRequest}
 }
 

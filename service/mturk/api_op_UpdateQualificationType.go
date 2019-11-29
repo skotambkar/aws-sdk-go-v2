@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/mturk/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/mturk/types"
 )
 
@@ -66,6 +68,10 @@ func (c *Client) UpdateQualificationTypeRequest(input *types.UpdateQualification
 	}
 
 	req := c.newRequest(op, input, &types.UpdateQualificationTypeOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.UpdateQualificationTypeMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return UpdateQualificationTypeRequest{Request: req, Input: input, Copy: c.UpdateQualificationTypeRequest}
 }
 

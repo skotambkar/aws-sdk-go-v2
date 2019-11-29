@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/configservice/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/configservice/types"
 )
 
@@ -36,6 +38,10 @@ func (c *Client) DeleteRemediationConfigurationRequest(input *types.DeleteRemedi
 	}
 
 	req := c.newRequest(op, input, &types.DeleteRemediationConfigurationOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.DeleteRemediationConfigurationMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return DeleteRemediationConfigurationRequest{Request: req, Input: input, Copy: c.DeleteRemediationConfigurationRequest}
 }
 

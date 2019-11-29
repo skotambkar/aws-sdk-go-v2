@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/restjson"
+	"github.com/aws/aws-sdk-go-v2/service/connect/internal/aws_restjson"
 	"github.com/aws/aws-sdk-go-v2/service/connect/types"
 )
 
@@ -45,6 +47,10 @@ func (c *Client) GetCurrentMetricDataRequest(input *types.GetCurrentMetricDataIn
 	}
 
 	req := c.newRequest(op, input, &types.GetCurrentMetricDataOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(restjson.BuildHandler.Name, aws_restjson.GetCurrentMetricDataMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return GetCurrentMetricDataRequest{Request: req, Input: input, Copy: c.GetCurrentMetricDataRequest}
 }
 

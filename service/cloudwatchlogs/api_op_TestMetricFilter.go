@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs/types"
 )
 
@@ -38,6 +40,10 @@ func (c *Client) TestMetricFilterRequest(input *types.TestMetricFilterInput) Tes
 	}
 
 	req := c.newRequest(op, input, &types.TestMetricFilterOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.TestMetricFilterMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return TestMetricFilterRequest{Request: req, Input: input, Copy: c.TestMetricFilterRequest}
 }
 

@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/transcribe/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/transcribe/types"
 )
 
@@ -36,6 +38,10 @@ func (c *Client) StartTranscriptionJobRequest(input *types.StartTranscriptionJob
 	}
 
 	req := c.newRequest(op, input, &types.StartTranscriptionJobOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.StartTranscriptionJobMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return StartTranscriptionJobRequest{Request: req, Input: input, Copy: c.StartTranscriptionJobRequest}
 }
 

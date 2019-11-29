@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/restjson"
+	"github.com/aws/aws-sdk-go-v2/service/greengrass/internal/aws_restjson"
 	"github.com/aws/aws-sdk-go-v2/service/greengrass/types"
 )
 
@@ -38,6 +40,10 @@ func (c *Client) AssociateRoleToGroupRequest(input *types.AssociateRoleToGroupIn
 	}
 
 	req := c.newRequest(op, input, &types.AssociateRoleToGroupOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(restjson.BuildHandler.Name, aws_restjson.AssociateRoleToGroupMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return AssociateRoleToGroupRequest{Request: req, Input: input, Copy: c.AssociateRoleToGroupRequest}
 }
 

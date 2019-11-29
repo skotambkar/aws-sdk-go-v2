@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/iotthingsgraph/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/iotthingsgraph/types"
 )
 
@@ -54,6 +56,10 @@ func (c *Client) CreateSystemInstanceRequest(input *types.CreateSystemInstanceIn
 	}
 
 	req := c.newRequest(op, input, &types.CreateSystemInstanceOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.CreateSystemInstanceMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return CreateSystemInstanceRequest{Request: req, Input: input, Copy: c.CreateSystemInstanceRequest}
 }
 

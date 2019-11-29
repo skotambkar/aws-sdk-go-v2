@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/ec2query"
+	"github.com/aws/aws-sdk-go-v2/service/ec2/internal/aws_ec2query"
 	"github.com/aws/aws-sdk-go-v2/service/ec2/types"
 )
 
@@ -44,6 +46,10 @@ func (c *Client) DescribeFlowLogsRequest(input *types.DescribeFlowLogsInput) Des
 	}
 
 	req := c.newRequest(op, input, &types.DescribeFlowLogsOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(ec2query.BuildHandler.Name, aws_ec2query.DescribeFlowLogsMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return DescribeFlowLogsRequest{Request: req, Input: input, Copy: c.DescribeFlowLogsRequest}
 }
 

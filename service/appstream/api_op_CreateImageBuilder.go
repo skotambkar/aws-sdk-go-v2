@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/appstream/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/appstream/types"
 )
 
@@ -40,6 +42,10 @@ func (c *Client) CreateImageBuilderRequest(input *types.CreateImageBuilderInput)
 	}
 
 	req := c.newRequest(op, input, &types.CreateImageBuilderOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.CreateImageBuilderMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return CreateImageBuilderRequest{Request: req, Input: input, Copy: c.CreateImageBuilderRequest}
 }
 

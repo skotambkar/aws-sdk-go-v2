@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/restjson"
+	"github.com/aws/aws-sdk-go-v2/service/glacier/internal/aws_restjson"
 	"github.com/aws/aws-sdk-go-v2/service/glacier/types"
 )
 
@@ -52,6 +54,10 @@ func (c *Client) GetVaultNotificationsRequest(input *types.GetVaultNotifications
 	}
 
 	req := c.newRequest(op, input, &types.GetVaultNotificationsOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(restjson.BuildHandler.Name, aws_restjson.GetVaultNotificationsMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return GetVaultNotificationsRequest{Request: req, Input: input, Copy: c.GetVaultNotificationsRequest}
 }
 

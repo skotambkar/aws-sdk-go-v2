@@ -8,6 +8,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/private/protocol"
 	"github.com/aws/aws-sdk-go-v2/private/protocol/restxml"
+	"github.com/aws/aws-sdk-go-v2/service/s3/internal/aws_restxml"
 	"github.com/aws/aws-sdk-go-v2/service/s3/types"
 )
 
@@ -56,6 +57,10 @@ func (c *Client) DeleteBucketInventoryConfigurationRequest(input *types.DeleteBu
 	}
 
 	req := c.newRequest(op, input, &types.DeleteBucketInventoryConfigurationOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(restxml.BuildHandler.Name, aws_restxml.DeleteBucketInventoryConfigurationMarshaler{Input: input}.GetNamedBuildHandler())
+
 	req.Handlers.Unmarshal.Remove(restxml.UnmarshalHandler)
 	req.Handlers.Unmarshal.PushBackNamed(protocol.UnmarshalDiscardBodyHandler)
 	return DeleteBucketInventoryConfigurationRequest{Request: req, Input: input, Copy: c.DeleteBucketInventoryConfigurationRequest}

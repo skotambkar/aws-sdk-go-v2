@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/query"
+	"github.com/aws/aws-sdk-go-v2/service/elasticloadbalancing/internal/aws_query"
 	"github.com/aws/aws-sdk-go-v2/service/elasticloadbalancing/types"
 )
 
@@ -51,6 +53,10 @@ func (c *Client) SetLoadBalancerPoliciesForBackendServerRequest(input *types.Set
 	}
 
 	req := c.newRequest(op, input, &types.SetLoadBalancerPoliciesForBackendServerOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(query.BuildHandler.Name, aws_query.SetLoadBalancerPoliciesForBackendServerMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return SetLoadBalancerPoliciesForBackendServerRequest{Request: req, Input: input, Copy: c.SetLoadBalancerPoliciesForBackendServerRequest}
 }
 

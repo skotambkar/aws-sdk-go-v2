@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/codestar/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/codestar/types"
 )
 
@@ -36,6 +38,10 @@ func (c *Client) UntagProjectRequest(input *types.UntagProjectInput) UntagProjec
 	}
 
 	req := c.newRequest(op, input, &types.UntagProjectOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.UntagProjectMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return UntagProjectRequest{Request: req, Input: input, Copy: c.UntagProjectRequest}
 }
 

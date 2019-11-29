@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/datasync/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/datasync/types"
 )
 
@@ -36,6 +38,10 @@ func (c *Client) DescribeLocationNfsRequest(input *types.DescribeLocationNfsInpu
 	}
 
 	req := c.newRequest(op, input, &types.DescribeLocationNfsOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.DescribeLocationNfsMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return DescribeLocationNfsRequest{Request: req, Input: input, Copy: c.DescribeLocationNfsRequest}
 }
 

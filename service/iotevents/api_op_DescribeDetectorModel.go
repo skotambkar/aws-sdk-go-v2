@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/restjson"
+	"github.com/aws/aws-sdk-go-v2/service/iotevents/internal/aws_restjson"
 	"github.com/aws/aws-sdk-go-v2/service/iotevents/types"
 )
 
@@ -37,6 +39,10 @@ func (c *Client) DescribeDetectorModelRequest(input *types.DescribeDetectorModel
 	}
 
 	req := c.newRequest(op, input, &types.DescribeDetectorModelOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(restjson.BuildHandler.Name, aws_restjson.DescribeDetectorModelMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return DescribeDetectorModelRequest{Request: req, Input: input, Copy: c.DescribeDetectorModelRequest}
 }
 

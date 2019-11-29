@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/restjson"
+	"github.com/aws/aws-sdk-go-v2/service/managedblockchain/internal/aws_restjson"
 	"github.com/aws/aws-sdk-go-v2/service/managedblockchain/types"
 )
 
@@ -42,6 +44,10 @@ func (c *Client) ListNodesRequest(input *types.ListNodesInput) ListNodesRequest 
 	}
 
 	req := c.newRequest(op, input, &types.ListNodesOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(restjson.BuildHandler.Name, aws_restjson.ListNodesMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return ListNodesRequest{Request: req, Input: input, Copy: c.ListNodesRequest}
 }
 

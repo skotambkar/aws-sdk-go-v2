@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/gamelift/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/gamelift/types"
 )
 
@@ -51,6 +53,10 @@ func (c *Client) UpdateAliasRequest(input *types.UpdateAliasInput) UpdateAliasRe
 	}
 
 	req := c.newRequest(op, input, &types.UpdateAliasOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.UpdateAliasMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return UpdateAliasRequest{Request: req, Input: input, Copy: c.UpdateAliasRequest}
 }
 

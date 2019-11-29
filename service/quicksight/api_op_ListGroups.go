@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/restjson"
+	"github.com/aws/aws-sdk-go-v2/service/quicksight/internal/aws_restjson"
 	"github.com/aws/aws-sdk-go-v2/service/quicksight/types"
 )
 
@@ -44,6 +46,10 @@ func (c *Client) ListGroupsRequest(input *types.ListGroupsInput) ListGroupsReque
 	}
 
 	req := c.newRequest(op, input, &types.ListGroupsOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(restjson.BuildHandler.Name, aws_restjson.ListGroupsMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return ListGroupsRequest{Request: req, Input: input, Copy: c.ListGroupsRequest}
 }
 

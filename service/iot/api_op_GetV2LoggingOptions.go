@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/restjson"
+	"github.com/aws/aws-sdk-go-v2/service/iot/internal/aws_restjson"
 	"github.com/aws/aws-sdk-go-v2/service/iot/types"
 )
 
@@ -34,6 +36,10 @@ func (c *Client) GetV2LoggingOptionsRequest(input *types.GetV2LoggingOptionsInpu
 	}
 
 	req := c.newRequest(op, input, &types.GetV2LoggingOptionsOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(restjson.BuildHandler.Name, aws_restjson.GetV2LoggingOptionsMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return GetV2LoggingOptionsRequest{Request: req, Input: input, Copy: c.GetV2LoggingOptionsRequest}
 }
 

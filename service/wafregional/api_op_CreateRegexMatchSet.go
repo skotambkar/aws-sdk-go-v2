@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/wafregional/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/wafregional/types"
 )
 
@@ -58,6 +60,10 @@ func (c *Client) CreateRegexMatchSetRequest(input *types.CreateRegexMatchSetInpu
 	}
 
 	req := c.newRequest(op, input, &types.CreateRegexMatchSetOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.CreateRegexMatchSetMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return CreateRegexMatchSetRequest{Request: req, Input: input, Copy: c.CreateRegexMatchSetRequest}
 }
 

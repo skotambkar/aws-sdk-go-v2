@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/sagemaker/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/sagemaker/types"
 )
 
@@ -36,6 +38,10 @@ func (c *Client) DescribeNotebookInstanceRequest(input *types.DescribeNotebookIn
 	}
 
 	req := c.newRequest(op, input, &types.DescribeNotebookInstanceOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.DescribeNotebookInstanceMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return DescribeNotebookInstanceRequest{Request: req, Input: input, Copy: c.DescribeNotebookInstanceRequest}
 }
 

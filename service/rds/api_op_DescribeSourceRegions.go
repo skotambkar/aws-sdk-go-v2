@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/query"
+	"github.com/aws/aws-sdk-go-v2/service/rds/internal/aws_query"
 	"github.com/aws/aws-sdk-go-v2/service/rds/types"
 )
 
@@ -38,6 +40,10 @@ func (c *Client) DescribeSourceRegionsRequest(input *types.DescribeSourceRegions
 	}
 
 	req := c.newRequest(op, input, &types.DescribeSourceRegionsOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(query.BuildHandler.Name, aws_query.DescribeSourceRegionsMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return DescribeSourceRegionsRequest{Request: req, Input: input, Copy: c.DescribeSourceRegionsRequest}
 }
 

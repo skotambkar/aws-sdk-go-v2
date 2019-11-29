@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/sms/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/sms/types"
 )
 
@@ -36,6 +38,10 @@ func (c *Client) GetAppLaunchConfigurationRequest(input *types.GetAppLaunchConfi
 	}
 
 	req := c.newRequest(op, input, &types.GetAppLaunchConfigurationOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.GetAppLaunchConfigurationMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return GetAppLaunchConfigurationRequest{Request: req, Input: input, Copy: c.GetAppLaunchConfigurationRequest}
 }
 

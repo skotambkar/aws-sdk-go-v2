@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/eventbridge/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/eventbridge/types"
 )
 
@@ -40,6 +42,10 @@ func (c *Client) ListEventSourcesRequest(input *types.ListEventSourcesInput) Lis
 	}
 
 	req := c.newRequest(op, input, &types.ListEventSourcesOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.ListEventSourcesMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return ListEventSourcesRequest{Request: req, Input: input, Copy: c.ListEventSourcesRequest}
 }
 

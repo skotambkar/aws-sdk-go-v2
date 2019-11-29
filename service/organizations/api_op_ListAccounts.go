@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/organizations/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/organizations/types"
 )
 
@@ -51,6 +53,10 @@ func (c *Client) ListAccountsRequest(input *types.ListAccountsInput) ListAccount
 	}
 
 	req := c.newRequest(op, input, &types.ListAccountsOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.ListAccountsMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return ListAccountsRequest{Request: req, Input: input, Copy: c.ListAccountsRequest}
 }
 

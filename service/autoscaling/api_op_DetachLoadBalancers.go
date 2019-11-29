@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/query"
+	"github.com/aws/aws-sdk-go-v2/service/autoscaling/internal/aws_query"
 	"github.com/aws/aws-sdk-go-v2/service/autoscaling/types"
 )
 
@@ -46,6 +48,10 @@ func (c *Client) DetachLoadBalancersRequest(input *types.DetachLoadBalancersInpu
 	}
 
 	req := c.newRequest(op, input, &types.DetachLoadBalancersOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(query.BuildHandler.Name, aws_query.DetachLoadBalancersMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return DetachLoadBalancersRequest{Request: req, Input: input, Copy: c.DetachLoadBalancersRequest}
 }
 

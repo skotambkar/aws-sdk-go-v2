@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/waf/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/waf/types"
 )
 
@@ -55,6 +57,10 @@ func (c *Client) PutLoggingConfigurationRequest(input *types.PutLoggingConfigura
 	}
 
 	req := c.newRequest(op, input, &types.PutLoggingConfigurationOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.PutLoggingConfigurationMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return PutLoggingConfigurationRequest{Request: req, Input: input, Copy: c.PutLoggingConfigurationRequest}
 }
 

@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/restjson"
+	"github.com/aws/aws-sdk-go-v2/service/polly/internal/aws_restjson"
 	"github.com/aws/aws-sdk-go-v2/service/polly/types"
 )
 
@@ -37,6 +39,10 @@ func (c *Client) GetLexiconRequest(input *types.GetLexiconInput) GetLexiconReque
 	}
 
 	req := c.newRequest(op, input, &types.GetLexiconOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(restjson.BuildHandler.Name, aws_restjson.GetLexiconMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return GetLexiconRequest{Request: req, Input: input, Copy: c.GetLexiconRequest}
 }
 

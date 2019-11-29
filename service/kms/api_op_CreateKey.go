@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/kms/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/kms/types"
 )
 
@@ -52,6 +54,10 @@ func (c *Client) CreateKeyRequest(input *types.CreateKeyInput) CreateKeyRequest 
 	}
 
 	req := c.newRequest(op, input, &types.CreateKeyOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.CreateKeyMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return CreateKeyRequest{Request: req, Input: input, Copy: c.CreateKeyRequest}
 }
 

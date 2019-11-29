@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/route53domains/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/route53domains/types"
 )
 
@@ -37,6 +39,10 @@ func (c *Client) DisableDomainAutoRenewRequest(input *types.DisableDomainAutoRen
 	}
 
 	req := c.newRequest(op, input, &types.DisableDomainAutoRenewOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.DisableDomainAutoRenewMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return DisableDomainAutoRenewRequest{Request: req, Input: input, Copy: c.DisableDomainAutoRenewRequest}
 }
 

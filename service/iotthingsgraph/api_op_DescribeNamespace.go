@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/iotthingsgraph/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/iotthingsgraph/types"
 )
 
@@ -37,6 +39,10 @@ func (c *Client) DescribeNamespaceRequest(input *types.DescribeNamespaceInput) D
 	}
 
 	req := c.newRequest(op, input, &types.DescribeNamespaceOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.DescribeNamespaceMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return DescribeNamespaceRequest{Request: req, Input: input, Copy: c.DescribeNamespaceRequest}
 }
 

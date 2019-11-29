@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/storagegateway/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/storagegateway/types"
 )
 
@@ -55,6 +57,10 @@ func (c *Client) UpdateNFSFileShareRequest(input *types.UpdateNFSFileShareInput)
 	}
 
 	req := c.newRequest(op, input, &types.UpdateNFSFileShareOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.UpdateNFSFileShareMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return UpdateNFSFileShareRequest{Request: req, Input: input, Copy: c.UpdateNFSFileShareRequest}
 }
 

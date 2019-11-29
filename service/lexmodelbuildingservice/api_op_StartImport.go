@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/restjson"
+	"github.com/aws/aws-sdk-go-v2/service/lexmodelbuildingservice/internal/aws_restjson"
 	"github.com/aws/aws-sdk-go-v2/service/lexmodelbuildingservice/types"
 )
 
@@ -36,6 +38,10 @@ func (c *Client) StartImportRequest(input *types.StartImportInput) StartImportRe
 	}
 
 	req := c.newRequest(op, input, &types.StartImportOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(restjson.BuildHandler.Name, aws_restjson.StartImportMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return StartImportRequest{Request: req, Input: input, Copy: c.StartImportRequest}
 }
 

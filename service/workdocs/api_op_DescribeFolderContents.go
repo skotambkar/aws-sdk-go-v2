@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/restjson"
+	"github.com/aws/aws-sdk-go-v2/service/workdocs/internal/aws_restjson"
 	"github.com/aws/aws-sdk-go-v2/service/workdocs/types"
 )
 
@@ -48,6 +50,10 @@ func (c *Client) DescribeFolderContentsRequest(input *types.DescribeFolderConten
 	}
 
 	req := c.newRequest(op, input, &types.DescribeFolderContentsOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(restjson.BuildHandler.Name, aws_restjson.DescribeFolderContentsMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return DescribeFolderContentsRequest{Request: req, Input: input, Copy: c.DescribeFolderContentsRequest}
 }
 

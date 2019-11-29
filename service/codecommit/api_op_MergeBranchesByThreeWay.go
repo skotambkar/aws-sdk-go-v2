@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/codecommit/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/codecommit/types"
 )
 
@@ -36,6 +38,10 @@ func (c *Client) MergeBranchesByThreeWayRequest(input *types.MergeBranchesByThre
 	}
 
 	req := c.newRequest(op, input, &types.MergeBranchesByThreeWayOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.MergeBranchesByThreeWayMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return MergeBranchesByThreeWayRequest{Request: req, Input: input, Copy: c.MergeBranchesByThreeWayRequest}
 }
 

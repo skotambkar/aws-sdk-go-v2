@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/cognitoidentityprovider/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/cognitoidentityprovider/types"
 )
 
@@ -38,6 +40,10 @@ func (c *Client) AdminGetDeviceRequest(input *types.AdminGetDeviceInput) AdminGe
 	}
 
 	req := c.newRequest(op, input, &types.AdminGetDeviceOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.AdminGetDeviceMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return AdminGetDeviceRequest{Request: req, Input: input, Copy: c.AdminGetDeviceRequest}
 }
 

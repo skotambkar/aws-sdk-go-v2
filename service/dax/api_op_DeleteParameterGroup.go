@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/dax/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/dax/types"
 )
 
@@ -37,6 +39,10 @@ func (c *Client) DeleteParameterGroupRequest(input *types.DeleteParameterGroupIn
 	}
 
 	req := c.newRequest(op, input, &types.DeleteParameterGroupOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.DeleteParameterGroupMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return DeleteParameterGroupRequest{Request: req, Input: input, Copy: c.DeleteParameterGroupRequest}
 }
 

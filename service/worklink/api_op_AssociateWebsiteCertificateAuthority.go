@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/restjson"
+	"github.com/aws/aws-sdk-go-v2/service/worklink/internal/aws_restjson"
 	"github.com/aws/aws-sdk-go-v2/service/worklink/types"
 )
 
@@ -37,6 +39,10 @@ func (c *Client) AssociateWebsiteCertificateAuthorityRequest(input *types.Associ
 	}
 
 	req := c.newRequest(op, input, &types.AssociateWebsiteCertificateAuthorityOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(restjson.BuildHandler.Name, aws_restjson.AssociateWebsiteCertificateAuthorityMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return AssociateWebsiteCertificateAuthorityRequest{Request: req, Input: input, Copy: c.AssociateWebsiteCertificateAuthorityRequest}
 }
 

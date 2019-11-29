@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/codecommit/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/codecommit/types"
 )
 
@@ -37,6 +39,10 @@ func (c *Client) DeleteBranchRequest(input *types.DeleteBranchInput) DeleteBranc
 	}
 
 	req := c.newRequest(op, input, &types.DeleteBranchOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.DeleteBranchMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return DeleteBranchRequest{Request: req, Input: input, Copy: c.DeleteBranchRequest}
 }
 

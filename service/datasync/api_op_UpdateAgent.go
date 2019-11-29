@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/datasync/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/datasync/types"
 )
 
@@ -36,6 +38,10 @@ func (c *Client) UpdateAgentRequest(input *types.UpdateAgentInput) UpdateAgentRe
 	}
 
 	req := c.newRequest(op, input, &types.UpdateAgentOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.UpdateAgentMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return UpdateAgentRequest{Request: req, Input: input, Copy: c.UpdateAgentRequest}
 }
 

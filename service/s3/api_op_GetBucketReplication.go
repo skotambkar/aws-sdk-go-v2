@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/restxml"
+	"github.com/aws/aws-sdk-go-v2/service/s3/internal/aws_restxml"
 	"github.com/aws/aws-sdk-go-v2/service/s3/types"
 )
 
@@ -62,6 +64,10 @@ func (c *Client) GetBucketReplicationRequest(input *types.GetBucketReplicationIn
 	}
 
 	req := c.newRequest(op, input, &types.GetBucketReplicationOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(restxml.BuildHandler.Name, aws_restxml.GetBucketReplicationMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return GetBucketReplicationRequest{Request: req, Input: input, Copy: c.GetBucketReplicationRequest}
 }
 

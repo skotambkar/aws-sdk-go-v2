@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/restjson"
+	"github.com/aws/aws-sdk-go-v2/service/pinpointemail/internal/aws_restjson"
 	"github.com/aws/aws-sdk-go-v2/service/pinpointemail/types"
 )
 
@@ -34,6 +36,10 @@ func (c *Client) PutDedicatedIpWarmupAttributesRequest(input *types.PutDedicated
 	}
 
 	req := c.newRequest(op, input, &types.PutDedicatedIpWarmupAttributesOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(restjson.BuildHandler.Name, aws_restjson.PutDedicatedIpWarmupAttributesMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return PutDedicatedIpWarmupAttributesRequest{Request: req, Input: input, Copy: c.PutDedicatedIpWarmupAttributesRequest}
 }
 

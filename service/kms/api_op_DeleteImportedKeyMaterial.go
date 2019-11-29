@@ -8,6 +8,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/private/protocol"
 	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/kms/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/kms/types"
 )
 
@@ -52,6 +53,10 @@ func (c *Client) DeleteImportedKeyMaterialRequest(input *types.DeleteImportedKey
 	}
 
 	req := c.newRequest(op, input, &types.DeleteImportedKeyMaterialOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.DeleteImportedKeyMaterialMarshaler{Input: input}.GetNamedBuildHandler())
+
 	req.Handlers.Unmarshal.Remove(jsonrpc.UnmarshalHandler)
 	req.Handlers.Unmarshal.PushBackNamed(protocol.UnmarshalDiscardBodyHandler)
 	return DeleteImportedKeyMaterialRequest{Request: req, Input: input, Copy: c.DeleteImportedKeyMaterialRequest}

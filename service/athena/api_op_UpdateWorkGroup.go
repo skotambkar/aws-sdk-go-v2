@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/athena/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/athena/types"
 )
 
@@ -37,6 +39,10 @@ func (c *Client) UpdateWorkGroupRequest(input *types.UpdateWorkGroupInput) Updat
 	}
 
 	req := c.newRequest(op, input, &types.UpdateWorkGroupOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.UpdateWorkGroupMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return UpdateWorkGroupRequest{Request: req, Input: input, Copy: c.UpdateWorkGroupRequest}
 }
 

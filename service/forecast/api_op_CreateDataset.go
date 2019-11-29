@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/forecast/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/forecast/types"
 )
 
@@ -60,6 +62,10 @@ func (c *Client) CreateDatasetRequest(input *types.CreateDatasetInput) CreateDat
 	}
 
 	req := c.newRequest(op, input, &types.CreateDatasetOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.CreateDatasetMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return CreateDatasetRequest{Request: req, Input: input, Copy: c.CreateDatasetRequest}
 }
 

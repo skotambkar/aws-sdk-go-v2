@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/support/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/support/types"
 )
 
@@ -37,6 +39,10 @@ func (c *Client) ResolveCaseRequest(input *types.ResolveCaseInput) ResolveCaseRe
 	}
 
 	req := c.newRequest(op, input, &types.ResolveCaseOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.ResolveCaseMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return ResolveCaseRequest{Request: req, Input: input, Copy: c.ResolveCaseRequest}
 }
 

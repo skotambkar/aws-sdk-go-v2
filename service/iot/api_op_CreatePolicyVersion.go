@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/restjson"
+	"github.com/aws/aws-sdk-go-v2/service/iot/internal/aws_restjson"
 	"github.com/aws/aws-sdk-go-v2/service/iot/types"
 )
 
@@ -41,6 +43,10 @@ func (c *Client) CreatePolicyVersionRequest(input *types.CreatePolicyVersionInpu
 	}
 
 	req := c.newRequest(op, input, &types.CreatePolicyVersionOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(restjson.BuildHandler.Name, aws_restjson.CreatePolicyVersionMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return CreatePolicyVersionRequest{Request: req, Input: input, Copy: c.CreatePolicyVersionRequest}
 }
 

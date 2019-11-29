@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/dax/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/dax/types"
 )
 
@@ -40,6 +42,10 @@ func (c *Client) RebootNodeRequest(input *types.RebootNodeInput) RebootNodeReque
 	}
 
 	req := c.newRequest(op, input, &types.RebootNodeOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.RebootNodeMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return RebootNodeRequest{Request: req, Input: input, Copy: c.RebootNodeRequest}
 }
 

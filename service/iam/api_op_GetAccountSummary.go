@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/query"
+	"github.com/aws/aws-sdk-go-v2/service/iam/internal/aws_query"
 	"github.com/aws/aws-sdk-go-v2/service/iam/types"
 )
 
@@ -40,6 +42,10 @@ func (c *Client) GetAccountSummaryRequest(input *types.GetAccountSummaryInput) G
 	}
 
 	req := c.newRequest(op, input, &types.GetAccountSummaryOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(query.BuildHandler.Name, aws_query.GetAccountSummaryMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return GetAccountSummaryRequest{Request: req, Input: input, Copy: c.GetAccountSummaryRequest}
 }
 

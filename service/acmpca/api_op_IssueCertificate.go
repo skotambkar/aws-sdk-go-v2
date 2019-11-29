@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/acmpca/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/acmpca/types"
 )
 
@@ -42,6 +44,10 @@ func (c *Client) IssueCertificateRequest(input *types.IssueCertificateInput) Iss
 	}
 
 	req := c.newRequest(op, input, &types.IssueCertificateOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.IssueCertificateMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return IssueCertificateRequest{Request: req, Input: input, Copy: c.IssueCertificateRequest}
 }
 

@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/ssm/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/ssm/types"
 )
 
@@ -36,6 +38,10 @@ func (c *Client) DeleteParametersRequest(input *types.DeleteParametersInput) Del
 	}
 
 	req := c.newRequest(op, input, &types.DeleteParametersOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.DeleteParametersMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return DeleteParametersRequest{Request: req, Input: input, Copy: c.DeleteParametersRequest}
 }
 

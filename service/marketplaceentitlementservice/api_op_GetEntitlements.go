@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/marketplaceentitlementservice/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/marketplaceentitlementservice/types"
 )
 
@@ -37,6 +39,10 @@ func (c *Client) GetEntitlementsRequest(input *types.GetEntitlementsInput) GetEn
 	}
 
 	req := c.newRequest(op, input, &types.GetEntitlementsOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.GetEntitlementsMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return GetEntitlementsRequest{Request: req, Input: input, Copy: c.GetEntitlementsRequest}
 }
 

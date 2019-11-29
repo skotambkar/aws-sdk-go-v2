@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/ssm/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/ssm/types"
 )
 
@@ -36,6 +38,10 @@ func (c *Client) GetOpsSummaryRequest(input *types.GetOpsSummaryInput) GetOpsSum
 	}
 
 	req := c.newRequest(op, input, &types.GetOpsSummaryOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.GetOpsSummaryMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return GetOpsSummaryRequest{Request: req, Input: input, Copy: c.GetOpsSummaryRequest}
 }
 

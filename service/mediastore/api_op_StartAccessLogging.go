@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/mediastore/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/mediastore/types"
 )
 
@@ -38,6 +40,10 @@ func (c *Client) StartAccessLoggingRequest(input *types.StartAccessLoggingInput)
 	}
 
 	req := c.newRequest(op, input, &types.StartAccessLoggingOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.StartAccessLoggingMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return StartAccessLoggingRequest{Request: req, Input: input, Copy: c.StartAccessLoggingRequest}
 }
 

@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/inspector/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/inspector/types"
 )
 
@@ -37,6 +39,10 @@ func (c *Client) AddAttributesToFindingsRequest(input *types.AddAttributesToFind
 	}
 
 	req := c.newRequest(op, input, &types.AddAttributesToFindingsOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.AddAttributesToFindingsMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return AddAttributesToFindingsRequest{Request: req, Input: input, Copy: c.AddAttributesToFindingsRequest}
 }
 

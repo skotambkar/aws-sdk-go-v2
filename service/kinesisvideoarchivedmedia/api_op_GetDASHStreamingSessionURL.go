@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/restjson"
+	"github.com/aws/aws-sdk-go-v2/service/kinesisvideoarchivedmedia/internal/aws_restjson"
 	"github.com/aws/aws-sdk-go-v2/service/kinesisvideoarchivedmedia/types"
 )
 
@@ -159,6 +161,10 @@ func (c *Client) GetDASHStreamingSessionURLRequest(input *types.GetDASHStreaming
 	}
 
 	req := c.newRequest(op, input, &types.GetDASHStreamingSessionURLOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(restjson.BuildHandler.Name, aws_restjson.GetDASHStreamingSessionURLMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return GetDASHStreamingSessionURLRequest{Request: req, Input: input, Copy: c.GetDASHStreamingSessionURLRequest}
 }
 

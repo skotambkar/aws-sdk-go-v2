@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/restjson"
+	"github.com/aws/aws-sdk-go-v2/service/iot/internal/aws_restjson"
 	"github.com/aws/aws-sdk-go-v2/service/iot/types"
 )
 
@@ -45,6 +47,10 @@ func (c *Client) TransferCertificateRequest(input *types.TransferCertificateInpu
 	}
 
 	req := c.newRequest(op, input, &types.TransferCertificateOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(restjson.BuildHandler.Name, aws_restjson.TransferCertificateMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return TransferCertificateRequest{Request: req, Input: input, Copy: c.TransferCertificateRequest}
 }
 

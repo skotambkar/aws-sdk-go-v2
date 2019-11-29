@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/snowball/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/snowball/types"
 )
 
@@ -48,6 +50,10 @@ func (c *Client) GetJobUnlockCodeRequest(input *types.GetJobUnlockCodeInput) Get
 	}
 
 	req := c.newRequest(op, input, &types.GetJobUnlockCodeOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.GetJobUnlockCodeMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return GetJobUnlockCodeRequest{Request: req, Input: input, Copy: c.GetJobUnlockCodeRequest}
 }
 

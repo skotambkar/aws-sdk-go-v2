@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/comprehendmedical/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/comprehendmedical/types"
 )
 
@@ -47,6 +49,10 @@ func (c *Client) DetectEntitiesV2Request(input *types.DetectEntitiesV2Input) Det
 	}
 
 	req := c.newRequest(op, input, &types.DetectEntitiesV2Output{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.DetectEntitiesV2Marshaler{Input: input}.GetNamedBuildHandler())
+
 	return DetectEntitiesV2Request{Request: req, Input: input, Copy: c.DetectEntitiesV2Request}
 }
 

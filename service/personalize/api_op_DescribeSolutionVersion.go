@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/personalize/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/personalize/types"
 )
 
@@ -37,6 +39,10 @@ func (c *Client) DescribeSolutionVersionRequest(input *types.DescribeSolutionVer
 	}
 
 	req := c.newRequest(op, input, &types.DescribeSolutionVersionOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.DescribeSolutionVersionMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return DescribeSolutionVersionRequest{Request: req, Input: input, Copy: c.DescribeSolutionVersionRequest}
 }
 

@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/restxml"
+	"github.com/aws/aws-sdk-go-v2/service/s3/internal/aws_restxml"
 	"github.com/aws/aws-sdk-go-v2/service/s3/types"
 )
 
@@ -219,6 +221,10 @@ func (c *Client) CopyObjectRequest(input *types.CopyObjectInput) CopyObjectReque
 	}
 
 	req := c.newRequest(op, input, &types.CopyObjectOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(restxml.BuildHandler.Name, aws_restxml.CopyObjectMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return CopyObjectRequest{Request: req, Input: input, Copy: c.CopyObjectRequest}
 }
 

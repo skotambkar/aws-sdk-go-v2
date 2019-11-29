@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/applicationdiscoveryservice/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/applicationdiscoveryservice/types"
 )
 
@@ -43,6 +45,10 @@ func (c *Client) DescribeImportTasksRequest(input *types.DescribeImportTasksInpu
 	}
 
 	req := c.newRequest(op, input, &types.DescribeImportTasksOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.DescribeImportTasksMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return DescribeImportTasksRequest{Request: req, Input: input, Copy: c.DescribeImportTasksRequest}
 }
 

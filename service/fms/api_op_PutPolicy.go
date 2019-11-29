@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/fms/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/fms/types"
 )
 
@@ -55,6 +57,10 @@ func (c *Client) PutPolicyRequest(input *types.PutPolicyInput) PutPolicyRequest 
 	}
 
 	req := c.newRequest(op, input, &types.PutPolicyOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.PutPolicyMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return PutPolicyRequest{Request: req, Input: input, Copy: c.PutPolicyRequest}
 }
 

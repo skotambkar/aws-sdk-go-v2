@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/restjson"
+	"github.com/aws/aws-sdk-go-v2/service/ram/internal/aws_restjson"
 	"github.com/aws/aws-sdk-go-v2/service/ram/types"
 )
 
@@ -43,6 +45,10 @@ func (c *Client) ListResourcesRequest(input *types.ListResourcesInput) ListResou
 	}
 
 	req := c.newRequest(op, input, &types.ListResourcesOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(restjson.BuildHandler.Name, aws_restjson.ListResourcesMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return ListResourcesRequest{Request: req, Input: input, Copy: c.ListResourcesRequest}
 }
 

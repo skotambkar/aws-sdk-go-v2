@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/restjson"
+	"github.com/aws/aws-sdk-go-v2/service/groundstation/internal/aws_restjson"
 	"github.com/aws/aws-sdk-go-v2/service/groundstation/types"
 )
 
@@ -36,6 +38,10 @@ func (c *Client) DeleteMissionProfileRequest(input *types.DeleteMissionProfileIn
 	}
 
 	req := c.newRequest(op, input, &types.DeleteMissionProfileOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(restjson.BuildHandler.Name, aws_restjson.DeleteMissionProfileMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return DeleteMissionProfileRequest{Request: req, Input: input, Copy: c.DeleteMissionProfileRequest}
 }
 

@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/restxml"
+	"github.com/aws/aws-sdk-go-v2/service/cloudfront/internal/aws_restxml"
 	"github.com/aws/aws-sdk-go-v2/service/cloudfront/types"
 )
 
@@ -41,6 +43,10 @@ func (c *Client) CreateCloudFrontOriginAccessIdentityRequest(input *types.Create
 	}
 
 	req := c.newRequest(op, input, &types.CreateCloudFrontOriginAccessIdentityOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(restxml.BuildHandler.Name, aws_restxml.CreateCloudFrontOriginAccessIdentityMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return CreateCloudFrontOriginAccessIdentityRequest{Request: req, Input: input, Copy: c.CreateCloudFrontOriginAccessIdentityRequest}
 }
 

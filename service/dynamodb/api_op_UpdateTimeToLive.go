@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/dynamodb/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb/types"
 )
 
@@ -63,6 +65,10 @@ func (c *Client) UpdateTimeToLiveRequest(input *types.UpdateTimeToLiveInput) Upd
 	}
 
 	req := c.newRequest(op, input, &types.UpdateTimeToLiveOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.UpdateTimeToLiveMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return UpdateTimeToLiveRequest{Request: req, Input: input, Copy: c.UpdateTimeToLiveRequest}
 }
 

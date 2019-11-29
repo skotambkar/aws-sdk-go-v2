@@ -8,6 +8,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/private/protocol"
 	"github.com/aws/aws-sdk-go-v2/private/protocol/query"
+	"github.com/aws/aws-sdk-go-v2/service/autoscaling/internal/aws_query"
 	"github.com/aws/aws-sdk-go-v2/service/autoscaling/types"
 )
 
@@ -42,6 +43,10 @@ func (c *Client) DeleteLaunchConfigurationRequest(input *types.DeleteLaunchConfi
 	}
 
 	req := c.newRequest(op, input, &types.DeleteLaunchConfigurationOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(query.BuildHandler.Name, aws_query.DeleteLaunchConfigurationMarshaler{Input: input}.GetNamedBuildHandler())
+
 	req.Handlers.Unmarshal.Remove(query.UnmarshalHandler)
 	req.Handlers.Unmarshal.PushBackNamed(protocol.UnmarshalDiscardBodyHandler)
 	return DeleteLaunchConfigurationRequest{Request: req, Input: input, Copy: c.DeleteLaunchConfigurationRequest}

@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/restjson"
+	"github.com/aws/aws-sdk-go-v2/service/securityhub/internal/aws_restjson"
 	"github.com/aws/aws-sdk-go-v2/service/securityhub/types"
 )
 
@@ -37,6 +39,10 @@ func (c *Client) BatchDisableStandardsRequest(input *types.BatchDisableStandards
 	}
 
 	req := c.newRequest(op, input, &types.BatchDisableStandardsOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(restjson.BuildHandler.Name, aws_restjson.BatchDisableStandardsMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return BatchDisableStandardsRequest{Request: req, Input: input, Copy: c.BatchDisableStandardsRequest}
 }
 

@@ -8,6 +8,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/private/protocol"
 	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/acmpca/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/acmpca/types"
 )
 
@@ -41,6 +42,10 @@ func (c *Client) UpdateCertificateAuthorityRequest(input *types.UpdateCertificat
 	}
 
 	req := c.newRequest(op, input, &types.UpdateCertificateAuthorityOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.UpdateCertificateAuthorityMarshaler{Input: input}.GetNamedBuildHandler())
+
 	req.Handlers.Unmarshal.Remove(jsonrpc.UnmarshalHandler)
 	req.Handlers.Unmarshal.PushBackNamed(protocol.UnmarshalDiscardBodyHandler)
 	return UpdateCertificateAuthorityRequest{Request: req, Input: input, Copy: c.UpdateCertificateAuthorityRequest}

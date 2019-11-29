@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/restjson"
+	"github.com/aws/aws-sdk-go-v2/service/pinpoint/internal/aws_restjson"
 	"github.com/aws/aws-sdk-go-v2/service/pinpoint/types"
 )
 
@@ -36,6 +38,10 @@ func (c *Client) UpdateJourneyStateRequest(input *types.UpdateJourneyStateInput)
 	}
 
 	req := c.newRequest(op, input, &types.UpdateJourneyStateOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(restjson.BuildHandler.Name, aws_restjson.UpdateJourneyStateMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return UpdateJourneyStateRequest{Request: req, Input: input, Copy: c.UpdateJourneyStateRequest}
 }
 

@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/sms/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/sms/types"
 )
 
@@ -44,6 +46,10 @@ func (c *Client) GetServersRequest(input *types.GetServersInput) GetServersReque
 	}
 
 	req := c.newRequest(op, input, &types.GetServersOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.GetServersMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return GetServersRequest{Request: req, Input: input, Copy: c.GetServersRequest}
 }
 

@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/secretsmanager/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/secretsmanager/types"
 )
 
@@ -77,6 +79,10 @@ func (c *Client) CancelRotateSecretRequest(input *types.CancelRotateSecretInput)
 	}
 
 	req := c.newRequest(op, input, &types.CancelRotateSecretOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.CancelRotateSecretMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return CancelRotateSecretRequest{Request: req, Input: input, Copy: c.CancelRotateSecretRequest}
 }
 

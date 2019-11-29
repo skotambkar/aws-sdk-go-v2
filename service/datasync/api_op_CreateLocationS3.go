@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/datasync/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/datasync/types"
 )
 
@@ -45,6 +47,10 @@ func (c *Client) CreateLocationS3Request(input *types.CreateLocationS3Input) Cre
 	}
 
 	req := c.newRequest(op, input, &types.CreateLocationS3Output{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.CreateLocationS3Marshaler{Input: input}.GetNamedBuildHandler())
+
 	return CreateLocationS3Request{Request: req, Input: input, Copy: c.CreateLocationS3Request}
 }
 

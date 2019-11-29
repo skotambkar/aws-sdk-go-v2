@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/restjson"
+	"github.com/aws/aws-sdk-go-v2/service/quicksight/internal/aws_restjson"
 	"github.com/aws/aws-sdk-go-v2/service/quicksight/types"
 )
 
@@ -44,6 +46,10 @@ func (c *Client) DescribeDataSetRequest(input *types.DescribeDataSetInput) Descr
 	}
 
 	req := c.newRequest(op, input, &types.DescribeDataSetOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(restjson.BuildHandler.Name, aws_restjson.DescribeDataSetMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return DescribeDataSetRequest{Request: req, Input: input, Copy: c.DescribeDataSetRequest}
 }
 

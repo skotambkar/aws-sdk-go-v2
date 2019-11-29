@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/kms/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/kms/types"
 )
 
@@ -69,6 +71,10 @@ func (c *Client) UpdateCustomKeyStoreRequest(input *types.UpdateCustomKeyStoreIn
 	}
 
 	req := c.newRequest(op, input, &types.UpdateCustomKeyStoreOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.UpdateCustomKeyStoreMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return UpdateCustomKeyStoreRequest{Request: req, Input: input, Copy: c.UpdateCustomKeyStoreRequest}
 }
 

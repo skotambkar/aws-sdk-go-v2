@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/costexplorer/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/costexplorer/types"
 )
 
@@ -42,6 +44,10 @@ func (c *Client) GetCostAndUsageRequest(input *types.GetCostAndUsageInput) GetCo
 	}
 
 	req := c.newRequest(op, input, &types.GetCostAndUsageOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.GetCostAndUsageMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return GetCostAndUsageRequest{Request: req, Input: input, Copy: c.GetCostAndUsageRequest}
 }
 

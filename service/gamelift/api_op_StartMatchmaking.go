@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/gamelift/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/gamelift/types"
 )
 
@@ -116,6 +118,10 @@ func (c *Client) StartMatchmakingRequest(input *types.StartMatchmakingInput) Sta
 	}
 
 	req := c.newRequest(op, input, &types.StartMatchmakingOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.StartMatchmakingMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return StartMatchmakingRequest{Request: req, Input: input, Copy: c.StartMatchmakingRequest}
 }
 

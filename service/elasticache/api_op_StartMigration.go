@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/query"
+	"github.com/aws/aws-sdk-go-v2/service/elasticache/internal/aws_query"
 	"github.com/aws/aws-sdk-go-v2/service/elasticache/types"
 )
 
@@ -36,6 +38,10 @@ func (c *Client) StartMigrationRequest(input *types.StartMigrationInput) StartMi
 	}
 
 	req := c.newRequest(op, input, &types.StartMigrationOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(query.BuildHandler.Name, aws_query.StartMigrationMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return StartMigrationRequest{Request: req, Input: input, Copy: c.StartMigrationRequest}
 }
 

@@ -7,6 +7,8 @@ import (
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/private/protocol"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/servicediscovery/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/servicediscovery/types"
 )
 
@@ -37,6 +39,10 @@ func (c *Client) DiscoverInstancesRequest(input *types.DiscoverInstancesInput) D
 	}
 
 	req := c.newRequest(op, input, &types.DiscoverInstancesOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.DiscoverInstancesMarshaler{Input: input}.GetNamedBuildHandler())
+
 	req.Handlers.Build.PushBackNamed(protocol.NewHostPrefixHandler("data-", nil))
 	req.Handlers.Build.PushBackNamed(protocol.ValidateEndpointHostHandler)
 	return DiscoverInstancesRequest{Request: req, Input: input, Copy: c.DiscoverInstancesRequest}

@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/route53domains/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/route53domains/types"
 )
 
@@ -40,6 +42,10 @@ func (c *Client) EnableDomainTransferLockRequest(input *types.EnableDomainTransf
 	}
 
 	req := c.newRequest(op, input, &types.EnableDomainTransferLockOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.EnableDomainTransferLockMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return EnableDomainTransferLockRequest{Request: req, Input: input, Copy: c.EnableDomainTransferLockRequest}
 }
 

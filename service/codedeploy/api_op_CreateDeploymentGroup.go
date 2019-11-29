@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/codedeploy/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/codedeploy/types"
 )
 
@@ -36,6 +38,10 @@ func (c *Client) CreateDeploymentGroupRequest(input *types.CreateDeploymentGroup
 	}
 
 	req := c.newRequest(op, input, &types.CreateDeploymentGroupOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.CreateDeploymentGroupMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return CreateDeploymentGroupRequest{Request: req, Input: input, Copy: c.CreateDeploymentGroupRequest}
 }
 

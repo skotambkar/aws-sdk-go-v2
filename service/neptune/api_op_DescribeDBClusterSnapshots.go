@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/query"
+	"github.com/aws/aws-sdk-go-v2/service/neptune/internal/aws_query"
 	"github.com/aws/aws-sdk-go-v2/service/neptune/types"
 )
 
@@ -37,6 +39,10 @@ func (c *Client) DescribeDBClusterSnapshotsRequest(input *types.DescribeDBCluste
 	}
 
 	req := c.newRequest(op, input, &types.DescribeDBClusterSnapshotsOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(query.BuildHandler.Name, aws_query.DescribeDBClusterSnapshotsMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return DescribeDBClusterSnapshotsRequest{Request: req, Input: input, Copy: c.DescribeDBClusterSnapshotsRequest}
 }
 

@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/kinesisanalyticsv2/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/kinesisanalyticsv2/types"
 )
 
@@ -37,6 +39,10 @@ func (c *Client) DeleteApplicationCloudWatchLoggingOptionRequest(input *types.De
 	}
 
 	req := c.newRequest(op, input, &types.DeleteApplicationCloudWatchLoggingOptionOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.DeleteApplicationCloudWatchLoggingOptionMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return DeleteApplicationCloudWatchLoggingOptionRequest{Request: req, Input: input, Copy: c.DeleteApplicationCloudWatchLoggingOptionRequest}
 }
 

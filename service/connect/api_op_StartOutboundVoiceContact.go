@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/restjson"
+	"github.com/aws/aws-sdk-go-v2/service/connect/internal/aws_restjson"
 	"github.com/aws/aws-sdk-go-v2/service/connect/types"
 )
 
@@ -39,6 +41,10 @@ func (c *Client) StartOutboundVoiceContactRequest(input *types.StartOutboundVoic
 	}
 
 	req := c.newRequest(op, input, &types.StartOutboundVoiceContactOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(restjson.BuildHandler.Name, aws_restjson.StartOutboundVoiceContactMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return StartOutboundVoiceContactRequest{Request: req, Input: input, Copy: c.StartOutboundVoiceContactRequest}
 }
 

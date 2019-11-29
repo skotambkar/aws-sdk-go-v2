@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/restjson"
+	"github.com/aws/aws-sdk-go-v2/service/dlm/internal/aws_restjson"
 	"github.com/aws/aws-sdk-go-v2/service/dlm/types"
 )
 
@@ -37,6 +39,10 @@ func (c *Client) DeleteLifecyclePolicyRequest(input *types.DeleteLifecyclePolicy
 	}
 
 	req := c.newRequest(op, input, &types.DeleteLifecyclePolicyOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(restjson.BuildHandler.Name, aws_restjson.DeleteLifecyclePolicyMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return DeleteLifecyclePolicyRequest{Request: req, Input: input, Copy: c.DeleteLifecyclePolicyRequest}
 }
 

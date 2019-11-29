@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/configservice/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/configservice/types"
 )
 
@@ -44,6 +46,10 @@ func (c *Client) BatchGetResourceConfigRequest(input *types.BatchGetResourceConf
 	}
 
 	req := c.newRequest(op, input, &types.BatchGetResourceConfigOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.BatchGetResourceConfigMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return BatchGetResourceConfigRequest{Request: req, Input: input, Copy: c.BatchGetResourceConfigRequest}
 }
 

@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/codecommit/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/codecommit/types"
 )
 
@@ -36,6 +38,10 @@ func (c *Client) GetMergeCommitRequest(input *types.GetMergeCommitInput) GetMerg
 	}
 
 	req := c.newRequest(op, input, &types.GetMergeCommitOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.GetMergeCommitMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return GetMergeCommitRequest{Request: req, Input: input, Copy: c.GetMergeCommitRequest}
 }
 

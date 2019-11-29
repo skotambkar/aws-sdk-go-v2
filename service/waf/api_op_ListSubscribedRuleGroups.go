@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/waf/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/waf/types"
 )
 
@@ -36,6 +38,10 @@ func (c *Client) ListSubscribedRuleGroupsRequest(input *types.ListSubscribedRule
 	}
 
 	req := c.newRequest(op, input, &types.ListSubscribedRuleGroupsOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.ListSubscribedRuleGroupsMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return ListSubscribedRuleGroupsRequest{Request: req, Input: input, Copy: c.ListSubscribedRuleGroupsRequest}
 }
 

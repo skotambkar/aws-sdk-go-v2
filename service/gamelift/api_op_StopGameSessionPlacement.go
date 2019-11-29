@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/gamelift/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/gamelift/types"
 )
 
@@ -53,6 +55,10 @@ func (c *Client) StopGameSessionPlacementRequest(input *types.StopGameSessionPla
 	}
 
 	req := c.newRequest(op, input, &types.StopGameSessionPlacementOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.StopGameSessionPlacementMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return StopGameSessionPlacementRequest{Request: req, Input: input, Copy: c.StopGameSessionPlacementRequest}
 }
 

@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/forecast/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/forecast/types"
 )
 
@@ -55,6 +57,10 @@ func (c *Client) CreateForecastRequest(input *types.CreateForecastInput) CreateF
 	}
 
 	req := c.newRequest(op, input, &types.CreateForecastOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.CreateForecastMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return CreateForecastRequest{Request: req, Input: input, Copy: c.CreateForecastRequest}
 }
 

@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/sagemaker/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/sagemaker/types"
 )
 
@@ -42,6 +44,10 @@ func (c *Client) ListTrainingJobsRequest(input *types.ListTrainingJobsInput) Lis
 	}
 
 	req := c.newRequest(op, input, &types.ListTrainingJobsOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.ListTrainingJobsMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return ListTrainingJobsRequest{Request: req, Input: input, Copy: c.ListTrainingJobsRequest}
 }
 

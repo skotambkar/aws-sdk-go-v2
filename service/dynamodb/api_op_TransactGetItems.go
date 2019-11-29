@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/dynamodb/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb/types"
 )
 
@@ -55,6 +57,10 @@ func (c *Client) TransactGetItemsRequest(input *types.TransactGetItemsInput) Tra
 	}
 
 	req := c.newRequest(op, input, &types.TransactGetItemsOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.TransactGetItemsMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return TransactGetItemsRequest{Request: req, Input: input, Copy: c.TransactGetItemsRequest}
 }
 

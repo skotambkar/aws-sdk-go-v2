@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/restxml"
+	"github.com/aws/aws-sdk-go-v2/service/cloudfront/internal/aws_restxml"
 	"github.com/aws/aws-sdk-go-v2/service/cloudfront/types"
 )
 
@@ -36,6 +38,10 @@ func (c *Client) UpdateStreamingDistributionRequest(input *types.UpdateStreaming
 	}
 
 	req := c.newRequest(op, input, &types.UpdateStreamingDistributionOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(restxml.BuildHandler.Name, aws_restxml.UpdateStreamingDistributionMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return UpdateStreamingDistributionRequest{Request: req, Input: input, Copy: c.UpdateStreamingDistributionRequest}
 }
 

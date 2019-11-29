@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/comprehend/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/comprehend/types"
 )
 
@@ -37,6 +39,10 @@ func (c *Client) DescribeTopicsDetectionJobRequest(input *types.DescribeTopicsDe
 	}
 
 	req := c.newRequest(op, input, &types.DescribeTopicsDetectionJobOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.DescribeTopicsDetectionJobMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return DescribeTopicsDetectionJobRequest{Request: req, Input: input, Copy: c.DescribeTopicsDetectionJobRequest}
 }
 

@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/kinesis/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/kinesis/types"
 )
 
@@ -57,6 +59,10 @@ func (c *Client) ListStreamsRequest(input *types.ListStreamsInput) ListStreamsRe
 	}
 
 	req := c.newRequest(op, input, &types.ListStreamsOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.ListStreamsMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return ListStreamsRequest{Request: req, Input: input, Copy: c.ListStreamsRequest}
 }
 

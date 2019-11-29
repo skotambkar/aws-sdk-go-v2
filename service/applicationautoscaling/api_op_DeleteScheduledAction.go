@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/applicationautoscaling/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/applicationautoscaling/types"
 )
 
@@ -40,6 +42,10 @@ func (c *Client) DeleteScheduledActionRequest(input *types.DeleteScheduledAction
 	}
 
 	req := c.newRequest(op, input, &types.DeleteScheduledActionOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.DeleteScheduledActionMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return DeleteScheduledActionRequest{Request: req, Input: input, Copy: c.DeleteScheduledActionRequest}
 }
 

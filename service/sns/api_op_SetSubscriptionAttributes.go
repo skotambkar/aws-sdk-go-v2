@@ -8,6 +8,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/private/protocol"
 	"github.com/aws/aws-sdk-go-v2/private/protocol/query"
+	"github.com/aws/aws-sdk-go-v2/service/sns/internal/aws_query"
 	"github.com/aws/aws-sdk-go-v2/service/sns/types"
 )
 
@@ -39,6 +40,10 @@ func (c *Client) SetSubscriptionAttributesRequest(input *types.SetSubscriptionAt
 	}
 
 	req := c.newRequest(op, input, &types.SetSubscriptionAttributesOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(query.BuildHandler.Name, aws_query.SetSubscriptionAttributesMarshaler{Input: input}.GetNamedBuildHandler())
+
 	req.Handlers.Unmarshal.Remove(query.UnmarshalHandler)
 	req.Handlers.Unmarshal.PushBackNamed(protocol.UnmarshalDiscardBodyHandler)
 	return SetSubscriptionAttributesRequest{Request: req, Input: input, Copy: c.SetSubscriptionAttributesRequest}

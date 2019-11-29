@@ -8,6 +8,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/private/protocol"
 	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/codedeploy/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/codedeploy/types"
 )
 
@@ -38,6 +39,10 @@ func (c *Client) RegisterApplicationRevisionRequest(input *types.RegisterApplica
 	}
 
 	req := c.newRequest(op, input, &types.RegisterApplicationRevisionOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.RegisterApplicationRevisionMarshaler{Input: input}.GetNamedBuildHandler())
+
 	req.Handlers.Unmarshal.Remove(jsonrpc.UnmarshalHandler)
 	req.Handlers.Unmarshal.PushBackNamed(protocol.UnmarshalDiscardBodyHandler)
 	return RegisterApplicationRevisionRequest{Request: req, Input: input, Copy: c.RegisterApplicationRevisionRequest}

@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/query"
+	"github.com/aws/aws-sdk-go-v2/service/simpledb/internal/aws_query"
 	"github.com/aws/aws-sdk-go-v2/service/simpledb/types"
 )
 
@@ -45,6 +47,10 @@ func (c *Client) ListDomainsRequest(input *types.ListDomainsInput) ListDomainsRe
 	}
 
 	req := c.newRequest(op, input, &types.ListDomainsOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(query.BuildHandler.Name, aws_query.ListDomainsMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return ListDomainsRequest{Request: req, Input: input, Copy: c.ListDomainsRequest}
 }
 

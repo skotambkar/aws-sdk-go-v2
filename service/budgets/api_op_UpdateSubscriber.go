@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/budgets/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/budgets/types"
 )
 
@@ -34,6 +36,10 @@ func (c *Client) UpdateSubscriberRequest(input *types.UpdateSubscriberInput) Upd
 	}
 
 	req := c.newRequest(op, input, &types.UpdateSubscriberOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.UpdateSubscriberMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return UpdateSubscriberRequest{Request: req, Input: input, Copy: c.UpdateSubscriberRequest}
 }
 

@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/codecommit/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/codecommit/types"
 )
 
@@ -36,6 +38,10 @@ func (c *Client) MergeBranchesBySquashRequest(input *types.MergeBranchesBySquash
 	}
 
 	req := c.newRequest(op, input, &types.MergeBranchesBySquashOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.MergeBranchesBySquashMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return MergeBranchesBySquashRequest{Request: req, Input: input, Copy: c.MergeBranchesBySquashRequest}
 }
 

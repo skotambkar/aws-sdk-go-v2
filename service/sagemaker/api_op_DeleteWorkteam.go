@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/sagemaker/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/sagemaker/types"
 )
 
@@ -36,6 +38,10 @@ func (c *Client) DeleteWorkteamRequest(input *types.DeleteWorkteamInput) DeleteW
 	}
 
 	req := c.newRequest(op, input, &types.DeleteWorkteamOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.DeleteWorkteamMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return DeleteWorkteamRequest{Request: req, Input: input, Copy: c.DeleteWorkteamRequest}
 }
 

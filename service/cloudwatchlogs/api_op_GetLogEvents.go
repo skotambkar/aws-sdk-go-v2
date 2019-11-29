@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs/types"
 )
 
@@ -47,6 +49,10 @@ func (c *Client) GetLogEventsRequest(input *types.GetLogEventsInput) GetLogEvent
 	}
 
 	req := c.newRequest(op, input, &types.GetLogEventsOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.GetLogEventsMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return GetLogEventsRequest{Request: req, Input: input, Copy: c.GetLogEventsRequest}
 }
 

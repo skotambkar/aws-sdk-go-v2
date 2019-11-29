@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/query"
+	"github.com/aws/aws-sdk-go-v2/service/cloudsearch/internal/aws_query"
 	"github.com/aws/aws-sdk-go-v2/service/cloudsearch/types"
 )
 
@@ -36,6 +38,10 @@ func (c *Client) DeleteAnalysisSchemeRequest(input *types.DeleteAnalysisSchemeIn
 	}
 
 	req := c.newRequest(op, input, &types.DeleteAnalysisSchemeOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(query.BuildHandler.Name, aws_query.DeleteAnalysisSchemeMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return DeleteAnalysisSchemeRequest{Request: req, Input: input, Copy: c.DeleteAnalysisSchemeRequest}
 }
 

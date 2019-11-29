@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/directconnect/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/directconnect/types"
 )
 
@@ -37,6 +39,10 @@ func (c *Client) AcceptDirectConnectGatewayAssociationProposalRequest(input *typ
 	}
 
 	req := c.newRequest(op, input, &types.AcceptDirectConnectGatewayAssociationProposalOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.AcceptDirectConnectGatewayAssociationProposalMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return AcceptDirectConnectGatewayAssociationProposalRequest{Request: req, Input: input, Copy: c.AcceptDirectConnectGatewayAssociationProposalRequest}
 }
 

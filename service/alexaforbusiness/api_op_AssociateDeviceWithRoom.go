@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/alexaforbusiness/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/alexaforbusiness/types"
 )
 
@@ -39,6 +41,10 @@ func (c *Client) AssociateDeviceWithRoomRequest(input *types.AssociateDeviceWith
 	}
 
 	req := c.newRequest(op, input, &types.AssociateDeviceWithRoomOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.AssociateDeviceWithRoomMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return AssociateDeviceWithRoomRequest{Request: req, Input: input, Copy: c.AssociateDeviceWithRoomRequest}
 }
 

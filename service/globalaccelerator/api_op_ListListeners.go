@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/globalaccelerator/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/globalaccelerator/types"
 )
 
@@ -36,6 +38,10 @@ func (c *Client) ListListenersRequest(input *types.ListListenersInput) ListListe
 	}
 
 	req := c.newRequest(op, input, &types.ListListenersOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.ListListenersMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return ListListenersRequest{Request: req, Input: input, Copy: c.ListListenersRequest}
 }
 

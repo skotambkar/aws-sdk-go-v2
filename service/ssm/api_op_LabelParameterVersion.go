@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/ssm/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/ssm/types"
 )
 
@@ -64,6 +66,10 @@ func (c *Client) LabelParameterVersionRequest(input *types.LabelParameterVersion
 	}
 
 	req := c.newRequest(op, input, &types.LabelParameterVersionOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.LabelParameterVersionMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return LabelParameterVersionRequest{Request: req, Input: input, Copy: c.LabelParameterVersionRequest}
 }
 

@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/query"
+	"github.com/aws/aws-sdk-go-v2/service/sqs/internal/aws_query"
 	"github.com/aws/aws-sdk-go-v2/service/sqs/types"
 )
 
@@ -66,6 +68,10 @@ func (c *Client) SendMessageBatchRequest(input *types.SendMessageBatchInput) Sen
 	}
 
 	req := c.newRequest(op, input, &types.SendMessageBatchOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(query.BuildHandler.Name, aws_query.SendMessageBatchMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return SendMessageBatchRequest{Request: req, Input: input, Copy: c.SendMessageBatchRequest}
 }
 

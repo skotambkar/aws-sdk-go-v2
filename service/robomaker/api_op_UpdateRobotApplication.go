@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/restjson"
+	"github.com/aws/aws-sdk-go-v2/service/robomaker/internal/aws_restjson"
 	"github.com/aws/aws-sdk-go-v2/service/robomaker/types"
 )
 
@@ -36,6 +38,10 @@ func (c *Client) UpdateRobotApplicationRequest(input *types.UpdateRobotApplicati
 	}
 
 	req := c.newRequest(op, input, &types.UpdateRobotApplicationOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(restjson.BuildHandler.Name, aws_restjson.UpdateRobotApplicationMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return UpdateRobotApplicationRequest{Request: req, Input: input, Copy: c.UpdateRobotApplicationRequest}
 }
 

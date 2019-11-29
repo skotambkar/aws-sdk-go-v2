@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/mturk/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/mturk/types"
 )
 
@@ -40,6 +42,10 @@ func (c *Client) NotifyWorkersRequest(input *types.NotifyWorkersInput) NotifyWor
 	}
 
 	req := c.newRequest(op, input, &types.NotifyWorkersOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.NotifyWorkersMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return NotifyWorkersRequest{Request: req, Input: input, Copy: c.NotifyWorkersRequest}
 }
 

@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/datapipeline/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/datapipeline/types"
 )
 
@@ -43,6 +45,10 @@ func (c *Client) QueryObjectsRequest(input *types.QueryObjectsInput) QueryObject
 	}
 
 	req := c.newRequest(op, input, &types.QueryObjectsOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.QueryObjectsMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return QueryObjectsRequest{Request: req, Input: input, Copy: c.QueryObjectsRequest}
 }
 

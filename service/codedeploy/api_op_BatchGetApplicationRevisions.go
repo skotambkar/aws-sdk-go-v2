@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/codedeploy/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/codedeploy/types"
 )
 
@@ -37,6 +39,10 @@ func (c *Client) BatchGetApplicationRevisionsRequest(input *types.BatchGetApplic
 	}
 
 	req := c.newRequest(op, input, &types.BatchGetApplicationRevisionsOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.BatchGetApplicationRevisionsMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return BatchGetApplicationRevisionsRequest{Request: req, Input: input, Copy: c.BatchGetApplicationRevisionsRequest}
 }
 

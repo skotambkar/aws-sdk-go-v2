@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/restjson"
+	"github.com/aws/aws-sdk-go-v2/service/kafka/internal/aws_restjson"
 	"github.com/aws/aws-sdk-go-v2/service/kafka/types"
 )
 
@@ -36,6 +38,10 @@ func (c *Client) DescribeConfigurationRequest(input *types.DescribeConfiguration
 	}
 
 	req := c.newRequest(op, input, &types.DescribeConfigurationOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(restjson.BuildHandler.Name, aws_restjson.DescribeConfigurationMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return DescribeConfigurationRequest{Request: req, Input: input, Copy: c.DescribeConfigurationRequest}
 }
 

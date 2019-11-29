@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/restjson"
+	"github.com/aws/aws-sdk-go-v2/service/clouddirectory/internal/aws_restjson"
 	"github.com/aws/aws-sdk-go-v2/service/clouddirectory/types"
 )
 
@@ -38,6 +40,10 @@ func (c *Client) ListIncomingTypedLinksRequest(input *types.ListIncomingTypedLin
 	}
 
 	req := c.newRequest(op, input, &types.ListIncomingTypedLinksOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(restjson.BuildHandler.Name, aws_restjson.ListIncomingTypedLinksMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return ListIncomingTypedLinksRequest{Request: req, Input: input, Copy: c.ListIncomingTypedLinksRequest}
 }
 

@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/opsworkscm/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/opsworkscm/types"
 )
 
@@ -45,6 +47,10 @@ func (c *Client) ExportServerEngineAttributeRequest(input *types.ExportServerEng
 	}
 
 	req := c.newRequest(op, input, &types.ExportServerEngineAttributeOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.ExportServerEngineAttributeMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return ExportServerEngineAttributeRequest{Request: req, Input: input, Copy: c.ExportServerEngineAttributeRequest}
 }
 

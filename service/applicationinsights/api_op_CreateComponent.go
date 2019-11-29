@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/applicationinsights/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/applicationinsights/types"
 )
 
@@ -36,6 +38,10 @@ func (c *Client) CreateComponentRequest(input *types.CreateComponentInput) Creat
 	}
 
 	req := c.newRequest(op, input, &types.CreateComponentOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.CreateComponentMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return CreateComponentRequest{Request: req, Input: input, Copy: c.CreateComponentRequest}
 }
 

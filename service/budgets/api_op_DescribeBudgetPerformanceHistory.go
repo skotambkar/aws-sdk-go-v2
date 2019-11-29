@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/budgets/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/budgets/types"
 )
 
@@ -35,6 +37,10 @@ func (c *Client) DescribeBudgetPerformanceHistoryRequest(input *types.DescribeBu
 	}
 
 	req := c.newRequest(op, input, &types.DescribeBudgetPerformanceHistoryOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.DescribeBudgetPerformanceHistoryMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return DescribeBudgetPerformanceHistoryRequest{Request: req, Input: input, Copy: c.DescribeBudgetPerformanceHistoryRequest}
 }
 

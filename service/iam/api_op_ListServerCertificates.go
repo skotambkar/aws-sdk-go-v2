@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/query"
+	"github.com/aws/aws-sdk-go-v2/service/iam/internal/aws_query"
 	"github.com/aws/aws-sdk-go-v2/service/iam/types"
 )
 
@@ -50,6 +52,10 @@ func (c *Client) ListServerCertificatesRequest(input *types.ListServerCertificat
 	}
 
 	req := c.newRequest(op, input, &types.ListServerCertificatesOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(query.BuildHandler.Name, aws_query.ListServerCertificatesMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return ListServerCertificatesRequest{Request: req, Input: input, Copy: c.ListServerCertificatesRequest}
 }
 

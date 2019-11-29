@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/route53domains/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/route53domains/types"
 )
 
@@ -43,6 +45,10 @@ func (c *Client) ListDomainsRequest(input *types.ListDomainsInput) ListDomainsRe
 	}
 
 	req := c.newRequest(op, input, &types.ListDomainsOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.ListDomainsMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return ListDomainsRequest{Request: req, Input: input, Copy: c.ListDomainsRequest}
 }
 

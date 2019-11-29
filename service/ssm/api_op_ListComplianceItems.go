@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/ssm/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/ssm/types"
 )
 
@@ -39,6 +41,10 @@ func (c *Client) ListComplianceItemsRequest(input *types.ListComplianceItemsInpu
 	}
 
 	req := c.newRequest(op, input, &types.ListComplianceItemsOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.ListComplianceItemsMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return ListComplianceItemsRequest{Request: req, Input: input, Copy: c.ListComplianceItemsRequest}
 }
 

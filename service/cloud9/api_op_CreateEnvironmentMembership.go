@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/cloud9/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/cloud9/types"
 )
 
@@ -36,6 +38,10 @@ func (c *Client) CreateEnvironmentMembershipRequest(input *types.CreateEnvironme
 	}
 
 	req := c.newRequest(op, input, &types.CreateEnvironmentMembershipOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.CreateEnvironmentMembershipMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return CreateEnvironmentMembershipRequest{Request: req, Input: input, Copy: c.CreateEnvironmentMembershipRequest}
 }
 

@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/query"
+	"github.com/aws/aws-sdk-go-v2/service/cloudwatch/internal/aws_query"
 	"github.com/aws/aws-sdk-go-v2/service/cloudwatch/types"
 )
 
@@ -50,6 +52,10 @@ func (c *Client) GetMetricWidgetImageRequest(input *types.GetMetricWidgetImageIn
 	}
 
 	req := c.newRequest(op, input, &types.GetMetricWidgetImageOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(query.BuildHandler.Name, aws_query.GetMetricWidgetImageMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return GetMetricWidgetImageRequest{Request: req, Input: input, Copy: c.GetMetricWidgetImageRequest}
 }
 

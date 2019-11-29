@@ -8,6 +8,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/private/protocol"
 	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/secretsmanager/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/secretsmanager/types"
 )
 
@@ -80,6 +81,10 @@ func (c *Client) TagResourceRequest(input *types.TagResourceInput) TagResourceRe
 	}
 
 	req := c.newRequest(op, input, &types.TagResourceOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.TagResourceMarshaler{Input: input}.GetNamedBuildHandler())
+
 	req.Handlers.Unmarshal.Remove(jsonrpc.UnmarshalHandler)
 	req.Handlers.Unmarshal.PushBackNamed(protocol.UnmarshalDiscardBodyHandler)
 	return TagResourceRequest{Request: req, Input: input, Copy: c.TagResourceRequest}

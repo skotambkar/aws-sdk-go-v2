@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/costexplorer/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/costexplorer/types"
 )
 
@@ -56,6 +58,10 @@ func (c *Client) GetSavingsPlansCoverageRequest(input *types.GetSavingsPlansCove
 	}
 
 	req := c.newRequest(op, input, &types.GetSavingsPlansCoverageOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.GetSavingsPlansCoverageMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return GetSavingsPlansCoverageRequest{Request: req, Input: input, Copy: c.GetSavingsPlansCoverageRequest}
 }
 

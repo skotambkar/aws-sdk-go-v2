@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/kms/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/kms/types"
 )
 
@@ -51,6 +53,10 @@ func (c *Client) CreateGrantRequest(input *types.CreateGrantInput) CreateGrantRe
 	}
 
 	req := c.newRequest(op, input, &types.CreateGrantOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.CreateGrantMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return CreateGrantRequest{Request: req, Input: input, Copy: c.CreateGrantRequest}
 }
 

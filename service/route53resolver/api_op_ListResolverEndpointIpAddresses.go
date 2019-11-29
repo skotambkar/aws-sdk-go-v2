@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/route53resolver/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/route53resolver/types"
 )
 
@@ -42,6 +44,10 @@ func (c *Client) ListResolverEndpointIpAddressesRequest(input *types.ListResolve
 	}
 
 	req := c.newRequest(op, input, &types.ListResolverEndpointIpAddressesOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.ListResolverEndpointIpAddressesMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return ListResolverEndpointIpAddressesRequest{Request: req, Input: input, Copy: c.ListResolverEndpointIpAddressesRequest}
 }
 

@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/lightsail/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/lightsail/types"
 )
 
@@ -40,6 +42,10 @@ func (c *Client) DeleteInstanceRequest(input *types.DeleteInstanceInput) DeleteI
 	}
 
 	req := c.newRequest(op, input, &types.DeleteInstanceOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.DeleteInstanceMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return DeleteInstanceRequest{Request: req, Input: input, Copy: c.DeleteInstanceRequest}
 }
 

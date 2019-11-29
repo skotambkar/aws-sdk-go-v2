@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/restjson"
+	"github.com/aws/aws-sdk-go-v2/service/quicksight/internal/aws_restjson"
 	"github.com/aws/aws-sdk-go-v2/service/quicksight/types"
 )
 
@@ -41,6 +43,10 @@ func (c *Client) UpdateTemplateAliasRequest(input *types.UpdateTemplateAliasInpu
 	}
 
 	req := c.newRequest(op, input, &types.UpdateTemplateAliasOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(restjson.BuildHandler.Name, aws_restjson.UpdateTemplateAliasMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return UpdateTemplateAliasRequest{Request: req, Input: input, Copy: c.UpdateTemplateAliasRequest}
 }
 

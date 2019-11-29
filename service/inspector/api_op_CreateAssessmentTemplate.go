@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/inspector/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/inspector/types"
 )
 
@@ -40,6 +42,10 @@ func (c *Client) CreateAssessmentTemplateRequest(input *types.CreateAssessmentTe
 	}
 
 	req := c.newRequest(op, input, &types.CreateAssessmentTemplateOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.CreateAssessmentTemplateMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return CreateAssessmentTemplateRequest{Request: req, Input: input, Copy: c.CreateAssessmentTemplateRequest}
 }
 

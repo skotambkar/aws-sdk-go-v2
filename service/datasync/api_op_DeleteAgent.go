@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/datasync/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/datasync/types"
 )
 
@@ -39,6 +41,10 @@ func (c *Client) DeleteAgentRequest(input *types.DeleteAgentInput) DeleteAgentRe
 	}
 
 	req := c.newRequest(op, input, &types.DeleteAgentOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.DeleteAgentMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return DeleteAgentRequest{Request: req, Input: input, Copy: c.DeleteAgentRequest}
 }
 

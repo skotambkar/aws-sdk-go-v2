@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/health/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/health/types"
 )
 
@@ -44,6 +46,10 @@ func (c *Client) DescribeEventAggregatesRequest(input *types.DescribeEventAggreg
 	}
 
 	req := c.newRequest(op, input, &types.DescribeEventAggregatesOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.DescribeEventAggregatesMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return DescribeEventAggregatesRequest{Request: req, Input: input, Copy: c.DescribeEventAggregatesRequest}
 }
 

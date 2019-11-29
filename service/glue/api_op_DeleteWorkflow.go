@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/glue/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/glue/types"
 )
 
@@ -36,6 +38,10 @@ func (c *Client) DeleteWorkflowRequest(input *types.DeleteWorkflowInput) DeleteW
 	}
 
 	req := c.newRequest(op, input, &types.DeleteWorkflowOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.DeleteWorkflowMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return DeleteWorkflowRequest{Request: req, Input: input, Copy: c.DeleteWorkflowRequest}
 }
 

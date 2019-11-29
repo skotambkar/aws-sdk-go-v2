@@ -8,6 +8,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/private/protocol"
 	"github.com/aws/aws-sdk-go-v2/private/protocol/restjson"
+	"github.com/aws/aws-sdk-go-v2/service/personalizeevents/internal/aws_restjson"
 	"github.com/aws/aws-sdk-go-v2/service/personalizeevents/types"
 )
 
@@ -38,6 +39,10 @@ func (c *Client) PutEventsRequest(input *types.PutEventsInput) PutEventsRequest 
 	}
 
 	req := c.newRequest(op, input, &types.PutEventsOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(restjson.BuildHandler.Name, aws_restjson.PutEventsMarshaler{Input: input}.GetNamedBuildHandler())
+
 	req.Handlers.Unmarshal.Remove(restjson.UnmarshalHandler)
 	req.Handlers.Unmarshal.PushBackNamed(protocol.UnmarshalDiscardBodyHandler)
 	return PutEventsRequest{Request: req, Input: input, Copy: c.PutEventsRequest}

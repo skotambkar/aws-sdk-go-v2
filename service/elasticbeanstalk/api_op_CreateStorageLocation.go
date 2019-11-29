@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/query"
+	"github.com/aws/aws-sdk-go-v2/service/elasticbeanstalk/internal/aws_query"
 	"github.com/aws/aws-sdk-go-v2/service/elasticbeanstalk/types"
 )
 
@@ -40,6 +42,10 @@ func (c *Client) CreateStorageLocationRequest(input *types.CreateStorageLocation
 	}
 
 	req := c.newRequest(op, input, &types.CreateStorageLocationOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(query.BuildHandler.Name, aws_query.CreateStorageLocationMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return CreateStorageLocationRequest{Request: req, Input: input, Copy: c.CreateStorageLocationRequest}
 }
 

@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/emr/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/emr/types"
 )
 
@@ -44,6 +46,10 @@ func (c *Client) ListStepsRequest(input *types.ListStepsInput) ListStepsRequest 
 	}
 
 	req := c.newRequest(op, input, &types.ListStepsOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.ListStepsMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return ListStepsRequest{Request: req, Input: input, Copy: c.ListStepsRequest}
 }
 

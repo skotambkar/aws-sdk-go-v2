@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/servicecatalog/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/servicecatalog/types"
 )
 
@@ -44,6 +46,10 @@ func (c *Client) DescribeProvisioningParametersRequest(input *types.DescribeProv
 	}
 
 	req := c.newRequest(op, input, &types.DescribeProvisioningParametersOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.DescribeProvisioningParametersMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return DescribeProvisioningParametersRequest{Request: req, Input: input, Copy: c.DescribeProvisioningParametersRequest}
 }
 

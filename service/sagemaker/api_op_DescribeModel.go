@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/sagemaker/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/sagemaker/types"
 )
 
@@ -36,6 +38,10 @@ func (c *Client) DescribeModelRequest(input *types.DescribeModelInput) DescribeM
 	}
 
 	req := c.newRequest(op, input, &types.DescribeModelOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.DescribeModelMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return DescribeModelRequest{Request: req, Input: input, Copy: c.DescribeModelRequest}
 }
 

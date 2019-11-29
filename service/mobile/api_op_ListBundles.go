@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/restjson"
+	"github.com/aws/aws-sdk-go-v2/service/mobile/internal/aws_restjson"
 	"github.com/aws/aws-sdk-go-v2/service/mobile/types"
 )
 
@@ -42,6 +44,10 @@ func (c *Client) ListBundlesRequest(input *types.ListBundlesInput) ListBundlesRe
 	}
 
 	req := c.newRequest(op, input, &types.ListBundlesOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(restjson.BuildHandler.Name, aws_restjson.ListBundlesMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return ListBundlesRequest{Request: req, Input: input, Copy: c.ListBundlesRequest}
 }
 

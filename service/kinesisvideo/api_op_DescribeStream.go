@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/restjson"
+	"github.com/aws/aws-sdk-go-v2/service/kinesisvideo/internal/aws_restjson"
 	"github.com/aws/aws-sdk-go-v2/service/kinesisvideo/types"
 )
 
@@ -37,6 +39,10 @@ func (c *Client) DescribeStreamRequest(input *types.DescribeStreamInput) Describ
 	}
 
 	req := c.newRequest(op, input, &types.DescribeStreamOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(restjson.BuildHandler.Name, aws_restjson.DescribeStreamMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return DescribeStreamRequest{Request: req, Input: input, Copy: c.DescribeStreamRequest}
 }
 

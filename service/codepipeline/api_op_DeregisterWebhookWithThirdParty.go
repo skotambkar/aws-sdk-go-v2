@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/codepipeline/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/codepipeline/types"
 )
 
@@ -38,6 +40,10 @@ func (c *Client) DeregisterWebhookWithThirdPartyRequest(input *types.DeregisterW
 	}
 
 	req := c.newRequest(op, input, &types.DeregisterWebhookWithThirdPartyOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.DeregisterWebhookWithThirdPartyMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return DeregisterWebhookWithThirdPartyRequest{Request: req, Input: input, Copy: c.DeregisterWebhookWithThirdPartyRequest}
 }
 

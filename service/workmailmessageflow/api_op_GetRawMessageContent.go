@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/restjson"
+	"github.com/aws/aws-sdk-go-v2/service/workmailmessageflow/internal/aws_restjson"
 	"github.com/aws/aws-sdk-go-v2/service/workmailmessageflow/types"
 )
 
@@ -36,6 +38,10 @@ func (c *Client) GetRawMessageContentRequest(input *types.GetRawMessageContentIn
 	}
 
 	req := c.newRequest(op, input, &types.GetRawMessageContentOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(restjson.BuildHandler.Name, aws_restjson.GetRawMessageContentMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return GetRawMessageContentRequest{Request: req, Input: input, Copy: c.GetRawMessageContentRequest}
 }
 

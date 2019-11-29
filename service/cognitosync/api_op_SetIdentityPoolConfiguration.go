@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/restjson"
+	"github.com/aws/aws-sdk-go-v2/service/cognitosync/internal/aws_restjson"
 	"github.com/aws/aws-sdk-go-v2/service/cognitosync/types"
 )
 
@@ -39,6 +41,10 @@ func (c *Client) SetIdentityPoolConfigurationRequest(input *types.SetIdentityPoo
 	}
 
 	req := c.newRequest(op, input, &types.SetIdentityPoolConfigurationOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(restjson.BuildHandler.Name, aws_restjson.SetIdentityPoolConfigurationMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return SetIdentityPoolConfigurationRequest{Request: req, Input: input, Copy: c.SetIdentityPoolConfigurationRequest}
 }
 

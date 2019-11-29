@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/query"
+	"github.com/aws/aws-sdk-go-v2/service/rds/internal/aws_query"
 	"github.com/aws/aws-sdk-go-v2/service/rds/types"
 )
 
@@ -47,6 +49,10 @@ func (c *Client) DescribeDBSnapshotAttributesRequest(input *types.DescribeDBSnap
 	}
 
 	req := c.newRequest(op, input, &types.DescribeDBSnapshotAttributesOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(query.BuildHandler.Name, aws_query.DescribeDBSnapshotAttributesMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return DescribeDBSnapshotAttributesRequest{Request: req, Input: input, Copy: c.DescribeDBSnapshotAttributesRequest}
 }
 

@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/query"
+	"github.com/aws/aws-sdk-go-v2/service/elasticloadbalancingv2/internal/aws_query"
 	"github.com/aws/aws-sdk-go-v2/service/elasticloadbalancingv2/types"
 )
 
@@ -48,6 +50,10 @@ func (c *Client) DescribeTargetGroupsRequest(input *types.DescribeTargetGroupsIn
 	}
 
 	req := c.newRequest(op, input, &types.DescribeTargetGroupsOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(query.BuildHandler.Name, aws_query.DescribeTargetGroupsMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return DescribeTargetGroupsRequest{Request: req, Input: input, Copy: c.DescribeTargetGroupsRequest}
 }
 

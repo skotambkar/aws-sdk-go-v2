@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/comprehend/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/comprehend/types"
 )
 
@@ -42,6 +44,10 @@ func (c *Client) ListDocumentClassificationJobsRequest(input *types.ListDocument
 	}
 
 	req := c.newRequest(op, input, &types.ListDocumentClassificationJobsOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.ListDocumentClassificationJobsMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return ListDocumentClassificationJobsRequest{Request: req, Input: input, Copy: c.ListDocumentClassificationJobsRequest}
 }
 

@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/restxml"
+	"github.com/aws/aws-sdk-go-v2/service/route53/internal/aws_restxml"
 	"github.com/aws/aws-sdk-go-v2/service/route53/types"
 )
 
@@ -46,6 +48,10 @@ func (c *Client) ListTrafficPolicyInstancesByHostedZoneRequest(input *types.List
 	}
 
 	req := c.newRequest(op, input, &types.ListTrafficPolicyInstancesByHostedZoneOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(restxml.BuildHandler.Name, aws_restxml.ListTrafficPolicyInstancesByHostedZoneMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return ListTrafficPolicyInstancesByHostedZoneRequest{Request: req, Input: input, Copy: c.ListTrafficPolicyInstancesByHostedZoneRequest}
 }
 

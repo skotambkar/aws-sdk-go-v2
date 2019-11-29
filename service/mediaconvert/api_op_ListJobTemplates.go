@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/restjson"
+	"github.com/aws/aws-sdk-go-v2/service/mediaconvert/internal/aws_restjson"
 	"github.com/aws/aws-sdk-go-v2/service/mediaconvert/types"
 )
 
@@ -44,6 +46,10 @@ func (c *Client) ListJobTemplatesRequest(input *types.ListJobTemplatesInput) Lis
 	}
 
 	req := c.newRequest(op, input, &types.ListJobTemplatesOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(restjson.BuildHandler.Name, aws_restjson.ListJobTemplatesMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return ListJobTemplatesRequest{Request: req, Input: input, Copy: c.ListJobTemplatesRequest}
 }
 

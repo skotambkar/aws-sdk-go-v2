@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/servicequotas/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/servicequotas/types"
 )
 
@@ -36,6 +38,10 @@ func (c *Client) GetServiceQuotaIncreaseRequestFromTemplateRequest(input *types.
 	}
 
 	req := c.newRequest(op, input, &types.GetServiceQuotaIncreaseRequestFromTemplateOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.GetServiceQuotaIncreaseRequestFromTemplateMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return GetServiceQuotaIncreaseRequestFromTemplateRequest{Request: req, Input: input, Copy: c.GetServiceQuotaIncreaseRequestFromTemplateRequest}
 }
 

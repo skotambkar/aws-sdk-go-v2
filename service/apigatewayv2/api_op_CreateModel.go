@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/restjson"
+	"github.com/aws/aws-sdk-go-v2/service/apigatewayv2/internal/aws_restjson"
 	"github.com/aws/aws-sdk-go-v2/service/apigatewayv2/types"
 )
 
@@ -36,6 +38,10 @@ func (c *Client) CreateModelRequest(input *types.CreateModelInput) CreateModelRe
 	}
 
 	req := c.newRequest(op, input, &types.CreateModelOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(restjson.BuildHandler.Name, aws_restjson.CreateModelMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return CreateModelRequest{Request: req, Input: input, Copy: c.CreateModelRequest}
 }
 

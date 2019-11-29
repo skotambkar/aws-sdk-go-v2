@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/query"
+	"github.com/aws/aws-sdk-go-v2/service/docdb/internal/aws_query"
 	"github.com/aws/aws-sdk-go-v2/service/docdb/types"
 )
 
@@ -37,6 +39,10 @@ func (c *Client) ApplyPendingMaintenanceActionRequest(input *types.ApplyPendingM
 	}
 
 	req := c.newRequest(op, input, &types.ApplyPendingMaintenanceActionOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(query.BuildHandler.Name, aws_query.ApplyPendingMaintenanceActionMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return ApplyPendingMaintenanceActionRequest{Request: req, Input: input, Copy: c.ApplyPendingMaintenanceActionRequest}
 }
 

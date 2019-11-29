@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/query"
+	"github.com/aws/aws-sdk-go-v2/service/redshift/internal/aws_query"
 	"github.com/aws/aws-sdk-go-v2/service/redshift/types"
 )
 
@@ -37,6 +39,10 @@ func (c *Client) DisableLoggingRequest(input *types.DisableLoggingInput) Disable
 	}
 
 	req := c.newRequest(op, input, &types.DisableLoggingOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(query.BuildHandler.Name, aws_query.DisableLoggingMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return DisableLoggingRequest{Request: req, Input: input, Copy: c.DisableLoggingRequest}
 }
 

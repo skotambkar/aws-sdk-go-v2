@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/storagegateway/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/storagegateway/types"
 )
 
@@ -40,6 +42,10 @@ func (c *Client) AttachVolumeRequest(input *types.AttachVolumeInput) AttachVolum
 	}
 
 	req := c.newRequest(op, input, &types.AttachVolumeOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.AttachVolumeMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return AttachVolumeRequest{Request: req, Input: input, Copy: c.AttachVolumeRequest}
 }
 

@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/wafregional/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/wafregional/types"
 )
 
@@ -36,6 +38,10 @@ func (c *Client) ListSqlInjectionMatchSetsRequest(input *types.ListSqlInjectionM
 	}
 
 	req := c.newRequest(op, input, &types.ListSqlInjectionMatchSetsOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.ListSqlInjectionMatchSetsMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return ListSqlInjectionMatchSetsRequest{Request: req, Input: input, Copy: c.ListSqlInjectionMatchSetsRequest}
 }
 

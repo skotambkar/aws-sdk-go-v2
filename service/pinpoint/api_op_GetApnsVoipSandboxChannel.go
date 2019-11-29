@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/restjson"
+	"github.com/aws/aws-sdk-go-v2/service/pinpoint/internal/aws_restjson"
 	"github.com/aws/aws-sdk-go-v2/service/pinpoint/types"
 )
 
@@ -37,6 +39,10 @@ func (c *Client) GetApnsVoipSandboxChannelRequest(input *types.GetApnsVoipSandbo
 	}
 
 	req := c.newRequest(op, input, &types.GetApnsVoipSandboxChannelOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(restjson.BuildHandler.Name, aws_restjson.GetApnsVoipSandboxChannelMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return GetApnsVoipSandboxChannelRequest{Request: req, Input: input, Copy: c.GetApnsVoipSandboxChannelRequest}
 }
 

@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/opsworkscm/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/opsworkscm/types"
 )
 
@@ -42,6 +44,10 @@ func (c *Client) DescribeBackupsRequest(input *types.DescribeBackupsInput) Descr
 	}
 
 	req := c.newRequest(op, input, &types.DescribeBackupsOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.DescribeBackupsMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return DescribeBackupsRequest{Request: req, Input: input, Copy: c.DescribeBackupsRequest}
 }
 

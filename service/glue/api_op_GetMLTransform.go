@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/glue/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/glue/types"
 )
 
@@ -40,6 +42,10 @@ func (c *Client) GetMLTransformRequest(input *types.GetMLTransformInput) GetMLTr
 	}
 
 	req := c.newRequest(op, input, &types.GetMLTransformOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.GetMLTransformMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return GetMLTransformRequest{Request: req, Input: input, Copy: c.GetMLTransformRequest}
 }
 

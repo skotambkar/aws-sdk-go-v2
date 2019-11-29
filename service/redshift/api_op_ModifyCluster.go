@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/query"
+	"github.com/aws/aws-sdk-go-v2/service/redshift/internal/aws_query"
 	"github.com/aws/aws-sdk-go-v2/service/redshift/types"
 )
 
@@ -46,6 +48,10 @@ func (c *Client) ModifyClusterRequest(input *types.ModifyClusterInput) ModifyClu
 	}
 
 	req := c.newRequest(op, input, &types.ModifyClusterOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(query.BuildHandler.Name, aws_query.ModifyClusterMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return ModifyClusterRequest{Request: req, Input: input, Copy: c.ModifyClusterRequest}
 }
 

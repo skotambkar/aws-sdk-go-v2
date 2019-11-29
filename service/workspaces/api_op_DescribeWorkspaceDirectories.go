@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/workspaces/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/workspaces/types"
 )
 
@@ -42,6 +44,10 @@ func (c *Client) DescribeWorkspaceDirectoriesRequest(input *types.DescribeWorksp
 	}
 
 	req := c.newRequest(op, input, &types.DescribeWorkspaceDirectoriesOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.DescribeWorkspaceDirectoriesMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return DescribeWorkspaceDirectoriesRequest{Request: req, Input: input, Copy: c.DescribeWorkspaceDirectoriesRequest}
 }
 

@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/restjson"
+	"github.com/aws/aws-sdk-go-v2/service/lexmodelbuildingservice/internal/aws_restjson"
 	"github.com/aws/aws-sdk-go-v2/service/lexmodelbuildingservice/types"
 )
 
@@ -47,6 +49,10 @@ func (c *Client) GetBuiltinSlotTypesRequest(input *types.GetBuiltinSlotTypesInpu
 	}
 
 	req := c.newRequest(op, input, &types.GetBuiltinSlotTypesOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(restjson.BuildHandler.Name, aws_restjson.GetBuiltinSlotTypesMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return GetBuiltinSlotTypesRequest{Request: req, Input: input, Copy: c.GetBuiltinSlotTypesRequest}
 }
 

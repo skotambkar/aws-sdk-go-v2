@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/codebuild/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/codebuild/types"
 )
 
@@ -36,6 +38,10 @@ func (c *Client) StartBuildRequest(input *types.StartBuildInput) StartBuildReque
 	}
 
 	req := c.newRequest(op, input, &types.StartBuildOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.StartBuildMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return StartBuildRequest{Request: req, Input: input, Copy: c.StartBuildRequest}
 }
 

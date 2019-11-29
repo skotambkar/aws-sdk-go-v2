@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/lakeformation/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/lakeformation/types"
 )
 
@@ -45,6 +47,10 @@ func (c *Client) RegisterResourceRequest(input *types.RegisterResourceInput) Reg
 	}
 
 	req := c.newRequest(op, input, &types.RegisterResourceOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.RegisterResourceMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return RegisterResourceRequest{Request: req, Input: input, Copy: c.RegisterResourceRequest}
 }
 

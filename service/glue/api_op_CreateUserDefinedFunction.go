@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/glue/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/glue/types"
 )
 
@@ -36,6 +38,10 @@ func (c *Client) CreateUserDefinedFunctionRequest(input *types.CreateUserDefined
 	}
 
 	req := c.newRequest(op, input, &types.CreateUserDefinedFunctionOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.CreateUserDefinedFunctionMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return CreateUserDefinedFunctionRequest{Request: req, Input: input, Copy: c.CreateUserDefinedFunctionRequest}
 }
 

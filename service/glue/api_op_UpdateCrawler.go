@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/glue/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/glue/types"
 )
 
@@ -37,6 +39,10 @@ func (c *Client) UpdateCrawlerRequest(input *types.UpdateCrawlerInput) UpdateCra
 	}
 
 	req := c.newRequest(op, input, &types.UpdateCrawlerOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.UpdateCrawlerMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return UpdateCrawlerRequest{Request: req, Input: input, Copy: c.UpdateCrawlerRequest}
 }
 

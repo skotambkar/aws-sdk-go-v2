@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/kms/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/kms/types"
 )
 
@@ -55,6 +57,10 @@ func (c *Client) DecryptRequest(input *types.DecryptInput) DecryptRequest {
 	}
 
 	req := c.newRequest(op, input, &types.DecryptOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.DecryptMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return DecryptRequest{Request: req, Input: input, Copy: c.DecryptRequest}
 }
 

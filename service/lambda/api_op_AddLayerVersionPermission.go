@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/restjson"
+	"github.com/aws/aws-sdk-go-v2/service/lambda/internal/aws_restjson"
 	"github.com/aws/aws-sdk-go-v2/service/lambda/types"
 )
 
@@ -43,6 +45,10 @@ func (c *Client) AddLayerVersionPermissionRequest(input *types.AddLayerVersionPe
 	}
 
 	req := c.newRequest(op, input, &types.AddLayerVersionPermissionOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(restjson.BuildHandler.Name, aws_restjson.AddLayerVersionPermissionMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return AddLayerVersionPermissionRequest{Request: req, Input: input, Copy: c.AddLayerVersionPermissionRequest}
 }
 

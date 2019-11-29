@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/query"
+	"github.com/aws/aws-sdk-go-v2/service/rds/internal/aws_query"
 	"github.com/aws/aws-sdk-go-v2/service/rds/types"
 )
 
@@ -37,6 +39,10 @@ func (c *Client) ImportInstallationMediaRequest(input *types.ImportInstallationM
 	}
 
 	req := c.newRequest(op, input, &types.ImportInstallationMediaOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(query.BuildHandler.Name, aws_query.ImportInstallationMediaMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return ImportInstallationMediaRequest{Request: req, Input: input, Copy: c.ImportInstallationMediaRequest}
 }
 

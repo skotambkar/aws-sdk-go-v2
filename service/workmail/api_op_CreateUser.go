@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/workmail/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/workmail/types"
 )
 
@@ -37,6 +39,10 @@ func (c *Client) CreateUserRequest(input *types.CreateUserInput) CreateUserReque
 	}
 
 	req := c.newRequest(op, input, &types.CreateUserOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.CreateUserMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return CreateUserRequest{Request: req, Input: input, Copy: c.CreateUserRequest}
 }
 

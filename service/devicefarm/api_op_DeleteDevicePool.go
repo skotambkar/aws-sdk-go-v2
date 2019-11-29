@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/devicefarm/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/devicefarm/types"
 )
 
@@ -37,6 +39,10 @@ func (c *Client) DeleteDevicePoolRequest(input *types.DeleteDevicePoolInput) Del
 	}
 
 	req := c.newRequest(op, input, &types.DeleteDevicePoolOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.DeleteDevicePoolMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return DeleteDevicePoolRequest{Request: req, Input: input, Copy: c.DeleteDevicePoolRequest}
 }
 

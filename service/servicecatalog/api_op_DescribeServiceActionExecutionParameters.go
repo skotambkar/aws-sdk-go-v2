@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/servicecatalog/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/servicecatalog/types"
 )
 
@@ -34,6 +36,10 @@ func (c *Client) DescribeServiceActionExecutionParametersRequest(input *types.De
 	}
 
 	req := c.newRequest(op, input, &types.DescribeServiceActionExecutionParametersOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.DescribeServiceActionExecutionParametersMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return DescribeServiceActionExecutionParametersRequest{Request: req, Input: input, Copy: c.DescribeServiceActionExecutionParametersRequest}
 }
 

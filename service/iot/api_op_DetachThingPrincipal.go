@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/restjson"
+	"github.com/aws/aws-sdk-go-v2/service/iot/internal/aws_restjson"
 	"github.com/aws/aws-sdk-go-v2/service/iot/types"
 )
 
@@ -39,6 +41,10 @@ func (c *Client) DetachThingPrincipalRequest(input *types.DetachThingPrincipalIn
 	}
 
 	req := c.newRequest(op, input, &types.DetachThingPrincipalOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(restjson.BuildHandler.Name, aws_restjson.DetachThingPrincipalMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return DetachThingPrincipalRequest{Request: req, Input: input, Copy: c.DetachThingPrincipalRequest}
 }
 

@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/datasync/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/datasync/types"
 )
 
@@ -44,6 +46,10 @@ func (c *Client) StartTaskExecutionRequest(input *types.StartTaskExecutionInput)
 	}
 
 	req := c.newRequest(op, input, &types.StartTaskExecutionOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.StartTaskExecutionMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return StartTaskExecutionRequest{Request: req, Input: input, Copy: c.StartTaskExecutionRequest}
 }
 

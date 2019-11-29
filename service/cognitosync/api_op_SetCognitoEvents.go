@@ -8,6 +8,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/private/protocol"
 	"github.com/aws/aws-sdk-go-v2/private/protocol/restjson"
+	"github.com/aws/aws-sdk-go-v2/service/cognitosync/internal/aws_restjson"
 	"github.com/aws/aws-sdk-go-v2/service/cognitosync/types"
 )
 
@@ -44,6 +45,10 @@ func (c *Client) SetCognitoEventsRequest(input *types.SetCognitoEventsInput) Set
 	}
 
 	req := c.newRequest(op, input, &types.SetCognitoEventsOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(restjson.BuildHandler.Name, aws_restjson.SetCognitoEventsMarshaler{Input: input}.GetNamedBuildHandler())
+
 	req.Handlers.Unmarshal.Remove(restjson.UnmarshalHandler)
 	req.Handlers.Unmarshal.PushBackNamed(protocol.UnmarshalDiscardBodyHandler)
 	return SetCognitoEventsRequest{Request: req, Input: input, Copy: c.SetCognitoEventsRequest}

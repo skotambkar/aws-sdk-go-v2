@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/forecast/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/forecast/types"
 )
 
@@ -76,6 +78,10 @@ func (c *Client) CreatePredictorRequest(input *types.CreatePredictorInput) Creat
 	}
 
 	req := c.newRequest(op, input, &types.CreatePredictorOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.CreatePredictorMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return CreatePredictorRequest{Request: req, Input: input, Copy: c.CreatePredictorRequest}
 }
 

@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/fsx/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/fsx/types"
 )
 
@@ -51,6 +53,10 @@ func (c *Client) DeleteFileSystemRequest(input *types.DeleteFileSystemInput) Del
 	}
 
 	req := c.newRequest(op, input, &types.DeleteFileSystemOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.DeleteFileSystemMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return DeleteFileSystemRequest{Request: req, Input: input, Copy: c.DeleteFileSystemRequest}
 }
 

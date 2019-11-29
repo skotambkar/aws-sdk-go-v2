@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/databasemigrationservice/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/databasemigrationservice/types"
 )
 
@@ -42,6 +44,10 @@ func (c *Client) DescribeReplicationInstanceTaskLogsRequest(input *types.Describ
 	}
 
 	req := c.newRequest(op, input, &types.DescribeReplicationInstanceTaskLogsOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.DescribeReplicationInstanceTaskLogsMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return DescribeReplicationInstanceTaskLogsRequest{Request: req, Input: input, Copy: c.DescribeReplicationInstanceTaskLogsRequest}
 }
 

@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/restjson"
+	"github.com/aws/aws-sdk-go-v2/service/ssooidc/internal/aws_restjson"
 	"github.com/aws/aws-sdk-go-v2/service/ssooidc/types"
 )
 
@@ -38,6 +40,10 @@ func (c *Client) CreateTokenRequest(input *types.CreateTokenInput) CreateTokenRe
 	}
 
 	req := c.newRequest(op, input, &types.CreateTokenOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(restjson.BuildHandler.Name, aws_restjson.CreateTokenMarshaler{Input: input}.GetNamedBuildHandler())
+
 	req.Config.Credentials = aws.AnonymousCredentials
 	return CreateTokenRequest{Request: req, Input: input, Copy: c.CreateTokenRequest}
 }

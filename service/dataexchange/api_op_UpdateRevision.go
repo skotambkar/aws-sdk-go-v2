@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/restjson"
+	"github.com/aws/aws-sdk-go-v2/service/dataexchange/internal/aws_restjson"
 	"github.com/aws/aws-sdk-go-v2/service/dataexchange/types"
 )
 
@@ -36,6 +38,10 @@ func (c *Client) UpdateRevisionRequest(input *types.UpdateRevisionInput) UpdateR
 	}
 
 	req := c.newRequest(op, input, &types.UpdateRevisionOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(restjson.BuildHandler.Name, aws_restjson.UpdateRevisionMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return UpdateRevisionRequest{Request: req, Input: input, Copy: c.UpdateRevisionRequest}
 }
 

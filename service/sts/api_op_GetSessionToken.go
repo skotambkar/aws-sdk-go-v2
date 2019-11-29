@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/query"
+	"github.com/aws/aws-sdk-go-v2/service/sts/internal/aws_query"
 	"github.com/aws/aws-sdk-go-v2/service/sts/types"
 )
 
@@ -80,6 +82,10 @@ func (c *Client) GetSessionTokenRequest(input *types.GetSessionTokenInput) GetSe
 	}
 
 	req := c.newRequest(op, input, &types.GetSessionTokenOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(query.BuildHandler.Name, aws_query.GetSessionTokenMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return GetSessionTokenRequest{Request: req, Input: input, Copy: c.GetSessionTokenRequest}
 }
 

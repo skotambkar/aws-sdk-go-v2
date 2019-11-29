@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/restjson"
+	"github.com/aws/aws-sdk-go-v2/service/connect/internal/aws_restjson"
 	"github.com/aws/aws-sdk-go-v2/service/connect/types"
 )
 
@@ -42,6 +44,10 @@ func (c *Client) ListQueuesRequest(input *types.ListQueuesInput) ListQueuesReque
 	}
 
 	req := c.newRequest(op, input, &types.ListQueuesOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(restjson.BuildHandler.Name, aws_restjson.ListQueuesMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return ListQueuesRequest{Request: req, Input: input, Copy: c.ListQueuesRequest}
 }
 

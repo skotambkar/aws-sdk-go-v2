@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/servicequotas/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/servicequotas/types"
 )
 
@@ -36,6 +38,10 @@ func (c *Client) GetRequestedServiceQuotaChangeRequest(input *types.GetRequested
 	}
 
 	req := c.newRequest(op, input, &types.GetRequestedServiceQuotaChangeOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.GetRequestedServiceQuotaChangeMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return GetRequestedServiceQuotaChangeRequest{Request: req, Input: input, Copy: c.GetRequestedServiceQuotaChangeRequest}
 }
 

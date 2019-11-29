@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/ec2instanceconnect/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/ec2instanceconnect/types"
 )
 
@@ -37,6 +39,10 @@ func (c *Client) SendSSHPublicKeyRequest(input *types.SendSSHPublicKeyInput) Sen
 	}
 
 	req := c.newRequest(op, input, &types.SendSSHPublicKeyOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.SendSSHPublicKeyMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return SendSSHPublicKeyRequest{Request: req, Input: input, Copy: c.SendSSHPublicKeyRequest}
 }
 

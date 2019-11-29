@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/query"
+	"github.com/aws/aws-sdk-go-v2/service/docdb/internal/aws_query"
 	"github.com/aws/aws-sdk-go-v2/service/docdb/types"
 )
 
@@ -36,6 +38,10 @@ func (c *Client) DeleteDBInstanceRequest(input *types.DeleteDBInstanceInput) Del
 	}
 
 	req := c.newRequest(op, input, &types.DeleteDBInstanceOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(query.BuildHandler.Name, aws_query.DeleteDBInstanceMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return DeleteDBInstanceRequest{Request: req, Input: input, Copy: c.DeleteDBInstanceRequest}
 }
 

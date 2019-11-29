@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/workmail/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/workmail/types"
 )
 
@@ -36,6 +38,10 @@ func (c *Client) AssociateMemberToGroupRequest(input *types.AssociateMemberToGro
 	}
 
 	req := c.newRequest(op, input, &types.AssociateMemberToGroupOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.AssociateMemberToGroupMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return AssociateMemberToGroupRequest{Request: req, Input: input, Copy: c.AssociateMemberToGroupRequest}
 }
 

@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/storagegateway/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/storagegateway/types"
 )
 
@@ -37,6 +39,10 @@ func (c *Client) DescribeSMBFileSharesRequest(input *types.DescribeSMBFileShares
 	}
 
 	req := c.newRequest(op, input, &types.DescribeSMBFileSharesOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.DescribeSMBFileSharesMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return DescribeSMBFileSharesRequest{Request: req, Input: input, Copy: c.DescribeSMBFileSharesRequest}
 }
 

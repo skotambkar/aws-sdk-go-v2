@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/restxml"
+	"github.com/aws/aws-sdk-go-v2/service/s3/internal/aws_restxml"
 	"github.com/aws/aws-sdk-go-v2/service/s3/types"
 )
 
@@ -54,6 +56,10 @@ func (c *Client) GetObjectTaggingRequest(input *types.GetObjectTaggingInput) Get
 	}
 
 	req := c.newRequest(op, input, &types.GetObjectTaggingOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(restxml.BuildHandler.Name, aws_restxml.GetObjectTaggingMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return GetObjectTaggingRequest{Request: req, Input: input, Copy: c.GetObjectTaggingRequest}
 }
 

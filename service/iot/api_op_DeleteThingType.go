@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/restjson"
+	"github.com/aws/aws-sdk-go-v2/service/iot/internal/aws_restjson"
 	"github.com/aws/aws-sdk-go-v2/service/iot/types"
 )
 
@@ -38,6 +40,10 @@ func (c *Client) DeleteThingTypeRequest(input *types.DeleteThingTypeInput) Delet
 	}
 
 	req := c.newRequest(op, input, &types.DeleteThingTypeOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(restjson.BuildHandler.Name, aws_restjson.DeleteThingTypeMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return DeleteThingTypeRequest{Request: req, Input: input, Copy: c.DeleteThingTypeRequest}
 }
 

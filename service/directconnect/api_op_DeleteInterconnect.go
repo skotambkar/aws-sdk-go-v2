@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/directconnect/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/directconnect/types"
 )
 
@@ -38,6 +40,10 @@ func (c *Client) DeleteInterconnectRequest(input *types.DeleteInterconnectInput)
 	}
 
 	req := c.newRequest(op, input, &types.DeleteInterconnectOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.DeleteInterconnectMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return DeleteInterconnectRequest{Request: req, Input: input, Copy: c.DeleteInterconnectRequest}
 }
 

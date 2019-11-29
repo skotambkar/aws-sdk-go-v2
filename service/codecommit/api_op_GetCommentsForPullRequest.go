@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/codecommit/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/codecommit/types"
 )
 
@@ -42,6 +44,10 @@ func (c *Client) GetCommentsForPullRequestRequest(input *types.GetCommentsForPul
 	}
 
 	req := c.newRequest(op, input, &types.GetCommentsForPullRequestOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.GetCommentsForPullRequestMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return GetCommentsForPullRequestRequest{Request: req, Input: input, Copy: c.GetCommentsForPullRequestRequest}
 }
 

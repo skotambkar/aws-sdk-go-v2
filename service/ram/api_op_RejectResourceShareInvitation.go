@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/restjson"
+	"github.com/aws/aws-sdk-go-v2/service/ram/internal/aws_restjson"
 	"github.com/aws/aws-sdk-go-v2/service/ram/types"
 )
 
@@ -36,6 +38,10 @@ func (c *Client) RejectResourceShareInvitationRequest(input *types.RejectResourc
 	}
 
 	req := c.newRequest(op, input, &types.RejectResourceShareInvitationOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(restjson.BuildHandler.Name, aws_restjson.RejectResourceShareInvitationMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return RejectResourceShareInvitationRequest{Request: req, Input: input, Copy: c.RejectResourceShareInvitationRequest}
 }
 

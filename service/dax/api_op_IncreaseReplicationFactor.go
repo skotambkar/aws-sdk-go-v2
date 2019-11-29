@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/dax/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/dax/types"
 )
 
@@ -36,6 +38,10 @@ func (c *Client) IncreaseReplicationFactorRequest(input *types.IncreaseReplicati
 	}
 
 	req := c.newRequest(op, input, &types.IncreaseReplicationFactorOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.IncreaseReplicationFactorMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return IncreaseReplicationFactorRequest{Request: req, Input: input, Copy: c.IncreaseReplicationFactorRequest}
 }
 

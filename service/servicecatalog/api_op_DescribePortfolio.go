@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/servicecatalog/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/servicecatalog/types"
 )
 
@@ -36,6 +38,10 @@ func (c *Client) DescribePortfolioRequest(input *types.DescribePortfolioInput) D
 	}
 
 	req := c.newRequest(op, input, &types.DescribePortfolioOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.DescribePortfolioMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return DescribePortfolioRequest{Request: req, Input: input, Copy: c.DescribePortfolioRequest}
 }
 

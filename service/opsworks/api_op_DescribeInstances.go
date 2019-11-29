@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/opsworks/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/opsworks/types"
 )
 
@@ -43,6 +45,10 @@ func (c *Client) DescribeInstancesRequest(input *types.DescribeInstancesInput) D
 	}
 
 	req := c.newRequest(op, input, &types.DescribeInstancesOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.DescribeInstancesMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return DescribeInstancesRequest{Request: req, Input: input, Copy: c.DescribeInstancesRequest}
 }
 

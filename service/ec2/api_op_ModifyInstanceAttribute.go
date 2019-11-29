@@ -8,6 +8,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/private/protocol"
 	"github.com/aws/aws-sdk-go-v2/private/protocol/ec2query"
+	"github.com/aws/aws-sdk-go-v2/service/ec2/internal/aws_ec2query"
 	"github.com/aws/aws-sdk-go-v2/service/ec2/types"
 )
 
@@ -49,6 +50,10 @@ func (c *Client) ModifyInstanceAttributeRequest(input *types.ModifyInstanceAttri
 	}
 
 	req := c.newRequest(op, input, &types.ModifyInstanceAttributeOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(ec2query.BuildHandler.Name, aws_ec2query.ModifyInstanceAttributeMarshaler{Input: input}.GetNamedBuildHandler())
+
 	req.Handlers.Unmarshal.Remove(ec2query.UnmarshalHandler)
 	req.Handlers.Unmarshal.PushBackNamed(protocol.UnmarshalDiscardBodyHandler)
 	return ModifyInstanceAttributeRequest{Request: req, Input: input, Copy: c.ModifyInstanceAttributeRequest}

@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/restjson"
+	"github.com/aws/aws-sdk-go-v2/service/rdsdata/internal/aws_restjson"
 	"github.com/aws/aws-sdk-go-v2/service/rdsdata/types"
 )
 
@@ -42,6 +44,10 @@ func (c *Client) ExecuteStatementRequest(input *types.ExecuteStatementInput) Exe
 	}
 
 	req := c.newRequest(op, input, &types.ExecuteStatementOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(restjson.BuildHandler.Name, aws_restjson.ExecuteStatementMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return ExecuteStatementRequest{Request: req, Input: input, Copy: c.ExecuteStatementRequest}
 }
 

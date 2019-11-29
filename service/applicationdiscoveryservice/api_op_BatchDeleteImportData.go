@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/applicationdiscoveryservice/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/applicationdiscoveryservice/types"
 )
 
@@ -44,6 +46,10 @@ func (c *Client) BatchDeleteImportDataRequest(input *types.BatchDeleteImportData
 	}
 
 	req := c.newRequest(op, input, &types.BatchDeleteImportDataOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.BatchDeleteImportDataMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return BatchDeleteImportDataRequest{Request: req, Input: input, Copy: c.BatchDeleteImportDataRequest}
 }
 

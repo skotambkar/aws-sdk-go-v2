@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/workspaces/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/workspaces/types"
 )
 
@@ -39,6 +41,10 @@ func (c *Client) AuthorizeIpRulesRequest(input *types.AuthorizeIpRulesInput) Aut
 	}
 
 	req := c.newRequest(op, input, &types.AuthorizeIpRulesOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.AuthorizeIpRulesMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return AuthorizeIpRulesRequest{Request: req, Input: input, Copy: c.AuthorizeIpRulesRequest}
 }
 

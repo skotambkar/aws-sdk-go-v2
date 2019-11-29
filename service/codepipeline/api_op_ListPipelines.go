@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/codepipeline/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/codepipeline/types"
 )
 
@@ -42,6 +44,10 @@ func (c *Client) ListPipelinesRequest(input *types.ListPipelinesInput) ListPipel
 	}
 
 	req := c.newRequest(op, input, &types.ListPipelinesOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.ListPipelinesMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return ListPipelinesRequest{Request: req, Input: input, Copy: c.ListPipelinesRequest}
 }
 

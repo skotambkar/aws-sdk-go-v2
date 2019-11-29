@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/iotthingsgraph/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/iotthingsgraph/types"
 )
 
@@ -43,6 +45,10 @@ func (c *Client) SearchEntitiesRequest(input *types.SearchEntitiesInput) SearchE
 	}
 
 	req := c.newRequest(op, input, &types.SearchEntitiesOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.SearchEntitiesMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return SearchEntitiesRequest{Request: req, Input: input, Copy: c.SearchEntitiesRequest}
 }
 

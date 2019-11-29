@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/query"
+	"github.com/aws/aws-sdk-go-v2/service/rds/internal/aws_query"
 	"github.com/aws/aws-sdk-go-v2/service/rds/types"
 )
 
@@ -42,6 +44,10 @@ func (c *Client) DescribeOptionGroupsRequest(input *types.DescribeOptionGroupsIn
 	}
 
 	req := c.newRequest(op, input, &types.DescribeOptionGroupsOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(query.BuildHandler.Name, aws_query.DescribeOptionGroupsMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return DescribeOptionGroupsRequest{Request: req, Input: input, Copy: c.DescribeOptionGroupsRequest}
 }
 

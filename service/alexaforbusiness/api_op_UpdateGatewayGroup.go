@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/alexaforbusiness/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/alexaforbusiness/types"
 )
 
@@ -37,6 +39,10 @@ func (c *Client) UpdateGatewayGroupRequest(input *types.UpdateGatewayGroupInput)
 	}
 
 	req := c.newRequest(op, input, &types.UpdateGatewayGroupOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.UpdateGatewayGroupMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return UpdateGatewayGroupRequest{Request: req, Input: input, Copy: c.UpdateGatewayGroupRequest}
 }
 

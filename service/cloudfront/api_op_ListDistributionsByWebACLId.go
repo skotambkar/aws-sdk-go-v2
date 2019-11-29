@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/restxml"
+	"github.com/aws/aws-sdk-go-v2/service/cloudfront/internal/aws_restxml"
 	"github.com/aws/aws-sdk-go-v2/service/cloudfront/types"
 )
 
@@ -36,6 +38,10 @@ func (c *Client) ListDistributionsByWebACLIdRequest(input *types.ListDistributio
 	}
 
 	req := c.newRequest(op, input, &types.ListDistributionsByWebACLIdOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(restxml.BuildHandler.Name, aws_restxml.ListDistributionsByWebACLIdMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return ListDistributionsByWebACLIdRequest{Request: req, Input: input, Copy: c.ListDistributionsByWebACLIdRequest}
 }
 

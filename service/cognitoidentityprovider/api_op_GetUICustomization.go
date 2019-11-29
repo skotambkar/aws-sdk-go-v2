@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/cognitoidentityprovider/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/cognitoidentityprovider/types"
 )
 
@@ -39,6 +41,10 @@ func (c *Client) GetUICustomizationRequest(input *types.GetUICustomizationInput)
 	}
 
 	req := c.newRequest(op, input, &types.GetUICustomizationOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.GetUICustomizationMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return GetUICustomizationRequest{Request: req, Input: input, Copy: c.GetUICustomizationRequest}
 }
 

@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/kinesisanalytics/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/kinesisanalytics/types"
 )
 
@@ -50,6 +52,10 @@ func (c *Client) DescribeApplicationRequest(input *types.DescribeApplicationInpu
 	}
 
 	req := c.newRequest(op, input, &types.DescribeApplicationOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.DescribeApplicationMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return DescribeApplicationRequest{Request: req, Input: input, Copy: c.DescribeApplicationRequest}
 }
 

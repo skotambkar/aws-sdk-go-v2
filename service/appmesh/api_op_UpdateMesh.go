@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/restjson"
+	"github.com/aws/aws-sdk-go-v2/service/appmesh/internal/aws_restjson"
 	"github.com/aws/aws-sdk-go-v2/service/appmesh/types"
 )
 
@@ -36,6 +38,10 @@ func (c *Client) UpdateMeshRequest(input *types.UpdateMeshInput) UpdateMeshReque
 	}
 
 	req := c.newRequest(op, input, &types.UpdateMeshOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(restjson.BuildHandler.Name, aws_restjson.UpdateMeshMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return UpdateMeshRequest{Request: req, Input: input, Copy: c.UpdateMeshRequest}
 }
 

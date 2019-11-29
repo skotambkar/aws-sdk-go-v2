@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/restjson"
+	"github.com/aws/aws-sdk-go-v2/service/appmesh/internal/aws_restjson"
 	"github.com/aws/aws-sdk-go-v2/service/appmesh/types"
 )
 
@@ -36,6 +38,10 @@ func (c *Client) UpdateRouteRequest(input *types.UpdateRouteInput) UpdateRouteRe
 	}
 
 	req := c.newRequest(op, input, &types.UpdateRouteOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(restjson.BuildHandler.Name, aws_restjson.UpdateRouteMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return UpdateRouteRequest{Request: req, Input: input, Copy: c.UpdateRouteRequest}
 }
 

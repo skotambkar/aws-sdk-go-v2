@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/query"
+	"github.com/aws/aws-sdk-go-v2/service/ses/internal/aws_query"
 	"github.com/aws/aws-sdk-go-v2/service/ses/types"
 )
 
@@ -46,6 +48,10 @@ func (c *Client) SetIdentityNotificationTopicRequest(input *types.SetIdentityNot
 	}
 
 	req := c.newRequest(op, input, &types.SetIdentityNotificationTopicOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(query.BuildHandler.Name, aws_query.SetIdentityNotificationTopicMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return SetIdentityNotificationTopicRequest{Request: req, Input: input, Copy: c.SetIdentityNotificationTopicRequest}
 }
 

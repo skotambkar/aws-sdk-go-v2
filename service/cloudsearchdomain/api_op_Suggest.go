@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/restjson"
+	"github.com/aws/aws-sdk-go-v2/service/cloudsearchdomain/internal/aws_restjson"
 	"github.com/aws/aws-sdk-go-v2/service/cloudsearchdomain/types"
 )
 
@@ -50,6 +52,10 @@ func (c *Client) SuggestRequest(input *types.SuggestInput) SuggestRequest {
 	}
 
 	req := c.newRequest(op, input, &types.SuggestOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(restjson.BuildHandler.Name, aws_restjson.SuggestMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return SuggestRequest{Request: req, Input: input, Copy: c.SuggestRequest}
 }
 

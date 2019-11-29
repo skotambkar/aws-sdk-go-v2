@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/restjson"
+	"github.com/aws/aws-sdk-go-v2/service/appmesh/internal/aws_restjson"
 	"github.com/aws/aws-sdk-go-v2/service/appmesh/types"
 )
 
@@ -39,6 +41,10 @@ func (c *Client) DeleteVirtualNodeRequest(input *types.DeleteVirtualNodeInput) D
 	}
 
 	req := c.newRequest(op, input, &types.DeleteVirtualNodeOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(restjson.BuildHandler.Name, aws_restjson.DeleteVirtualNodeMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return DeleteVirtualNodeRequest{Request: req, Input: input, Copy: c.DeleteVirtualNodeRequest}
 }
 

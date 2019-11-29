@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/storagegateway/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/storagegateway/types"
 )
 
@@ -39,6 +41,10 @@ func (c *Client) DescribeStorediSCSIVolumesRequest(input *types.DescribeStorediS
 	}
 
 	req := c.newRequest(op, input, &types.DescribeStorediSCSIVolumesOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.DescribeStorediSCSIVolumesMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return DescribeStorediSCSIVolumesRequest{Request: req, Input: input, Copy: c.DescribeStorediSCSIVolumesRequest}
 }
 

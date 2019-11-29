@@ -8,6 +8,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/private/protocol"
 	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/emr/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/emr/types"
 )
 
@@ -43,6 +44,10 @@ func (c *Client) ModifyInstanceFleetRequest(input *types.ModifyInstanceFleetInpu
 	}
 
 	req := c.newRequest(op, input, &types.ModifyInstanceFleetOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.ModifyInstanceFleetMarshaler{Input: input}.GetNamedBuildHandler())
+
 	req.Handlers.Unmarshal.Remove(jsonrpc.UnmarshalHandler)
 	req.Handlers.Unmarshal.PushBackNamed(protocol.UnmarshalDiscardBodyHandler)
 	return ModifyInstanceFleetRequest{Request: req, Input: input, Copy: c.ModifyInstanceFleetRequest}

@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/restjson"
+	"github.com/aws/aws-sdk-go-v2/service/mediaconnect/internal/aws_restjson"
 	"github.com/aws/aws-sdk-go-v2/service/mediaconnect/types"
 )
 
@@ -36,6 +38,10 @@ func (c *Client) StopFlowRequest(input *types.StopFlowInput) StopFlowRequest {
 	}
 
 	req := c.newRequest(op, input, &types.StopFlowOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(restjson.BuildHandler.Name, aws_restjson.StopFlowMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return StopFlowRequest{Request: req, Input: input, Copy: c.StopFlowRequest}
 }
 

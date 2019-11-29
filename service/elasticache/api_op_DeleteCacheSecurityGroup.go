@@ -8,6 +8,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/private/protocol"
 	"github.com/aws/aws-sdk-go-v2/private/protocol/query"
+	"github.com/aws/aws-sdk-go-v2/service/elasticache/internal/aws_query"
 	"github.com/aws/aws-sdk-go-v2/service/elasticache/types"
 )
 
@@ -40,6 +41,10 @@ func (c *Client) DeleteCacheSecurityGroupRequest(input *types.DeleteCacheSecurit
 	}
 
 	req := c.newRequest(op, input, &types.DeleteCacheSecurityGroupOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(query.BuildHandler.Name, aws_query.DeleteCacheSecurityGroupMarshaler{Input: input}.GetNamedBuildHandler())
+
 	req.Handlers.Unmarshal.Remove(query.UnmarshalHandler)
 	req.Handlers.Unmarshal.PushBackNamed(protocol.UnmarshalDiscardBodyHandler)
 	return DeleteCacheSecurityGroupRequest{Request: req, Input: input, Copy: c.DeleteCacheSecurityGroupRequest}

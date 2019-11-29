@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/ssm/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/ssm/types"
 )
 
@@ -44,6 +46,10 @@ func (c *Client) CreateAssociationRequest(input *types.CreateAssociationInput) C
 	}
 
 	req := c.newRequest(op, input, &types.CreateAssociationOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.CreateAssociationMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return CreateAssociationRequest{Request: req, Input: input, Copy: c.CreateAssociationRequest}
 }
 

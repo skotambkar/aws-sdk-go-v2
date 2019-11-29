@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/restjson"
+	"github.com/aws/aws-sdk-go-v2/service/clouddirectory/internal/aws_restjson"
 	"github.com/aws/aws-sdk-go-v2/service/clouddirectory/types"
 )
 
@@ -42,6 +44,10 @@ func (c *Client) ListPolicyAttachmentsRequest(input *types.ListPolicyAttachments
 	}
 
 	req := c.newRequest(op, input, &types.ListPolicyAttachmentsOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(restjson.BuildHandler.Name, aws_restjson.ListPolicyAttachmentsMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return ListPolicyAttachmentsRequest{Request: req, Input: input, Copy: c.ListPolicyAttachmentsRequest}
 }
 

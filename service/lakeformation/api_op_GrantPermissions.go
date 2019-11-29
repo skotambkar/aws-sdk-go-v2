@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/lakeformation/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/lakeformation/types"
 )
 
@@ -40,6 +42,10 @@ func (c *Client) GrantPermissionsRequest(input *types.GrantPermissionsInput) Gra
 	}
 
 	req := c.newRequest(op, input, &types.GrantPermissionsOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.GrantPermissionsMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return GrantPermissionsRequest{Request: req, Input: input, Copy: c.GrantPermissionsRequest}
 }
 

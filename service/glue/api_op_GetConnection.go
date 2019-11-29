@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/glue/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/glue/types"
 )
 
@@ -36,6 +38,10 @@ func (c *Client) GetConnectionRequest(input *types.GetConnectionInput) GetConnec
 	}
 
 	req := c.newRequest(op, input, &types.GetConnectionOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.GetConnectionMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return GetConnectionRequest{Request: req, Input: input, Copy: c.GetConnectionRequest}
 }
 

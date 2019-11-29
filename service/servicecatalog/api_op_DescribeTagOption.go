@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/servicecatalog/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/servicecatalog/types"
 )
 
@@ -36,6 +38,10 @@ func (c *Client) DescribeTagOptionRequest(input *types.DescribeTagOptionInput) D
 	}
 
 	req := c.newRequest(op, input, &types.DescribeTagOptionOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.DescribeTagOptionMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return DescribeTagOptionRequest{Request: req, Input: input, Copy: c.DescribeTagOptionRequest}
 }
 

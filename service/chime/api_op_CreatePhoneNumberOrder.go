@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/restjson"
+	"github.com/aws/aws-sdk-go-v2/service/chime/internal/aws_restjson"
 	"github.com/aws/aws-sdk-go-v2/service/chime/types"
 )
 
@@ -39,6 +41,10 @@ func (c *Client) CreatePhoneNumberOrderRequest(input *types.CreatePhoneNumberOrd
 	}
 
 	req := c.newRequest(op, input, &types.CreatePhoneNumberOrderOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(restjson.BuildHandler.Name, aws_restjson.CreatePhoneNumberOrderMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return CreatePhoneNumberOrderRequest{Request: req, Input: input, Copy: c.CreatePhoneNumberOrderRequest}
 }
 

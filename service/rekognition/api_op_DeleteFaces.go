@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/rekognition/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/rekognition/types"
 )
 
@@ -38,6 +40,10 @@ func (c *Client) DeleteFacesRequest(input *types.DeleteFacesInput) DeleteFacesRe
 	}
 
 	req := c.newRequest(op, input, &types.DeleteFacesOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.DeleteFacesMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return DeleteFacesRequest{Request: req, Input: input, Copy: c.DeleteFacesRequest}
 }
 

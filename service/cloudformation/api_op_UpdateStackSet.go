@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/query"
+	"github.com/aws/aws-sdk-go-v2/service/cloudformation/internal/aws_query"
 	"github.com/aws/aws-sdk-go-v2/service/cloudformation/types"
 )
 
@@ -42,6 +44,10 @@ func (c *Client) UpdateStackSetRequest(input *types.UpdateStackSetInput) UpdateS
 	}
 
 	req := c.newRequest(op, input, &types.UpdateStackSetOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(query.BuildHandler.Name, aws_query.UpdateStackSetMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return UpdateStackSetRequest{Request: req, Input: input, Copy: c.UpdateStackSetRequest}
 }
 

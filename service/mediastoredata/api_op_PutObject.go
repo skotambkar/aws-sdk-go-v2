@@ -7,6 +7,8 @@ import (
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/aws/signer/v4"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/restjson"
+	"github.com/aws/aws-sdk-go-v2/service/mediastoredata/internal/aws_restjson"
 	"github.com/aws/aws-sdk-go-v2/service/mediastoredata/types"
 )
 
@@ -38,6 +40,10 @@ func (c *Client) PutObjectRequest(input *types.PutObjectInput) PutObjectRequest 
 	}
 
 	req := c.newRequest(op, input, &types.PutObjectOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(restjson.BuildHandler.Name, aws_restjson.PutObjectMarshaler{Input: input}.GetNamedBuildHandler())
+
 	req.Handlers.Sign.Remove(v4.SignRequestHandler)
 	handler := v4.BuildNamedHandler("v4.CustomSignerHandler", v4.WithUnsignedPayload)
 	req.Handlers.Sign.PushFrontNamed(handler)

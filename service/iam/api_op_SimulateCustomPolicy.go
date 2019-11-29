@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/query"
+	"github.com/aws/aws-sdk-go-v2/service/iam/internal/aws_query"
 	"github.com/aws/aws-sdk-go-v2/service/iam/types"
 )
 
@@ -58,6 +60,10 @@ func (c *Client) SimulateCustomPolicyRequest(input *types.SimulateCustomPolicyIn
 	}
 
 	req := c.newRequest(op, input, &types.SimulateCustomPolicyOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(query.BuildHandler.Name, aws_query.SimulateCustomPolicyMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return SimulateCustomPolicyRequest{Request: req, Input: input, Copy: c.SimulateCustomPolicyRequest}
 }
 

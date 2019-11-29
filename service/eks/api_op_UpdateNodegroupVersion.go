@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/restjson"
+	"github.com/aws/aws-sdk-go-v2/service/eks/internal/aws_restjson"
 	"github.com/aws/aws-sdk-go-v2/service/eks/types"
 )
 
@@ -53,6 +55,10 @@ func (c *Client) UpdateNodegroupVersionRequest(input *types.UpdateNodegroupVersi
 	}
 
 	req := c.newRequest(op, input, &types.UpdateNodegroupVersionOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(restjson.BuildHandler.Name, aws_restjson.UpdateNodegroupVersionMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return UpdateNodegroupVersionRequest{Request: req, Input: input, Copy: c.UpdateNodegroupVersionRequest}
 }
 

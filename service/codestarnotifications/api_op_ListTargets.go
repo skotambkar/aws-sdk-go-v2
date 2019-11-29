@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/restjson"
+	"github.com/aws/aws-sdk-go-v2/service/codestarnotifications/internal/aws_restjson"
 	"github.com/aws/aws-sdk-go-v2/service/codestarnotifications/types"
 )
 
@@ -42,6 +44,10 @@ func (c *Client) ListTargetsRequest(input *types.ListTargetsInput) ListTargetsRe
 	}
 
 	req := c.newRequest(op, input, &types.ListTargetsOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(restjson.BuildHandler.Name, aws_restjson.ListTargetsMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return ListTargetsRequest{Request: req, Input: input, Copy: c.ListTargetsRequest}
 }
 

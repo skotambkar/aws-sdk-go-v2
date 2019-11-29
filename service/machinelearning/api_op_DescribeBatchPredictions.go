@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/machinelearning/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/machinelearning/types"
 )
 
@@ -41,6 +43,10 @@ func (c *Client) DescribeBatchPredictionsRequest(input *types.DescribeBatchPredi
 	}
 
 	req := c.newRequest(op, input, &types.DescribeBatchPredictionsOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.DescribeBatchPredictionsMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return DescribeBatchPredictionsRequest{Request: req, Input: input, Copy: c.DescribeBatchPredictionsRequest}
 }
 

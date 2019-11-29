@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/restjson"
+	"github.com/aws/aws-sdk-go-v2/service/mediaconvert/internal/aws_restjson"
 	"github.com/aws/aws-sdk-go-v2/service/mediaconvert/types"
 )
 
@@ -37,6 +39,10 @@ func (c *Client) CreatePresetRequest(input *types.CreatePresetInput) CreatePrese
 	}
 
 	req := c.newRequest(op, input, &types.CreatePresetOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(restjson.BuildHandler.Name, aws_restjson.CreatePresetMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return CreatePresetRequest{Request: req, Input: input, Copy: c.CreatePresetRequest}
 }
 

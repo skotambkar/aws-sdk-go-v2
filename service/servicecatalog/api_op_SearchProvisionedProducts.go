@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/servicecatalog/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/servicecatalog/types"
 )
 
@@ -42,6 +44,10 @@ func (c *Client) SearchProvisionedProductsRequest(input *types.SearchProvisioned
 	}
 
 	req := c.newRequest(op, input, &types.SearchProvisionedProductsOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.SearchProvisionedProductsMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return SearchProvisionedProductsRequest{Request: req, Input: input, Copy: c.SearchProvisionedProductsRequest}
 }
 

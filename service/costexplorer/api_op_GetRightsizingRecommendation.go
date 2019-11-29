@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/costexplorer/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/costexplorer/types"
 )
 
@@ -41,6 +43,10 @@ func (c *Client) GetRightsizingRecommendationRequest(input *types.GetRightsizing
 	}
 
 	req := c.newRequest(op, input, &types.GetRightsizingRecommendationOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.GetRightsizingRecommendationMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return GetRightsizingRecommendationRequest{Request: req, Input: input, Copy: c.GetRightsizingRecommendationRequest}
 }
 

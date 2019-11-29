@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/codestar/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/codestar/types"
 )
 
@@ -36,6 +38,10 @@ func (c *Client) TagProjectRequest(input *types.TagProjectInput) TagProjectReque
 	}
 
 	req := c.newRequest(op, input, &types.TagProjectOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.TagProjectMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return TagProjectRequest{Request: req, Input: input, Copy: c.TagProjectRequest}
 }
 

@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/codecommit/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/codecommit/types"
 )
 
@@ -42,6 +44,10 @@ func (c *Client) ListBranchesRequest(input *types.ListBranchesInput) ListBranche
 	}
 
 	req := c.newRequest(op, input, &types.ListBranchesOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.ListBranchesMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return ListBranchesRequest{Request: req, Input: input, Copy: c.ListBranchesRequest}
 }
 

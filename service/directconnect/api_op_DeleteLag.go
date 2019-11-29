@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/directconnect/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/directconnect/types"
 )
 
@@ -37,6 +39,10 @@ func (c *Client) DeleteLagRequest(input *types.DeleteLagInput) DeleteLagRequest 
 	}
 
 	req := c.newRequest(op, input, &types.DeleteLagOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.DeleteLagMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return DeleteLagRequest{Request: req, Input: input, Copy: c.DeleteLagRequest}
 }
 

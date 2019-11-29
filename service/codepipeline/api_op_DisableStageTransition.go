@@ -8,6 +8,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/private/protocol"
 	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/codepipeline/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/codepipeline/types"
 )
 
@@ -39,6 +40,10 @@ func (c *Client) DisableStageTransitionRequest(input *types.DisableStageTransiti
 	}
 
 	req := c.newRequest(op, input, &types.DisableStageTransitionOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.DisableStageTransitionMarshaler{Input: input}.GetNamedBuildHandler())
+
 	req.Handlers.Unmarshal.Remove(jsonrpc.UnmarshalHandler)
 	req.Handlers.Unmarshal.PushBackNamed(protocol.UnmarshalDiscardBodyHandler)
 	return DisableStageTransitionRequest{Request: req, Input: input, Copy: c.DisableStageTransitionRequest}

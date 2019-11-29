@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/restjson"
+	"github.com/aws/aws-sdk-go-v2/service/clouddirectory/internal/aws_restjson"
 	"github.com/aws/aws-sdk-go-v2/service/clouddirectory/types"
 )
 
@@ -37,6 +39,10 @@ func (c *Client) CreateIndexRequest(input *types.CreateIndexInput) CreateIndexRe
 	}
 
 	req := c.newRequest(op, input, &types.CreateIndexOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(restjson.BuildHandler.Name, aws_restjson.CreateIndexMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return CreateIndexRequest{Request: req, Input: input, Copy: c.CreateIndexRequest}
 }
 

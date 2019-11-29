@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/restxml"
+	"github.com/aws/aws-sdk-go-v2/service/route53/internal/aws_restxml"
 	"github.com/aws/aws-sdk-go-v2/service/route53/types"
 )
 
@@ -44,6 +46,10 @@ func (c *Client) GetChangeRequest(input *types.GetChangeInput) GetChangeRequest 
 	}
 
 	req := c.newRequest(op, input, &types.GetChangeOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(restxml.BuildHandler.Name, aws_restxml.GetChangeMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return GetChangeRequest{Request: req, Input: input, Copy: c.GetChangeRequest}
 }
 

@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/query"
+	"github.com/aws/aws-sdk-go-v2/service/iam/internal/aws_query"
 	"github.com/aws/aws-sdk-go-v2/service/iam/types"
 )
 
@@ -39,6 +41,10 @@ func (c *Client) CreateLoginProfileRequest(input *types.CreateLoginProfileInput)
 	}
 
 	req := c.newRequest(op, input, &types.CreateLoginProfileOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(query.BuildHandler.Name, aws_query.CreateLoginProfileMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return CreateLoginProfileRequest{Request: req, Input: input, Copy: c.CreateLoginProfileRequest}
 }
 

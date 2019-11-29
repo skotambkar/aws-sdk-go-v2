@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/macie/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/macie/types"
 )
 
@@ -40,6 +42,10 @@ func (c *Client) AssociateS3ResourcesRequest(input *types.AssociateS3ResourcesIn
 	}
 
 	req := c.newRequest(op, input, &types.AssociateS3ResourcesOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.AssociateS3ResourcesMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return AssociateS3ResourcesRequest{Request: req, Input: input, Copy: c.AssociateS3ResourcesRequest}
 }
 

@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/appstream/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/appstream/types"
 )
 
@@ -36,6 +38,10 @@ func (c *Client) UpdateImagePermissionsRequest(input *types.UpdateImagePermissio
 	}
 
 	req := c.newRequest(op, input, &types.UpdateImagePermissionsOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.UpdateImagePermissionsMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return UpdateImagePermissionsRequest{Request: req, Input: input, Copy: c.UpdateImagePermissionsRequest}
 }
 

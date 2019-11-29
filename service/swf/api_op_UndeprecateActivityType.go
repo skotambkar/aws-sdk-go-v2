@@ -8,6 +8,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/private/protocol"
 	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/swf/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/swf/types"
 )
 
@@ -62,6 +63,10 @@ func (c *Client) UndeprecateActivityTypeRequest(input *types.UndeprecateActivity
 	}
 
 	req := c.newRequest(op, input, &types.UndeprecateActivityTypeOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.UndeprecateActivityTypeMarshaler{Input: input}.GetNamedBuildHandler())
+
 	req.Handlers.Unmarshal.Remove(jsonrpc.UnmarshalHandler)
 	req.Handlers.Unmarshal.PushBackNamed(protocol.UnmarshalDiscardBodyHandler)
 	return UndeprecateActivityTypeRequest{Request: req, Input: input, Copy: c.UndeprecateActivityTypeRequest}

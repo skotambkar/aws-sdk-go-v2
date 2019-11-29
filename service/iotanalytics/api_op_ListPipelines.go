@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/restjson"
+	"github.com/aws/aws-sdk-go-v2/service/iotanalytics/internal/aws_restjson"
 	"github.com/aws/aws-sdk-go-v2/service/iotanalytics/types"
 )
 
@@ -42,6 +44,10 @@ func (c *Client) ListPipelinesRequest(input *types.ListPipelinesInput) ListPipel
 	}
 
 	req := c.newRequest(op, input, &types.ListPipelinesOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(restjson.BuildHandler.Name, aws_restjson.ListPipelinesMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return ListPipelinesRequest{Request: req, Input: input, Copy: c.ListPipelinesRequest}
 }
 

@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/restjson"
+	"github.com/aws/aws-sdk-go-v2/service/mobile/internal/aws_restjson"
 	"github.com/aws/aws-sdk-go-v2/service/mobile/types"
 )
 
@@ -36,6 +38,10 @@ func (c *Client) DeleteProjectRequest(input *types.DeleteProjectInput) DeletePro
 	}
 
 	req := c.newRequest(op, input, &types.DeleteProjectOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(restjson.BuildHandler.Name, aws_restjson.DeleteProjectMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return DeleteProjectRequest{Request: req, Input: input, Copy: c.DeleteProjectRequest}
 }
 

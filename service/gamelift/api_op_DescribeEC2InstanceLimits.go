@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/gamelift/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/gamelift/types"
 )
 
@@ -65,6 +67,10 @@ func (c *Client) DescribeEC2InstanceLimitsRequest(input *types.DescribeEC2Instan
 	}
 
 	req := c.newRequest(op, input, &types.DescribeEC2InstanceLimitsOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.DescribeEC2InstanceLimitsMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return DescribeEC2InstanceLimitsRequest{Request: req, Input: input, Copy: c.DescribeEC2InstanceLimitsRequest}
 }
 

@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/restjson"
+	"github.com/aws/aws-sdk-go-v2/service/backup/internal/aws_restjson"
 	"github.com/aws/aws-sdk-go-v2/service/backup/types"
 )
 
@@ -46,6 +48,10 @@ func (c *Client) UpdateRecoveryPointLifecycleRequest(input *types.UpdateRecovery
 	}
 
 	req := c.newRequest(op, input, &types.UpdateRecoveryPointLifecycleOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(restjson.BuildHandler.Name, aws_restjson.UpdateRecoveryPointLifecycleMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return UpdateRecoveryPointLifecycleRequest{Request: req, Input: input, Copy: c.UpdateRecoveryPointLifecycleRequest}
 }
 

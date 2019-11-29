@@ -8,6 +8,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/private/protocol"
 	"github.com/aws/aws-sdk-go-v2/private/protocol/restjson"
+	"github.com/aws/aws-sdk-go-v2/service/chime/internal/aws_restjson"
 	"github.com/aws/aws-sdk-go-v2/service/chime/types"
 )
 
@@ -40,6 +41,10 @@ func (c *Client) DeleteVoiceConnectorRequest(input *types.DeleteVoiceConnectorIn
 	}
 
 	req := c.newRequest(op, input, &types.DeleteVoiceConnectorOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(restjson.BuildHandler.Name, aws_restjson.DeleteVoiceConnectorMarshaler{Input: input}.GetNamedBuildHandler())
+
 	req.Handlers.Unmarshal.Remove(restjson.UnmarshalHandler)
 	req.Handlers.Unmarshal.PushBackNamed(protocol.UnmarshalDiscardBodyHandler)
 	return DeleteVoiceConnectorRequest{Request: req, Input: input, Copy: c.DeleteVoiceConnectorRequest}

@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/opsworks/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/opsworks/types"
 )
 
@@ -39,6 +41,10 @@ func (c *Client) GrantAccessRequest(input *types.GrantAccessInput) GrantAccessRe
 	}
 
 	req := c.newRequest(op, input, &types.GrantAccessOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.GrantAccessMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return GrantAccessRequest{Request: req, Input: input, Copy: c.GrantAccessRequest}
 }
 

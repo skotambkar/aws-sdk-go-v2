@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/restxml"
+	"github.com/aws/aws-sdk-go-v2/service/cloudfront/internal/aws_restxml"
 	"github.com/aws/aws-sdk-go-v2/service/cloudfront/types"
 )
 
@@ -37,6 +39,10 @@ func (c *Client) UpdatePublicKeyRequest(input *types.UpdatePublicKeyInput) Updat
 	}
 
 	req := c.newRequest(op, input, &types.UpdatePublicKeyOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(restxml.BuildHandler.Name, aws_restxml.UpdatePublicKeyMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return UpdatePublicKeyRequest{Request: req, Input: input, Copy: c.UpdatePublicKeyRequest}
 }
 

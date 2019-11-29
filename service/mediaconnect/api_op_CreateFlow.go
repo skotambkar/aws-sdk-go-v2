@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/restjson"
+	"github.com/aws/aws-sdk-go-v2/service/mediaconnect/internal/aws_restjson"
 	"github.com/aws/aws-sdk-go-v2/service/mediaconnect/types"
 )
 
@@ -37,6 +39,10 @@ func (c *Client) CreateFlowRequest(input *types.CreateFlowInput) CreateFlowReque
 	}
 
 	req := c.newRequest(op, input, &types.CreateFlowOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(restjson.BuildHandler.Name, aws_restjson.CreateFlowMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return CreateFlowRequest{Request: req, Input: input, Copy: c.CreateFlowRequest}
 }
 

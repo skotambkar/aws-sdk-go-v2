@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/restjson"
+	"github.com/aws/aws-sdk-go-v2/service/appsync/internal/aws_restjson"
 	"github.com/aws/aws-sdk-go-v2/service/appsync/types"
 )
 
@@ -36,6 +38,10 @@ func (c *Client) ListResolversByFunctionRequest(input *types.ListResolversByFunc
 	}
 
 	req := c.newRequest(op, input, &types.ListResolversByFunctionOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(restjson.BuildHandler.Name, aws_restjson.ListResolversByFunctionMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return ListResolversByFunctionRequest{Request: req, Input: input, Copy: c.ListResolversByFunctionRequest}
 }
 

@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/jsonrpc"
+	"github.com/aws/aws-sdk-go-v2/service/shield/internal/aws_jsonrpc"
 	"github.com/aws/aws-sdk-go-v2/service/shield/types"
 )
 
@@ -36,6 +38,10 @@ func (c *Client) DescribeAttackRequest(input *types.DescribeAttackInput) Describ
 	}
 
 	req := c.newRequest(op, input, &types.DescribeAttackOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(jsonrpc.BuildHandler.Name, aws_jsonrpc.DescribeAttackMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return DescribeAttackRequest{Request: req, Input: input, Copy: c.DescribeAttackRequest}
 }
 
