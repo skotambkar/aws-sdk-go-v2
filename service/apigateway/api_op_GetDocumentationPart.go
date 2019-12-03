@@ -6,6 +6,8 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/private/protocol/restjson"
+	"github.com/aws/aws-sdk-go-v2/service/apigateway/internal/aws_restjson"
 	"github.com/aws/aws-sdk-go-v2/service/apigateway/types"
 )
 
@@ -32,6 +34,10 @@ func (c *Client) GetDocumentationPartRequest(input *types.GetDocumentationPartIn
 	}
 
 	req := c.newRequest(op, input, &types.GetDocumentationPartOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(restjson.BuildHandler.Name, aws_restjson.GetDocumentationPartMarshaler{Input: input}.GetNamedBuildHandler())
+
 	return GetDocumentationPartRequest{Request: req, Input: input, Copy: c.GetDocumentationPartRequest}
 }
 

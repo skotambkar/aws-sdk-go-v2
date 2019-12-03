@@ -8,6 +8,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/private/protocol"
 	"github.com/aws/aws-sdk-go-v2/private/protocol/restjson"
+	"github.com/aws/aws-sdk-go-v2/service/apigateway/internal/aws_restjson"
 	"github.com/aws/aws-sdk-go-v2/service/apigateway/types"
 )
 
@@ -34,6 +35,10 @@ func (c *Client) DeleteDocumentationVersionRequest(input *types.DeleteDocumentat
 	}
 
 	req := c.newRequest(op, input, &types.DeleteDocumentationVersionOutput{})
+
+	// swap existing build handler on svc, with a new named build handler
+	req.Handlers.Build.Swap(restjson.BuildHandler.Name, aws_restjson.DeleteDocumentationVersionMarshaler{Input: input}.GetNamedBuildHandler())
+
 	req.Handlers.Unmarshal.Remove(restjson.UnmarshalHandler)
 	req.Handlers.Unmarshal.PushBackNamed(protocol.UnmarshalDiscardBodyHandler)
 	return DeleteDocumentationVersionRequest{Request: req, Input: input, Copy: c.DeleteDocumentationVersionRequest}
