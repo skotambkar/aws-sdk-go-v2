@@ -4,6 +4,7 @@ package lexruntimeservice
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
@@ -213,8 +214,8 @@ func (g deleteSessionSerializeMiddleware) ID() string {
 	return "GetSessionSerializeMiddleware"
 }
 
-// HandleSerialize will serialize the middleware input parameters to the provided input http request
-func (g deleteSessionSerializeMiddleware) HandleSerialize(ctx context.Context, in middleware.SerializeInput, next middleware.SerializeHandler) (
+// HandleDeserialize will serialize the middleware input parameters to the provided input http request
+func (g deleteSessionSerializeMiddleware) HandleDeserialize(ctx context.Context, in middleware.SerializeInput, next middleware.SerializeHandler) (
 	out middleware.SerializeOutput, metadata middleware.Metadata, err error,
 ) {
 	request, ok := in.Request.(*smithyHTTP.Request)
@@ -257,6 +258,183 @@ func serializeDeleteSessionInputAWSREST(v *DeleteSessionInput, encoder *rest.Enc
 	if v.UserId != nil {
 		if err := encoder.SetURI("userId").String(*v.UserId); err != nil {
 			return err
+		}
+	}
+
+	return nil
+}
+
+// awsrestjson_deleteSessionDeserializeMiddleware
+type awsrestjson_deleteSessionDeserializeMiddleware struct{}
+
+// ID is the middleware identifier
+func (d awsrestjson_deleteSessionDeserializeMiddleware) ID() string {
+	return "awsrestjson_deleteSessionDeserializeMiddleware"
+}
+
+// HandleDeserialize
+func (d awsrestjson_deleteSessionDeserializeMiddleware) HandleDeserialize(ctx context.Context, in middleware.DeserializeInput,
+	next middleware.DeserializeHandler) (
+	out middleware.DeserializeOutput, metadata middleware.Metadata, err error,
+) {
+	out, metadata, err = next.HandleDeserialize(ctx, in)
+	response, ok := out.RawResponse.(*smithyHTTP.Response)
+	if !ok {
+		return out, metadata, fmt.Errorf("unknown transport type %T", out.RawResponse)
+	}
+
+	output, ok := out.Result.(*DeleteSessionOutput)
+	if !ok {
+		return out, metadata, fmt.Errorf("unknown output parameters type %T", out.Result)
+	}
+
+	buff := make([]byte, 1024)
+	ringBuffer := sdkio.NewRingBuffer(buff)
+
+	// wrap a TeeReader to read from response body & write on snapshot
+	body := io.TeeReader(response.Body, ringBuffer)
+	defer r.HTTPResponse.Body.Close()
+	decoder := json.NewDecoder(body)
+
+	if err := awsjson_deleteSessionOutputDeserialize(output, decoder, ringBuffer); err != nil {
+		return out, metadata, err
+	}
+
+	return out, metadata, err
+}
+
+// awsjson_deleteSessionOutputDeserialize
+func awsjson_deleteSessionOutputDeserialize(output *DeleteSessionOutput, decoder *json.Decoder, rb *sdkio.RingBuffer) error {
+	if output == nil {
+		return nil
+	}
+
+	startToken, err := decoder.Token()
+	if err == io.EOF {
+		// "Empty Response"
+		return nil
+	}
+	if err != nil {
+		return err
+	}
+
+	if t, ok := startToken.(json.Delim); !ok {
+		if t.String() != "{" {
+			snapshot := make([]byte, 1024)
+			rb.Read(snapshot)
+			return aws.SerializationError{
+				Err: fmt.Sprintf("failed to decode response body with invalid JSON,"+
+					"expected `{` as start token; "+
+					"Here's a snapshot: %s",
+					snapshot),
+			}
+		}
+	}
+
+	for decoder.More() {
+
+		if t == "botAlias" {
+			val, err := decoder.Token()
+			if err != nil {
+				snapshot := make([]byte, 1024)
+				rb.Read(snapshot)
+				return aws.SerializationError{
+					Err: fmt.Sprintf("failed to decode response body with invalid JSON.", err),
+				}
+				if v, ok := val.(string); ok {
+					output.BotAlias = &v
+				} else {
+					snapshot := make([]byte, 1024)
+					rb.Read(snapshot)
+					return aws.SerializationError{
+						Err: fmt.Sprintf("expected BotAlias to be of type *String, "+
+							"Here's a snapshot: %s",
+							snapshot, err),
+					}
+				}
+			}
+		}
+
+		if t == "botName" {
+			val, err := decoder.Token()
+			if err != nil {
+				snapshot := make([]byte, 1024)
+				rb.Read(snapshot)
+				return aws.SerializationError{
+					Err: fmt.Sprintf("failed to decode response body with invalid JSON.", err),
+				}
+				if v, ok := val.(string); ok {
+					output.BotName = &v
+				} else {
+					snapshot := make([]byte, 1024)
+					rb.Read(snapshot)
+					return aws.SerializationError{
+						Err: fmt.Sprintf("expected BotName to be of type *String, "+
+							"Here's a snapshot: %s",
+							snapshot, err),
+					}
+				}
+			}
+		}
+
+		if t == "sessionId" {
+			val, err := decoder.Token()
+			if err != nil {
+				snapshot := make([]byte, 1024)
+				rb.Read(snapshot)
+				return aws.SerializationError{
+					Err: fmt.Sprintf("failed to decode response body with invalid JSON.", err),
+				}
+				if v, ok := val.(string); ok {
+					output.SessionId = &v
+				} else {
+					snapshot := make([]byte, 1024)
+					rb.Read(snapshot)
+					return aws.SerializationError{
+						Err: fmt.Sprintf("expected SessionId to be of type *String, "+
+							"Here's a snapshot: %s",
+							snapshot, err),
+					}
+				}
+			}
+		}
+
+		if t == "userId" {
+			val, err := decoder.Token()
+			if err != nil {
+				snapshot := make([]byte, 1024)
+				rb.Read(snapshot)
+				return aws.SerializationError{
+					Err: fmt.Sprintf("failed to decode response body with invalid JSON.", err),
+				}
+				if v, ok := val.(string); ok {
+					output.UserId = &v
+				} else {
+					snapshot := make([]byte, 1024)
+					rb.Read(snapshot)
+					return aws.SerializationError{
+						Err: fmt.Sprintf("expected UserId to be of type *String, "+
+							"Here's a snapshot: %s",
+							snapshot, err),
+					}
+				}
+			}
+		}
+	}
+
+	// end of the json response body
+	endToken, err := decoder.Token()
+	if err != nil {
+		return err
+	}
+	if t, ok := endToken.(json.Delim); !ok || t.String() != "}" {
+		snapshot := make([]byte, 1024)
+		rb.Read(snapshot)
+		return aws.SerializationError{
+			Err: fmt.Sprintf("failed to decode response body with invalid JSON,"+
+				"expected `}` as end token; "+
+				"Here's a snapshot: %s",
+				snapshot, err),
 		}
 	}
 

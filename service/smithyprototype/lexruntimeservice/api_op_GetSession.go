@@ -4,6 +4,7 @@ package lexruntimeservice
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
@@ -298,6 +299,159 @@ func serializeGetSessionInputAWSREST(v *GetSessionInput, encoder *rest.Encoder) 
 	if v.UserId != nil {
 		if err := encoder.SetURI("userId").String(*v.UserId); err != nil {
 			return err
+		}
+	}
+
+	return nil
+}
+
+// awsrestjson_getSessionDeserializeMiddleware
+type awsrestjson_getSessionDeserializeMiddleware struct{}
+
+// ID is the middleware identifier
+func (g awsrestjson_getSessionDeserializeMiddleware) ID() string {
+	return "awsrestjson_getSessionDeserializeMiddleware"
+}
+
+// HandleDeserialize
+func (g awsrestjson_getSessionDeserializeMiddleware) HandleDeserialize(ctx context.Context, in middleware.DeserializeInput,
+	next middleware.DeserializeHandler) (
+	out middleware.DeserializeOutput, metadata middleware.Metadata, err error,
+) {
+	out, metadata, err = next.HandleDeserialize(ctx, in)
+	response, ok := out.RawResponse.(*smithyHTTP.Response)
+	if !ok {
+		return out, metadata, fmt.Errorf("unknown transport type %T", out.RawResponse)
+	}
+
+	output, ok := out.Result.(*GetSessionOutput)
+	if !ok {
+		return out, metadata, fmt.Errorf("unknown output parameters type %T", out.Result)
+	}
+
+	buff := make([]byte, 1024)
+	ringBuffer := sdkio.NewRingBuffer(buff)
+
+	// wrap a TeeReader to read from response body & write on snapshot
+	body := io.TeeReader(response.Body, ringBuffer)
+	defer r.HTTPResponse.Body.Close()
+	decoder := json.NewDecoder(body)
+
+	if err := awsjson_getSessionOutputDeserialize(output, decoder, ringBuffer); err != nil {
+		return out, metadata, err
+	}
+
+	return out, metadata, err
+}
+
+// awsjson_getSessionOutputDeserialize
+func awsjson_getSessionOutputDeserialize(output *GetSessionOutput, decoder *json.Decoder, rb *sdkio.RingBuffer) error {
+	if output == nil {
+		return nil
+	}
+
+	startToken, err := decoder.Token()
+	if err == io.EOF {
+		// "Empty Response"
+		return nil
+	}
+	if err != nil {
+		return err
+	}
+
+	if t, ok := startToken.(json.Delim); !ok {
+		if t.String() != "{" {
+			snapshot := make([]byte, 1024)
+			rb.Read(snapshot)
+			return aws.SerializationError{
+				Err: fmt.Sprintf("failed to decode response body with invalid JSON,"+
+					"expected `{` as start token; "+
+					"Here's a snapshot: %s",
+					snapshot),
+			}
+		}
+	}
+
+	for decoder.More() {
+		if t == "dialogAction" {
+			val, err := decoder.Token()
+			if err != nil {
+				snapshot := make([]byte, 1024)
+				rb.Read(snapshot)
+				return aws.SerializationError{
+					Err: fmt.Sprintf("failed to decode response body with invalid JSON.", err),
+				}
+
+				v := &DialogAction{}
+				if err := awsjson_dialogActionShapeDeserialize(v, decoder, rb); err != nil {
+					output.DialogAction = v
+				} else {
+					snapshot := make([]byte, 1024)
+					rb.Read(snapshot)
+					return aws.SerializationError{
+						Err: fmt.Sprintf("expected DialogAction to be of type *String, "+
+							"Here's a snapshot: %s",
+							snapshot, err),
+					}
+				}
+			}
+		}
+
+		// Todo: Add deserializer for recentIntentSummaryView
+
+		if t == "sessionAttributes" {
+			// create []string as modeled for the member shape
+			v := make(map[string]string, 0)
+			if err = awsjson_sessionAttributeMapShapeDeserialize(v, decoder, rb); err != nil {
+				snapshot := make([]byte, 1024)
+				rb.Read(snapshot)
+				return aws.SerializationError{
+					Err: fmt.Sprintf("expected SessionAttributes to be of type map[string]string, "+
+						"Here's a snapshot: %s",
+						snapshot, err),
+				}
+			} else {
+				output.SessionAttributes = v
+			}
+		}
+
+		if t == "sessionId" {
+			val, err := decoder.Token()
+			if err != nil {
+				snapshot := make([]byte, 1024)
+				rb.Read(snapshot)
+				return aws.SerializationError{
+					Err: fmt.Sprintf("failed to decode response body with invalid JSON.", err),
+				}
+				if v, ok := val.(string); ok {
+					output.SessionId = &v
+				} else {
+					snapshot := make([]byte, 1024)
+					rb.Read(snapshot)
+					return aws.SerializationError{
+						Err: fmt.Sprintf("expected SessionId to be of type *String, "+
+							"Here's a snapshot: %s",
+							snapshot, err),
+					}
+				}
+			}
+		}
+
+	}
+
+	// end of the json response body
+	endToken, err := decoder.Token()
+	if err != nil {
+		return err
+	}
+	if t, ok := endToken.(json.Delim); !ok || t.String() != "}" {
+		snapshot := make([]byte, 1024)
+		rb.Read(snapshot)
+		return aws.SerializationError{
+			Err: fmt.Sprintf("failed to decode response body with invalid JSON,"+
+				"expected `}` as end token; "+
+				"Here's a snapshot: %s",
+				snapshot, err),
 		}
 	}
 

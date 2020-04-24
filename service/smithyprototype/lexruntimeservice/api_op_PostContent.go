@@ -627,3 +627,130 @@ func serializePostContentInputAWSREST(v *PostContentInput, encoder *rest.Encoder
 
 	return nil
 }
+
+// awsrestjson_postContentDeserializeMiddleware
+type awsrestjson_postContentDeserializeMiddleware struct{}
+
+// ID is the middleware identifier
+func (p awsrestjson_postContentDeserializeMiddleware) ID() string {
+	return "awsrestjson_postContentDeserializeMiddleware"
+}
+
+// HandleDeserialize
+func (p awsrestjson_postContentDeserializeMiddleware) HandleDeserialize(ctx context.Context, in middleware.DeserializeInput, next middleware.DeserializeHandler) (
+	out middleware.DeserializeOutput, metadata middleware.Metadata, err error,
+) {
+	out, metadata, err = next.HandleDeserialize(ctx, in)
+	response, ok := out.RawResponse.(*smithyHTTP.Response)
+	if !ok {
+		return out, metadata, fmt.Errorf("unknown transport type %T", out.RawResponse)
+	}
+
+	output, ok := out.Result.(*PostContentOutput)
+	if !ok {
+		return out, metadata, fmt.Errorf("unknown output parameters type %T", out.Result)
+	}
+
+	if err := awsrest_postContentOutputDeserialize(output, response); err != nil {
+		return out, metadata, err
+	}
+
+	if err := awsjson_postContentOutputDeserialize(output, response); err != nil {
+		return out, metadata, err
+	}
+
+	return out, metadata, err
+}
+
+// awsrest_postContentOutputDeserialize
+func awsrest_postContentOutputDeserialize(v *PostContentOutput, response *smithyHTTP.Response) error {
+	if v == nil {
+		return nil
+	}
+
+	if v.ContentType != nil {
+		val := response.Header.Get("Content-Type")
+		v.ContentType = &val
+	}
+
+	if len(v.DialogState) > 0 {
+		val := response.Header.Get("x-amz-lex-dialog-state")
+		v.DialogState = val
+	}
+
+	if v.InputTranscript != nil {
+		val := response.Header.Get("x-amz-lex-input-transcript")
+		v.InputTranscript = &val
+	}
+
+	if v.IntentName != nil {
+		val := response.Header.Get("x-amz-lex-intent-name")
+		v.IntentName = &val
+	}
+
+	if v.Message != nil {
+		val := response.Header.Get("x-amz-lex-message")
+		v.Message = &val
+	}
+
+	if len(v.MessageFormat) > 0 {
+		val := response.Header.Get("x-amz-lex-message-format")
+		v.MessageFormat = val
+	}
+
+	if v.SentimentResponse != nil {
+		val := response.Header.Get("x-amz-lex-sentiment")
+		v.SentimentResponse = &val
+	}
+
+	if v.SessionAttributes != nil {
+		val := response.Header.Get("x-amz-lex-session-attributes")
+		b, err = base64.StdEncoding.DecodeString(val)
+		if err != nil {
+			return err
+		}
+		m := aws.JSONValue{}
+		err = coreJson.Unmarshal(b, &m)
+		if err != nil {
+			return err
+		}
+		v.SessionAttributes = m
+	}
+
+	if v.SessionId != nil {
+		val := response.Header.Get("x-amz-lex-session-id")
+		v.SessionId = &val
+	}
+
+	if v.SlotToElicit != nil {
+		val := response.Header.Get("x-amz-lex-slot-to-elicit")
+		v.SlotToElicit = &val
+	}
+
+	if v.Slots != nil {
+		val := response.Header.Get("x-amz-lex-slots")
+		b, err = base64.StdEncoding.DecodeString(val)
+		if err != nil {
+			return err
+		}
+		m := aws.JSONValue{}
+		err = coreJson.Unmarshal(b, &m)
+		if err != nil {
+			return err
+		}
+		v.Slots = m
+	}
+
+	return nil
+}
+
+// awsjson_postContentOutputDeserialize
+func awsjson_postContentOutputDeserialize(v *PutSessionOutput, response *smithyHTTP.Response) error {
+	if v == nil {
+		return nil
+	}
+
+	v.AudioStream = response.Body
+
+	return nil
+}

@@ -3,11 +3,13 @@
 package lexruntimeservice
 
 import (
+	"encoding/json"
 	"fmt"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/aws/protocol/json"
 	"github.com/aws/aws-sdk-go-v2/internal/awsutil"
+	"github.com/aws/aws-sdk-go-v2/internal/sdkio"
 	"github.com/aws/aws-sdk-go-v2/private/protocol"
 )
 
@@ -604,5 +606,618 @@ func serializeStringMapAWSJSON(v map[string]string, value json.Value) error {
 		object.Key(k).String(kv)
 	}
 
+	return nil
+}
+
+// awsjson_responseCardShapeDeserialize
+func awsjson_responseCardShapeDeserialize(output *ResponseCard, decoder *json.Decoder, rb sdkio.RingBuffer) error {
+	if output == nil {
+		return nil
+	}
+
+	startToken, err := decoder.Token()
+	if err == io.EOF {
+		// "Empty Response"
+		return nil
+	}
+	if err != nil {
+		return err
+	}
+
+	if t, ok := startToken.(json.Delim); !ok {
+		if t.String() != "{" {
+			snapshot := make([]byte, 1024)
+			rb.Read(snapshot)
+			return aws.SerializationError{
+				Err: fmt.Sprintf("failed to decode response body with invalid JSON,"+
+					"expected `{` as start token; "+
+					"Here's a snapshot: %s",
+					snapshot),
+			}
+		}
+	}
+
+	for decoder.More() {
+		// fetch token for key
+		t, err := decoder.Token()
+		if err != nil {
+			snapshot := make([]byte, 1024)
+			rb.Read(snapshot)
+			return aws.SerializationError{
+				Err: fmt.Sprintf("failed to decode response body with invalid JSON,"+
+					"Here's a snapshot: %s",
+					snapshot, err),
+			}
+		}
+
+		// location name : `contentType` key with value as enum
+		if t == "contentType" {
+			val, err := decoder.Token()
+			if err != nil {
+				snapshot := make([]byte, 1024)
+				rb.Read(snapshot)
+				return aws.SerializationError{
+					Err: fmt.Sprintf("failed to decode response body with invalid JSON. "+
+						"Here's a snapshot: %s",
+						snapshot, err),
+				}
+				if v, ok := val.(string); ok {
+					output.ContentType = v
+				} else {
+					snapshot := make([]byte, 1024)
+					rb.Read(snapshot)
+					return aws.SerializationError{
+						Err: fmt.Sprintf("expected ContentType to be of type Enum, "+
+							"Here's a snapshot: %s",
+							snapshot, err),
+					}
+				}
+			}
+		}
+
+		// Todo: Add case for []GenericAttachment
+
+		// location name : `version` key with value as `*string`
+		if t == "version" {
+			val, err := decoder.Token()
+			if err != nil {
+				snapshot := make([]byte, 1024)
+				rb.Read(snapshot)
+				return aws.SerializationError{
+					Err: fmt.Sprintf("failed to decode response body with invalid JSON. "+
+						"Here's a snapshot: %s",
+						snapshot, err),
+				}
+				if v, ok := val.(string); ok {
+					output.Version = &v
+				} else {
+					snapshot := make([]byte, 1024)
+					rb.Read(snapshot)
+					return aws.SerializationError{
+						Err: fmt.Sprintf("expected Version to be of type *String, "+
+							"Here's a snapshot: %s",
+							snapshot, err),
+					}
+				}
+			}
+		}
+
+	}
+
+	// end of the json response body
+	endToken, err := decoder.Token()
+	if err != nil {
+		return err
+	}
+	if t, ok := endToken.(json.Delim); !ok || t.String() != "}" {
+		snapshot := make([]byte, 1024)
+		rb.Read(snapshot)
+		return aws.SerializationError{
+			Err: fmt.Sprintf("failed to decode response body with invalid JSON,"+
+				"expected `}` as end token; "+
+				"Here's a snapshot: %s",
+				snapshot, err),
+		}
+	}
+
+	return nil
+}
+
+// awsjson_sentimentResponseShapeDeserialize
+func awsjson_sentimentResponseShapeDeserialize(output *SentimentResponse, decoder *json.Decoder, rb sdkio.RingBuffer) error {
+	startToken, err := decoder.Token()
+	if err == io.EOF {
+		// "Empty List"
+		return nil
+	}
+	if err != nil {
+		snapshot := make([]byte, 1024)
+		rb.Read(snapshot)
+		return aws.SerializationError{
+			Err: fmt.Sprintf("failed to decode response body with invalid JSON,"+
+				"Here's a snapshot: %s",
+				snapshot, err),
+		}
+	}
+	if t, ok := startToken.(json.Delim); !ok || t.String() != "{" {
+		snapshot := make([]byte, 1024)
+		rb.Read(snapshot)
+		return aws.SerializationError{
+			Err: fmt.Sprintf("failed to decode response body with invalid JSON,"+
+				"expected `{` as start token; "+
+				"Here's a snapshot: %s",
+				snapshot),
+		}
+	}
+
+	// decoder
+	for decoder.More() {
+		// fetch token for key
+		t, err := decoder.Token()
+		if err != nil {
+			snapshot := make([]byte, 1024)
+			rb.Read(snapshot)
+			return aws.SerializationError{
+				Err: fmt.Sprintf("failed to decode response body with invalid JSON,"+
+					"Here's a snapshot: %s",
+					snapshot, err),
+			}
+		}
+
+		// location name : `sentimentScore` key with value as `*string`
+		if t == "sentimentScore" {
+			val, err := decoder.Token()
+			if err != nil {
+				snapshot := make([]byte, 1024)
+				rb.Read(snapshot)
+				return aws.SerializationError{
+					Err: fmt.Sprintf("failed to decode response body with invalid JSON. "+
+						"Here's a snapshot: %s",
+						snapshot, err),
+				}
+				if v, ok := val.(string); ok {
+					output.SentimentScore = &v
+				} else {
+					snapshot := make([]byte, 1024)
+					rb.Read(snapshot)
+					return aws.SerializationError{
+						Err: fmt.Sprintf("expected Version to be of type *String, "+
+							"Here's a snapshot: %s",
+							snapshot, err),
+					}
+				}
+			}
+		}
+
+		// location name : `sentimentLabel` key with value as `*string`
+		if t == "sentimentLabel" {
+			val, err := decoder.Token()
+			if err != nil {
+				snapshot := make([]byte, 1024)
+				rb.Read(snapshot)
+				return aws.SerializationError{
+					Err: fmt.Sprintf("failed to decode response body with invalid JSON. "+
+						"Here's a snapshot: %s",
+						snapshot, err),
+				}
+				if v, ok := val.(string); ok {
+					output.SentimentLabel = &v
+				} else {
+					snapshot := make([]byte, 1024)
+					rb.Read(snapshot)
+					return aws.SerializationError{
+						Err: fmt.Sprintf("expected Version to be of type *String, "+
+							"Here's a snapshot: %s",
+							snapshot, err),
+					}
+				}
+			}
+		}
+	}
+
+	// end of the json response body
+	endToken, err := decoder.Token()
+	if err != nil {
+		return err
+	}
+	if t, ok := endToken.(json.Delim); !ok || t.String() != "}" {
+		snapshot := make([]byte, 1024)
+		rb.Read(snapshot)
+		return aws.SerializationError{
+			Err: fmt.Sprintf("failed to decode response body with invalid JSON,"+
+				"expected `}` as end token; "+
+				"Here's a snapshot: %s",
+				snapshot, err),
+		}
+	}
+}
+
+// awsjson_sessionAttributeMapShapeDeserialize
+func awsjson_sessionAttributeMapShapeDeserialize(output *map[string]string, decoder *json.Decoder, rb *sdkio.RingBuffer) error {
+	startToken, err := decoder.Token()
+	if err == io.EOF {
+		// "Empty List"
+		return nil
+	}
+	if err != nil {
+		snapshot := make([]byte, 1024)
+		rb.Read(snapshot)
+		return aws.SerializationError{
+			Err: fmt.Sprintf("failed to decode response body with invalid JSON,"+
+				"Here's a snapshot: %s",
+				snapshot, err),
+		}
+	}
+	if t, ok := startToken.(json.Delim); !ok || t.String() != "{" {
+		snapshot := make([]byte, 1024)
+		rb.Read(snapshot)
+		return aws.SerializationError{
+			Err: fmt.Sprintf("failed to decode response body with invalid JSON,"+
+				"expected `{` as start token; "+
+				"Here's a snapshot: %s",
+				snapshot),
+		}
+	}
+
+	// decoder
+	for decoder.More() {
+		token, err := decoder.Token()
+		if err != nil {
+			snapshot := make([]byte, 1024)
+			rb.Read(snapshot)
+			return aws.SerializationError{
+				Err: fmt.Sprintf("failed to decode response body with invalid JSON,"+
+					"Here's a snapshot: %s",
+					snapshot, err),
+			}
+		}
+
+		// based on struct Stage
+		if key, ok := token.(string); ok {
+			val, err := decoder.Token()
+			if err != nil {
+				snapshot := make([]byte, 1024)
+				rb.Read(snapshot)
+				return aws.SerializationError{
+					Err: fmt.Sprintf("failed to decode response body with invalid JSON,"+
+						"Here's a snapshot: %s",
+						snapshot, err),
+				}
+			}
+			if v, ok := val.(string); ok {
+				m := *output
+				m[key] = v
+			} else {
+				return awserr.New(aws.ErrCodeSerialization,
+					fmt.Sprintf("invalid json, expected string. Here's a snapshot: %s",
+						getSnapshot(ringBuffer)), err)
+			}
+		} else {
+			return awserr.New(aws.ErrCodeSerialization,
+				fmt.Sprintf("Expected %v, to be of type string, got %T. "+
+					"Here's a snapshot: %s", key, key,
+					getSnapshot(ringBuffer)), err)
+		}
+	}
+
+	// end of the map
+	endToken, err := decoder.Token()
+	if err != nil {
+		return awserr.New(aws.ErrCodeSerialization,
+			fmt.Sprintf("failed to decode response body with invalid JSON. Here's a snapshot: %s",
+				getSnapshot(ringBuffer)), err)
+	}
+	if t, ok := endToken.(json.Delim); !ok || t.String() != "}" {
+		return awserr.New(aws.ErrCodeSerialization,
+			fmt.Sprintf("failed to decode response body with invalid JSON, expected `}` as end Token. "+
+				"Here's a snapshot: %s",
+				getSnapshot(ringBuffer)), err)
+	}
+	return nil
+}
+
+// awsjson_slotsMapShapeDeserialize
+func awsjson_slotsMapShapeDeserialize(output *map[string]string, decoder *json.Decoder, rb *sdkio.RingBuffer) error {
+	startToken, err := decoder.Token()
+	if err == io.EOF {
+		// "Empty List"
+		return nil
+	}
+	if err != nil {
+		snapshot := make([]byte, 1024)
+		rb.Read(snapshot)
+		return aws.SerializationError{
+			Err: fmt.Sprintf("failed to decode response body with invalid JSON,"+
+				"Here's a snapshot: %s",
+				snapshot, err),
+		}
+	}
+	if t, ok := startToken.(json.Delim); !ok || t.String() != "{" {
+		snapshot := make([]byte, 1024)
+		rb.Read(snapshot)
+		return aws.SerializationError{
+			Err: fmt.Sprintf("failed to decode response body with invalid JSON,"+
+				"expected `{` as start token; "+
+				"Here's a snapshot: %s",
+				snapshot),
+		}
+	}
+
+	// decoder
+	for decoder.More() {
+		token, err := decoder.Token()
+		if err != nil {
+			snapshot := make([]byte, 1024)
+			rb.Read(snapshot)
+			return aws.SerializationError{
+				Err: fmt.Sprintf("failed to decode response body with invalid JSON,"+
+					"Here's a snapshot: %s",
+					snapshot, err),
+			}
+		}
+
+		// based on struct Stage
+		if key, ok := token.(string); ok {
+			val, err := decoder.Token()
+			if err != nil {
+				snapshot := make([]byte, 1024)
+				rb.Read(snapshot)
+				return aws.SerializationError{
+					Err: fmt.Sprintf("failed to decode response body with invalid JSON,"+
+						"Here's a snapshot: %s",
+						snapshot, err),
+				}
+			}
+			if v, ok := val.(string); ok {
+				m := *output
+				m[key] = v
+			} else {
+				snapshot := make([]byte, 1024)
+				rb.Read(snapshot)
+				return aws.SerializationError{
+					Err: fmt.Sprintf("failed to decode response body with invalid JSON,"+
+						"Here's a snapshot: %s",
+						snapshot, err),
+				}
+			}
+		} else {
+			snapshot := make([]byte, 1024)
+			rb.Read(snapshot)
+			return aws.SerializationError{
+				Err: fmt.Sprintf("failed to decode response body with invalid JSON,"+
+					"Here's a snapshot: %s",
+					snapshot, err),
+			}
+
+			// end of the map
+			endToken, err := decoder.Token()
+			if err != nil {
+				snapshot := make([]byte, 1024)
+				rb.Read(snapshot)
+				return aws.SerializationError{
+					Err: fmt.Sprintf("failed to decode response body with invalid JSON,"+
+						"Here's a snapshot: %s",
+						snapshot, err),
+				}
+				if t, ok := endToken.(json.Delim); !ok || t.String() != "}" {
+					snapshot := make([]byte, 1024)
+					rb.Read(snapshot)
+					return aws.SerializationError{
+						Err: fmt.Sprintf("failed to decode response body with invalid JSON,"+
+							"expected `}` as end token; "+
+							"Here's a snapshot: %s",
+							snapshot),
+					}
+				}
+				return nil
+			}
+		}
+	}
+}
+
+// awsjson_dialogActionShapeDeserialize
+func awsjson_dialogActionShapeDeserialize(output *DialogAction, decoder *json.Decoder, rb *sdkio.RingBuffer) error {
+	startToken, err := decoder.Token()
+	if err == io.EOF {
+		// "Empty List"
+		return nil
+	}
+	if err != nil {
+		snapshot := make([]byte, 1024)
+		rb.Read(snapshot)
+		return aws.SerializationError{
+			Err: fmt.Sprintf("failed to decode response body with invalid JSON,"+
+				"Here's a snapshot: %s",
+				snapshot, err),
+		}
+	}
+	if t, ok := startToken.(json.Delim); !ok || t.String() != "{" {
+		snapshot := make([]byte, 1024)
+		rb.Read(snapshot)
+		return aws.SerializationError{
+			Err: fmt.Sprintf("failed to decode response body with invalid JSON,"+
+				"expected `{` as start token; "+
+				"Here's a snapshot: %s",
+				snapshot),
+		}
+	}
+
+	for decoder.More() {
+
+		// Todo : handle sensitive fields
+		if t == "message" {
+			val, err := decoder.Token()
+			if err != nil {
+				snapshot := make([]byte, 1024)
+				rb.Read(snapshot)
+				return aws.SerializationError{
+					Err: fmt.Sprintf("failed to decode response body with invalid JSON.", err),
+				}
+				if v, ok := val.(string); ok {
+					output.Message = &v
+				} else {
+					snapshot := make([]byte, 1024)
+					rb.Read(snapshot)
+					return aws.SerializationError{
+						Err: fmt.Sprintf("expected Message to be of type *String, "+
+							"Here's a snapshot: %s",
+							snapshot, err),
+					}
+				}
+			}
+		}
+
+		// location name: `intentName` key with value as `string`
+		if t == "intentName" {
+			val, err := decoder.Token()
+			if err != nil {
+				snapshot := make([]byte, 1024)
+				rb.Read(snapshot)
+				return aws.SerializationError{
+					Err: fmt.Sprintf("failed to decode response body with invalid JSON. "+
+						"Here's a snapshot: %s",
+						snapshot, err),
+				}
+				if v, ok := val.(string); ok {
+					output.IntentName = &v
+				} else {
+					snapshot := make([]byte, 1024)
+					rb.Read(snapshot)
+					return aws.SerializationError{
+						Err: fmt.Sprintf("expected IntentName to be of type *String, "+
+							"Here's a snapshot: %s",
+							snapshot, err),
+					}
+				}
+			}
+		}
+
+		if t == "messageFormat" {
+			val, err := decoder.Token()
+			if err != nil {
+				snapshot := make([]byte, 1024)
+				rb.Read(snapshot)
+				return aws.SerializationError{
+					Err: fmt.Sprintf("failed to decode response body with invalid JSON.", err),
+				}
+				if v, ok := val.(string); ok {
+					output.MessageFormat = v
+				} else {
+					snapshot := make([]byte, 1024)
+					rb.Read(snapshot)
+					return aws.SerializationError{
+						Err: fmt.Sprintf("expected MessageFormat to be of type *String, "+
+							"Here's a snapshot: %s",
+							snapshot, err),
+					}
+				}
+			}
+		}
+
+		if t == "slotToElicit" {
+			val, err := decoder.Token()
+			if err != nil {
+				snapshot := make([]byte, 1024)
+				rb.Read(snapshot)
+				return aws.SerializationError{
+					Err: fmt.Sprintf("failed to decode response body with invalid JSON.", err),
+				}
+				if v, ok := val.(string); ok {
+					output.SlotToElicit = &v
+				} else {
+					snapshot := make([]byte, 1024)
+					rb.Read(snapshot)
+					return aws.SerializationError{
+						Err: fmt.Sprintf("expected SlotToElicit to be of type *String, "+
+							"Here's a snapshot: %s",
+							snapshot, err),
+					}
+				}
+			}
+		}
+
+		if t == "slots" {
+			// create []string as modeled for the member shape
+			v := make(map[string]string, 0)
+			if err = awsjson_slotsMapShapeDeserialize(v, decoder, rb); err != nil {
+				snapshot := make([]byte, 1024)
+				rb.Read(snapshot)
+				return aws.SerializationError{
+					Err: fmt.Sprintf("expected SessionAttributes to be of type map[string]string, "+
+						"Here's a snapshot: %s",
+						snapshot, err),
+				}
+			} else {
+				output.Slots = v
+			}
+		}
+
+		if t == "type" {
+			val, err := decoder.Token()
+			if err != nil {
+				snapshot := make([]byte, 1024)
+				rb.Read(snapshot)
+				return aws.SerializationError{
+					Err: fmt.Sprintf("failed to decode response body with invalid JSON.", err),
+				}
+				if v, ok := val.(string); ok {
+					output.Type = v
+				} else {
+					snapshot := make([]byte, 1024)
+					rb.Read(snapshot)
+					return aws.SerializationError{
+						Err: fmt.Sprintf("expected Type to be of type *String, "+
+							"Here's a snapshot: %s",
+							snapshot, err),
+					}
+				}
+			}
+		}
+
+		if t == "fulfillmentState" {
+			val, err := decoder.Token()
+			if err != nil {
+				snapshot := make([]byte, 1024)
+				rb.Read(snapshot)
+				return aws.SerializationError{
+					Err: fmt.Sprintf("failed to decode response body with invalid JSON.", err),
+				}
+				if v, ok := val.(string); ok {
+					output.FulfillmentState = v
+				} else {
+					snapshot := make([]byte, 1024)
+					rb.Read(snapshot)
+					return aws.SerializationError{
+						Err: fmt.Sprintf("expected Type to be of type *String, "+
+							"Here's a snapshot: %s",
+							snapshot, err),
+					}
+				}
+			}
+		}
+
+	}
+
+	// end of the map
+	endToken, err := decoder.Token()
+	if err != nil {
+		snapshot := make([]byte, 1024)
+		rb.Read(snapshot)
+		return aws.SerializationError{
+			Err: fmt.Sprintf("failed to decode response body with invalid JSON,"+
+				"Here's a snapshot: %s",
+				snapshot, err),
+		}
+	}
+	if t, ok := endToken.(json.Delim); !ok || t.String() != "}" {
+		snapshot := make([]byte, 1024)
+		rb.Read(snapshot)
+		return aws.SerializationError{
+			Err: fmt.Sprintf("failed to decode response body with invalid JSON,"+
+				"expected `}` as end token; "+
+				"Here's a snapshot: %s",
+				snapshot),
+		}
+	}
 	return nil
 }
