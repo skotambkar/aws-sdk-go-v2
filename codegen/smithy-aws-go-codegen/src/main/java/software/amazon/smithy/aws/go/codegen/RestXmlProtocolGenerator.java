@@ -1,11 +1,15 @@
 package software.amazon.smithy.aws.go.codegen;
 
 import java.util.Set;
+import java.util.stream.Collectors;
 import software.amazon.smithy.codegen.core.SymbolProvider;
 import software.amazon.smithy.go.codegen.GoStackStepMiddlewareGenerator;
 import software.amazon.smithy.go.codegen.GoWriter;
 import software.amazon.smithy.go.codegen.integration.HttpBindingProtocolGenerator;
+import software.amazon.smithy.go.codegen.integration.ProtocolUtils;
 import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.knowledge.HttpBinding;
+import software.amazon.smithy.model.knowledge.HttpBindingIndex;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.Shape;
@@ -67,8 +71,13 @@ abstract class RestXmlProtocolGenerator extends HttpBindingProtocolGenerator {
             OperationShape operation,
             GoStackStepMiddlewareGenerator generator
     ) {
+        Model model = context.getModel();
+        HttpBindingIndex bindingIndex = model.getKnowledge(HttpBindingIndex.class);
 
-    }
+        Set<MemberShape> documentBindings = bindingIndex.getRequestBindings(operation, HttpBinding.Location.DOCUMENT)
+                .stream()
+                .map(HttpBinding::getMember)
+                .collect(Collectors.toSet());
 
     @Override
     protected void writeMiddlewarePayloadSerializerDelegator(
@@ -78,11 +87,25 @@ abstract class RestXmlProtocolGenerator extends HttpBindingProtocolGenerator {
             GoStackStepMiddlewareGenerator generator
     ) {
 
+        Shape inputShape = ProtocolUtils.expectInput(model, operation);
+        inputShape.accept(new XmlShapeSerVisitor(context, documentBindings::contains));
     }
 
     @Override
     protected void generateDocumentBodyShapeSerializers(
             GenerationContext context, Set<Shape> shapes
+    ) {
+        XmlShapeSerVisitor visitor = new XmlShapeSerVisitor(context);
+        shapes.forEach(shape -> shape.accept(visitor));
+    }
+
+
+    /*========================Deserializers==================================*/
+
+    @Override
+    protected void writeMiddlewareDocumentDeserializerDelegator(
+            GoWriter writer, Model model, SymbolProvider symbolProvider, OperationShape operation,
+            GoStackStepMiddlewareGenerator generator
     ) {
 
     }
