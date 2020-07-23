@@ -56,26 +56,25 @@ final class XmlShapeSerVisitor extends DocumentShapeSerVisitor {
  @Override
  protected void serializeCollection(GenerationContext context, CollectionShape shape) {
   GoWriter writer = context.getWriter();
-  Shape target = context.getModel().expectShape(shape.getMember().getTarget());
-
-  writer.write("array, closeFn := value.Array()");
-  writer.write("defer closeFn()");
-  writer.write("");
-
-  writer.openBlock("for i := range v {", "}", () -> {
-   writer.write("av := array.NewMember()");
-
-   // Null values in lists should be serialized as such. Enums can't be null, so we don't bother
-   // putting this in for their case.
-   if (!target.hasTrait(EnumTrait.class)) {
-    writer.openBlock("if vv := v[i]; vv == nil {", "}", () -> {
-     writer.write("av.Null()");
-     writer.write("continue");
-    });
-   }
-
-   target.accept(getMemberSerVisitor(shape.getMember(), "v[i]", "av"));
-  });
+//  Shape target = context.getModel().expectShape(shape.getMember().getTarget());
+//
+//  writer.write("array := value.Array()");
+//  writer.write("defer array.Close()");
+//  writer.insertTrailingNewline();
+//
+//  writer.openBlock("for i := range v {", "}", () -> {
+//   writer.write("av := array.Member()");
+//   // Null values in lists should be serialized as such. Enums can't be null, so we don't bother
+//   // putting this in for their case.
+//   if (!target.hasTrait(EnumTrait.class)) {
+//    writer.openBlock("if vv := v[i]; vv == nil {", "}", () -> {
+//     writer.write("av.Null()");
+//     writer.write("continue");
+//    });
+//   }
+//
+//   target.accept(getMemberSerVisitor(shape.getMember(), "v[i]", "av"));
+//  });
 
   writer.write("return nil");
  }
@@ -91,29 +90,31 @@ final class XmlShapeSerVisitor extends DocumentShapeSerVisitor {
  @Override
  protected void serializeMap(GenerationContext context, MapShape shape) {
   GoWriter writer = context.getWriter();
-  Shape target = context.getModel().expectShape(shape.getValue().getTarget());
-
-  writer.write("object, closeFn := value.Map()");
-  writer.write("defer closeFn()");
-  writer.insertTrailingNewline();
-
-  writer.openBlock("for key := range v {", "}", () -> {
-
-   writer.write("entry, closeFn := object.Entry()");
-   writer.write("defer closeFn()");
-   writer.write("om := entry.Key(key)");
-
-   // Null values in maps should be serialized as such. Enums can't be null, so we don't bother
-   // putting this in for their case.
-   if (!target.hasTrait(EnumTrait.class)) {
-    writer.openBlock("if vv := v[key]; vv == nil {", "}", () -> {
-     writer.write("om.Null()");
-     writer.write("continue");
-    });
-   }
-
-   target.accept(getMemberSerVisitor(shape.getValue(), "v[key]", "om"));
-  });
+//  Shape target = context.getModel().expectShape(shape.getValue().getTarget());
+//
+//  writer.write("m := value.Map()");
+//  writer.write("defer m.Close()");
+//  writer.insertTrailingNewline();
+//
+//  writer.openBlock("for key := range v {", "}", () -> {
+//
+//   writer.write("entry := m.Entry()");
+//   writer.write("defer entry.Close()");
+//   writer.insertTrailingNewline();
+//
+//   writer.write("mv := entry.Key(key, nil)");
+//
+//   // Null values in maps should be serialized as such. Enums can't be null, so we don't bother
+//   // putting this in for their case.
+//   if (!target.hasTrait(EnumTrait.class)) {
+//    writer.openBlock("if vv := v[key]; vv == nil {", "}", () -> {
+//     writer.write("mv.Null()");
+//     writer.write("continue");
+//    });
+//   }
+//
+//   target.accept(getMemberSerVisitor(shape.getValue(), "v[key]", "mv"));
+//  });
 
   writer.write("return nil");
  }
@@ -121,25 +122,25 @@ final class XmlShapeSerVisitor extends DocumentShapeSerVisitor {
  @Override
  protected void serializeStructure(GenerationContext context, StructureShape shape) {
   GoWriter writer = context.getWriter();
-
-  writer.write("object, closeFn := value.NestedElement()");
-  writer.write("defer closeFn()");
-  writer.insertTrailingNewline();
-
-  // Use a TreeSet to sort the members.
-  Set<MemberShape> members = new TreeSet<>(shape.getAllMembers().values());
-  for (MemberShape member : members) {
-   if (!memberFilter.test(member)) {
-    continue;
-   }
-   Shape target = context.getModel().expectShape(member.getTarget());
-   String serializedMemberName = getSerializedMemberName(member);
-   writeSafeMemberAccessor(context, member, "v", (operand) -> {
-    writer.write("ok := object.Key($S)", serializedMemberName);
-    target.accept(getMemberSerVisitor(member, operand, "ok"));
-   });
-   writer.write("");
-  }
+//
+//  writer.write("ne := value.NestedElement()");
+//  writer.write("defer ne.Close()");
+//  writer.insertTrailingNewline();
+//
+//  // Use a TreeSet to sort the members.
+//  Set<MemberShape> members = new TreeSet<>(shape.getAllMembers().values());
+//  for (MemberShape member : members) {
+//   if (!memberFilter.test(member)) {
+//    continue;
+//   }
+//   Shape target = context.getModel().expectShape(member.getTarget());
+//   String serializedMemberName = getSerializedMemberName(member);
+//   writeSafeMemberAccessor(context, member, "v", (operand) -> {
+//    writer.write("ek := ne.Key($S, nil)", serializedMemberName);
+//    target.accept(getMemberSerVisitor(member, operand, "ek"));
+//   });
+//   writer.insertTrailingNewline();
+//  }
 
   writer.write("return nil");
  }

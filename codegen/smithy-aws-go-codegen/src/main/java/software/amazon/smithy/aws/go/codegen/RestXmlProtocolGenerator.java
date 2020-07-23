@@ -2,9 +2,13 @@ package software.amazon.smithy.aws.go.codegen;
 
 import static software.amazon.smithy.go.codegen.integration.ProtocolUtils.writeSafeMemberAccessor;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import software.amazon.smithy.codegen.core.Symbol;
+import software.amazon.smithy.codegen.core.SymbolProvider;
 import software.amazon.smithy.go.codegen.GoStackStepMiddlewareGenerator;
 import software.amazon.smithy.go.codegen.GoWriter;
 import software.amazon.smithy.go.codegen.SmithyGoDependency;
@@ -17,11 +21,13 @@ import software.amazon.smithy.model.knowledge.HttpBindingIndex;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.Shape;
-import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.traits.MediaTypeTrait;
 import software.amazon.smithy.model.traits.StreamingTrait;
 import software.amazon.smithy.model.traits.TimestampFormatTrait;
+import software.amazon.smithy.model.traits.XmlAttributeTrait;
+import software.amazon.smithy.model.traits.XmlNameTrait;
+import software.amazon.smithy.model.traits.XmlNamespaceTrait;
 
 abstract class RestXmlProtocolGenerator extends HttpBindingProtocolGenerator {
     /**
@@ -51,6 +57,45 @@ abstract class RestXmlProtocolGenerator extends HttpBindingProtocolGenerator {
     protected String getDocumentContentType() {
         return null;
     }
+
+    // getSerializedShapeName retrieves the shape name to be used for serialization.
+    // The xml name is returned if it is defined.
+    private String getSerializedShapeName(Shape shape) {
+        Optional<XmlNameTrait> xmlNameTrait = shape.getTrait(XmlNameTrait.class);
+        return xmlNameTrait.isPresent() ? xmlNameTrait.get().getValue() : shape.getId().getName();
+    }
+
+    private void generateXMLStartElementStub (GenerationContext context, GoWriter writer, Shape shape, String dst, String inputSrc) {
+        SymbolProvider symbolProvider = context.getSymbolProvider();
+        writer.write("attr := []smithyxml.Attr{}");
+
+        Optional<XmlNamespaceTrait> xmlNamespaceTrait = shape.getTrait(XmlNamespaceTrait.class);
+        if (xmlNamespaceTrait.isPresent()) {
+            XmlNamespaceTrait ns = xmlNamespaceTrait.get();
+            writer.write("attr = append(attr, smithyxml.NewNamespaceAttribute($S, $S))",
+                    ns.getPrefix().isPresent()? ns.getPrefix().get():"", ns.getUri()
+            );
+        }
+
+        // Traverse member shapes to get attributes
+        shape.members().stream().forEach(memberShape -> {
+            Optional<XmlAttributeTrait> xmlAttributeTrait = memberShape.getTrait(XmlAttributeTrait.class);
+            if (xmlAttributeTrait.isPresent()){
+                writeSafeMemberAccessor(context, memberShape, inputSrc, (operand)->{
+                    writer.write("attr = append(attr, smithyxml.NewAttribute($S, string(*$L)))",
+                            getSerializedShapeName(memberShape),operand);
+                });
+            }
+        });
+
+        writer.openBlock("$L = smithyxml.StartElement{ ", "}", dst, () -> {
+            writer.openBlock("Name:smithyxml.Name{","},", () -> {
+                writer.write("Local: $S,", getSerializedShapeName(shape));
+            });
+            writer.write("Attr : attr,");
+        });
+    }
+
 
 
     @Override
@@ -89,21 +134,24 @@ abstract class RestXmlProtocolGenerator extends HttpBindingProtocolGenerator {
         String functionName = ProtocolGenerator.getDocumentSerializerFunctionName(inputShape, getProtocolName());
 
         writer.addUseImports(SmithyGoDependency.SMITHY_XML);
-        writer.write("xmlEncoder := smithyxml.NewEncoder()");
+        writer.addUseImports(SmithyGoDependency.BYTES);
+        writer.write("xmlEncoder := smithyxml.NewEncoder(bytes.NewBuffer(nil))");
+        // TODO: fux thsi
+//        writer.write("root := ", getXMLStartElement(input, inputShape));
+        writer.write("var root smithyxml.StartElement");
+        generateXMLStartElementStub(context, writer, inputShape, "root", "input");
 
-        writer.openBlock("if err := $L(input, xmlEncoder.Value.RootElement().Key($S)); err != nil {", "}",
-                functionName, inputShape.getId().getName(), () -> {
+        writer.openBlock("if err := $L(input, xmlEncoder.RootElement(root)); err != nil {", "}",
+                functionName, () -> {
             writer.write("return out, metadata, &smithy.SerializationError{Err: err}");
         });
-        writer.write("");
+        writer.insertTrailingNewline();
 
-        writer.addUseImports(SmithyGoDependency.BYTES);
-        writer.openBlock("if request, err = request.SetStream(bytes.NewReader(xmlEncoder.Bytes())); err != nil {", "}",
-                () -> {
+        writer.openBlock("if request, err = request.SetStream(bytes.NewReader(xmlEncoder.Bytes())); " +
+                        "err != nil {", "}", () -> {
                     writer.write("return out, metadata, &smithy.SerializationError{Err: err}");
-                });
+        });
     }
-
 
     @Override
     protected void writeMiddlewarePayloadSerializerDelegator(
@@ -137,8 +185,13 @@ abstract class RestXmlProtocolGenerator extends HttpBindingProtocolGenerator {
                 String functionName = ProtocolGenerator.getDocumentSerializerFunctionName(payloadShape,
                         getProtocolName());
                 writer.addUseImports(SmithyGoDependency.SMITHY_XML);
-                writer.write("xmlEncoder := smithyxml.NewEncoder()");
-                writer.openBlock("if err := $L($L, xmlEncoder.Value); err != nil {", "}", functionName,
+                writer.addUseImports(SmithyGoDependency.BYTES);
+                writer.write("xmlEncoder := smithyxml.NewEncoder(bytes.NewBuffer(nil))");
+
+                // TODO: verify PayloadShape needs to be wrapped
+                writer.write("var payloadRoot smithyxml.StartElement");
+                generateXMLStartElementStub(context, writer, payloadShape, "payloadRoot", s);
+                writer.openBlock("if err := $L($L, xmlEncoder.RootElement(payloadRoot)); err != nil {", "}", functionName,
                         s, () -> {
                             writer.write("return out, metadata, &smithy.SerializationError{Err: err}");
                         });
@@ -210,17 +263,12 @@ abstract class RestXmlProtocolGenerator extends HttpBindingProtocolGenerator {
 
     }
 
-    @Override
-    public ShapeId getProtocol() {
-        return null;
-    }
+
 
     @Override
     protected void writeErrorMessageCodeDeserializer(GenerationContext context) {
-        // TODO: change this
         context.getWriter().writeDocs("TODO: implement error message / code deser");
-        context.getWriter().addUseImports(SmithyGoDependency.FMT);
-        context.getWriter().write("fmt.Println(errorBody)");
+        context.getWriter().write("_= errorBody");
     }
 
     @Override
