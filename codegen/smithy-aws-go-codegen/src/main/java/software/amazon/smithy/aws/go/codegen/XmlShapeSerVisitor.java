@@ -135,44 +135,55 @@ final class XmlShapeSerVisitor extends DocumentShapeSerVisitor {
  protected void serializeCollection(GenerationContext context, CollectionShape shape) {
   GoWriter writer = context.getWriter();
   Shape target = context.getModel().expectShape(shape.getMember().getTarget());
-   // check for xml name
-   MemberShape member = shape.getMember();
+  MemberShape member = shape.getMember();
   writer.write("var array *smithyxml.Array");
 
-  // TODO: Major fix this
-   if (member.hasTrait(XmlNameTrait.class) || member.hasTrait(XmlNamespaceTrait.class)) {
-    writer.openBlock("if value.IsFlattened() {", "} else {", () ->{
-     writer.write("array = value.FlattenedArray()");
-    });
-    generateXMLStartElementStub(context, member, "customMemberName", "v");
-    writer.write("array = value.ArrayWithCustomName(customMemberName)");
-   } else{
-    writer.openBlock("if value.IsFlattened() {", "} else {", () ->{
-     writer.write("array = value.FlattenedArray()");
-    });
-    writer.write("array = value.Array()");
-   }
-  writer.write("defer array.Close()}");
+//   if (member.hasTrait(XmlNameTrait.class) || member.hasTrait(XmlNamespaceTrait.class)) {
+//    writer.openBlock("if value.IsFlattened() {", "} else {", () ->{
+//     writer.write("array = value.FlattenedArray()");
+//    });
+//    generateXMLStartElementStub(context, member, "customMemberName", "v");
+//    writer.write("array = value.ArrayWithCustomName(customMemberName)");
+//   } else{
+//    writer.openBlock("if value.IsFlattened() {", "} else {", () ->{
+//     writer.write("array = value.FlattenedArray()");
+//    });
+//    writer.write("array = value.Array()");
+//   }
+
+  // TODO: may be close it in the same function it came from.
+  writer.openBlock("if !value.IsFlattened() {", "}", () -> {
+   writer.write("defer value.Close()");
+  });
+
+  if (member.hasTrait(XmlNameTrait.class) || member.hasTrait(XmlNamespaceTrait.class)) {
+   generateXMLStartElementStub(context, member, "customMemberName", "v");
+   writer.write("array = value.ArrayWithCustomName(customMemberName)");
+  } else {
+   writer.write("array = value.Array()");
+  }
+
   writer.insertTrailingNewline();
 
   writer.openBlock("for i := range v {", "}", () -> {
-    // Null values in lists should be serialized as such. Enums can't be null, so we don't bother
-   // putting this in for their case.
-   if (!target.hasTrait(EnumTrait.class)) {
-    writer.openBlock("if vv := v[i]; vv == nil {", "}", () -> {
-     writer.write("am := array.Member()");
-     writer.write("am.Close()");
-      writer.write("continue");
-     });
-    }
+           // Null values in lists should be serialized as such. Enums can't be null, so we don't bother
+           // putting this in for their case.
+           if (!target.hasTrait(EnumTrait.class)) {
+            writer.openBlock("if vv := v[i]; vv == nil {", "}", () -> {
+             writer.write("am := array.Member()");
+             writer.write("am.Close()");
+             writer.write("continue");
+            });
+           }
 
-   if (target.isSetShape()|| target.isListShape() || target.isMapShape()) {
-      writer.write("am := array.NestedMember()");
-      target.accept(getMemberSerVisitor(shape.getMember(), "v[i]", "am"));
-   } else {
-    writer.write("am := array.Member()");
-    target.accept(getMemberSerVisitor(shape.getMember(), "v[i]", "am"));
-   }
+           // Nested Array should use Collection member
+           // TODO: check if this should include maps
+//   if (target.isSetShape()|| target.isListShape()) {
+//      writer.write("am := array.CollectionMember()");
+//   } else {
+           writer.write("am := array.Member()");
+//          }
+   target.accept(getMemberSerVisitor(shape.getMember(), "v[i]", "am"));
   });
 
   writer.write("return nil");
@@ -199,12 +210,17 @@ final class XmlShapeSerVisitor extends DocumentShapeSerVisitor {
 //  writer.write("m = value.Map()");
 //  writer.write("defer m.Close()}");
 
-  writer.write("var m *smithyxml.Map");
-  writer.openBlock("if value.IsFlattened() {", "} else {", () ->{
-   writer.write("m = value.FlattenedMap()");
+//  writer.write("var m *smithyxml.Map");
+//  writer.openBlock("if value.IsFlattened() {", "} else {", () ->{
+//   writer.write("m = value.FlattenedMap()");
+//  });
+
+
+  writer.openBlock("if !value.IsFlattened() {", "}", () -> {
+   writer.write("defer value.Close()");
   });
-  writer.write("m = value.Map()");
-  writer.write("defer m.Close()}");
+
+  writer.write("m := value.Map()");
 
 //  if (shape.hasTrait(XmlFlattenedTrait.class)
 //          || shape.getMemberTrait(context.getModel(), XmlFlattenedTrait.class).isPresent()) {
@@ -231,8 +247,15 @@ final class XmlShapeSerVisitor extends DocumentShapeSerVisitor {
    generateXMLStartElementStub(context, shape.getKey(), "keyElement", "v");
    targetKey.accept(getMemberSerVisitor(shape.getKey(), "&key", "entry.MemberElement(keyElement)"));
 
+
+   String dest = "entry.MemberElement(valueElement)";
+   // TODO should this be target?
+   if (shape.getValue().hasTrait(XmlFlattenedTrait.class)) {
+    dest = "entry.FlattenedElement(valueElement)";
+   }
+
    generateXMLStartElementStub(context, shape.getValue(), "valueElement", "v");
-   targetValue.accept(getMemberSerVisitor(shape.getValue(), "v[key]", "entry.MemberElement(valueElement)"));
+   targetValue.accept(getMemberSerVisitor(shape.getValue(), "v[key]", dest));
 
    writer.write("entry.Close()");
   });
@@ -262,15 +285,22 @@ final class XmlShapeSerVisitor extends DocumentShapeSerVisitor {
     // else use value.Member element
     generateXMLStartElementStub(context, member, "root", "v");
 
-    // TODO: check if we have a util for these types
-    if (target.isMapShape() || target.isListShape() || target.isSetShape()) {
-     writer.write("el:= value.CollectionElement($L)", "root");
-     if (target.hasTrait(XmlFlattenedTrait.class) || member.hasTrait(XmlFlattenedTrait.class)) {
-      writer.write("el = el.SetFlattened()");
-     }
+    // TODO check if this trait is on target or member
+    if (member.hasTrait(XmlFlattenedTrait.class)) {
+     writer.write("el := value.FlattenedElement($L)", "root");
     } else {
      writer.write("el := value.MemberElement($L)", "root");
     }
+
+//    // TODO: check if we have a util for these types
+//    if (target.isMapShape() || target.isListShape() || target.isSetShape()) {
+//     writer.write("el:= value.CollectionElement($L)", "root");
+//     if (target.hasTrait(XmlFlattenedTrait.class) || member.hasTrait(XmlFlattenedTrait.class)) {
+//      writer.write("el = el.SetFlattened()");
+//     }
+//    } else {
+//     writer.write("el := value.MemberElement($L)", "root");
+//    }
 
     // TODO: change this logic to be more sutle and user friendly
     // Check if shape is flattened
