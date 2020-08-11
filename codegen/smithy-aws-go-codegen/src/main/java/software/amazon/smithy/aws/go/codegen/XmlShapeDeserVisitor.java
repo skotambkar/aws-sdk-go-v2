@@ -108,7 +108,38 @@ public class XmlShapeDeserVisitor extends DocumentShapeDeserVisitor {
             writer.openBlock("switch t.Name.Local {", "}", () -> {
                 writer.openBlock("case $S:", "", serializedMemberName, () -> {
                     writer.write("var col $P", context.getSymbolProvider().toSymbol(target));
-                    target.accept(getMemberDeserVisitor(member, "col", FunctionalUtils.alwaysTrue()));
+
+                    // TODO: Should this be complex types instead
+                    if (target.isListShape() || target.isSetShape()) {
+                        writer.write("memberDecoder := smithydecoding.NewXMLNodeDecoder(decoder.Decoder, t)");
+                        writer.openBlock("for {", "}", () -> {
+                            writer.write("t, done, err = memberDecoder.Token()");
+                            writer.write("if err != nil { return err }");
+                            writer.write("if done { break }");
+
+                            CollectionShape targetAsCollection = getCollectionShape(target);
+                            MemberShape targetMember = targetAsCollection.getMember();
+                            Symbol targetMemberSymbol = symbolProvider.toSymbol(targetMember);
+                            Shape nestedTarget = context.getModel().expectShape(targetMember.getTarget());
+                            String serializedTargetMemberName = getSerializedMemberName(targetMember);
+
+                            writer.openBlock("switch t.Name.Local {", "}", () -> {
+                                writer.openBlock("case $S:", "", serializedTargetMemberName, () -> {
+                                    writer.write("originalDecoder := decoder");
+                                    writer.write("decoder = smithydecoding.NewXMLNodeDecoder(memberDecoder.Decoder, t)");
+                                    writer.openBlock("for {", "}", () -> {
+                                        writer.write("var mv $P", targetMemberSymbol);
+                                        nestedTarget.accept(getMemberDeserVisitor(targetMember, "mv", FunctionalUtils.alwaysTrue()));
+                                        writer.write("col = append(col, mv)");
+                                    });
+                                });
+                                writer.write("decoder = originalDecoder");
+                            });
+                        });
+                    } else {
+                        // TODO: Should this be only simple types
+                        target.accept(getMemberDeserVisitor(member, "col", FunctionalUtils.alwaysTrue()));
+                    }
                     writer.write("sv = append(sv, col)");
                 });
 
@@ -119,6 +150,18 @@ public class XmlShapeDeserVisitor extends DocumentShapeDeserVisitor {
         });
         writer.write("*v = sv");
         writer.write("return nil");
+    }
+
+    private CollectionShape getCollectionShape(Shape shape) {
+        if (shape.isListShape()) {
+            return shape.asListShape().get();
+        }
+
+        if (shape.isSetShape()) {
+            return shape.asSetShape().get();
+        }
+
+        return null;
     }
 
     public void generateFlattenedCollection(GenerationContext context, CollectionShape shape) {
