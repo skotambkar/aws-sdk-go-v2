@@ -28,10 +28,12 @@ import java.util.stream.Collectors;
 import software.amazon.smithy.codegen.core.CodegenException;
 import software.amazon.smithy.codegen.core.Symbol;
 import software.amazon.smithy.codegen.core.SymbolProvider;
+import software.amazon.smithy.go.codegen.ApplicationProtocol;
 import software.amazon.smithy.go.codegen.GoStackStepMiddlewareGenerator;
 import software.amazon.smithy.go.codegen.GoWriter;
 import software.amazon.smithy.go.codegen.SmithyGoDependency;
 import software.amazon.smithy.go.codegen.integration.HttpBindingProtocolGenerator;
+import software.amazon.smithy.go.codegen.integration.HttpProtocolGeneratorUtils;
 import software.amazon.smithy.go.codegen.integration.ProtocolGenerator;
 import software.amazon.smithy.go.codegen.integration.ProtocolUtils;
 import software.amazon.smithy.model.Model;
@@ -310,11 +312,10 @@ abstract class RestJsonProtocolGenerator extends HttpBindingProtocolGenerator {
     }
 
     @Override
-    protected void writeErrorMessageCodeDeserializer(GenerationContext context) {
+    protected void writeErrorMessageCodeDeserializer(GenerationContext context, OperationShape operation) {
         writeJsonErrorMessageCodeDeserializer(context);
     }
 
-    @Override
     protected void deserializeError(GenerationContext context, StructureShape shape) {
         GoWriter writer = context.getWriter();
         Symbol symbol = context.getSymbolProvider().toSymbol(shape);
@@ -417,5 +418,36 @@ abstract class RestJsonProtocolGenerator extends HttpBindingProtocolGenerator {
     @Override
     public void generateProtocolTests(GenerationContext context) {
         AwsProtocolUtils.generateHttpProtocolTests(context);
+    }
+
+    @Override
+    public void handleOperationErrorResponse(GenerationContext context, OperationShape operation) {
+        GoWriter writer = context.getWriter();
+        String errorFunctionName = ProtocolGenerator.getOperationErrorDeserFunctionName(
+                operation, context.getProtocolName());
+
+        writer.openBlock("if response.StatusCode < 200 || response.StatusCode >= 300 {", "}", () -> {
+            writer.write("return out, metadata, $L(response)", errorFunctionName);
+        });
+    }
+
+    @Override
+    public void generateErrorDeserializer(GenerationContext context, StructureShape shape) {
+        GoWriter writer = context.getWriter();
+        String functionName = ProtocolGenerator.getErrorDeserFunctionName(shape, context.getProtocolName());
+        Symbol responseType = getApplicationProtocol().getResponseType();
+
+        writer.addUseImports(SmithyGoDependency.BYTES);
+        writer.openBlock("func $L(response $P, errorBody *bytes.Reader) error {", "}",
+                functionName, responseType, () -> deserializeError(context, shape));
+        writer.write("");
+    }
+
+    @Override
+    public Set<StructureShape> generateErrorDispatcher(GenerationContext context, OperationShape operation){
+        ApplicationProtocol applicationProtocol = getApplicationProtocol();
+        Symbol responseType = applicationProtocol.getResponseType();
+        return HttpProtocolGeneratorUtils.generateJsonErrorDispatcher(
+                context, operation, responseType, (c, s) -> writeErrorMessageCodeDeserializer(c, s));
     }
 }

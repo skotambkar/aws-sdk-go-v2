@@ -108,7 +108,7 @@ abstract class JsonRpcProtocolGenerator extends HttpRpcProtocolGenerator {
     }
 
     @Override
-    protected void writeErrorMessageCodeDeserializer(GenerationContext context) {
+    protected void writeErrorMessageCodeDeserializer(GenerationContext context, OperationShape operation) {
         writeJsonErrorMessageCodeDeserializer(context);
     }
 

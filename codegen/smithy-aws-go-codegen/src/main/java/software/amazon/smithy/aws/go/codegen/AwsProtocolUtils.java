@@ -146,6 +146,20 @@ final class AwsProtocolUtils {
         writer.write("");
     }
 
+    public static void initializeXMLDecoder(GoWriter writer, String bodyLocation) {
+        // Use a ring buffer and tee reader to help in pinpointing any deserialization errors.
+        writer.addUseImports(SmithyGoDependency.SMITHY_IO);
+        writer.write("buff := make([]byte, 1024)");
+        writer.write("ringBuffer := smithyio.NewRingBuffer(buff)");
+        writer.write("");
+
+        writer.addUseImports(SmithyGoDependency.IO);
+        writer.addUseImports(SmithyGoDependency.SMITHY_DECODING);
+        writer.write("body := io.TeeReader($L, ringBuffer)", bodyLocation);
+        writer.write("decoder := smithydecoding.RootDecoder(body)");
+        writer.insertTrailingNewline();
+    }
+
     public static void handleDecodeError(GoWriter writer, String returnExtras) {
         writer.openBlock("if err != nil {", "}", () -> {
             writer.addUseImports(SmithyGoDependency.BYTES);
