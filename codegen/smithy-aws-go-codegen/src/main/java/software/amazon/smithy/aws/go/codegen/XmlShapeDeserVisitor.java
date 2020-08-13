@@ -99,8 +99,6 @@ public class XmlShapeDeserVisitor extends DocumentShapeDeserVisitor {
             writer.write("if err != nil { return err }");
             writer.write("if done { break }");
 
-
-            // non-flattened maps
             MemberShape member = shape.getMember();
             Shape target = context.getModel().expectShape(member.getTarget());
             String memberName = symbolProvider.toMemberName(member);
@@ -109,7 +107,7 @@ public class XmlShapeDeserVisitor extends DocumentShapeDeserVisitor {
                 writer.openBlock("case $S:", "", serializedMemberName, () -> {
                     writer.write("var col $P", context.getSymbolProvider().toSymbol(target));
 
-                    // TODO: Should this be complex types instead
+                    // in case of nested collections we will have nested `member` element tags
                     if (target.isListShape() || target.isSetShape()) {
                         writer.write("memberDecoder := smithydecoding.NewXMLNodeDecoder(decoder.Decoder, t)");
                         writer.openBlock("for {", "}", () -> {
@@ -137,7 +135,6 @@ public class XmlShapeDeserVisitor extends DocumentShapeDeserVisitor {
                             });
                         });
                     } else {
-                        // TODO: Should this be only simple types
                         target.accept(getMemberDeserVisitor(member, "col", FunctionalUtils.alwaysTrue()));
                     }
                     writer.write("sv = append(sv, col)");
@@ -164,7 +161,8 @@ public class XmlShapeDeserVisitor extends DocumentShapeDeserVisitor {
         return null;
     }
 
-    public void generateFlattenedCollection(GenerationContext context, CollectionShape shape) {
+    // TODO: documentation
+    public void generateFlattenedCollectionDeserializer(GenerationContext context, CollectionShape shape) {
         GoWriter writer = context.getWriter();
         SymbolProvider symbolProvider = context.getSymbolProvider();
         Symbol symbol = symbolProvider.toSymbol(shape);
@@ -173,7 +171,6 @@ public class XmlShapeDeserVisitor extends DocumentShapeDeserVisitor {
         Symbol memberSymbol = symbolProvider.toSymbol(member);
 
         Shape target  = context.getModel().expectShape(member.getTarget());
-        Symbol targetSymbol = symbolProvider.toSymbol(target);
 
         writer.openBlock("func $L(v *$P, decoder *smithydecoding.XMLNodeDecoder) error {", "}",
                 getUnwrappedMapDelegateFunctionName(context, shape), symbol, () -> {
@@ -242,7 +239,8 @@ public class XmlShapeDeserVisitor extends DocumentShapeDeserVisitor {
         writer.write("return nil");
     }
 
-    public void generateFlattenedMap(GenerationContext context, MapShape shape) {
+    // TODO: documentation
+    public void generateFlattenedMapDeserializer(GenerationContext context, MapShape shape) {
         GoWriter writer = context.getWriter();
         SymbolProvider symbolProvider = context.getSymbolProvider();
         Symbol symbol = symbolProvider.toSymbol(shape);
@@ -299,29 +297,11 @@ public class XmlShapeDeserVisitor extends DocumentShapeDeserVisitor {
         return ProtocolGenerator.getDocumentDeserializerFunctionName(shape, context.getProtocolName()) + "Unwrapped";
     }
 
-    // Generate the unwrapped Map method
-
-    protected void deserializeUnwrappedMap(GenerationContext context, MapShape shape) {
-        GoWriter writer = context.getWriter();
-        SymbolProvider symbolProvider = context.getSymbolProvider();
-        Symbol symbol = symbolProvider.toSymbol(shape);
-
-        writer.write("return nill");
-    }
-
-    private String getUnWrappedMapFunctionName(GenerationContext context, Shape shape) {
-        return ProtocolGenerator.getDocumentDeserializerFunctionName(shape, context.getProtocolName()) + "Unwrapped";
-    }
-
-
-
     @Override
     protected void deserializeStructure(GenerationContext context, StructureShape shape) {
         GoWriter writer = context.getWriter();
         SymbolProvider symbolProvider = context.getSymbolProvider();
         Symbol symbol = symbolProvider.toSymbol(shape);
-
-//        writeXMLTokenizerStartStub(writer, shape);
 
         // Initialize the value now that the start stub has verified that there's something there.
         writer.write("var sv $P", symbol);
@@ -394,7 +374,6 @@ public class XmlShapeDeserVisitor extends DocumentShapeDeserVisitor {
             });
         });
 
-//        writeXMLTokenizerEndStub(writer, shape);
         writer.write("*v = sv");
         writer.write("return nil");
     }
@@ -421,49 +400,5 @@ public class XmlShapeDeserVisitor extends DocumentShapeDeserVisitor {
         LOGGER.warning("Union type is currently unsupported for XML deserialization.");
         context.getWriter().writeDocs("TODO: implement union serialization.");
         writer.write("return nil");
-    }
-
-    @Override
-    protected Void getDefault(Shape shape) {
-        if (shape.isMapShape()) {
-            generateDeserFunction(shape , getUnWrappedMapFunctionName(super.getContext(), shape), (c, s) -> deserializeUnwrappedMap(c, s.asMapShape().get()));
-        }
-        return null;
-    }
-
-    /*=================================== Helpers ===========================================*/
-
-    /**
-     * Writes out a stub to initialize decoding.
-     *
-     * @param writer The GoWriter to use.
-     * @param shape The shape the stub is intended to start arsing.
-     */
-    private void writeXMLTokenizerStartStub(GoWriter writer, Shape shape) {
-        writer.addUseImports(SmithyGoDependency.XML);
-        writer.write("startToken, err := decoder.Token()");
-        writer.write("if err != nil { return err }");
-        writer.write("if startToken == nil { return nil }");
-        writer.openBlock("if t, ok := startToken.(xml.StartElement); !ok {","}", () -> {
-            writer.addUseImports(SmithyGoDependency.FMT);
-            writer.write("return fmt.Errorf(\"expected start token, got %v\", startToken)");
-        });
-        writer.insertTrailingNewline();
-    }
-
-    /**
-     * Writes out a stub to finalize decoding.
-     *
-     * @param writer The GoWriter to use.
-     * @param shape The shape the stub is intended to finalize parsing for.
-     */
-    private void writeXMLTokenizerEndStub(GoWriter writer, Shape shape) {
-        writer.addUseImports(SmithyGoDependency.XML);
-        writer.write("endToken, err := decoder.Token()");
-        writer.write("if err != nil { return err }");
-        writer.openBlock("if t, ok := endToken.(xml.EndElement); !ok {", "}", () -> {
-            writer.write("return fmt.Errorf(\"expected end element, got %v\",endToken)");
-        });
-        writer.insertTrailingNewline();
     }
 }

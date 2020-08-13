@@ -21,8 +21,10 @@ import static software.amazon.smithy.aws.go.codegen.AwsProtocolUtils.writeJsonEr
 
 import java.util.Set;
 import software.amazon.smithy.codegen.core.Symbol;
+import software.amazon.smithy.go.codegen.ApplicationProtocol;
 import software.amazon.smithy.go.codegen.GoWriter;
 import software.amazon.smithy.go.codegen.SmithyGoDependency;
+import software.amazon.smithy.go.codegen.integration.HttpProtocolGeneratorUtils;
 import software.amazon.smithy.go.codegen.integration.HttpRpcProtocolGenerator;
 import software.amazon.smithy.go.codegen.integration.ProtocolGenerator;
 import software.amazon.smithy.go.codegen.integration.ProtocolUtils;
@@ -107,10 +109,6 @@ abstract class JsonRpcProtocolGenerator extends HttpRpcProtocolGenerator {
         shapes.forEach(shape -> shape.accept(visitor));
     }
 
-    @Override
-    protected void writeErrorMessageCodeDeserializer(GenerationContext context, OperationShape operation) {
-        writeJsonErrorMessageCodeDeserializer(context);
-    }
 
     @Override
     protected void deserializeError(GenerationContext context, StructureShape shape) {
@@ -130,5 +128,17 @@ abstract class JsonRpcProtocolGenerator extends HttpRpcProtocolGenerator {
     @Override
     public void generateProtocolTests(GenerationContext context) {
         AwsProtocolUtils.generateHttpProtocolTests(context);
+    }
+
+    @Override
+    public Set<StructureShape> generateErrorDispatcher(GenerationContext context, OperationShape operation){
+        ApplicationProtocol applicationProtocol = getApplicationProtocol();
+        Symbol responseType = applicationProtocol.getResponseType();
+        return HttpProtocolGeneratorUtils.generateJsonErrorDispatcher(
+                context, operation, responseType, this::writeErrorMessageCodeDeserializer);
+    }
+
+    protected void writeErrorMessageCodeDeserializer(GenerationContext context) {
+        writeJsonErrorMessageCodeDeserializer(context);
     }
 }

@@ -311,8 +311,7 @@ abstract class RestJsonProtocolGenerator extends HttpBindingProtocolGenerator {
         writer.write("");
     }
 
-    @Override
-    protected void writeErrorMessageCodeDeserializer(GenerationContext context, OperationShape operation) {
+    protected void writeErrorMessageCodeDeserializer(GenerationContext context) {
         writeJsonErrorMessageCodeDeserializer(context);
     }
 
@@ -321,8 +320,7 @@ abstract class RestJsonProtocolGenerator extends HttpBindingProtocolGenerator {
         Symbol symbol = context.getSymbolProvider().toSymbol(shape);
 
         writer.write("output := &$T{}", symbol);
-        writer.write("_ = output");
-        writer.write("");
+        writer.insertTrailingNewline();
 
         // TODO: filter on error document body contains
         if (isShapeWithResponseBindings(context.getModel(), shape, Location.DOCUMENT)) {
@@ -421,17 +419,6 @@ abstract class RestJsonProtocolGenerator extends HttpBindingProtocolGenerator {
     }
 
     @Override
-    public void handleOperationErrorResponse(GenerationContext context, OperationShape operation) {
-        GoWriter writer = context.getWriter();
-        String errorFunctionName = ProtocolGenerator.getOperationErrorDeserFunctionName(
-                operation, context.getProtocolName());
-
-        writer.openBlock("if response.StatusCode < 200 || response.StatusCode >= 300 {", "}", () -> {
-            writer.write("return out, metadata, $L(response)", errorFunctionName);
-        });
-    }
-
-    @Override
     public void generateErrorDeserializer(GenerationContext context, StructureShape shape) {
         GoWriter writer = context.getWriter();
         String functionName = ProtocolGenerator.getErrorDeserFunctionName(shape, context.getProtocolName());
@@ -448,6 +435,6 @@ abstract class RestJsonProtocolGenerator extends HttpBindingProtocolGenerator {
         ApplicationProtocol applicationProtocol = getApplicationProtocol();
         Symbol responseType = applicationProtocol.getResponseType();
         return HttpProtocolGeneratorUtils.generateJsonErrorDispatcher(
-                context, operation, responseType, (c, s) -> writeErrorMessageCodeDeserializer(c, s));
+                context, operation, responseType, this::writeErrorMessageCodeDeserializer);
     }
 }

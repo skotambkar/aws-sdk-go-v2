@@ -1,9 +1,5 @@
 package software.amazon.smithy.aws.go.codegen;
 
-import static software.amazon.smithy.aws.go.codegen.AwsProtocolUtils.handleDecodeError;
-import static software.amazon.smithy.aws.go.codegen.AwsProtocolUtils.initializeJsonDecoder;
-import static software.amazon.smithy.aws.go.codegen.AwsProtocolUtils.initializeXMLDecoder;
-
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.function.Predicate;
@@ -89,49 +85,6 @@ abstract class RestXmlProtocolGenerator extends HttpBindingProtocolGenerator {
 
     /*======================== Error Deser ================================*/
 
-
-    @Override
-    public void handleOperationErrorResponse(GenerationContext context, OperationShape operation) {
-        GoWriter writer = context.getWriter();
-        String errorFunctionName = ProtocolGenerator.getOperationErrorDeserFunctionName(
-                operation, context.getProtocolName());
-
-        writer.addUseImports(SmithyGoDependency.SMITHY_IO);
-        writer.write("buff := make([]byte, 1024)");
-        writer.write("ringBuffer := smithyio.NewRingBuffer(buff)");
-//        writer.write("var errorBody *bytes.Buffer");
-//        writer.write("w := io.MultiWriter(ringBuffer, errorBody)");
-        writer.write("");
-
-        writer.addUseImports(SmithyGoDependency.IO);
-        writer.write("body := io.TeeReader(response.Body, ringBuffer)");
-        writer.write("_  = body");
-        writer.write("defer response.Body.Close()");
-        writer.write("");
-
-        writer.addUseImports(SmithyGoDependency.SMITHY_DECODING);
-        writer.write("var decoder *smithydecoding.XMLNodeDecoder");
-        writer.write("_ = decoder");
-
-        // TODO: Add customization for S3 to check for response status code 200
-        writer.openBlock("if response.StatusCode < 200 || response.StatusCode >= 300 {", "}", () -> {
-//            writer.addUseImports(SmithyGoDependency.XML);
-//            writer.write("rootDecoder := xml.NewDecoder(body)");
-//
-//            writer.write("// fetch the root element ignoring comments and preamble");
-//            writer.write("t, err  := smithydecoding.RootElement(rootDecoder)");
-//
-//            writer.addUseImports(SmithyGoDependency.IO);
-//            writer.write("if err == io.EOF { err = nil }");
-//            writer.write("if err != nil {return out, metadata, "
-//                    + "fmt.Errorf(\"error fetching the start element of xml response body: %w\", err)}");
-//            writer.write("decoder = smithydecoding.NewXMLNodeDecoder(rootDecoder, t)");
-//            writer.insertTrailingNewline();
-
-            writer.write("return out, metadata, $L(response)", errorFunctionName);
-        });
-    }
-
     @Override
     public void generateErrorDeserializer(GenerationContext context, StructureShape shape) {
         GoWriter writer = context.getWriter();
@@ -139,27 +92,24 @@ abstract class RestXmlProtocolGenerator extends HttpBindingProtocolGenerator {
         Symbol responseType = getApplicationProtocol().getResponseType();
 
         writer.addUseImports(SmithyGoDependency.SMITHY_DECODING);
-
         writer.openBlock("func $L(decoder *smithydecoding.XMLNodeDecoder, response $P) error {", "}",
                 functionName, responseType, () -> deserializeError(context, shape));
         writer.insertTrailingNewline();
     }
 
+    @Override
     protected void deserializeError(GenerationContext context, StructureShape shape) {
         GoWriter writer = context.getWriter();
         Symbol symbol = context.getSymbolProvider().toSymbol(shape);
 
         writer.write("output := &$T{}", symbol);
-        writer.write("_ = output");
-        writer.write("");
+        writer.insertTrailingNewline();
 
-        // TODO: filter on error document body contains
         if (isShapeWithResponseBindings(context.getModel(), shape, HttpBinding.Location.DOCUMENT)) {
             String documentDeserFunctionName = ProtocolGenerator.getDocumentDeserializerFunctionName(
                     shape, getProtocolName());
 
             writer.write("err := $L(&output, decoder)", documentDeserFunctionName);
-            // TODO follow json pattern and return wrapped deserialization Error
             writer.addUseImports(SmithyGoDependency.IO);
             writer.write("if err == io.EOF { err = nil }");
             writer.write("if err != nil {return err}");
@@ -174,13 +124,12 @@ abstract class RestXmlProtocolGenerator extends HttpBindingProtocolGenerator {
                 writer.write(String.format("return &smithy.DeserializationError{Err: %s}",
                         "fmt.Errorf(\"failed to decode response error with invalid HTTP bindings, %w\", err)"));
             });
-            writer.write("");
+            writer.insertTrailingNewline();
         }
 
         writer.write("return output");
     }
 
-    @Override
     public void writeErrorMessageCodeDeserializer(GenerationContext context, OperationShape operation) {
         GoWriter writer = context.getWriter();
         boolean isNoErrorWrapping = false;
@@ -276,18 +225,17 @@ abstract class RestXmlProtocolGenerator extends HttpBindingProtocolGenerator {
             GenerationContext context, Set<Shape> shapes
     ) {
         XmlShapeDeserVisitor visitor = new XmlShapeDeserVisitor(context);
-//        shapes.forEach(shape -> shape.accept(visitor));
         for (Shape shape : shapes) {
             if (shape.isMapShape()) {
-                visitor.generateFlattenedMap(context, shape.asMapShape().get());
+                visitor.generateFlattenedMapDeserializer(context, shape.asMapShape().get());
             }
 
             if (shape.isListShape()) {
-                visitor.generateFlattenedCollection(context, shape.asListShape().get());
+                visitor.generateFlattenedCollectionDeserializer(context, shape.asListShape().get());
             }
 
             if (shape.isSetShape()) {
-                visitor.generateFlattenedCollection(context, shape.asSetShape().get());
+                visitor.generateFlattenedCollectionDeserializer(context, shape.asSetShape().get());
             }
 
             shape.accept(visitor);
@@ -364,6 +312,19 @@ abstract class RestXmlProtocolGenerator extends HttpBindingProtocolGenerator {
             Shape shape,
             String operand
     ) {
+        writer.addUseImports(SmithyGoDependency.SMITHY_DECODING);
+        writer.addUseImports(SmithyGoDependency.SMITHY_IO);
+
+        writer.write("var decoder *smithydecoding.XMLNodeDecoder");
+        writer.write("buff := make([]byte, 1024)");
+        writer.write("ringBuffer := smithyio.NewRingBuffer(buff)");
+        writer.insertTrailingNewline();
+
+        writer.addUseImports(SmithyGoDependency.IO);
+        writer.write("body := io.TeeReader(response.Body, ringBuffer)");
+        writer.write("defer response.Body.Close()");
+        writer.insertTrailingNewline();
+
         writer.openBlock("if decoder == nil {", "}", () -> {
             writer.addUseImports(SmithyGoDependency.XML);
             writer.addUseImports(SmithyGoDependency.SMITHY_DECODING);
