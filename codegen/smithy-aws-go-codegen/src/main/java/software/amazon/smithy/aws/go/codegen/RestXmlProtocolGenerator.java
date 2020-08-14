@@ -111,9 +111,12 @@ abstract class RestXmlProtocolGenerator extends HttpBindingProtocolGenerator {
 
             writer.write("err := $L(&output, decoder)", documentDeserFunctionName);
             writer.addUseImports(SmithyGoDependency.IO);
-            writer.write("if err == io.EOF { err = nil }");
-            writer.write("if err != nil {return err}");
-            writer.write("");
+            writer.openBlock("if err != nil && err != io.EOF { ", "}", () -> {
+                writer.addUseImports(SmithyGoDependency.SMITHY);
+                writer.write(String.format("return &smithy.DeserializationError{Err: %s}",
+                        "fmt.Errorf(\"failed to decode response error with invalid XML document bindings, %w\", err)"));
+            });
+            writer.insertTrailingNewline();
         }
 
         if (isShapeWithRestResponseBindings(context.getModel(), shape)) {
@@ -130,15 +133,26 @@ abstract class RestXmlProtocolGenerator extends HttpBindingProtocolGenerator {
         writer.write("return output");
     }
 
-    public void writeErrorMessageCodeDeserializer(GenerationContext context, OperationShape operation) {
+    /**
+     * Generates code to retrieve error code or error message from the error response body
+     * This method is used by generateErrorDispatcher to generate operation specific error handling functions
+     *
+     * @param context the generation context
+     *
+     * Refer: https://awslabs.github.io/smithy/1.0/spec/aws/aws-restxml-protocol.html#operation-error-serialization
+     */
+    private void writeErrorMessageCodeDeserializer(GenerationContext context) {
         GoWriter writer = context.getWriter();
         boolean isNoErrorWrapping = false;
-        if (operation.hasTrait(RestXmlTrait.ID)) {
-            RestXmlTrait trait = operation.getTrait(RestXmlTrait.class).get();
+
+        // Check if service uses isNoErrorWrapping setting
+        if (context.getService().hasTrait(RestXmlTrait.ID)) {
+            RestXmlTrait trait = context.getService().getTrait(RestXmlTrait.class).get();
             isNoErrorWrapping = trait.isNoErrorWrapping();
         }
+
         writer.write("errorCode, err := smithydecoding.GetXMLResponseErrorCode(errorBody, $L)", isNoErrorWrapping);
-        writer.write("if err != nil { return err}");
+        writer.write("if err != nil { return err }");
         writer.insertTrailingNewline();
 
         writer.write("errorBody.Seek(0, io.SeekStart)");
@@ -146,11 +160,11 @@ abstract class RestXmlProtocolGenerator extends HttpBindingProtocolGenerator {
     }
 
     @Override
-    public Set<StructureShape> generateErrorDispatcher(GenerationContext context, OperationShape operation){
+    protected Set<StructureShape> generateErrorDispatcher(GenerationContext context, OperationShape operation){
         ApplicationProtocol applicationProtocol = getApplicationProtocol();
         Symbol responseType = applicationProtocol.getResponseType();
         return HttpProtocolGeneratorUtils.generateXmlErrorDispatcher(
-                context, operation, responseType, (c, s) -> writeErrorMessageCodeDeserializer(c, s));
+                context, operation, responseType, this::writeErrorMessageCodeDeserializer);
     }
 
     /*======================== Document Deser ================================*/
@@ -331,7 +345,7 @@ abstract class RestXmlProtocolGenerator extends HttpBindingProtocolGenerator {
             writer.write("rootDecoder := xml.NewDecoder(body)");
 
             writer.write("// fetch the root element ignoring comments and preamble");
-            writer.write("t, err  := smithydecoding.RootElement(rootDecoder)");
+            writer.write("t, err  := smithydecoding.FetchXmlRootElement(rootDecoder)");
 
             writer.addUseImports(SmithyGoDependency.IO);
             writer.write("if err == io.EOF { err = nil }");

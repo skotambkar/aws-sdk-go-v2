@@ -101,7 +101,6 @@ public class XmlShapeDeserVisitor extends DocumentShapeDeserVisitor {
 
             MemberShape member = shape.getMember();
             Shape target = context.getModel().expectShape(member.getTarget());
-            String memberName = symbolProvider.toMemberName(member);
             String serializedMemberName = getSerializedMemberName(member);
             writer.openBlock("switch t.Name.Local {", "}", () -> {
                 writer.openBlock("case $S:", "", serializedMemberName, () -> {
@@ -161,7 +160,7 @@ public class XmlShapeDeserVisitor extends DocumentShapeDeserVisitor {
         return null;
     }
 
-    // TODO: documentation
+    // Generates deserializer function for collection shapes with xml flattened trait.
     public void generateFlattenedCollectionDeserializer(GenerationContext context, CollectionShape shape) {
         GoWriter writer = context.getWriter();
         SymbolProvider symbolProvider = context.getSymbolProvider();
@@ -239,8 +238,8 @@ public class XmlShapeDeserVisitor extends DocumentShapeDeserVisitor {
         writer.write("return nil");
     }
 
-    // TODO: documentation
-    public void generateFlattenedMapDeserializer(GenerationContext context, MapShape shape) {
+    // Generates deserializer function for flattened maps.
+    protected void generateFlattenedMapDeserializer(GenerationContext context, MapShape shape) {
         GoWriter writer = context.getWriter();
         SymbolProvider symbolProvider = context.getSymbolProvider();
         Symbol symbol = symbolProvider.toSymbol(shape);
