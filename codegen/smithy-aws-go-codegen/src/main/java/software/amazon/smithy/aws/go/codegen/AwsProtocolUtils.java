@@ -150,6 +150,7 @@ final class AwsProtocolUtils {
         writer.openBlock("if err != nil {", "}", () -> {
             writer.addUseImports(SmithyGoDependency.BYTES);
             writer.addUseImports(SmithyGoDependency.SMITHY);
+            writer.addUseImports(SmithyGoDependency.IO);
             writer.write("var snapshot bytes.Buffer");
             writer.write("io.Copy(&snapshot, ringBuffer)");
             writer.openBlock("return $L&smithy.DeserializationError {", "}", returnExtras, () -> {

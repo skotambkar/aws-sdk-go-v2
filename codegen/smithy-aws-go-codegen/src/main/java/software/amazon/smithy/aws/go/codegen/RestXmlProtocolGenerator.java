@@ -138,18 +138,15 @@ abstract class RestXmlProtocolGenerator extends HttpBindingProtocolGenerator {
      * This method is used by generateErrorDispatcher to generate operation specific error handling functions
      *
      * @param context the generation context
-     *
-     * Refer: https://awslabs.github.io/smithy/1.0/spec/aws/aws-restxml-protocol.html#operation-error-serialization
+     * @see <a href="https://awslabs.github.io/smithy/1.0/spec/aws/aws-restxml-protocol.html#operation-error-serialization">Rest-XML operation error serialization.</a>
      */
     private void writeErrorMessageCodeDeserializer(GenerationContext context) {
         GoWriter writer = context.getWriter();
         boolean isNoErrorWrapping = false;
 
         // Check if service uses isNoErrorWrapping setting
-        if (context.getService().hasTrait(RestXmlTrait.ID)) {
-            RestXmlTrait trait = context.getService().getTrait(RestXmlTrait.class).get();
-            isNoErrorWrapping = trait.isNoErrorWrapping();
-        }
+        isNoErrorWrapping = context.getService().getTrait(RestXmlTrait.class).map(
+                RestXmlTrait::isNoErrorWrapping).orElse(false);
 
         writer.write("errorCode, err := smithydecoding.GetXMLResponseErrorCode(errorBody, $L)", isNoErrorWrapping);
         writer.write("if err != nil { return err }");
@@ -160,7 +157,7 @@ abstract class RestXmlProtocolGenerator extends HttpBindingProtocolGenerator {
     }
 
     @Override
-    protected Set<StructureShape> generateErrorDispatcher(GenerationContext context, OperationShape operation){
+    protected Set<StructureShape> generateErrorDispatcher(GenerationContext context, OperationShape operation) {
         ApplicationProtocol applicationProtocol = getApplicationProtocol();
         Symbol responseType = applicationProtocol.getResponseType();
         return HttpProtocolGeneratorUtils.generateXmlErrorDispatcher(
@@ -179,8 +176,7 @@ abstract class RestXmlProtocolGenerator extends HttpBindingProtocolGenerator {
         Shape targetShape = ProtocolUtils.expectOutput(model, operation);
         String operand = "output";
 
-        boolean isShapeWithPayloadBinding = isShapeWithResponseBindings(model, operation, HttpBinding.Location.PAYLOAD);
-        if (isShapeWithPayloadBinding) {
+        if (isShapeWithResponseBindings(model, operation, HttpBinding.Location.PAYLOAD)) {
             // since payload trait can only be applied to a single member in a output shape
             MemberShape memberShape = model.getKnowledge(HttpBindingIndex.class)
                     .getResponseBindings(operation, HttpBinding.Location.PAYLOAD).stream()
@@ -234,24 +230,12 @@ abstract class RestXmlProtocolGenerator extends HttpBindingProtocolGenerator {
         writer.write("");
     }
 
+
+
     @Override
-    protected void generateDocumentBodyShapeDeserializers(
-            GenerationContext context, Set<Shape> shapes
-    ) {
+    protected void generateDocumentBodyShapeDeserializers(GenerationContext context, Set<Shape> shapes) {
         XmlShapeDeserVisitor visitor = new XmlShapeDeserVisitor(context);
         for (Shape shape : shapes) {
-            if (shape.isMapShape()) {
-                visitor.generateFlattenedMapDeserializer(context, shape.asMapShape().get());
-            }
-
-            if (shape.isListShape()) {
-                visitor.generateFlattenedCollectionDeserializer(context, shape.asListShape().get());
-            }
-
-            if (shape.isSetShape()) {
-                visitor.generateFlattenedCollectionDeserializer(context, shape.asSetShape().get());
-            }
-
             shape.accept(visitor);
         }
     }
@@ -274,38 +258,39 @@ abstract class RestXmlProtocolGenerator extends HttpBindingProtocolGenerator {
 
             String memberName = symbolProvider.toMemberName(memberShape);
             Shape targetShape = context.getModel().expectShape(memberShape.getTarget());
-            if (targetShape.isStringShape() || targetShape.isBlobShape()) {
-                writer.openBlock("func $L(v $P, body io.ReadCloser) error {", "}",
-                        funcName, shapeSymbol, () -> {
-                            writer.openBlock("if v == nil {", "}", () -> {
-                                writer.write("return fmt.Errorf(\"unsupported deserialization of nil %T\", v)");
-                            });
-                            writer.write("");
-
-                            if (!targetShape.hasTrait(StreamingTrait.class)) {
-                                writer.addUseImports(SmithyGoDependency.IOUTIL);
-                                writer.write("bs, err := ioutil.ReadAll(body)");
-                                writer.write("if err != nil { return err }");
-                                writer.openBlock("if len(bs) > 0 {", "}", () -> {
-                                    if (targetShape.isBlobShape()) {
-                                        writer.write("v.$L = bs", memberName);
-                                    } else { // string
-                                        writer.addUseImports(SmithyGoDependency.SMITHY_PTR);
-                                        if (targetShape.hasTrait(EnumTrait.class)) {
-                                            writer.write("v.$L = string(bs)", memberName);
-                                        } else {
-                                            writer.write("v.$L = ptr.String(string(bs))", memberName);
-                                        }
-                                    }
-                                });
-                            } else {
-                                writer.write("v.$L = body", memberName);
-                            }
-                            writer.write("return nil");
-                        });
-            } else {
+            if (!targetShape.isStringShape() && !targetShape.isBlobShape()) {
                 shape.accept(new XmlShapeDeserVisitor(context, filterMemberShapes));
+                return;
             }
+            writer.openBlock("func $L(v $P, body io.ReadCloser) error {", "}", funcName, shapeSymbol, () -> {
+                writer.openBlock("if v == nil {", "}", () -> {
+                    writer.write("return fmt.Errorf(\"unsupported deserialization of nil %T\", v)");
+                });
+                writer.insertTrailingNewline();
+
+                if (targetShape.hasTrait(StreamingTrait.class)) {
+                    writer.write("v.$L = body", memberName);
+                    writer.write("return nil");
+                    return;
+                }
+
+                writer.addUseImports(SmithyGoDependency.IOUTIL);
+                writer.write("bs, err := ioutil.ReadAll(body)");
+                writer.write("if err != nil { return err }");
+                writer.openBlock("if len(bs) > 0 {", "}", () -> {
+                    if (targetShape.isBlobShape()) {
+                        writer.write("v.$L = bs", memberName);
+                    } else { // string
+                        writer.addUseImports(SmithyGoDependency.SMITHY_PTR);
+                        if (targetShape.hasTrait(EnumTrait.class)) {
+                            writer.write("v.$L = string(bs)", memberName);
+                        } else {
+                            writer.write("v.$L = ptr.String(string(bs))", memberName);
+                        }
+                    }
+                });
+                writer.write("return nil");
+            });
         }
     }
 
@@ -344,7 +329,7 @@ abstract class RestXmlProtocolGenerator extends HttpBindingProtocolGenerator {
             writer.addUseImports(SmithyGoDependency.SMITHY_DECODING);
             writer.write("rootDecoder := xml.NewDecoder(body)");
 
-            writer.write("// fetch the root element ignoring comments and preamble");
+            writer.writeDocs("fetch the root element ignoring comments and preamble");
             writer.write("t, err  := smithydecoding.FetchXmlRootElement(rootDecoder)");
 
             writer.addUseImports(SmithyGoDependency.IO);
@@ -357,17 +342,6 @@ abstract class RestXmlProtocolGenerator extends HttpBindingProtocolGenerator {
 
         String deserFuncName = ProtocolGenerator.getDocumentDeserializerFunctionName(shape, getProtocolName());
         writer.write("err = $L(&$L, decoder)", deserFuncName, operand);
-
-        writer.addUseImports(SmithyGoDependency.IO);
-        writer.openBlock("if err != nil {", "}", () -> {
-            writer.addUseImports(SmithyGoDependency.BYTES);
-            writer.addUseImports(SmithyGoDependency.SMITHY);
-            writer.write("var snapshot bytes.Buffer");
-            writer.write("io.Copy(&snapshot, ringBuffer)");
-            writer.openBlock("return out, metadata, &smithy.DeserializationError {", "}", () -> {
-                writer.write("Err: fmt.Errorf(\"failed to decode response body with invalid XML, %w\", err),");
-                writer.write("Snapshot: snapshot.Bytes(),");
-            });
-        });
+        AwsProtocolUtils.handleDecodeError(writer, "out, metadata,");
     }
 }

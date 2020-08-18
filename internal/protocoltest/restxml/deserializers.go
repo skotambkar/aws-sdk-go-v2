@@ -295,7 +295,7 @@ func (m *awsRestxml_deserializeOpFlattenedXmlMap) HandleDeserialize(ctx context.
 		var snapshot bytes.Buffer
 		io.Copy(&snapshot, ringBuffer)
 		return out, metadata, &smithy.DeserializationError{
-			Err:      fmt.Errorf("failed to decode response body with invalid XML, %w", err),
+			Err:      fmt.Errorf("failed to decode response body, %w", err),
 			Snapshot: snapshot.Bytes(),
 		}
 	}
@@ -356,7 +356,7 @@ func awsRestxml_deserializeDocumentFlattenedXmlMapOutput(v **FlattenedXmlMapOutp
 			}
 
 		default:
-			// Do nothing and ignore
+			// Do nothing and ignore the unexpected tag element
 
 		}
 	}
@@ -412,7 +412,7 @@ func (m *awsRestxml_deserializeOpFlattenedXmlMapWithXmlName) HandleDeserialize(c
 		var snapshot bytes.Buffer
 		io.Copy(&snapshot, ringBuffer)
 		return out, metadata, &smithy.DeserializationError{
-			Err:      fmt.Errorf("failed to decode response body with invalid XML, %w", err),
+			Err:      fmt.Errorf("failed to decode response body, %w", err),
 			Snapshot: snapshot.Bytes(),
 		}
 	}
@@ -473,7 +473,7 @@ func awsRestxml_deserializeDocumentFlattenedXmlMapWithXmlNameOutput(v **Flattene
 			}
 
 		default:
-			// Do nothing and ignore
+			// Do nothing and ignore the unexpected tag element
 
 		}
 	}
@@ -689,7 +689,6 @@ func awsRestxml_deserializeDocumentHttpPayloadTraitsOutput(v *HttpPayloadTraitsO
 	if v == nil {
 		return fmt.Errorf("unsupported deserialization of nil %T", v)
 	}
-
 	bs, err := ioutil.ReadAll(body)
 	if err != nil {
 		return err
@@ -781,7 +780,6 @@ func awsRestxml_deserializeDocumentHttpPayloadTraitsWithMediaTypeOutput(v *HttpP
 	if v == nil {
 		return fmt.Errorf("unsupported deserialization of nil %T", v)
 	}
-
 	bs, err := ioutil.ReadAll(body)
 	if err != nil {
 		return err
@@ -840,7 +838,7 @@ func (m *awsRestxml_deserializeOpHttpPayloadWithStructure) HandleDeserialize(ctx
 		var snapshot bytes.Buffer
 		io.Copy(&snapshot, ringBuffer)
 		return out, metadata, &smithy.DeserializationError{
-			Err:      fmt.Errorf("failed to decode response body with invalid XML, %w", err),
+			Err:      fmt.Errorf("failed to decode response body, %w", err),
 			Snapshot: snapshot.Bytes(),
 		}
 	}
@@ -901,7 +899,7 @@ func awsRestxml_deserializeDocumentHttpPayloadWithStructureOutput(v **HttpPayloa
 			}
 
 		default:
-			// Do nothing and ignore
+			// Do nothing and ignore the unexpected tag element
 
 		}
 	}
@@ -957,7 +955,7 @@ func (m *awsRestxml_deserializeOpHttpPayloadWithXmlName) HandleDeserialize(ctx c
 		var snapshot bytes.Buffer
 		io.Copy(&snapshot, ringBuffer)
 		return out, metadata, &smithy.DeserializationError{
-			Err:      fmt.Errorf("failed to decode response body with invalid XML, %w", err),
+			Err:      fmt.Errorf("failed to decode response body, %w", err),
 			Snapshot: snapshot.Bytes(),
 		}
 	}
@@ -1018,7 +1016,7 @@ func awsRestxml_deserializeDocumentHttpPayloadWithXmlNameOutput(v **HttpPayloadW
 			}
 
 		default:
-			// Do nothing and ignore
+			// Do nothing and ignore the unexpected tag element
 
 		}
 	}
@@ -1074,7 +1072,7 @@ func (m *awsRestxml_deserializeOpHttpPayloadWithXmlNamespace) HandleDeserialize(
 		var snapshot bytes.Buffer
 		io.Copy(&snapshot, ringBuffer)
 		return out, metadata, &smithy.DeserializationError{
-			Err:      fmt.Errorf("failed to decode response body with invalid XML, %w", err),
+			Err:      fmt.Errorf("failed to decode response body, %w", err),
 			Snapshot: snapshot.Bytes(),
 		}
 	}
@@ -1135,7 +1133,7 @@ func awsRestxml_deserializeDocumentHttpPayloadWithXmlNamespaceOutput(v **HttpPay
 			}
 
 		default:
-			// Do nothing and ignore
+			// Do nothing and ignore the unexpected tag element
 
 		}
 	}
@@ -1191,7 +1189,7 @@ func (m *awsRestxml_deserializeOpHttpPayloadWithXmlNamespaceAndPrefix) HandleDes
 		var snapshot bytes.Buffer
 		io.Copy(&snapshot, ringBuffer)
 		return out, metadata, &smithy.DeserializationError{
-			Err:      fmt.Errorf("failed to decode response body with invalid XML, %w", err),
+			Err:      fmt.Errorf("failed to decode response body, %w", err),
 			Snapshot: snapshot.Bytes(),
 		}
 	}
@@ -1252,7 +1250,7 @@ func awsRestxml_deserializeDocumentHttpPayloadWithXmlNamespaceAndPrefixOutput(v 
 			}
 
 		default:
-			// Do nothing and ignore
+			// Do nothing and ignore the unexpected tag element
 
 		}
 	}
@@ -1559,7 +1557,7 @@ func (m *awsRestxml_deserializeOpIgnoreQueryParamsInResponse) HandleDeserialize(
 		var snapshot bytes.Buffer
 		io.Copy(&snapshot, ringBuffer)
 		return out, metadata, &smithy.DeserializationError{
-			Err:      fmt.Errorf("failed to decode response body with invalid XML, %w", err),
+			Err:      fmt.Errorf("failed to decode response body, %w", err),
 			Snapshot: snapshot.Bytes(),
 		}
 	}
@@ -1627,7 +1625,7 @@ func awsRestxml_deserializeDocumentIgnoreQueryParamsInResponseOutput(v **IgnoreQ
 			}
 
 		default:
-			// Do nothing and ignore
+			// Do nothing and ignore the unexpected tag element
 
 		}
 	}
@@ -2353,7 +2351,7 @@ func (m *awsRestxml_deserializeOpRecursiveShapes) HandleDeserialize(ctx context.
 		var snapshot bytes.Buffer
 		io.Copy(&snapshot, ringBuffer)
 		return out, metadata, &smithy.DeserializationError{
-			Err:      fmt.Errorf("failed to decode response body with invalid XML, %w", err),
+			Err:      fmt.Errorf("failed to decode response body, %w", err),
 			Snapshot: snapshot.Bytes(),
 		}
 	}
@@ -2414,7 +2412,7 @@ func awsRestxml_deserializeDocumentRecursiveShapesOutput(v **RecursiveShapesOutp
 			}
 
 		default:
-			// Do nothing and ignore
+			// Do nothing and ignore the unexpected tag element
 
 		}
 	}
@@ -2475,7 +2473,7 @@ func (m *awsRestxml_deserializeOpSimpleScalarProperties) HandleDeserialize(ctx c
 		var snapshot bytes.Buffer
 		io.Copy(&snapshot, ringBuffer)
 		return out, metadata, &smithy.DeserializationError{
-			Err:      fmt.Errorf("failed to decode response body with invalid XML, %w", err),
+			Err:      fmt.Errorf("failed to decode response body, %w", err),
 			Snapshot: snapshot.Bytes(),
 		}
 	}
@@ -2689,7 +2687,7 @@ func awsRestxml_deserializeDocumentSimpleScalarPropertiesOutput(v **SimpleScalar
 			}
 
 		default:
-			// Do nothing and ignore
+			// Do nothing and ignore the unexpected tag element
 
 		}
 	}
@@ -2878,7 +2876,7 @@ func (m *awsRestxml_deserializeOpXmlAttributes) HandleDeserialize(ctx context.Co
 		var snapshot bytes.Buffer
 		io.Copy(&snapshot, ringBuffer)
 		return out, metadata, &smithy.DeserializationError{
-			Err:      fmt.Errorf("failed to decode response body with invalid XML, %w", err),
+			Err:      fmt.Errorf("failed to decode response body, %w", err),
 			Snapshot: snapshot.Bytes(),
 		}
 	}
@@ -2924,9 +2922,9 @@ func awsRestxml_deserializeDocumentXmlAttributesOutput(v **XmlAttributesOutput, 
 	}
 
 	for _, attr := range decoder.StartEl.Attr {
-		val := []byte(attr.Value)
 		switch attr.Name.Local {
 		case "test":
+			val := []byte(attr.Value)
 			if val != nil {
 				xtv := string(val)
 				sv.Attr = &xtv
@@ -2957,7 +2955,7 @@ func awsRestxml_deserializeDocumentXmlAttributesOutput(v **XmlAttributesOutput, 
 			}
 
 		default:
-			// Do nothing and ignore
+			// Do nothing and ignore the unexpected tag element
 
 		}
 	}
@@ -3013,7 +3011,7 @@ func (m *awsRestxml_deserializeOpXmlAttributesOnPayload) HandleDeserialize(ctx c
 		var snapshot bytes.Buffer
 		io.Copy(&snapshot, ringBuffer)
 		return out, metadata, &smithy.DeserializationError{
-			Err:      fmt.Errorf("failed to decode response body with invalid XML, %w", err),
+			Err:      fmt.Errorf("failed to decode response body, %w", err),
 			Snapshot: snapshot.Bytes(),
 		}
 	}
@@ -3074,7 +3072,7 @@ func awsRestxml_deserializeDocumentXmlAttributesOnPayloadOutput(v **XmlAttribute
 			}
 
 		default:
-			// Do nothing and ignore
+			// Do nothing and ignore the unexpected tag element
 
 		}
 	}
@@ -3130,7 +3128,7 @@ func (m *awsRestxml_deserializeOpXmlBlobs) HandleDeserialize(ctx context.Context
 		var snapshot bytes.Buffer
 		io.Copy(&snapshot, ringBuffer)
 		return out, metadata, &smithy.DeserializationError{
-			Err:      fmt.Errorf("failed to decode response body with invalid XML, %w", err),
+			Err:      fmt.Errorf("failed to decode response body, %w", err),
 			Snapshot: snapshot.Bytes(),
 		}
 	}
@@ -3196,7 +3194,7 @@ func awsRestxml_deserializeDocumentXmlBlobsOutput(v **XmlBlobsOutput, decoder *s
 			}
 
 		default:
-			// Do nothing and ignore
+			// Do nothing and ignore the unexpected tag element
 
 		}
 	}
@@ -3252,7 +3250,7 @@ func (m *awsRestxml_deserializeOpXmlEnums) HandleDeserialize(ctx context.Context
 		var snapshot bytes.Buffer
 		io.Copy(&snapshot, ringBuffer)
 		return out, metadata, &smithy.DeserializationError{
-			Err:      fmt.Errorf("failed to decode response body with invalid XML, %w", err),
+			Err:      fmt.Errorf("failed to decode response body, %w", err),
 			Snapshot: snapshot.Bytes(),
 		}
 	}
@@ -3364,7 +3362,7 @@ func awsRestxml_deserializeDocumentXmlEnumsOutput(v **XmlEnumsOutput, decoder *s
 			}
 
 		default:
-			// Do nothing and ignore
+			// Do nothing and ignore the unexpected tag element
 
 		}
 	}
@@ -3420,7 +3418,7 @@ func (m *awsRestxml_deserializeOpXmlLists) HandleDeserialize(ctx context.Context
 		var snapshot bytes.Buffer
 		io.Copy(&snapshot, ringBuffer)
 		return out, metadata, &smithy.DeserializationError{
-			Err:      fmt.Errorf("failed to decode response body with invalid XML, %w", err),
+			Err:      fmt.Errorf("failed to decode response body, %w", err),
 			Snapshot: snapshot.Bytes(),
 		}
 	}
@@ -3541,7 +3539,7 @@ func awsRestxml_deserializeDocumentXmlListsOutput(v **XmlListsOutput, decoder *s
 			}
 
 		default:
-			// Do nothing and ignore
+			// Do nothing and ignore the unexpected tag element
 
 		}
 	}
@@ -3597,7 +3595,7 @@ func (m *awsRestxml_deserializeOpXmlMaps) HandleDeserialize(ctx context.Context,
 		var snapshot bytes.Buffer
 		io.Copy(&snapshot, ringBuffer)
 		return out, metadata, &smithy.DeserializationError{
-			Err:      fmt.Errorf("failed to decode response body with invalid XML, %w", err),
+			Err:      fmt.Errorf("failed to decode response body, %w", err),
 			Snapshot: snapshot.Bytes(),
 		}
 	}
@@ -3658,7 +3656,7 @@ func awsRestxml_deserializeDocumentXmlMapsOutput(v **XmlMapsOutput, decoder *smi
 			}
 
 		default:
-			// Do nothing and ignore
+			// Do nothing and ignore the unexpected tag element
 
 		}
 	}
@@ -3714,7 +3712,7 @@ func (m *awsRestxml_deserializeOpXmlMapsXmlName) HandleDeserialize(ctx context.C
 		var snapshot bytes.Buffer
 		io.Copy(&snapshot, ringBuffer)
 		return out, metadata, &smithy.DeserializationError{
-			Err:      fmt.Errorf("failed to decode response body with invalid XML, %w", err),
+			Err:      fmt.Errorf("failed to decode response body, %w", err),
 			Snapshot: snapshot.Bytes(),
 		}
 	}
@@ -3775,7 +3773,7 @@ func awsRestxml_deserializeDocumentXmlMapsXmlNameOutput(v **XmlMapsXmlNameOutput
 			}
 
 		default:
-			// Do nothing and ignore
+			// Do nothing and ignore the unexpected tag element
 
 		}
 	}
@@ -3831,7 +3829,7 @@ func (m *awsRestxml_deserializeOpXmlNamespaces) HandleDeserialize(ctx context.Co
 		var snapshot bytes.Buffer
 		io.Copy(&snapshot, ringBuffer)
 		return out, metadata, &smithy.DeserializationError{
-			Err:      fmt.Errorf("failed to decode response body with invalid XML, %w", err),
+			Err:      fmt.Errorf("failed to decode response body, %w", err),
 			Snapshot: snapshot.Bytes(),
 		}
 	}
@@ -3892,7 +3890,7 @@ func awsRestxml_deserializeDocumentXmlNamespacesOutput(v **XmlNamespacesOutput, 
 			}
 
 		default:
-			// Do nothing and ignore
+			// Do nothing and ignore the unexpected tag element
 
 		}
 	}
@@ -3948,7 +3946,7 @@ func (m *awsRestxml_deserializeOpXmlTimestamps) HandleDeserialize(ctx context.Co
 		var snapshot bytes.Buffer
 		io.Copy(&snapshot, ringBuffer)
 		return out, metadata, &smithy.DeserializationError{
-			Err:      fmt.Errorf("failed to decode response body with invalid XML, %w", err),
+			Err:      fmt.Errorf("failed to decode response body, %w", err),
 			Snapshot: snapshot.Bytes(),
 		}
 	}
@@ -4071,7 +4069,7 @@ func awsRestxml_deserializeDocumentXmlTimestampsOutput(v **XmlTimestampsOutput, 
 			}
 
 		default:
-			// Do nothing and ignore
+			// Do nothing and ignore the unexpected tag element
 
 		}
 	}
@@ -4163,7 +4161,7 @@ func awsRestxml_deserializeDocumentComplexError(v **types.ComplexError, decoder 
 			}
 
 		default:
-			// Do nothing and ignore
+			// Do nothing and ignore the unexpected tag element
 
 		}
 	}
@@ -4205,8 +4203,38 @@ func awsRestxml_deserializeDocumentComplexNestedErrorData(v **types.ComplexNeste
 			}
 
 		default:
-			// Do nothing and ignore
+			// Do nothing and ignore the unexpected tag element
 
+		}
+	}
+	*v = sv
+	return nil
+}
+
+func awsRestxml_deserializeDocumentFlattenedXmlMapWithXmlNameInputOutputMap(v *map[string]*string, decoder *smithydecoding.XMLNodeDecoder) error {
+	if v == nil {
+		return fmt.Errorf("unexpected nil of type %T", v)
+	}
+	var sv map[string]*string
+	if *v == nil {
+		sv = make(map[string]*string, 0)
+	} else {
+		sv = *v
+	}
+
+	for {
+		t, done, err := decoder.Token()
+		if err != nil {
+			return err
+		}
+		if done {
+			break
+		}
+		if t.Name.Local == "entry" {
+			entryDecoder := smithydecoding.NewXMLNodeDecoder(decoder.Decoder, t)
+			if err := awsRestxml_deserializeDocumentFlattenedXmlMapWithXmlNameInputOutputMapUnwrapped(&sv, entryDecoder); err != nil {
+				return err
+			}
 		}
 	}
 	*v = sv
@@ -4260,47 +4288,13 @@ func awsRestxml_deserializeDocumentFlattenedXmlMapWithXmlNameInputOutputMapUnwra
 			}
 
 		default:
-			// Do nothing and ignore
+			// Do nothing and ignore the unexpected tag element
 
 		}
 	}
 	*v = sv
 	return nil
 }
-func awsRestxml_deserializeDocumentFlattenedXmlMapWithXmlNameInputOutputMap(v *map[string]*string, decoder *smithydecoding.XMLNodeDecoder) error {
-	if v == nil {
-		return fmt.Errorf("unexpected nil of type %T", v)
-	}
-	var sv map[string]*string
-	if *v == nil {
-		sv = make(map[string]*string, 0)
-	} else {
-		sv = *v
-	}
-
-	for {
-		t, done, err := decoder.Token()
-		if err != nil {
-			return err
-		}
-		if done {
-			break
-		}
-		switch t.Name.Local {
-		case "entry":
-			entryDecoder := smithydecoding.NewXMLNodeDecoder(decoder.Decoder, t)
-			if err := awsRestxml_deserializeDocumentFlattenedXmlMapWithXmlNameInputOutputMapUnwrapped(&sv, entryDecoder); err != nil {
-				return err
-			}
-		default:
-			// Do nothing and ignore
-
-		}
-	}
-	*v = sv
-	return nil
-}
-
 func awsRestxml_deserializeDocumentInvalidGreeting(v **types.InvalidGreeting, decoder *smithydecoding.XMLNodeDecoder) error {
 	if v == nil {
 		return fmt.Errorf("unexpected nil of type %T", v)
@@ -4335,7 +4329,7 @@ func awsRestxml_deserializeDocumentInvalidGreeting(v **types.InvalidGreeting, de
 			}
 
 		default:
-			// Do nothing and ignore
+			// Do nothing and ignore the unexpected tag element
 
 		}
 	}
@@ -4390,7 +4384,7 @@ func awsRestxml_deserializeDocumentNestedPayload(v **types.NestedPayload, decode
 			}
 
 		default:
-			// Do nothing and ignore
+			// Do nothing and ignore the unexpected tag element
 
 		}
 	}
@@ -4432,7 +4426,7 @@ func awsRestxml_deserializeDocumentPayloadWithXmlName(v **types.PayloadWithXmlNa
 			}
 
 		default:
-			// Do nothing and ignore
+			// Do nothing and ignore the unexpected tag element
 
 		}
 	}
@@ -4474,7 +4468,7 @@ func awsRestxml_deserializeDocumentPayloadWithXmlNamespace(v **types.PayloadWith
 			}
 
 		default:
-			// Do nothing and ignore
+			// Do nothing and ignore the unexpected tag element
 
 		}
 	}
@@ -4516,7 +4510,7 @@ func awsRestxml_deserializeDocumentPayloadWithXmlNamespaceAndPrefix(v **types.Pa
 			}
 
 		default:
-			// Do nothing and ignore
+			// Do nothing and ignore the unexpected tag element
 
 		}
 	}
@@ -4564,7 +4558,7 @@ func awsRestxml_deserializeDocumentRecursiveShapesInputOutputNested1(v **types.R
 			}
 
 		default:
-			// Do nothing and ignore
+			// Do nothing and ignore the unexpected tag element
 
 		}
 	}
@@ -4612,9 +4606,54 @@ func awsRestxml_deserializeDocumentRecursiveShapesInputOutputNested2(v **types.R
 			}
 
 		default:
-			// Do nothing and ignore
+			// Do nothing and ignore the unexpected tag element
 
 		}
+	}
+	*v = sv
+	return nil
+}
+
+func awsRestxml_deserializeDocumentRenamedListMembers(v *[]*string, decoder *smithydecoding.XMLNodeDecoder) error {
+	if v == nil {
+		return fmt.Errorf("unexpected nil of type %T", v)
+	}
+	var sv []*string
+	if *v == nil {
+		sv = make([]*string, 0)
+	} else {
+		sv = *v
+	}
+
+	originalDecoder := decoder
+	for {
+		t, done, err := decoder.Token()
+		if err != nil {
+			return err
+		}
+		if done {
+			break
+		}
+		memberDecoder := smithydecoding.NewXMLNodeDecoder(decoder.Decoder, t)
+		decoder = memberDecoder
+		for {
+			if t.Name.Local == "item" {
+				var col *string
+				val, done, err := decoder.Value()
+				if err != nil {
+					return err
+				}
+				if done {
+					break
+				}
+				if val != nil {
+					xtv := string(val)
+					col = &xtv
+				}
+				sv = append(sv, col)
+			}
+		}
+		decoder = originalDecoder
 	}
 	*v = sv
 	return nil
@@ -4648,17 +4687,18 @@ func awsRestxml_deserializeDocumentRenamedListMembersUnwrapped(v *[]*string, dec
 	*v = sv
 	return nil
 }
-func awsRestxml_deserializeDocumentRenamedListMembers(v *[]*string, decoder *smithydecoding.XMLNodeDecoder) error {
+func awsRestxml_deserializeDocumentStructureList(v *[]*types.StructureListMember, decoder *smithydecoding.XMLNodeDecoder) error {
 	if v == nil {
 		return fmt.Errorf("unexpected nil of type %T", v)
 	}
-	var sv []*string
+	var sv []*types.StructureListMember
 	if *v == nil {
-		sv = make([]*string, 0)
+		sv = make([]*types.StructureListMember, 0)
 	} else {
 		sv = *v
 	}
 
+	originalDecoder := decoder
 	for {
 		t, done, err := decoder.Token()
 		if err != nil {
@@ -4667,26 +4707,18 @@ func awsRestxml_deserializeDocumentRenamedListMembers(v *[]*string, decoder *smi
 		if done {
 			break
 		}
-		switch t.Name.Local {
-		case "item":
-			var col *string
-			val, done, err := decoder.Value()
-			if err != nil {
-				return err
-			}
-			if done {
+		for {
+			if t.Name.Local == "item" {
+				var col *types.StructureListMember
+				nodeDecoder := smithydecoding.NewXMLNodeDecoder(decoder.Decoder, t)
+				if err := awsRestxml_deserializeDocumentStructureListMember(&col, nodeDecoder); err != nil {
+					return err
+				}
+				sv = append(sv, col)
 				break
 			}
-			if val != nil {
-				xtv := string(val)
-				col = &xtv
-			}
-			sv = append(sv, col)
-
-		default:
-			// Do nothing and ignore
-
 		}
+		decoder = originalDecoder
 	}
 	*v = sv
 	return nil
@@ -4713,43 +4745,6 @@ func awsRestxml_deserializeDocumentStructureListUnwrapped(v *[]*types.StructureL
 	*v = sv
 	return nil
 }
-func awsRestxml_deserializeDocumentStructureList(v *[]*types.StructureListMember, decoder *smithydecoding.XMLNodeDecoder) error {
-	if v == nil {
-		return fmt.Errorf("unexpected nil of type %T", v)
-	}
-	var sv []*types.StructureListMember
-	if *v == nil {
-		sv = make([]*types.StructureListMember, 0)
-	} else {
-		sv = *v
-	}
-
-	for {
-		t, done, err := decoder.Token()
-		if err != nil {
-			return err
-		}
-		if done {
-			break
-		}
-		switch t.Name.Local {
-		case "item":
-			var col *types.StructureListMember
-			nodeDecoder := smithydecoding.NewXMLNodeDecoder(decoder.Decoder, t)
-			if err := awsRestxml_deserializeDocumentStructureListMember(&col, nodeDecoder); err != nil {
-				return err
-			}
-			sv = append(sv, col)
-
-		default:
-			// Do nothing and ignore
-
-		}
-	}
-	*v = sv
-	return nil
-}
-
 func awsRestxml_deserializeDocumentStructureListMember(v **types.StructureListMember, decoder *smithydecoding.XMLNodeDecoder) error {
 	if v == nil {
 		return fmt.Errorf("unexpected nil of type %T", v)
@@ -4797,7 +4792,7 @@ func awsRestxml_deserializeDocumentStructureListMember(v **types.StructureListMe
 			}
 
 		default:
-			// Do nothing and ignore
+			// Do nothing and ignore the unexpected tag element
 
 		}
 	}
@@ -4817,9 +4812,9 @@ func awsRestxml_deserializeDocumentXmlAttributesInputOutput(v **types.XmlAttribu
 	}
 
 	for _, attr := range decoder.StartEl.Attr {
-		val := []byte(attr.Value)
 		switch attr.Name.Local {
 		case "test":
+			val := []byte(attr.Value)
 			if val != nil {
 				xtv := string(val)
 				sv.Attr = &xtv
@@ -4850,8 +4845,38 @@ func awsRestxml_deserializeDocumentXmlAttributesInputOutput(v **types.XmlAttribu
 			}
 
 		default:
-			// Do nothing and ignore
+			// Do nothing and ignore the unexpected tag element
 
+		}
+	}
+	*v = sv
+	return nil
+}
+
+func awsRestxml_deserializeDocumentXmlMapsInputOutputMap(v *map[string]*types.GreetingStruct, decoder *smithydecoding.XMLNodeDecoder) error {
+	if v == nil {
+		return fmt.Errorf("unexpected nil of type %T", v)
+	}
+	var sv map[string]*types.GreetingStruct
+	if *v == nil {
+		sv = make(map[string]*types.GreetingStruct, 0)
+	} else {
+		sv = *v
+	}
+
+	for {
+		t, done, err := decoder.Token()
+		if err != nil {
+			return err
+		}
+		if done {
+			break
+		}
+		if t.Name.Local == "entry" {
+			entryDecoder := smithydecoding.NewXMLNodeDecoder(decoder.Decoder, t)
+			if err := awsRestxml_deserializeDocumentXmlMapsInputOutputMapUnwrapped(&sv, entryDecoder); err != nil {
+				return err
+			}
 		}
 	}
 	*v = sv
@@ -4898,14 +4923,14 @@ func awsRestxml_deserializeDocumentXmlMapsInputOutputMapUnwrapped(v *map[string]
 			}
 
 		default:
-			// Do nothing and ignore
+			// Do nothing and ignore the unexpected tag element
 
 		}
 	}
 	*v = sv
 	return nil
 }
-func awsRestxml_deserializeDocumentXmlMapsInputOutputMap(v *map[string]*types.GreetingStruct, decoder *smithydecoding.XMLNodeDecoder) error {
+func awsRestxml_deserializeDocumentXmlMapsXmlNameInputOutputMap(v *map[string]*types.GreetingStruct, decoder *smithydecoding.XMLNodeDecoder) error {
 	if v == nil {
 		return fmt.Errorf("unexpected nil of type %T", v)
 	}
@@ -4924,15 +4949,11 @@ func awsRestxml_deserializeDocumentXmlMapsInputOutputMap(v *map[string]*types.Gr
 		if done {
 			break
 		}
-		switch t.Name.Local {
-		case "entry":
+		if t.Name.Local == "entry" {
 			entryDecoder := smithydecoding.NewXMLNodeDecoder(decoder.Decoder, t)
-			if err := awsRestxml_deserializeDocumentXmlMapsInputOutputMapUnwrapped(&sv, entryDecoder); err != nil {
+			if err := awsRestxml_deserializeDocumentXmlMapsXmlNameInputOutputMapUnwrapped(&sv, entryDecoder); err != nil {
 				return err
 			}
-		default:
-			// Do nothing and ignore
-
 		}
 	}
 	*v = sv
@@ -4979,24 +5000,25 @@ func awsRestxml_deserializeDocumentXmlMapsXmlNameInputOutputMapUnwrapped(v *map[
 			}
 
 		default:
-			// Do nothing and ignore
+			// Do nothing and ignore the unexpected tag element
 
 		}
 	}
 	*v = sv
 	return nil
 }
-func awsRestxml_deserializeDocumentXmlMapsXmlNameInputOutputMap(v *map[string]*types.GreetingStruct, decoder *smithydecoding.XMLNodeDecoder) error {
+func awsRestxml_deserializeDocumentXmlNamespacedList(v *[]*string, decoder *smithydecoding.XMLNodeDecoder) error {
 	if v == nil {
 		return fmt.Errorf("unexpected nil of type %T", v)
 	}
-	var sv map[string]*types.GreetingStruct
+	var sv []*string
 	if *v == nil {
-		sv = make(map[string]*types.GreetingStruct, 0)
+		sv = make([]*string, 0)
 	} else {
 		sv = *v
 	}
 
+	originalDecoder := decoder
 	for {
 		t, done, err := decoder.Token()
 		if err != nil {
@@ -5005,16 +5027,26 @@ func awsRestxml_deserializeDocumentXmlMapsXmlNameInputOutputMap(v *map[string]*t
 		if done {
 			break
 		}
-		switch t.Name.Local {
-		case "entry":
-			entryDecoder := smithydecoding.NewXMLNodeDecoder(decoder.Decoder, t)
-			if err := awsRestxml_deserializeDocumentXmlMapsXmlNameInputOutputMapUnwrapped(&sv, entryDecoder); err != nil {
-				return err
+		memberDecoder := smithydecoding.NewXMLNodeDecoder(decoder.Decoder, t)
+		decoder = memberDecoder
+		for {
+			if t.Name.Local == "member" {
+				var col *string
+				val, done, err := decoder.Value()
+				if err != nil {
+					return err
+				}
+				if done {
+					break
+				}
+				if val != nil {
+					xtv := string(val)
+					col = &xtv
+				}
+				sv = append(sv, col)
 			}
-		default:
-			// Do nothing and ignore
-
 		}
+		decoder = originalDecoder
 	}
 	*v = sv
 	return nil
@@ -5048,50 +5080,6 @@ func awsRestxml_deserializeDocumentXmlNamespacedListUnwrapped(v *[]*string, deco
 	*v = sv
 	return nil
 }
-func awsRestxml_deserializeDocumentXmlNamespacedList(v *[]*string, decoder *smithydecoding.XMLNodeDecoder) error {
-	if v == nil {
-		return fmt.Errorf("unexpected nil of type %T", v)
-	}
-	var sv []*string
-	if *v == nil {
-		sv = make([]*string, 0)
-	} else {
-		sv = *v
-	}
-
-	for {
-		t, done, err := decoder.Token()
-		if err != nil {
-			return err
-		}
-		if done {
-			break
-		}
-		switch t.Name.Local {
-		case "member":
-			var col *string
-			val, done, err := decoder.Value()
-			if err != nil {
-				return err
-			}
-			if done {
-				break
-			}
-			if val != nil {
-				xtv := string(val)
-				col = &xtv
-			}
-			sv = append(sv, col)
-
-		default:
-			// Do nothing and ignore
-
-		}
-	}
-	*v = sv
-	return nil
-}
-
 func awsRestxml_deserializeDocumentXmlNamespaceNested(v **types.XmlNamespaceNested, decoder *smithydecoding.XMLNodeDecoder) error {
 	if v == nil {
 		return fmt.Errorf("unexpected nil of type %T", v)
@@ -5132,9 +5120,57 @@ func awsRestxml_deserializeDocumentXmlNamespaceNested(v **types.XmlNamespaceNest
 			}
 
 		default:
-			// Do nothing and ignore
+			// Do nothing and ignore the unexpected tag element
 
 		}
+	}
+	*v = sv
+	return nil
+}
+
+func awsRestxml_deserializeDocumentBooleanList(v *[]*bool, decoder *smithydecoding.XMLNodeDecoder) error {
+	if v == nil {
+		return fmt.Errorf("unexpected nil of type %T", v)
+	}
+	var sv []*bool
+	if *v == nil {
+		sv = make([]*bool, 0)
+	} else {
+		sv = *v
+	}
+
+	originalDecoder := decoder
+	for {
+		t, done, err := decoder.Token()
+		if err != nil {
+			return err
+		}
+		if done {
+			break
+		}
+		memberDecoder := smithydecoding.NewXMLNodeDecoder(decoder.Decoder, t)
+		decoder = memberDecoder
+		for {
+			if t.Name.Local == "member" {
+				var col *bool
+				val, done, err := decoder.Value()
+				if err != nil {
+					return err
+				}
+				if done {
+					break
+				}
+				if val != nil {
+					xtv, err := strconv.ParseBool(string(val))
+					if err != nil {
+						return fmt.Errorf("expected PrimitiveBoolean to be of type *bool, got %T instead", val)
+					}
+					col = &xtv
+				}
+				sv = append(sv, col)
+			}
+		}
+		decoder = originalDecoder
 	}
 	*v = sv
 	return nil
@@ -5171,17 +5207,18 @@ func awsRestxml_deserializeDocumentBooleanListUnwrapped(v *[]*bool, decoder *smi
 	*v = sv
 	return nil
 }
-func awsRestxml_deserializeDocumentBooleanList(v *[]*bool, decoder *smithydecoding.XMLNodeDecoder) error {
+func awsRestxml_deserializeDocumentFooEnumList(v *[]types.FooEnum, decoder *smithydecoding.XMLNodeDecoder) error {
 	if v == nil {
 		return fmt.Errorf("unexpected nil of type %T", v)
 	}
-	var sv []*bool
+	var sv []types.FooEnum
 	if *v == nil {
-		sv = make([]*bool, 0)
+		sv = make([]types.FooEnum, 0)
 	} else {
 		sv = *v
 	}
 
+	originalDecoder := decoder
 	for {
 		t, done, err := decoder.Token()
 		if err != nil {
@@ -5190,29 +5227,26 @@ func awsRestxml_deserializeDocumentBooleanList(v *[]*bool, decoder *smithydecodi
 		if done {
 			break
 		}
-		switch t.Name.Local {
-		case "member":
-			var col *bool
-			val, done, err := decoder.Value()
-			if err != nil {
-				return err
-			}
-			if done {
-				break
-			}
-			if val != nil {
-				xtv, err := strconv.ParseBool(string(val))
+		memberDecoder := smithydecoding.NewXMLNodeDecoder(decoder.Decoder, t)
+		decoder = memberDecoder
+		for {
+			if t.Name.Local == "member" {
+				var col types.FooEnum
+				val, done, err := decoder.Value()
 				if err != nil {
-					return fmt.Errorf("expected PrimitiveBoolean to be of type *bool, got %T instead", val)
+					return err
 				}
-				col = &xtv
+				if done {
+					break
+				}
+				if val != nil {
+					xtv := string(val)
+					col = types.FooEnum(xtv)
+				}
+				sv = append(sv, col)
 			}
-			sv = append(sv, col)
-
-		default:
-			// Do nothing and ignore
-
 		}
+		decoder = originalDecoder
 	}
 	*v = sv
 	return nil
@@ -5246,13 +5280,13 @@ func awsRestxml_deserializeDocumentFooEnumListUnwrapped(v *[]types.FooEnum, deco
 	*v = sv
 	return nil
 }
-func awsRestxml_deserializeDocumentFooEnumList(v *[]types.FooEnum, decoder *smithydecoding.XMLNodeDecoder) error {
+func awsRestxml_deserializeDocumentFooEnumMap(v *map[string]types.FooEnum, decoder *smithydecoding.XMLNodeDecoder) error {
 	if v == nil {
 		return fmt.Errorf("unexpected nil of type %T", v)
 	}
-	var sv []types.FooEnum
+	var sv map[string]types.FooEnum
 	if *v == nil {
-		sv = make([]types.FooEnum, 0)
+		sv = make(map[string]types.FooEnum, 0)
 	} else {
 		sv = *v
 	}
@@ -5265,25 +5299,11 @@ func awsRestxml_deserializeDocumentFooEnumList(v *[]types.FooEnum, decoder *smit
 		if done {
 			break
 		}
-		switch t.Name.Local {
-		case "member":
-			var col types.FooEnum
-			val, done, err := decoder.Value()
-			if err != nil {
+		if t.Name.Local == "entry" {
+			entryDecoder := smithydecoding.NewXMLNodeDecoder(decoder.Decoder, t)
+			if err := awsRestxml_deserializeDocumentFooEnumMapUnwrapped(&sv, entryDecoder); err != nil {
 				return err
 			}
-			if done {
-				break
-			}
-			if val != nil {
-				xtv := string(val)
-				col = types.FooEnum(xtv)
-			}
-			sv = append(sv, col)
-
-		default:
-			// Do nothing and ignore
-
 		}
 	}
 	*v = sv
@@ -5337,24 +5357,25 @@ func awsRestxml_deserializeDocumentFooEnumMapUnwrapped(v *map[string]types.FooEn
 			}
 
 		default:
-			// Do nothing and ignore
+			// Do nothing and ignore the unexpected tag element
 
 		}
 	}
 	*v = sv
 	return nil
 }
-func awsRestxml_deserializeDocumentFooEnumMap(v *map[string]types.FooEnum, decoder *smithydecoding.XMLNodeDecoder) error {
+func awsRestxml_deserializeDocumentFooEnumSet(v *[]types.FooEnum, decoder *smithydecoding.XMLNodeDecoder) error {
 	if v == nil {
 		return fmt.Errorf("unexpected nil of type %T", v)
 	}
-	var sv map[string]types.FooEnum
+	var sv []types.FooEnum
 	if *v == nil {
-		sv = make(map[string]types.FooEnum, 0)
+		sv = make([]types.FooEnum, 0)
 	} else {
 		sv = *v
 	}
 
+	originalDecoder := decoder
 	for {
 		t, done, err := decoder.Token()
 		if err != nil {
@@ -5363,16 +5384,26 @@ func awsRestxml_deserializeDocumentFooEnumMap(v *map[string]types.FooEnum, decod
 		if done {
 			break
 		}
-		switch t.Name.Local {
-		case "entry":
-			entryDecoder := smithydecoding.NewXMLNodeDecoder(decoder.Decoder, t)
-			if err := awsRestxml_deserializeDocumentFooEnumMapUnwrapped(&sv, entryDecoder); err != nil {
-				return err
+		memberDecoder := smithydecoding.NewXMLNodeDecoder(decoder.Decoder, t)
+		decoder = memberDecoder
+		for {
+			if t.Name.Local == "member" {
+				var col types.FooEnum
+				val, done, err := decoder.Value()
+				if err != nil {
+					return err
+				}
+				if done {
+					break
+				}
+				if val != nil {
+					xtv := string(val)
+					col = types.FooEnum(xtv)
+				}
+				sv = append(sv, col)
 			}
-		default:
-			// Do nothing and ignore
-
 		}
+		decoder = originalDecoder
 	}
 	*v = sv
 	return nil
@@ -5406,50 +5437,6 @@ func awsRestxml_deserializeDocumentFooEnumSetUnwrapped(v *[]types.FooEnum, decod
 	*v = sv
 	return nil
 }
-func awsRestxml_deserializeDocumentFooEnumSet(v *[]types.FooEnum, decoder *smithydecoding.XMLNodeDecoder) error {
-	if v == nil {
-		return fmt.Errorf("unexpected nil of type %T", v)
-	}
-	var sv []types.FooEnum
-	if *v == nil {
-		sv = make([]types.FooEnum, 0)
-	} else {
-		sv = *v
-	}
-
-	for {
-		t, done, err := decoder.Token()
-		if err != nil {
-			return err
-		}
-		if done {
-			break
-		}
-		switch t.Name.Local {
-		case "member":
-			var col types.FooEnum
-			val, done, err := decoder.Value()
-			if err != nil {
-				return err
-			}
-			if done {
-				break
-			}
-			if val != nil {
-				xtv := string(val)
-				col = types.FooEnum(xtv)
-			}
-			sv = append(sv, col)
-
-		default:
-			// Do nothing and ignore
-
-		}
-	}
-	*v = sv
-	return nil
-}
-
 func awsRestxml_deserializeDocumentGreetingStruct(v **types.GreetingStruct, decoder *smithydecoding.XMLNodeDecoder) error {
 	if v == nil {
 		return fmt.Errorf("unexpected nil of type %T", v)
@@ -5484,9 +5471,58 @@ func awsRestxml_deserializeDocumentGreetingStruct(v **types.GreetingStruct, deco
 			}
 
 		default:
-			// Do nothing and ignore
+			// Do nothing and ignore the unexpected tag element
 
 		}
+	}
+	*v = sv
+	return nil
+}
+
+func awsRestxml_deserializeDocumentIntegerList(v *[]*int32, decoder *smithydecoding.XMLNodeDecoder) error {
+	if v == nil {
+		return fmt.Errorf("unexpected nil of type %T", v)
+	}
+	var sv []*int32
+	if *v == nil {
+		sv = make([]*int32, 0)
+	} else {
+		sv = *v
+	}
+
+	originalDecoder := decoder
+	for {
+		t, done, err := decoder.Token()
+		if err != nil {
+			return err
+		}
+		if done {
+			break
+		}
+		memberDecoder := smithydecoding.NewXMLNodeDecoder(decoder.Decoder, t)
+		decoder = memberDecoder
+		for {
+			if t.Name.Local == "member" {
+				var col *int32
+				val, done, err := decoder.Value()
+				if err != nil {
+					return err
+				}
+				if done {
+					break
+				}
+				if val != nil {
+					xtv := string(val)
+					i64, err := strconv.ParseInt(xtv, 10, 64)
+					if err != nil {
+						return err
+					}
+					col = ptr.Int32(int32(i64))
+				}
+				sv = append(sv, col)
+			}
+		}
+		decoder = originalDecoder
 	}
 	*v = sv
 	return nil
@@ -5524,17 +5560,18 @@ func awsRestxml_deserializeDocumentIntegerListUnwrapped(v *[]*int32, decoder *sm
 	*v = sv
 	return nil
 }
-func awsRestxml_deserializeDocumentIntegerList(v *[]*int32, decoder *smithydecoding.XMLNodeDecoder) error {
+func awsRestxml_deserializeDocumentNestedStringList(v *[][]*string, decoder *smithydecoding.XMLNodeDecoder) error {
 	if v == nil {
 		return fmt.Errorf("unexpected nil of type %T", v)
 	}
-	var sv []*int32
+	var sv [][]*string
 	if *v == nil {
-		sv = make([]*int32, 0)
+		sv = make([][]*string, 0)
 	} else {
 		sv = *v
 	}
 
+	originalDecoder := decoder
 	for {
 		t, done, err := decoder.Token()
 		if err != nil {
@@ -5543,30 +5580,18 @@ func awsRestxml_deserializeDocumentIntegerList(v *[]*int32, decoder *smithydecod
 		if done {
 			break
 		}
-		switch t.Name.Local {
-		case "member":
-			var col *int32
-			val, done, err := decoder.Value()
-			if err != nil {
-				return err
-			}
-			if done {
-				break
-			}
-			if val != nil {
-				xtv := string(val)
-				i64, err := strconv.ParseInt(xtv, 10, 64)
-				if err != nil {
+		for {
+			if t.Name.Local == "member" {
+				var col []*string
+				nodeDecoder := smithydecoding.NewXMLNodeDecoder(decoder.Decoder, t)
+				if err := awsRestxml_deserializeDocumentStringList(&col, nodeDecoder); err != nil {
 					return err
 				}
-				col = ptr.Int32(int32(i64))
+				sv = append(sv, col)
+				break
 			}
-			sv = append(sv, col)
-
-		default:
-			// Do nothing and ignore
-
 		}
+		decoder = originalDecoder
 	}
 	*v = sv
 	return nil
@@ -5593,99 +5618,6 @@ func awsRestxml_deserializeDocumentNestedStringListUnwrapped(v *[][]*string, dec
 	*v = sv
 	return nil
 }
-func awsRestxml_deserializeDocumentNestedStringList(v *[][]*string, decoder *smithydecoding.XMLNodeDecoder) error {
-	if v == nil {
-		return fmt.Errorf("unexpected nil of type %T", v)
-	}
-	var sv [][]*string
-	if *v == nil {
-		sv = make([][]*string, 0)
-	} else {
-		sv = *v
-	}
-
-	for {
-		t, done, err := decoder.Token()
-		if err != nil {
-			return err
-		}
-		if done {
-			break
-		}
-		switch t.Name.Local {
-		case "member":
-			var col []*string
-			memberDecoder := smithydecoding.NewXMLNodeDecoder(decoder.Decoder, t)
-			for {
-				t, done, err = memberDecoder.Token()
-				if err != nil {
-					return err
-				}
-				if done {
-					break
-				}
-				switch t.Name.Local {
-				case "member":
-					originalDecoder := decoder
-					decoder = smithydecoding.NewXMLNodeDecoder(memberDecoder.Decoder, t)
-					for {
-						var mv *string
-						val, done, err := decoder.Value()
-						if err != nil {
-							return err
-						}
-						if done {
-							break
-						}
-						if val != nil {
-							xtv := string(val)
-							mv = &xtv
-						}
-						col = append(col, mv)
-					}
-
-					decoder = originalDecoder
-				}
-			}
-			sv = append(sv, col)
-
-		default:
-			// Do nothing and ignore
-
-		}
-	}
-	*v = sv
-	return nil
-}
-
-func awsRestxml_deserializeDocumentStringListUnwrapped(v *[]*string, decoder *smithydecoding.XMLNodeDecoder) error {
-	var sv []*string
-	if *v == nil {
-		sv = make([]*string, 0)
-	} else {
-		sv = *v
-	}
-
-	for {
-		var mv *string
-		t := decoder.StartEl
-		_ = t
-		val, done, err := decoder.Value()
-		if err != nil {
-			return err
-		}
-		if done {
-			break
-		}
-		if val != nil {
-			xtv := string(val)
-			mv = &xtv
-		}
-		sv = append(sv, mv)
-	}
-	*v = sv
-	return nil
-}
 func awsRestxml_deserializeDocumentStringList(v *[]*string, decoder *smithydecoding.XMLNodeDecoder) error {
 	if v == nil {
 		return fmt.Errorf("unexpected nil of type %T", v)
@@ -5697,6 +5629,7 @@ func awsRestxml_deserializeDocumentStringList(v *[]*string, decoder *smithydecod
 		sv = *v
 	}
 
+	originalDecoder := decoder
 	for {
 		t, done, err := decoder.Token()
 		if err != nil {
@@ -5705,32 +5638,32 @@ func awsRestxml_deserializeDocumentStringList(v *[]*string, decoder *smithydecod
 		if done {
 			break
 		}
-		switch t.Name.Local {
-		case "member":
-			var col *string
-			val, done, err := decoder.Value()
-			if err != nil {
-				return err
+		memberDecoder := smithydecoding.NewXMLNodeDecoder(decoder.Decoder, t)
+		decoder = memberDecoder
+		for {
+			if t.Name.Local == "member" {
+				var col *string
+				val, done, err := decoder.Value()
+				if err != nil {
+					return err
+				}
+				if done {
+					break
+				}
+				if val != nil {
+					xtv := string(val)
+					col = &xtv
+				}
+				sv = append(sv, col)
 			}
-			if done {
-				break
-			}
-			if val != nil {
-				xtv := string(val)
-				col = &xtv
-			}
-			sv = append(sv, col)
-
-		default:
-			// Do nothing and ignore
-
 		}
+		decoder = originalDecoder
 	}
 	*v = sv
 	return nil
 }
 
-func awsRestxml_deserializeDocumentStringSetUnwrapped(v *[]*string, decoder *smithydecoding.XMLNodeDecoder) error {
+func awsRestxml_deserializeDocumentStringListUnwrapped(v *[]*string, decoder *smithydecoding.XMLNodeDecoder) error {
 	var sv []*string
 	if *v == nil {
 		sv = make([]*string, 0)
@@ -5769,6 +5702,7 @@ func awsRestxml_deserializeDocumentStringSet(v *[]*string, decoder *smithydecodi
 		sv = *v
 	}
 
+	originalDecoder := decoder
 	for {
 		t, done, err := decoder.Token()
 		if err != nil {
@@ -5777,26 +5711,103 @@ func awsRestxml_deserializeDocumentStringSet(v *[]*string, decoder *smithydecodi
 		if done {
 			break
 		}
-		switch t.Name.Local {
-		case "member":
-			var col *string
-			val, done, err := decoder.Value()
-			if err != nil {
-				return err
+		memberDecoder := smithydecoding.NewXMLNodeDecoder(decoder.Decoder, t)
+		decoder = memberDecoder
+		for {
+			if t.Name.Local == "member" {
+				var col *string
+				val, done, err := decoder.Value()
+				if err != nil {
+					return err
+				}
+				if done {
+					break
+				}
+				if val != nil {
+					xtv := string(val)
+					col = &xtv
+				}
+				sv = append(sv, col)
 			}
-			if done {
-				break
-			}
-			if val != nil {
-				xtv := string(val)
-				col = &xtv
-			}
-			sv = append(sv, col)
-
-		default:
-			// Do nothing and ignore
-
 		}
+		decoder = originalDecoder
+	}
+	*v = sv
+	return nil
+}
+
+func awsRestxml_deserializeDocumentStringSetUnwrapped(v *[]*string, decoder *smithydecoding.XMLNodeDecoder) error {
+	var sv []*string
+	if *v == nil {
+		sv = make([]*string, 0)
+	} else {
+		sv = *v
+	}
+
+	for {
+		var mv *string
+		t := decoder.StartEl
+		_ = t
+		val, done, err := decoder.Value()
+		if err != nil {
+			return err
+		}
+		if done {
+			break
+		}
+		if val != nil {
+			xtv := string(val)
+			mv = &xtv
+		}
+		sv = append(sv, mv)
+	}
+	*v = sv
+	return nil
+}
+func awsRestxml_deserializeDocumentTimestampList(v *[]*time.Time, decoder *smithydecoding.XMLNodeDecoder) error {
+	if v == nil {
+		return fmt.Errorf("unexpected nil of type %T", v)
+	}
+	var sv []*time.Time
+	if *v == nil {
+		sv = make([]*time.Time, 0)
+	} else {
+		sv = *v
+	}
+
+	originalDecoder := decoder
+	for {
+		t, done, err := decoder.Token()
+		if err != nil {
+			return err
+		}
+		if done {
+			break
+		}
+		memberDecoder := smithydecoding.NewXMLNodeDecoder(decoder.Decoder, t)
+		decoder = memberDecoder
+		for {
+			if t.Name.Local == "member" {
+				var col *time.Time
+				val, done, err := decoder.Value()
+				if err != nil {
+					return err
+				}
+				if done {
+					break
+				}
+				if val != nil {
+					xtv := string(val)
+					t, err := smithytime.ParseDateTime(xtv)
+					if err != nil {
+						return err
+					}
+					col = &t
+				}
+				sv = append(sv, col)
+			}
+		}
+		decoder = originalDecoder
 	}
 	*v = sv
 	return nil
@@ -5830,53 +5841,6 @@ func awsRestxml_deserializeDocumentTimestampListUnwrapped(v *[]*time.Time, decod
 			mv = &t
 		}
 		sv = append(sv, mv)
-	}
-	*v = sv
-	return nil
-}
-func awsRestxml_deserializeDocumentTimestampList(v *[]*time.Time, decoder *smithydecoding.XMLNodeDecoder) error {
-	if v == nil {
-		return fmt.Errorf("unexpected nil of type %T", v)
-	}
-	var sv []*time.Time
-	if *v == nil {
-		sv = make([]*time.Time, 0)
-	} else {
-		sv = *v
-	}
-
-	for {
-		t, done, err := decoder.Token()
-		if err != nil {
-			return err
-		}
-		if done {
-			break
-		}
-		switch t.Name.Local {
-		case "member":
-			var col *time.Time
-			val, done, err := decoder.Value()
-			if err != nil {
-				return err
-			}
-			if done {
-				break
-			}
-			if val != nil {
-				xtv := string(val)
-				t, err := smithytime.ParseDateTime(xtv)
-				if err != nil {
-					return err
-				}
-				col = &t
-			}
-			sv = append(sv, col)
-
-		default:
-			// Do nothing and ignore
-
-		}
 	}
 	*v = sv
 	return nil

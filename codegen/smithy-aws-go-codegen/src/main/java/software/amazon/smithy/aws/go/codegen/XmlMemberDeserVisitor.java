@@ -43,15 +43,19 @@ public class XmlMemberDeserVisitor implements ShapeVisitor<Void> {
     private final GenerationContext context;
     private final String dataDest;
     private final Format timestampFormat;
-    private final Predicate<Shape> filter;
+
+    // isXmlAttributeMember indicates if member is deserialized from the xml start elements attribute value.
+    private final Boolean isXmlAttributeMember;
     private final Boolean isFlattened;
 
-
-    public XmlMemberDeserVisitor(GenerationContext context, String dataDest, Format timestampFormat, Predicate<Shape> filter, Boolean isFlattened) {
+    public XmlMemberDeserVisitor(
+            GenerationContext context, String dataDest, Format timestampFormat,
+            Boolean isXmlAttributeMember, Boolean isFlattened
+    ) {
         this.context = context;
         this.dataDest = dataDest;
         this.timestampFormat = timestampFormat;
-        this.filter = filter;
+        this.isXmlAttributeMember = isXmlAttributeMember;
         this.isFlattened = isFlattened;
     }
 
@@ -73,7 +77,7 @@ public class XmlMemberDeserVisitor implements ShapeVisitor<Void> {
     public Void booleanShape(BooleanShape shape) {
         GoWriter writer = context.getWriter();
         writer.addUseImports(SmithyGoDependency.FMT);
-        consumeToken(shape);
+        consumeToken();
 
         writer.openBlock("if val != nil {", "}", () -> {
             writer.addUseImports(SmithyGoDependency.STRCONV);
@@ -90,12 +94,13 @@ public class XmlMemberDeserVisitor implements ShapeVisitor<Void> {
     /**
      * Consumes a single token into the variable "val", returning on any error.
      */
-    private void consumeToken(Shape shape) {
-        if (!filter.test(shape)) {
+    private void consumeToken() {
+        GoWriter writer = context.getWriter();
+        if (isXmlAttributeMember) {
+            writer.write("val := []byte(attr.Value)");
          return;
         }
 
-        GoWriter writer = context.getWriter();
         writer.write("val, done, err := decoder.Value()");
         writer.write("if err != nil { return err }");
 
@@ -133,11 +138,11 @@ public class XmlMemberDeserVisitor implements ShapeVisitor<Void> {
 
     /**
      * Deserializes a string representing number without a fractional value.
-     *
+     * <p>
      * The 64-bit integer representation of the number is stored in the variable {@code i64}.
      *
      * @param shape The shape being deserialized.
-     * @param cast A wrapping of {@code i64} to cast it to the proper type.
+     * @param cast  A wrapping of {@code i64} to cast it to the proper type.
      */
     private void handleInteger(Shape shape, String cast) {
         GoWriter writer = context.getWriter();
@@ -150,16 +155,16 @@ public class XmlMemberDeserVisitor implements ShapeVisitor<Void> {
 
     /**
      * Deserializes a xml number string into a xml token.
-     *
+     * <p>
      * The number token is stored under the variable {@code xtv}.
      *
      * @param shape The shape being deserialized.
-     * @param r A runnable that runs after the value has been parsed, before the scope closes.
+     * @param r     A runnable that runs after the value has been parsed, before the scope closes.
      */
     private void handleNumber(Shape shape, Runnable r) {
         GoWriter writer = context.getWriter();
         writer.addUseImports(SmithyGoDependency.FMT);
-        consumeToken(shape);
+        consumeToken();
 
         writer.openBlock("if val != nil {", "}", () -> {
             writer.write("xtv := string(val)");
@@ -182,11 +187,11 @@ public class XmlMemberDeserVisitor implements ShapeVisitor<Void> {
 
     /**
      * Deserializes a string representing number with a fractional value.
-     *
+     * <p>
      * The 64-bit float representation of the number is stored in the variable {@code f64}.
      *
      * @param shape The shape being deserialized.
-     * @param cast A wrapping of {@code f64} to cast it to the proper type.
+     * @param cast  A wrapping of {@code f64} to cast it to the proper type.
      */
     private void handleFloat(Shape shape, String cast) {
         GoWriter writer = context.getWriter();
@@ -213,16 +218,16 @@ public class XmlMemberDeserVisitor implements ShapeVisitor<Void> {
 
     /**
      * Deserializes a xml string into a xml token.
-     *
+     * <p>
      * The number token is stored under the variable {@code xtv}.
      *
      * @param shape The shape being deserialized.
-     * @param r A runnable that runs after the value has been parsed, before the scope closes.
+     * @param r     A runnable that runs after the value has been parsed, before the scope closes.
      */
     private void handleString(Shape shape, Runnable r) {
         GoWriter writer = context.getWriter();
         writer.addUseImports(SmithyGoDependency.FMT);
-        consumeToken(shape);
+        consumeToken();
 
         writer.openBlock("if val != nil {", "}", () -> {
             writer.write("xtv := string(val)");
@@ -331,7 +336,7 @@ public class XmlMemberDeserVisitor implements ShapeVisitor<Void> {
         if (isFlattened) {
             writeUnwrappedDelegateFunction(shape);
         } else {
-        writeDelegateFunction(shape);
+            writeDelegateFunction(shape);
         }
         return null;
     }
