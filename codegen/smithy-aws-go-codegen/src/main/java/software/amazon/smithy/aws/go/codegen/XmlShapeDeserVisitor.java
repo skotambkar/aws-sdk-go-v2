@@ -35,10 +35,10 @@ import software.amazon.smithy.utils.FunctionalUtils;
 /**
  * Visitor to generate deserialization functions for shapes in XML protocol
  * document bodies.
- * <p>
+ *
  * This class handles function body generation for all types expected by the
  * {@code DocumentShapeDeserVisitor}. No other shape type serialization is overwritten.
- * <p>
+ *
  * Timestamps are serialized to {@link TimestampFormatTrait.Format}.DATE_TIME by default.
  */
 public class XmlShapeDeserVisitor extends DocumentShapeDeserVisitor {
@@ -69,12 +69,12 @@ public class XmlShapeDeserVisitor extends DocumentShapeDeserVisitor {
         return Collections.singletonMap("decoder", "*smithydecoding.XMLNodeDecoder");
     }
 
-    private XmlMemberDeserVisitor getMemberDeserVisitor(MemberShape member, String dataDest, Boolean isXmlAttibuteMember) {
+    private XmlMemberDeserVisitor getMemberDeserVisitor(MemberShape member, String dataDest, boolean isXmlAttibuteMember) {
         // Get the timestamp format to be used, defaulting to rfc 3339 date-time format.
         TimestampFormatTrait.Format format = member.getMemberTrait(getContext().getModel(), TimestampFormatTrait.class)
                 .map(TimestampFormatTrait::getFormat).orElse(DEFAULT_TIMESTAMP_FORMAT);
         // Check if FlattenedTrait  is applied
-        Boolean isFlattened = member.hasTrait(XmlFlattenedTrait.ID);
+        boolean isFlattened = member.hasTrait(XmlFlattenedTrait.ID);
         return new XmlMemberDeserVisitor(getContext(), dataDest, format, isXmlAttibuteMember, isFlattened);
     }
 
@@ -98,21 +98,21 @@ public class XmlShapeDeserVisitor extends DocumentShapeDeserVisitor {
 
     @Override
     public Void mapShape(MapShape shape) {
-        generateDeserFunction(shape, (c, s) -> deserializeMap(c, s.asMapShape().get()));
+        super.mapShape(shape);
         generateFlattenedMapDeserializer(getContext(), shape);
         return null;
     }
 
     @Override
     public Void setShape(SetShape shape) {
-        generateDeserFunction(shape, (c, s) -> deserializeCollection(c, s.asSetShape().get()));
+        super.setShape(shape);
         generateFlattenedCollectionDeserializer(getContext(), shape);
         return null;
     }
 
     @Override
     public Void listShape(ListShape shape) {
-        generateDeserFunction(shape, (c, s) -> deserializeCollection(c, s.asListShape().get()));
+        super.listShape(shape);
         generateFlattenedCollectionDeserializer(getContext(), shape);
         return null;
     }
@@ -141,7 +141,8 @@ public class XmlShapeDeserVisitor extends DocumentShapeDeserVisitor {
         generatesIntializerForOutputVariable(context, shape);
 
         writer.write("originalDecoder := decoder");
-        // Iterate through the decoder. The member visitor will handle popping tokens.
+        // Iterate through the decoder. The member visitor will handle popping xml tokens
+        // enclosed within a xml start and end element.
         writer.openBlock("for {", "}", () -> {
             writer.write("t, done, err := decoder.Token()");
             writer.write("if err != nil { return err }");
@@ -190,7 +191,6 @@ public class XmlShapeDeserVisitor extends DocumentShapeDeserVisitor {
                 getUnwrappedMapDelegateFunctionName(context, shape), symbol, () -> {
                     // initialize the output member variable
                     generatesIntializerForOutputVariable(context, shape);
-
                     writer.openBlock("for {", "}", () -> {
                         writer.write("var mv $P", memberSymbol);
                         writer.write("t := decoder.StartEl");
@@ -211,7 +211,8 @@ public class XmlShapeDeserVisitor extends DocumentShapeDeserVisitor {
         // initialize the output member variable
         generatesIntializerForOutputVariable(context, shape);
 
-        // Iterate through the decoder. The member visitor will handle popping tokens.
+        // Iterate through the decoder. The member visitor will handle popping xml tokens
+        // enclosed within a xml start and end element.
         writer.openBlock("for {", "}", () -> {
             writer.write("t, done, err := decoder.Token()");
             writer.write("if err != nil { return err }");
@@ -241,12 +242,12 @@ public class XmlShapeDeserVisitor extends DocumentShapeDeserVisitor {
                 getUnwrappedMapDelegateFunctionName(context, shape), symbol, () -> {
                     // initialize the output member variable
                     generatesIntializerForOutputVariable(context, shape);
-
                     writer.write("var ek $P", symbolProvider.toSymbol(shape.getKey()));
                     writer.write("var ev $P", symbolProvider.toSymbol(shape.getValue()));
                     writer.insertTrailingNewline();
 
-                    // Iterate through the decoder. The member visitor will handle popping tokens.
+                    // Iterate through the decoder. The member visitor will handle popping xml tokens
+                    // enclosed within a xml start and end element.
                     writer.openBlock("for {", "}", () -> {
                         writer.write("t, done, err := decoder.Token()");
                         writer.write("if err != nil { return err }");
@@ -278,7 +279,7 @@ public class XmlShapeDeserVisitor extends DocumentShapeDeserVisitor {
                     });
                     writer.write("*v = sv");
                     writer.write("return nil");
-                });
+        });
     }
 
     private String getUnwrappedMapDelegateFunctionName(GenerationContext context, Shape shape) {
@@ -293,7 +294,6 @@ public class XmlShapeDeserVisitor extends DocumentShapeDeserVisitor {
 
         // initialize the output member variable
         generatesIntializerForOutputVariable(context, shape);
-
         // Deserialize member shapes modeled with xml attribute trait
         if (hasXmlAttributeTraitMember(shape)) {
             writer.openBlock("for _, attr := range decoder.StartEl.Attr {", "}", () -> {
@@ -310,15 +310,15 @@ public class XmlShapeDeserVisitor extends DocumentShapeDeserVisitor {
                         writer.openBlock("case $S:", "", serializedMemberName, () -> {
                             String dest = "sv." + memberName;
                             context.getModel().expectShape(member.getTarget()).accept(
-                                    getMemberDeserVisitor(member, dest,true));
+                                    getMemberDeserVisitor(member, dest, true));
                         });
                     }
                 });
             });
         }
 
-        // Iterate through the decoder. The member visitor will handle popping xml tokens enclosed within
-        // a xml start and end element.
+        // Iterate through the decoder. The member visitor will handle popping xml tokens
+        // enclosed within a xml start and end element.
         writer.openBlock("for {", "}", () -> {
             writer.write("t, done, err := decoder.Token()");
             writer.write("if err != nil { return err }");
@@ -331,7 +331,6 @@ public class XmlShapeDeserVisitor extends DocumentShapeDeserVisitor {
                     if (!memberFilter.test(member) || member.hasTrait(XmlAttributeTrait.ID)) {
                         continue;
                     }
-
                     String memberName = symbolProvider.toMemberName(member);
                     String serializedMemberName = getSerializedMemberName(member);
                     writer.openBlock("case $S:", "", serializedMemberName, () -> {

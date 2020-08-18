@@ -45,12 +45,12 @@ public class XmlMemberDeserVisitor implements ShapeVisitor<Void> {
     private final Format timestampFormat;
 
     // isXmlAttributeMember indicates if member is deserialized from the xml start elements attribute value.
-    private final Boolean isXmlAttributeMember;
-    private final Boolean isFlattened;
+    private final boolean isXmlAttributeMember;
+    private final boolean isFlattened;
 
     public XmlMemberDeserVisitor(
             GenerationContext context, String dataDest, Format timestampFormat,
-            Boolean isXmlAttributeMember, Boolean isFlattened
+            boolean isXmlAttributeMember, boolean isFlattened
     ) {
         this.context = context;
         this.dataDest = dataDest;
@@ -93,12 +93,16 @@ public class XmlMemberDeserVisitor implements ShapeVisitor<Void> {
 
     /**
      * Consumes a single token into the variable "val", returning on any error.
+     * If member is an xmlAttributeMember, "attr" representing xml attribute value is in scope.
      */
     private void consumeToken() {
         GoWriter writer = context.getWriter();
+        // if the member is a modeled as an xml attribute, we do not need to
+        // get another token, instead use the attribute values from previously
+        // decoded start element.
         if (isXmlAttributeMember) {
             writer.write("val := []byte(attr.Value)");
-         return;
+            return;
         }
 
         writer.write("val, done, err := decoder.Value()");
@@ -138,7 +142,6 @@ public class XmlMemberDeserVisitor implements ShapeVisitor<Void> {
 
     /**
      * Deserializes a string representing number without a fractional value.
-     * <p>
      * The 64-bit integer representation of the number is stored in the variable {@code i64}.
      *
      * @param shape The shape being deserialized.
@@ -155,7 +158,6 @@ public class XmlMemberDeserVisitor implements ShapeVisitor<Void> {
 
     /**
      * Deserializes a xml number string into a xml token.
-     * <p>
      * The number token is stored under the variable {@code xtv}.
      *
      * @param shape The shape being deserialized.
@@ -187,7 +189,6 @@ public class XmlMemberDeserVisitor implements ShapeVisitor<Void> {
 
     /**
      * Deserializes a string representing number with a fractional value.
-     * <p>
      * The 64-bit float representation of the number is stored in the variable {@code f64}.
      *
      * @param shape The shape being deserialized.
@@ -218,7 +219,6 @@ public class XmlMemberDeserVisitor implements ShapeVisitor<Void> {
 
     /**
      * Deserializes a xml string into a xml token.
-     * <p>
      * The number token is stored under the variable {@code xtv}.
      *
      * @param shape The shape being deserialized.

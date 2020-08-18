@@ -142,10 +142,9 @@ abstract class RestXmlProtocolGenerator extends HttpBindingProtocolGenerator {
      */
     private void writeErrorMessageCodeDeserializer(GenerationContext context) {
         GoWriter writer = context.getWriter();
-        boolean isNoErrorWrapping = false;
 
         // Check if service uses isNoErrorWrapping setting
-        isNoErrorWrapping = context.getService().getTrait(RestXmlTrait.class).map(
+        boolean isNoErrorWrapping = context.getService().getTrait(RestXmlTrait.class).map(
                 RestXmlTrait::isNoErrorWrapping).orElse(false);
 
         writer.write("errorCode, err := smithydecoding.GetXMLResponseErrorCode(errorBody, $L)", isNoErrorWrapping);
@@ -229,8 +228,6 @@ abstract class RestXmlProtocolGenerator extends HttpBindingProtocolGenerator {
         writePayloadBindingDeserializer(context, outputShape, payloadBindings::contains);
         writer.write("");
     }
-
-
 
     @Override
     protected void generateDocumentBodyShapeDeserializers(GenerationContext context, Set<Shape> shapes) {
