@@ -160,7 +160,8 @@ public class XmlShapeDeserVisitor extends DocumentShapeDeserVisitor {
             }
 
             writer.openBlock("for {", "}", () -> {
-                writer.openBlock("if t.Name.Local == $S {", "}", serializedMemberName, () -> {
+                writer.addUseImports(SmithyGoDependency.STRINGS);
+                writer.openBlock("if strings.EqualFold($S, t.Name.Local) {", "}", serializedMemberName, () -> {
                     writer.write("var col $P", context.getSymbolProvider().toSymbol(target));
                     target.accept(getMemberDeserVisitor(member, "col", false));
                     writer.write("sv = append(sv, col)");
@@ -219,7 +220,8 @@ public class XmlShapeDeserVisitor extends DocumentShapeDeserVisitor {
             writer.write("if done { break }");
 
             // non-flattened maps
-            writer.openBlock("if t.Name.Local == \"entry\" {", "}", () -> {
+            writer.addUseImports(SmithyGoDependency.STRINGS);
+            writer.openBlock("if strings.EqualFold(\"entry\", t.Name.Local) {", "}", () -> {
                 writer.write("entryDecoder := smithydecoding.NewXMLNodeDecoder(decoder.Decoder, t)");
                 // delegate to unwrapped map deserializer function
                 writer.openBlock("if err := $L(&sv, entryDecoder); err != nil {", "}",
@@ -257,16 +259,17 @@ public class XmlShapeDeserVisitor extends DocumentShapeDeserVisitor {
                             writer.write("break");
                         });
 
-                        writer.openBlock("switch t.Name.Local {", "}", () -> {
+                        writer.openBlock("switch {", "}", () -> {
                             MemberShape keyShape = shape.getKey();
-                            writer.openBlock("case $S:", "", getSerializedMemberName(keyShape), () -> {
+                            writer.addUseImports(SmithyGoDependency.STRINGS);
+                            writer.openBlock("case strings.EqualFold($S, t.Name.Local):", "", getSerializedMemberName(keyShape), () -> {
                                 String dest = "ek";
                                 context.getModel().expectShape(keyShape.getTarget()).accept(
                                         getMemberDeserVisitor(keyShape, dest, false));
                             });
 
                             MemberShape valueShape = shape.getValue();
-                            writer.openBlock("case $S:", "", getSerializedMemberName(valueShape), () -> {
+                            writer.openBlock("case strings.EqualFold($S, t.Name.Local):", "", getSerializedMemberName(valueShape), () -> {
                                 String dest = "ev";
                                 context.getModel().expectShape(valueShape.getTarget()).accept(
                                         getMemberDeserVisitor(valueShape, dest, false));
@@ -297,7 +300,7 @@ public class XmlShapeDeserVisitor extends DocumentShapeDeserVisitor {
         // Deserialize member shapes modeled with xml attribute trait
         if (hasXmlAttributeTraitMember(shape)) {
             writer.openBlock("for _, attr := range decoder.StartEl.Attr {", "}", () -> {
-                writer.openBlock("switch attr.Name.Local {", "}", () -> {
+                writer.openBlock("switch {", "}", () -> {
                     Set<MemberShape> members = new TreeSet<>(shape.members());
                     for (MemberShape member : members) {
                         // check if member does not conform with the member filter or does not have a xmlAttribute trait
@@ -307,7 +310,8 @@ public class XmlShapeDeserVisitor extends DocumentShapeDeserVisitor {
 
                         String memberName = symbolProvider.toMemberName(member);
                         String serializedMemberName = getSerializedMemberName(member);
-                        writer.openBlock("case $S:", "", serializedMemberName, () -> {
+                        writer.addUseImports(SmithyGoDependency.STRINGS);
+                        writer.openBlock("case strings.EqualFold($S, attr.Name.Local):", "", serializedMemberName, () -> {
                             String dest = "sv." + memberName;
                             context.getModel().expectShape(member.getTarget()).accept(
                                     getMemberDeserVisitor(member, dest, true));
@@ -324,7 +328,7 @@ public class XmlShapeDeserVisitor extends DocumentShapeDeserVisitor {
             writer.write("if err != nil { return err }");
             writer.write("if done { break }");
 
-            writer.openBlock("switch t.Name.Local {", "}", () -> {
+            writer.openBlock("switch {", "}", () -> {
                 Set<MemberShape> members = new TreeSet<>(shape.members());
                 for (MemberShape member : members) {
                     // check if member is not a document binding or has a xmlAttribute trait
@@ -333,7 +337,8 @@ public class XmlShapeDeserVisitor extends DocumentShapeDeserVisitor {
                     }
                     String memberName = symbolProvider.toMemberName(member);
                     String serializedMemberName = getSerializedMemberName(member);
-                    writer.openBlock("case $S:", "", serializedMemberName, () -> {
+                    writer.addUseImports(SmithyGoDependency.STRINGS);
+                    writer.openBlock("case strings.EqualFold($S, t.Name.Local):", "", serializedMemberName, () -> {
                         String dest = "sv." + memberName;
                         model.expectShape(member.getTarget()).accept(
                                 getMemberDeserVisitor(member, dest, false));

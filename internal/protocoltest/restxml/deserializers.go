@@ -60,19 +60,20 @@ func awsRestxml_deserializeOpErrorAllQueryStringTypes(response *smithyhttp.Respo
 		return &smithy.DeserializationError{Err: fmt.Errorf("failed to copy error response body, %w", err)}
 	}
 	errorBody := bytes.NewReader(errorBuffer.Bytes())
+
+	errorCode := "UnknownError"
+	errorMessage := errorCode
+
 	errorCode, err := smithydecoding.GetXMLResponseErrorCode(errorBody, false)
 	if err != nil {
 		return err
 	}
 	errorBody.Seek(0, io.SeekStart)
-	switch errorCode {
+	switch {
 	default:
-		if len(errorCode) == 0 {
-			errorCode = "UnknownError"
-		}
 		genericError := &smithy.GenericAPIError{
 			Code:    errorCode,
-			Message: errorCode,
+			Message: errorMessage,
 		}
 		return genericError
 
@@ -116,19 +117,20 @@ func awsRestxml_deserializeOpErrorConstantAndVariableQueryString(response *smith
 		return &smithy.DeserializationError{Err: fmt.Errorf("failed to copy error response body, %w", err)}
 	}
 	errorBody := bytes.NewReader(errorBuffer.Bytes())
+
+	errorCode := "UnknownError"
+	errorMessage := errorCode
+
 	errorCode, err := smithydecoding.GetXMLResponseErrorCode(errorBody, false)
 	if err != nil {
 		return err
 	}
 	errorBody.Seek(0, io.SeekStart)
-	switch errorCode {
+	switch {
 	default:
-		if len(errorCode) == 0 {
-			errorCode = "UnknownError"
-		}
 		genericError := &smithy.GenericAPIError{
 			Code:    errorCode,
-			Message: errorCode,
+			Message: errorMessage,
 		}
 		return genericError
 
@@ -172,19 +174,20 @@ func awsRestxml_deserializeOpErrorConstantQueryString(response *smithyhttp.Respo
 		return &smithy.DeserializationError{Err: fmt.Errorf("failed to copy error response body, %w", err)}
 	}
 	errorBody := bytes.NewReader(errorBuffer.Bytes())
+
+	errorCode := "UnknownError"
+	errorMessage := errorCode
+
 	errorCode, err := smithydecoding.GetXMLResponseErrorCode(errorBody, false)
 	if err != nil {
 		return err
 	}
 	errorBody.Seek(0, io.SeekStart)
-	switch errorCode {
+	switch {
 	default:
-		if len(errorCode) == 0 {
-			errorCode = "UnknownError"
-		}
 		genericError := &smithy.GenericAPIError{
 			Code:    errorCode,
-			Message: errorCode,
+			Message: errorMessage,
 		}
 		return genericError
 
@@ -228,19 +231,20 @@ func awsRestxml_deserializeOpErrorEmptyInputAndEmptyOutput(response *smithyhttp.
 		return &smithy.DeserializationError{Err: fmt.Errorf("failed to copy error response body, %w", err)}
 	}
 	errorBody := bytes.NewReader(errorBuffer.Bytes())
+
+	errorCode := "UnknownError"
+	errorMessage := errorCode
+
 	errorCode, err := smithydecoding.GetXMLResponseErrorCode(errorBody, false)
 	if err != nil {
 		return err
 	}
 	errorBody.Seek(0, io.SeekStart)
-	switch errorCode {
+	switch {
 	default:
-		if len(errorCode) == 0 {
-			errorCode = "UnknownError"
-		}
 		genericError := &smithy.GenericAPIError{
 			Code:    errorCode,
-			Message: errorCode,
+			Message: errorMessage,
 		}
 		return genericError
 
@@ -311,24 +315,26 @@ func awsRestxml_deserializeOpErrorFlattenedXmlMap(response *smithyhttp.Response)
 		return &smithy.DeserializationError{Err: fmt.Errorf("failed to copy error response body, %w", err)}
 	}
 	errorBody := bytes.NewReader(errorBuffer.Bytes())
+
+	errorCode := "UnknownError"
+	errorMessage := errorCode
+
 	errorCode, err := smithydecoding.GetXMLResponseErrorCode(errorBody, false)
 	if err != nil {
 		return err
 	}
 	errorBody.Seek(0, io.SeekStart)
-	switch errorCode {
+	switch {
 	default:
-		if len(errorCode) == 0 {
-			errorCode = "UnknownError"
-		}
 		genericError := &smithy.GenericAPIError{
 			Code:    errorCode,
-			Message: errorCode,
+			Message: errorMessage,
 		}
 		return genericError
 
 	}
 }
+
 func awsRestxml_deserializeDocumentFlattenedXmlMapOutput(v **FlattenedXmlMapOutput, decoder *smithydecoding.XMLNodeDecoder) error {
 	if v == nil {
 		return fmt.Errorf("unexpected nil of type %T", v)
@@ -348,8 +354,8 @@ func awsRestxml_deserializeDocumentFlattenedXmlMapOutput(v **FlattenedXmlMapOutp
 		if done {
 			break
 		}
-		switch t.Name.Local {
-		case "myMap":
+		switch {
+		case strings.EqualFold("myMap", t.Name.Local):
 			nodeDecoder := smithydecoding.NewXMLNodeDecoder(decoder.Decoder, t)
 			if err := awsRestxml_deserializeDocumentFooEnumMapUnwrapped(&sv.MyMap, nodeDecoder); err != nil {
 				return err
@@ -428,24 +434,26 @@ func awsRestxml_deserializeOpErrorFlattenedXmlMapWithXmlName(response *smithyhtt
 		return &smithy.DeserializationError{Err: fmt.Errorf("failed to copy error response body, %w", err)}
 	}
 	errorBody := bytes.NewReader(errorBuffer.Bytes())
+
+	errorCode := "UnknownError"
+	errorMessage := errorCode
+
 	errorCode, err := smithydecoding.GetXMLResponseErrorCode(errorBody, false)
 	if err != nil {
 		return err
 	}
 	errorBody.Seek(0, io.SeekStart)
-	switch errorCode {
+	switch {
 	default:
-		if len(errorCode) == 0 {
-			errorCode = "UnknownError"
-		}
 		genericError := &smithy.GenericAPIError{
 			Code:    errorCode,
-			Message: errorCode,
+			Message: errorMessage,
 		}
 		return genericError
 
 	}
 }
+
 func awsRestxml_deserializeDocumentFlattenedXmlMapWithXmlNameOutput(v **FlattenedXmlMapWithXmlNameOutput, decoder *smithydecoding.XMLNodeDecoder) error {
 	if v == nil {
 		return fmt.Errorf("unexpected nil of type %T", v)
@@ -465,8 +473,8 @@ func awsRestxml_deserializeDocumentFlattenedXmlMapWithXmlNameOutput(v **Flattene
 		if done {
 			break
 		}
-		switch t.Name.Local {
-		case "KVP":
+		switch {
+		case strings.EqualFold("KVP", t.Name.Local):
 			nodeDecoder := smithydecoding.NewXMLNodeDecoder(decoder.Decoder, t)
 			if err := awsRestxml_deserializeDocumentFlattenedXmlMapWithXmlNameInputOutputMapUnwrapped(&sv.MyMap, nodeDecoder); err != nil {
 				return err
@@ -523,78 +531,32 @@ func awsRestxml_deserializeOpErrorGreetingWithErrors(response *smithyhttp.Respon
 		return &smithy.DeserializationError{Err: fmt.Errorf("failed to copy error response body, %w", err)}
 	}
 	errorBody := bytes.NewReader(errorBuffer.Bytes())
+
+	errorCode := "UnknownError"
+	errorMessage := errorCode
+
 	errorCode, err := smithydecoding.GetXMLResponseErrorCode(errorBody, false)
 	if err != nil {
 		return err
 	}
 	errorBody.Seek(0, io.SeekStart)
-	switch errorCode {
-	case "ComplexError":
-		buff := make([]byte, 1024)
-		ringBuffer := smithyio.NewRingBuffer(buff)
-		body := io.TeeReader(errorBody, ringBuffer)
-		rootDecoder := xml.NewDecoder(body)
-		t, err := smithydecoding.FetchXmlRootElement(rootDecoder)
-		if err != nil && err != io.EOF {
-			var snapshot bytes.Buffer
-			io.Copy(&snapshot, ringBuffer)
-			return &smithy.DeserializationError{
-				Err:      fmt.Errorf("error fetching the start element of xml response error body%w", err),
-				Snapshot: snapshot.Bytes(),
-			}
-		}
+	switch {
+	case strings.EqualFold("ComplexError", errorCode):
+		return awsRestxml_deserializeErrorComplexError(response, errorBody)
 
-		decoder := smithydecoding.NewXMLNodeDecoder(rootDecoder, t)
-		if err := awsRestxml_deserializeErrorComplexError(decoder, response); err != nil {
-			if de, ok := err.(*smithy.DeserializationError); ok {
-				var snapshot bytes.Buffer
-				io.Copy(&snapshot, ringBuffer)
-				de.Snapshot = snapshot.Bytes()
-				return de
-			}
-			return err
-		}
-		return nil
-
-	case "InvalidGreeting":
-		buff := make([]byte, 1024)
-		ringBuffer := smithyio.NewRingBuffer(buff)
-		body := io.TeeReader(errorBody, ringBuffer)
-		rootDecoder := xml.NewDecoder(body)
-		t, err := smithydecoding.FetchXmlRootElement(rootDecoder)
-		if err != nil && err != io.EOF {
-			var snapshot bytes.Buffer
-			io.Copy(&snapshot, ringBuffer)
-			return &smithy.DeserializationError{
-				Err:      fmt.Errorf("error fetching the start element of xml response error body%w", err),
-				Snapshot: snapshot.Bytes(),
-			}
-		}
-
-		decoder := smithydecoding.NewXMLNodeDecoder(rootDecoder, t)
-		if err := awsRestxml_deserializeErrorInvalidGreeting(decoder, response); err != nil {
-			if de, ok := err.(*smithy.DeserializationError); ok {
-				var snapshot bytes.Buffer
-				io.Copy(&snapshot, ringBuffer)
-				de.Snapshot = snapshot.Bytes()
-				return de
-			}
-			return err
-		}
-		return nil
+	case strings.EqualFold("InvalidGreeting", errorCode):
+		return awsRestxml_deserializeErrorInvalidGreeting(response, errorBody)
 
 	default:
-		if len(errorCode) == 0 {
-			errorCode = "UnknownError"
-		}
 		genericError := &smithy.GenericAPIError{
 			Code:    errorCode,
-			Message: errorCode,
+			Message: errorMessage,
 		}
 		return genericError
 
 	}
 }
+
 func awsRestxml_deserializeHttpBindingsGreetingWithErrorsOutput(v *GreetingWithErrorsOutput, response *smithyhttp.Response) error {
 	if v == nil {
 		return fmt.Errorf("unsupported deserialization for nil %T", v)
@@ -655,24 +617,26 @@ func awsRestxml_deserializeOpErrorHttpPayloadTraits(response *smithyhttp.Respons
 		return &smithy.DeserializationError{Err: fmt.Errorf("failed to copy error response body, %w", err)}
 	}
 	errorBody := bytes.NewReader(errorBuffer.Bytes())
+
+	errorCode := "UnknownError"
+	errorMessage := errorCode
+
 	errorCode, err := smithydecoding.GetXMLResponseErrorCode(errorBody, false)
 	if err != nil {
 		return err
 	}
 	errorBody.Seek(0, io.SeekStart)
-	switch errorCode {
+	switch {
 	default:
-		if len(errorCode) == 0 {
-			errorCode = "UnknownError"
-		}
 		genericError := &smithy.GenericAPIError{
 			Code:    errorCode,
-			Message: errorCode,
+			Message: errorMessage,
 		}
 		return genericError
 
 	}
 }
+
 func awsRestxml_deserializeHttpBindingsHttpPayloadTraitsOutput(v *HttpPayloadTraitsOutput, response *smithyhttp.Response) error {
 	if v == nil {
 		return fmt.Errorf("unsupported deserialization for nil %T", v)
@@ -746,24 +710,26 @@ func awsRestxml_deserializeOpErrorHttpPayloadTraitsWithMediaType(response *smith
 		return &smithy.DeserializationError{Err: fmt.Errorf("failed to copy error response body, %w", err)}
 	}
 	errorBody := bytes.NewReader(errorBuffer.Bytes())
+
+	errorCode := "UnknownError"
+	errorMessage := errorCode
+
 	errorCode, err := smithydecoding.GetXMLResponseErrorCode(errorBody, false)
 	if err != nil {
 		return err
 	}
 	errorBody.Seek(0, io.SeekStart)
-	switch errorCode {
+	switch {
 	default:
-		if len(errorCode) == 0 {
-			errorCode = "UnknownError"
-		}
 		genericError := &smithy.GenericAPIError{
 			Code:    errorCode,
-			Message: errorCode,
+			Message: errorMessage,
 		}
 		return genericError
 
 	}
 }
+
 func awsRestxml_deserializeHttpBindingsHttpPayloadTraitsWithMediaTypeOutput(v *HttpPayloadTraitsWithMediaTypeOutput, response *smithyhttp.Response) error {
 	if v == nil {
 		return fmt.Errorf("unsupported deserialization for nil %T", v)
@@ -854,24 +820,26 @@ func awsRestxml_deserializeOpErrorHttpPayloadWithStructure(response *smithyhttp.
 		return &smithy.DeserializationError{Err: fmt.Errorf("failed to copy error response body, %w", err)}
 	}
 	errorBody := bytes.NewReader(errorBuffer.Bytes())
+
+	errorCode := "UnknownError"
+	errorMessage := errorCode
+
 	errorCode, err := smithydecoding.GetXMLResponseErrorCode(errorBody, false)
 	if err != nil {
 		return err
 	}
 	errorBody.Seek(0, io.SeekStart)
-	switch errorCode {
+	switch {
 	default:
-		if len(errorCode) == 0 {
-			errorCode = "UnknownError"
-		}
 		genericError := &smithy.GenericAPIError{
 			Code:    errorCode,
-			Message: errorCode,
+			Message: errorMessage,
 		}
 		return genericError
 
 	}
 }
+
 func awsRestxml_deserializeDocumentHttpPayloadWithStructureOutput(v **HttpPayloadWithStructureOutput, decoder *smithydecoding.XMLNodeDecoder) error {
 	if v == nil {
 		return fmt.Errorf("unexpected nil of type %T", v)
@@ -891,8 +859,8 @@ func awsRestxml_deserializeDocumentHttpPayloadWithStructureOutput(v **HttpPayloa
 		if done {
 			break
 		}
-		switch t.Name.Local {
-		case "nested":
+		switch {
+		case strings.EqualFold("nested", t.Name.Local):
 			nodeDecoder := smithydecoding.NewXMLNodeDecoder(decoder.Decoder, t)
 			if err := awsRestxml_deserializeDocumentNestedPayload(&sv.Nested, nodeDecoder); err != nil {
 				return err
@@ -971,24 +939,26 @@ func awsRestxml_deserializeOpErrorHttpPayloadWithXmlName(response *smithyhttp.Re
 		return &smithy.DeserializationError{Err: fmt.Errorf("failed to copy error response body, %w", err)}
 	}
 	errorBody := bytes.NewReader(errorBuffer.Bytes())
+
+	errorCode := "UnknownError"
+	errorMessage := errorCode
+
 	errorCode, err := smithydecoding.GetXMLResponseErrorCode(errorBody, false)
 	if err != nil {
 		return err
 	}
 	errorBody.Seek(0, io.SeekStart)
-	switch errorCode {
+	switch {
 	default:
-		if len(errorCode) == 0 {
-			errorCode = "UnknownError"
-		}
 		genericError := &smithy.GenericAPIError{
 			Code:    errorCode,
-			Message: errorCode,
+			Message: errorMessage,
 		}
 		return genericError
 
 	}
 }
+
 func awsRestxml_deserializeDocumentHttpPayloadWithXmlNameOutput(v **HttpPayloadWithXmlNameOutput, decoder *smithydecoding.XMLNodeDecoder) error {
 	if v == nil {
 		return fmt.Errorf("unexpected nil of type %T", v)
@@ -1008,8 +978,8 @@ func awsRestxml_deserializeDocumentHttpPayloadWithXmlNameOutput(v **HttpPayloadW
 		if done {
 			break
 		}
-		switch t.Name.Local {
-		case "nested":
+		switch {
+		case strings.EqualFold("nested", t.Name.Local):
 			nodeDecoder := smithydecoding.NewXMLNodeDecoder(decoder.Decoder, t)
 			if err := awsRestxml_deserializeDocumentPayloadWithXmlName(&sv.Nested, nodeDecoder); err != nil {
 				return err
@@ -1088,24 +1058,26 @@ func awsRestxml_deserializeOpErrorHttpPayloadWithXmlNamespace(response *smithyht
 		return &smithy.DeserializationError{Err: fmt.Errorf("failed to copy error response body, %w", err)}
 	}
 	errorBody := bytes.NewReader(errorBuffer.Bytes())
+
+	errorCode := "UnknownError"
+	errorMessage := errorCode
+
 	errorCode, err := smithydecoding.GetXMLResponseErrorCode(errorBody, false)
 	if err != nil {
 		return err
 	}
 	errorBody.Seek(0, io.SeekStart)
-	switch errorCode {
+	switch {
 	default:
-		if len(errorCode) == 0 {
-			errorCode = "UnknownError"
-		}
 		genericError := &smithy.GenericAPIError{
 			Code:    errorCode,
-			Message: errorCode,
+			Message: errorMessage,
 		}
 		return genericError
 
 	}
 }
+
 func awsRestxml_deserializeDocumentHttpPayloadWithXmlNamespaceOutput(v **HttpPayloadWithXmlNamespaceOutput, decoder *smithydecoding.XMLNodeDecoder) error {
 	if v == nil {
 		return fmt.Errorf("unexpected nil of type %T", v)
@@ -1125,8 +1097,8 @@ func awsRestxml_deserializeDocumentHttpPayloadWithXmlNamespaceOutput(v **HttpPay
 		if done {
 			break
 		}
-		switch t.Name.Local {
-		case "nested":
+		switch {
+		case strings.EqualFold("nested", t.Name.Local):
 			nodeDecoder := smithydecoding.NewXMLNodeDecoder(decoder.Decoder, t)
 			if err := awsRestxml_deserializeDocumentPayloadWithXmlNamespace(&sv.Nested, nodeDecoder); err != nil {
 				return err
@@ -1205,24 +1177,26 @@ func awsRestxml_deserializeOpErrorHttpPayloadWithXmlNamespaceAndPrefix(response 
 		return &smithy.DeserializationError{Err: fmt.Errorf("failed to copy error response body, %w", err)}
 	}
 	errorBody := bytes.NewReader(errorBuffer.Bytes())
+
+	errorCode := "UnknownError"
+	errorMessage := errorCode
+
 	errorCode, err := smithydecoding.GetXMLResponseErrorCode(errorBody, false)
 	if err != nil {
 		return err
 	}
 	errorBody.Seek(0, io.SeekStart)
-	switch errorCode {
+	switch {
 	default:
-		if len(errorCode) == 0 {
-			errorCode = "UnknownError"
-		}
 		genericError := &smithy.GenericAPIError{
 			Code:    errorCode,
-			Message: errorCode,
+			Message: errorMessage,
 		}
 		return genericError
 
 	}
 }
+
 func awsRestxml_deserializeDocumentHttpPayloadWithXmlNamespaceAndPrefixOutput(v **HttpPayloadWithXmlNamespaceAndPrefixOutput, decoder *smithydecoding.XMLNodeDecoder) error {
 	if v == nil {
 		return fmt.Errorf("unexpected nil of type %T", v)
@@ -1242,8 +1216,8 @@ func awsRestxml_deserializeDocumentHttpPayloadWithXmlNamespaceAndPrefixOutput(v 
 		if done {
 			break
 		}
-		switch t.Name.Local {
-		case "nested":
+		switch {
+		case strings.EqualFold("nested", t.Name.Local):
 			nodeDecoder := smithydecoding.NewXMLNodeDecoder(decoder.Decoder, t)
 			if err := awsRestxml_deserializeDocumentPayloadWithXmlNamespaceAndPrefix(&sv.Nested, nodeDecoder); err != nil {
 				return err
@@ -1300,24 +1274,26 @@ func awsRestxml_deserializeOpErrorHttpPrefixHeaders(response *smithyhttp.Respons
 		return &smithy.DeserializationError{Err: fmt.Errorf("failed to copy error response body, %w", err)}
 	}
 	errorBody := bytes.NewReader(errorBuffer.Bytes())
+
+	errorCode := "UnknownError"
+	errorMessage := errorCode
+
 	errorCode, err := smithydecoding.GetXMLResponseErrorCode(errorBody, false)
 	if err != nil {
 		return err
 	}
 	errorBody.Seek(0, io.SeekStart)
-	switch errorCode {
+	switch {
 	default:
-		if len(errorCode) == 0 {
-			errorCode = "UnknownError"
-		}
 		genericError := &smithy.GenericAPIError{
 			Code:    errorCode,
-			Message: errorCode,
+			Message: errorMessage,
 		}
 		return genericError
 
 	}
 }
+
 func awsRestxml_deserializeHttpBindingsHttpPrefixHeadersOutput(v *HttpPrefixHeadersOutput, response *smithyhttp.Response) error {
 	if v == nil {
 		return fmt.Errorf("unsupported deserialization for nil %T", v)
@@ -1378,19 +1354,20 @@ func awsRestxml_deserializeOpErrorHttpRequestWithGreedyLabelInPath(response *smi
 		return &smithy.DeserializationError{Err: fmt.Errorf("failed to copy error response body, %w", err)}
 	}
 	errorBody := bytes.NewReader(errorBuffer.Bytes())
+
+	errorCode := "UnknownError"
+	errorMessage := errorCode
+
 	errorCode, err := smithydecoding.GetXMLResponseErrorCode(errorBody, false)
 	if err != nil {
 		return err
 	}
 	errorBody.Seek(0, io.SeekStart)
-	switch errorCode {
+	switch {
 	default:
-		if len(errorCode) == 0 {
-			errorCode = "UnknownError"
-		}
 		genericError := &smithy.GenericAPIError{
 			Code:    errorCode,
-			Message: errorCode,
+			Message: errorMessage,
 		}
 		return genericError
 
@@ -1434,19 +1411,20 @@ func awsRestxml_deserializeOpErrorHttpRequestWithLabels(response *smithyhttp.Res
 		return &smithy.DeserializationError{Err: fmt.Errorf("failed to copy error response body, %w", err)}
 	}
 	errorBody := bytes.NewReader(errorBuffer.Bytes())
+
+	errorCode := "UnknownError"
+	errorMessage := errorCode
+
 	errorCode, err := smithydecoding.GetXMLResponseErrorCode(errorBody, false)
 	if err != nil {
 		return err
 	}
 	errorBody.Seek(0, io.SeekStart)
-	switch errorCode {
+	switch {
 	default:
-		if len(errorCode) == 0 {
-			errorCode = "UnknownError"
-		}
 		genericError := &smithy.GenericAPIError{
 			Code:    errorCode,
-			Message: errorCode,
+			Message: errorMessage,
 		}
 		return genericError
 
@@ -1490,19 +1468,20 @@ func awsRestxml_deserializeOpErrorHttpRequestWithLabelsAndTimestampFormat(respon
 		return &smithy.DeserializationError{Err: fmt.Errorf("failed to copy error response body, %w", err)}
 	}
 	errorBody := bytes.NewReader(errorBuffer.Bytes())
+
+	errorCode := "UnknownError"
+	errorMessage := errorCode
+
 	errorCode, err := smithydecoding.GetXMLResponseErrorCode(errorBody, false)
 	if err != nil {
 		return err
 	}
 	errorBody.Seek(0, io.SeekStart)
-	switch errorCode {
+	switch {
 	default:
-		if len(errorCode) == 0 {
-			errorCode = "UnknownError"
-		}
 		genericError := &smithy.GenericAPIError{
 			Code:    errorCode,
-			Message: errorCode,
+			Message: errorMessage,
 		}
 		return genericError
 
@@ -1573,24 +1552,26 @@ func awsRestxml_deserializeOpErrorIgnoreQueryParamsInResponse(response *smithyht
 		return &smithy.DeserializationError{Err: fmt.Errorf("failed to copy error response body, %w", err)}
 	}
 	errorBody := bytes.NewReader(errorBuffer.Bytes())
+
+	errorCode := "UnknownError"
+	errorMessage := errorCode
+
 	errorCode, err := smithydecoding.GetXMLResponseErrorCode(errorBody, false)
 	if err != nil {
 		return err
 	}
 	errorBody.Seek(0, io.SeekStart)
-	switch errorCode {
+	switch {
 	default:
-		if len(errorCode) == 0 {
-			errorCode = "UnknownError"
-		}
 		genericError := &smithy.GenericAPIError{
 			Code:    errorCode,
-			Message: errorCode,
+			Message: errorMessage,
 		}
 		return genericError
 
 	}
 }
+
 func awsRestxml_deserializeDocumentIgnoreQueryParamsInResponseOutput(v **IgnoreQueryParamsInResponseOutput, decoder *smithydecoding.XMLNodeDecoder) error {
 	if v == nil {
 		return fmt.Errorf("unexpected nil of type %T", v)
@@ -1610,8 +1591,8 @@ func awsRestxml_deserializeDocumentIgnoreQueryParamsInResponseOutput(v **IgnoreQ
 		if done {
 			break
 		}
-		switch t.Name.Local {
-		case "baz":
+		switch {
+		case strings.EqualFold("baz", t.Name.Local):
 			val, done, err := decoder.Value()
 			if err != nil {
 				return err
@@ -1675,24 +1656,26 @@ func awsRestxml_deserializeOpErrorInputAndOutputWithHeaders(response *smithyhttp
 		return &smithy.DeserializationError{Err: fmt.Errorf("failed to copy error response body, %w", err)}
 	}
 	errorBody := bytes.NewReader(errorBuffer.Bytes())
+
+	errorCode := "UnknownError"
+	errorMessage := errorCode
+
 	errorCode, err := smithydecoding.GetXMLResponseErrorCode(errorBody, false)
 	if err != nil {
 		return err
 	}
 	errorBody.Seek(0, io.SeekStart)
-	switch errorCode {
+	switch {
 	default:
-		if len(errorCode) == 0 {
-			errorCode = "UnknownError"
-		}
 		genericError := &smithy.GenericAPIError{
 			Code:    errorCode,
-			Message: errorCode,
+			Message: errorMessage,
 		}
 		return genericError
 
 	}
 }
+
 func awsRestxml_deserializeHttpBindingsInputAndOutputWithHeadersOutput(v *InputAndOutputWithHeadersOutput, response *smithyhttp.Response) error {
 	if v == nil {
 		return fmt.Errorf("unsupported deserialization for nil %T", v)
@@ -1928,19 +1911,20 @@ func awsRestxml_deserializeOpErrorNoInputAndNoOutput(response *smithyhttp.Respon
 		return &smithy.DeserializationError{Err: fmt.Errorf("failed to copy error response body, %w", err)}
 	}
 	errorBody := bytes.NewReader(errorBuffer.Bytes())
+
+	errorCode := "UnknownError"
+	errorMessage := errorCode
+
 	errorCode, err := smithydecoding.GetXMLResponseErrorCode(errorBody, false)
 	if err != nil {
 		return err
 	}
 	errorBody.Seek(0, io.SeekStart)
-	switch errorCode {
+	switch {
 	default:
-		if len(errorCode) == 0 {
-			errorCode = "UnknownError"
-		}
 		genericError := &smithy.GenericAPIError{
 			Code:    errorCode,
-			Message: errorCode,
+			Message: errorMessage,
 		}
 		return genericError
 
@@ -1984,19 +1968,20 @@ func awsRestxml_deserializeOpErrorNoInputAndOutput(response *smithyhttp.Response
 		return &smithy.DeserializationError{Err: fmt.Errorf("failed to copy error response body, %w", err)}
 	}
 	errorBody := bytes.NewReader(errorBuffer.Bytes())
+
+	errorCode := "UnknownError"
+	errorMessage := errorCode
+
 	errorCode, err := smithydecoding.GetXMLResponseErrorCode(errorBody, false)
 	if err != nil {
 		return err
 	}
 	errorBody.Seek(0, io.SeekStart)
-	switch errorCode {
+	switch {
 	default:
-		if len(errorCode) == 0 {
-			errorCode = "UnknownError"
-		}
 		genericError := &smithy.GenericAPIError{
 			Code:    errorCode,
-			Message: errorCode,
+			Message: errorMessage,
 		}
 		return genericError
 
@@ -2045,24 +2030,26 @@ func awsRestxml_deserializeOpErrorNullAndEmptyHeadersClient(response *smithyhttp
 		return &smithy.DeserializationError{Err: fmt.Errorf("failed to copy error response body, %w", err)}
 	}
 	errorBody := bytes.NewReader(errorBuffer.Bytes())
+
+	errorCode := "UnknownError"
+	errorMessage := errorCode
+
 	errorCode, err := smithydecoding.GetXMLResponseErrorCode(errorBody, false)
 	if err != nil {
 		return err
 	}
 	errorBody.Seek(0, io.SeekStart)
-	switch errorCode {
+	switch {
 	default:
-		if len(errorCode) == 0 {
-			errorCode = "UnknownError"
-		}
 		genericError := &smithy.GenericAPIError{
 			Code:    errorCode,
-			Message: errorCode,
+			Message: errorMessage,
 		}
 		return genericError
 
 	}
 }
+
 func awsRestxml_deserializeHttpBindingsNullAndEmptyHeadersClientOutput(v *NullAndEmptyHeadersClientOutput, response *smithyhttp.Response) error {
 	if v == nil {
 		return fmt.Errorf("unsupported deserialization for nil %T", v)
@@ -2139,24 +2126,26 @@ func awsRestxml_deserializeOpErrorNullAndEmptyHeadersServer(response *smithyhttp
 		return &smithy.DeserializationError{Err: fmt.Errorf("failed to copy error response body, %w", err)}
 	}
 	errorBody := bytes.NewReader(errorBuffer.Bytes())
+
+	errorCode := "UnknownError"
+	errorMessage := errorCode
+
 	errorCode, err := smithydecoding.GetXMLResponseErrorCode(errorBody, false)
 	if err != nil {
 		return err
 	}
 	errorBody.Seek(0, io.SeekStart)
-	switch errorCode {
+	switch {
 	default:
-		if len(errorCode) == 0 {
-			errorCode = "UnknownError"
-		}
 		genericError := &smithy.GenericAPIError{
 			Code:    errorCode,
-			Message: errorCode,
+			Message: errorMessage,
 		}
 		return genericError
 
 	}
 }
+
 func awsRestxml_deserializeHttpBindingsNullAndEmptyHeadersServerOutput(v *NullAndEmptyHeadersServerOutput, response *smithyhttp.Response) error {
 	if v == nil {
 		return fmt.Errorf("unsupported deserialization for nil %T", v)
@@ -2228,19 +2217,20 @@ func awsRestxml_deserializeOpErrorOmitsNullSerializesEmptyString(response *smith
 		return &smithy.DeserializationError{Err: fmt.Errorf("failed to copy error response body, %w", err)}
 	}
 	errorBody := bytes.NewReader(errorBuffer.Bytes())
+
+	errorCode := "UnknownError"
+	errorMessage := errorCode
+
 	errorCode, err := smithydecoding.GetXMLResponseErrorCode(errorBody, false)
 	if err != nil {
 		return err
 	}
 	errorBody.Seek(0, io.SeekStart)
-	switch errorCode {
+	switch {
 	default:
-		if len(errorCode) == 0 {
-			errorCode = "UnknownError"
-		}
 		genericError := &smithy.GenericAPIError{
 			Code:    errorCode,
-			Message: errorCode,
+			Message: errorMessage,
 		}
 		return genericError
 
@@ -2284,19 +2274,20 @@ func awsRestxml_deserializeOpErrorQueryIdempotencyTokenAutoFill(response *smithy
 		return &smithy.DeserializationError{Err: fmt.Errorf("failed to copy error response body, %w", err)}
 	}
 	errorBody := bytes.NewReader(errorBuffer.Bytes())
+
+	errorCode := "UnknownError"
+	errorMessage := errorCode
+
 	errorCode, err := smithydecoding.GetXMLResponseErrorCode(errorBody, false)
 	if err != nil {
 		return err
 	}
 	errorBody.Seek(0, io.SeekStart)
-	switch errorCode {
+	switch {
 	default:
-		if len(errorCode) == 0 {
-			errorCode = "UnknownError"
-		}
 		genericError := &smithy.GenericAPIError{
 			Code:    errorCode,
-			Message: errorCode,
+			Message: errorMessage,
 		}
 		return genericError
 
@@ -2367,24 +2358,26 @@ func awsRestxml_deserializeOpErrorRecursiveShapes(response *smithyhttp.Response)
 		return &smithy.DeserializationError{Err: fmt.Errorf("failed to copy error response body, %w", err)}
 	}
 	errorBody := bytes.NewReader(errorBuffer.Bytes())
+
+	errorCode := "UnknownError"
+	errorMessage := errorCode
+
 	errorCode, err := smithydecoding.GetXMLResponseErrorCode(errorBody, false)
 	if err != nil {
 		return err
 	}
 	errorBody.Seek(0, io.SeekStart)
-	switch errorCode {
+	switch {
 	default:
-		if len(errorCode) == 0 {
-			errorCode = "UnknownError"
-		}
 		genericError := &smithy.GenericAPIError{
 			Code:    errorCode,
-			Message: errorCode,
+			Message: errorMessage,
 		}
 		return genericError
 
 	}
 }
+
 func awsRestxml_deserializeDocumentRecursiveShapesOutput(v **RecursiveShapesOutput, decoder *smithydecoding.XMLNodeDecoder) error {
 	if v == nil {
 		return fmt.Errorf("unexpected nil of type %T", v)
@@ -2404,8 +2397,8 @@ func awsRestxml_deserializeDocumentRecursiveShapesOutput(v **RecursiveShapesOutp
 		if done {
 			break
 		}
-		switch t.Name.Local {
-		case "nested":
+		switch {
+		case strings.EqualFold("nested", t.Name.Local):
 			nodeDecoder := smithydecoding.NewXMLNodeDecoder(decoder.Decoder, t)
 			if err := awsRestxml_deserializeDocumentRecursiveShapesInputOutputNested1(&sv.Nested, nodeDecoder); err != nil {
 				return err
@@ -2489,24 +2482,26 @@ func awsRestxml_deserializeOpErrorSimpleScalarProperties(response *smithyhttp.Re
 		return &smithy.DeserializationError{Err: fmt.Errorf("failed to copy error response body, %w", err)}
 	}
 	errorBody := bytes.NewReader(errorBuffer.Bytes())
+
+	errorCode := "UnknownError"
+	errorMessage := errorCode
+
 	errorCode, err := smithydecoding.GetXMLResponseErrorCode(errorBody, false)
 	if err != nil {
 		return err
 	}
 	errorBody.Seek(0, io.SeekStart)
-	switch errorCode {
+	switch {
 	default:
-		if len(errorCode) == 0 {
-			errorCode = "UnknownError"
-		}
 		genericError := &smithy.GenericAPIError{
 			Code:    errorCode,
-			Message: errorCode,
+			Message: errorMessage,
 		}
 		return genericError
 
 	}
 }
+
 func awsRestxml_deserializeHttpBindingsSimpleScalarPropertiesOutput(v *SimpleScalarPropertiesOutput, response *smithyhttp.Response) error {
 	if v == nil {
 		return fmt.Errorf("unsupported deserialization for nil %T", v)
@@ -2538,8 +2533,8 @@ func awsRestxml_deserializeDocumentSimpleScalarPropertiesOutput(v **SimpleScalar
 		if done {
 			break
 		}
-		switch t.Name.Local {
-		case "byteValue":
+		switch {
+		case strings.EqualFold("byteValue", t.Name.Local):
 			val, done, err := decoder.Value()
 			if err != nil {
 				return err
@@ -2556,7 +2551,7 @@ func awsRestxml_deserializeDocumentSimpleScalarPropertiesOutput(v **SimpleScalar
 				sv.ByteValue = ptr.Int8(int8(i64))
 			}
 
-		case "DoubleDribble":
+		case strings.EqualFold("DoubleDribble", t.Name.Local):
 			val, done, err := decoder.Value()
 			if err != nil {
 				return err
@@ -2573,7 +2568,7 @@ func awsRestxml_deserializeDocumentSimpleScalarPropertiesOutput(v **SimpleScalar
 				sv.DoubleValue = &f64
 			}
 
-		case "falseBooleanValue":
+		case strings.EqualFold("falseBooleanValue", t.Name.Local):
 			val, done, err := decoder.Value()
 			if err != nil {
 				return err
@@ -2589,7 +2584,7 @@ func awsRestxml_deserializeDocumentSimpleScalarPropertiesOutput(v **SimpleScalar
 				sv.FalseBooleanValue = &xtv
 			}
 
-		case "floatValue":
+		case strings.EqualFold("floatValue", t.Name.Local):
 			val, done, err := decoder.Value()
 			if err != nil {
 				return err
@@ -2606,7 +2601,7 @@ func awsRestxml_deserializeDocumentSimpleScalarPropertiesOutput(v **SimpleScalar
 				sv.FloatValue = ptr.Float32(float32(f64))
 			}
 
-		case "integerValue":
+		case strings.EqualFold("integerValue", t.Name.Local):
 			val, done, err := decoder.Value()
 			if err != nil {
 				return err
@@ -2623,7 +2618,7 @@ func awsRestxml_deserializeDocumentSimpleScalarPropertiesOutput(v **SimpleScalar
 				sv.IntegerValue = ptr.Int32(int32(i64))
 			}
 
-		case "longValue":
+		case strings.EqualFold("longValue", t.Name.Local):
 			val, done, err := decoder.Value()
 			if err != nil {
 				return err
@@ -2640,7 +2635,7 @@ func awsRestxml_deserializeDocumentSimpleScalarPropertiesOutput(v **SimpleScalar
 				sv.LongValue = &i64
 			}
 
-		case "shortValue":
+		case strings.EqualFold("shortValue", t.Name.Local):
 			val, done, err := decoder.Value()
 			if err != nil {
 				return err
@@ -2657,7 +2652,7 @@ func awsRestxml_deserializeDocumentSimpleScalarPropertiesOutput(v **SimpleScalar
 				sv.ShortValue = ptr.Int16(int16(i64))
 			}
 
-		case "stringValue":
+		case strings.EqualFold("stringValue", t.Name.Local):
 			val, done, err := decoder.Value()
 			if err != nil {
 				return err
@@ -2670,7 +2665,7 @@ func awsRestxml_deserializeDocumentSimpleScalarPropertiesOutput(v **SimpleScalar
 				sv.StringValue = &xtv
 			}
 
-		case "trueBooleanValue":
+		case strings.EqualFold("trueBooleanValue", t.Name.Local):
 			val, done, err := decoder.Value()
 			if err != nil {
 				return err
@@ -2737,24 +2732,26 @@ func awsRestxml_deserializeOpErrorTimestampFormatHeaders(response *smithyhttp.Re
 		return &smithy.DeserializationError{Err: fmt.Errorf("failed to copy error response body, %w", err)}
 	}
 	errorBody := bytes.NewReader(errorBuffer.Bytes())
+
+	errorCode := "UnknownError"
+	errorMessage := errorCode
+
 	errorCode, err := smithydecoding.GetXMLResponseErrorCode(errorBody, false)
 	if err != nil {
 		return err
 	}
 	errorBody.Seek(0, io.SeekStart)
-	switch errorCode {
+	switch {
 	default:
-		if len(errorCode) == 0 {
-			errorCode = "UnknownError"
-		}
 		genericError := &smithy.GenericAPIError{
 			Code:    errorCode,
-			Message: errorCode,
+			Message: errorMessage,
 		}
 		return genericError
 
 	}
 }
+
 func awsRestxml_deserializeHttpBindingsTimestampFormatHeadersOutput(v *TimestampFormatHeadersOutput, response *smithyhttp.Response) error {
 	if v == nil {
 		return fmt.Errorf("unsupported deserialization for nil %T", v)
@@ -2892,24 +2889,26 @@ func awsRestxml_deserializeOpErrorXmlAttributes(response *smithyhttp.Response) e
 		return &smithy.DeserializationError{Err: fmt.Errorf("failed to copy error response body, %w", err)}
 	}
 	errorBody := bytes.NewReader(errorBuffer.Bytes())
+
+	errorCode := "UnknownError"
+	errorMessage := errorCode
+
 	errorCode, err := smithydecoding.GetXMLResponseErrorCode(errorBody, false)
 	if err != nil {
 		return err
 	}
 	errorBody.Seek(0, io.SeekStart)
-	switch errorCode {
+	switch {
 	default:
-		if len(errorCode) == 0 {
-			errorCode = "UnknownError"
-		}
 		genericError := &smithy.GenericAPIError{
 			Code:    errorCode,
-			Message: errorCode,
+			Message: errorMessage,
 		}
 		return genericError
 
 	}
 }
+
 func awsRestxml_deserializeDocumentXmlAttributesOutput(v **XmlAttributesOutput, decoder *smithydecoding.XMLNodeDecoder) error {
 	if v == nil {
 		return fmt.Errorf("unexpected nil of type %T", v)
@@ -2922,8 +2921,8 @@ func awsRestxml_deserializeDocumentXmlAttributesOutput(v **XmlAttributesOutput, 
 	}
 
 	for _, attr := range decoder.StartEl.Attr {
-		switch attr.Name.Local {
-		case "test":
+		switch {
+		case strings.EqualFold("test", attr.Name.Local):
 			val := []byte(attr.Value)
 			if val != nil {
 				xtv := string(val)
@@ -2940,8 +2939,8 @@ func awsRestxml_deserializeDocumentXmlAttributesOutput(v **XmlAttributesOutput, 
 		if done {
 			break
 		}
-		switch t.Name.Local {
-		case "foo":
+		switch {
+		case strings.EqualFold("foo", t.Name.Local):
 			val, done, err := decoder.Value()
 			if err != nil {
 				return err
@@ -3027,24 +3026,26 @@ func awsRestxml_deserializeOpErrorXmlAttributesOnPayload(response *smithyhttp.Re
 		return &smithy.DeserializationError{Err: fmt.Errorf("failed to copy error response body, %w", err)}
 	}
 	errorBody := bytes.NewReader(errorBuffer.Bytes())
+
+	errorCode := "UnknownError"
+	errorMessage := errorCode
+
 	errorCode, err := smithydecoding.GetXMLResponseErrorCode(errorBody, false)
 	if err != nil {
 		return err
 	}
 	errorBody.Seek(0, io.SeekStart)
-	switch errorCode {
+	switch {
 	default:
-		if len(errorCode) == 0 {
-			errorCode = "UnknownError"
-		}
 		genericError := &smithy.GenericAPIError{
 			Code:    errorCode,
-			Message: errorCode,
+			Message: errorMessage,
 		}
 		return genericError
 
 	}
 }
+
 func awsRestxml_deserializeDocumentXmlAttributesOnPayloadOutput(v **XmlAttributesOnPayloadOutput, decoder *smithydecoding.XMLNodeDecoder) error {
 	if v == nil {
 		return fmt.Errorf("unexpected nil of type %T", v)
@@ -3064,8 +3065,8 @@ func awsRestxml_deserializeDocumentXmlAttributesOnPayloadOutput(v **XmlAttribute
 		if done {
 			break
 		}
-		switch t.Name.Local {
-		case "payload":
+		switch {
+		case strings.EqualFold("payload", t.Name.Local):
 			nodeDecoder := smithydecoding.NewXMLNodeDecoder(decoder.Decoder, t)
 			if err := awsRestxml_deserializeDocumentXmlAttributesInputOutput(&sv.Payload, nodeDecoder); err != nil {
 				return err
@@ -3144,24 +3145,26 @@ func awsRestxml_deserializeOpErrorXmlBlobs(response *smithyhttp.Response) error 
 		return &smithy.DeserializationError{Err: fmt.Errorf("failed to copy error response body, %w", err)}
 	}
 	errorBody := bytes.NewReader(errorBuffer.Bytes())
+
+	errorCode := "UnknownError"
+	errorMessage := errorCode
+
 	errorCode, err := smithydecoding.GetXMLResponseErrorCode(errorBody, false)
 	if err != nil {
 		return err
 	}
 	errorBody.Seek(0, io.SeekStart)
-	switch errorCode {
+	switch {
 	default:
-		if len(errorCode) == 0 {
-			errorCode = "UnknownError"
-		}
 		genericError := &smithy.GenericAPIError{
 			Code:    errorCode,
-			Message: errorCode,
+			Message: errorMessage,
 		}
 		return genericError
 
 	}
 }
+
 func awsRestxml_deserializeDocumentXmlBlobsOutput(v **XmlBlobsOutput, decoder *smithydecoding.XMLNodeDecoder) error {
 	if v == nil {
 		return fmt.Errorf("unexpected nil of type %T", v)
@@ -3181,8 +3184,8 @@ func awsRestxml_deserializeDocumentXmlBlobsOutput(v **XmlBlobsOutput, decoder *s
 		if done {
 			break
 		}
-		switch t.Name.Local {
-		case "data":
+		switch {
+		case strings.EqualFold("data", t.Name.Local):
 			var data string
 			err := decoder.Decoder.DecodeElement(&data, &t)
 			if err != nil {
@@ -3266,24 +3269,26 @@ func awsRestxml_deserializeOpErrorXmlEnums(response *smithyhttp.Response) error 
 		return &smithy.DeserializationError{Err: fmt.Errorf("failed to copy error response body, %w", err)}
 	}
 	errorBody := bytes.NewReader(errorBuffer.Bytes())
+
+	errorCode := "UnknownError"
+	errorMessage := errorCode
+
 	errorCode, err := smithydecoding.GetXMLResponseErrorCode(errorBody, false)
 	if err != nil {
 		return err
 	}
 	errorBody.Seek(0, io.SeekStart)
-	switch errorCode {
+	switch {
 	default:
-		if len(errorCode) == 0 {
-			errorCode = "UnknownError"
-		}
 		genericError := &smithy.GenericAPIError{
 			Code:    errorCode,
-			Message: errorCode,
+			Message: errorMessage,
 		}
 		return genericError
 
 	}
 }
+
 func awsRestxml_deserializeDocumentXmlEnumsOutput(v **XmlEnumsOutput, decoder *smithydecoding.XMLNodeDecoder) error {
 	if v == nil {
 		return fmt.Errorf("unexpected nil of type %T", v)
@@ -3303,8 +3308,8 @@ func awsRestxml_deserializeDocumentXmlEnumsOutput(v **XmlEnumsOutput, decoder *s
 		if done {
 			break
 		}
-		switch t.Name.Local {
-		case "fooEnum1":
+		switch {
+		case strings.EqualFold("fooEnum1", t.Name.Local):
 			val, done, err := decoder.Value()
 			if err != nil {
 				return err
@@ -3317,7 +3322,7 @@ func awsRestxml_deserializeDocumentXmlEnumsOutput(v **XmlEnumsOutput, decoder *s
 				sv.FooEnum1 = types.FooEnum(xtv)
 			}
 
-		case "fooEnum2":
+		case strings.EqualFold("fooEnum2", t.Name.Local):
 			val, done, err := decoder.Value()
 			if err != nil {
 				return err
@@ -3330,7 +3335,7 @@ func awsRestxml_deserializeDocumentXmlEnumsOutput(v **XmlEnumsOutput, decoder *s
 				sv.FooEnum2 = types.FooEnum(xtv)
 			}
 
-		case "fooEnum3":
+		case strings.EqualFold("fooEnum3", t.Name.Local):
 			val, done, err := decoder.Value()
 			if err != nil {
 				return err
@@ -3343,19 +3348,19 @@ func awsRestxml_deserializeDocumentXmlEnumsOutput(v **XmlEnumsOutput, decoder *s
 				sv.FooEnum3 = types.FooEnum(xtv)
 			}
 
-		case "fooEnumList":
+		case strings.EqualFold("fooEnumList", t.Name.Local):
 			nodeDecoder := smithydecoding.NewXMLNodeDecoder(decoder.Decoder, t)
 			if err := awsRestxml_deserializeDocumentFooEnumList(&sv.FooEnumList, nodeDecoder); err != nil {
 				return err
 			}
 
-		case "fooEnumMap":
+		case strings.EqualFold("fooEnumMap", t.Name.Local):
 			nodeDecoder := smithydecoding.NewXMLNodeDecoder(decoder.Decoder, t)
 			if err := awsRestxml_deserializeDocumentFooEnumMap(&sv.FooEnumMap, nodeDecoder); err != nil {
 				return err
 			}
 
-		case "fooEnumSet":
+		case strings.EqualFold("fooEnumSet", t.Name.Local):
 			nodeDecoder := smithydecoding.NewXMLNodeDecoder(decoder.Decoder, t)
 			if err := awsRestxml_deserializeDocumentFooEnumSet(&sv.FooEnumSet, nodeDecoder); err != nil {
 				return err
@@ -3434,24 +3439,26 @@ func awsRestxml_deserializeOpErrorXmlLists(response *smithyhttp.Response) error 
 		return &smithy.DeserializationError{Err: fmt.Errorf("failed to copy error response body, %w", err)}
 	}
 	errorBody := bytes.NewReader(errorBuffer.Bytes())
+
+	errorCode := "UnknownError"
+	errorMessage := errorCode
+
 	errorCode, err := smithydecoding.GetXMLResponseErrorCode(errorBody, false)
 	if err != nil {
 		return err
 	}
 	errorBody.Seek(0, io.SeekStart)
-	switch errorCode {
+	switch {
 	default:
-		if len(errorCode) == 0 {
-			errorCode = "UnknownError"
-		}
 		genericError := &smithy.GenericAPIError{
 			Code:    errorCode,
-			Message: errorCode,
+			Message: errorMessage,
 		}
 		return genericError
 
 	}
 }
+
 func awsRestxml_deserializeDocumentXmlListsOutput(v **XmlListsOutput, decoder *smithydecoding.XMLNodeDecoder) error {
 	if v == nil {
 		return fmt.Errorf("unexpected nil of type %T", v)
@@ -3471,68 +3478,68 @@ func awsRestxml_deserializeDocumentXmlListsOutput(v **XmlListsOutput, decoder *s
 		if done {
 			break
 		}
-		switch t.Name.Local {
-		case "booleanList":
+		switch {
+		case strings.EqualFold("booleanList", t.Name.Local):
 			nodeDecoder := smithydecoding.NewXMLNodeDecoder(decoder.Decoder, t)
 			if err := awsRestxml_deserializeDocumentBooleanList(&sv.BooleanList, nodeDecoder); err != nil {
 				return err
 			}
 
-		case "enumList":
+		case strings.EqualFold("enumList", t.Name.Local):
 			nodeDecoder := smithydecoding.NewXMLNodeDecoder(decoder.Decoder, t)
 			if err := awsRestxml_deserializeDocumentFooEnumList(&sv.EnumList, nodeDecoder); err != nil {
 				return err
 			}
 
-		case "flattenedList":
+		case strings.EqualFold("flattenedList", t.Name.Local):
 			nodeDecoder := smithydecoding.NewXMLNodeDecoder(decoder.Decoder, t)
 			if err := awsRestxml_deserializeDocumentRenamedListMembersUnwrapped(&sv.FlattenedList, nodeDecoder); err != nil {
 				return err
 			}
 
-		case "customName":
+		case strings.EqualFold("customName", t.Name.Local):
 			nodeDecoder := smithydecoding.NewXMLNodeDecoder(decoder.Decoder, t)
 			if err := awsRestxml_deserializeDocumentRenamedListMembersUnwrapped(&sv.FlattenedList2, nodeDecoder); err != nil {
 				return err
 			}
 
-		case "integerList":
+		case strings.EqualFold("integerList", t.Name.Local):
 			nodeDecoder := smithydecoding.NewXMLNodeDecoder(decoder.Decoder, t)
 			if err := awsRestxml_deserializeDocumentIntegerList(&sv.IntegerList, nodeDecoder); err != nil {
 				return err
 			}
 
-		case "nestedStringList":
+		case strings.EqualFold("nestedStringList", t.Name.Local):
 			nodeDecoder := smithydecoding.NewXMLNodeDecoder(decoder.Decoder, t)
 			if err := awsRestxml_deserializeDocumentNestedStringList(&sv.NestedStringList, nodeDecoder); err != nil {
 				return err
 			}
 
-		case "renamed":
+		case strings.EqualFold("renamed", t.Name.Local):
 			nodeDecoder := smithydecoding.NewXMLNodeDecoder(decoder.Decoder, t)
 			if err := awsRestxml_deserializeDocumentRenamedListMembers(&sv.RenamedListMembers, nodeDecoder); err != nil {
 				return err
 			}
 
-		case "stringList":
+		case strings.EqualFold("stringList", t.Name.Local):
 			nodeDecoder := smithydecoding.NewXMLNodeDecoder(decoder.Decoder, t)
 			if err := awsRestxml_deserializeDocumentStringList(&sv.StringList, nodeDecoder); err != nil {
 				return err
 			}
 
-		case "stringSet":
+		case strings.EqualFold("stringSet", t.Name.Local):
 			nodeDecoder := smithydecoding.NewXMLNodeDecoder(decoder.Decoder, t)
 			if err := awsRestxml_deserializeDocumentStringSet(&sv.StringSet, nodeDecoder); err != nil {
 				return err
 			}
 
-		case "myStructureList":
+		case strings.EqualFold("myStructureList", t.Name.Local):
 			nodeDecoder := smithydecoding.NewXMLNodeDecoder(decoder.Decoder, t)
 			if err := awsRestxml_deserializeDocumentStructureList(&sv.StructureList, nodeDecoder); err != nil {
 				return err
 			}
 
-		case "timestampList":
+		case strings.EqualFold("timestampList", t.Name.Local):
 			nodeDecoder := smithydecoding.NewXMLNodeDecoder(decoder.Decoder, t)
 			if err := awsRestxml_deserializeDocumentTimestampList(&sv.TimestampList, nodeDecoder); err != nil {
 				return err
@@ -3611,24 +3618,26 @@ func awsRestxml_deserializeOpErrorXmlMaps(response *smithyhttp.Response) error {
 		return &smithy.DeserializationError{Err: fmt.Errorf("failed to copy error response body, %w", err)}
 	}
 	errorBody := bytes.NewReader(errorBuffer.Bytes())
+
+	errorCode := "UnknownError"
+	errorMessage := errorCode
+
 	errorCode, err := smithydecoding.GetXMLResponseErrorCode(errorBody, false)
 	if err != nil {
 		return err
 	}
 	errorBody.Seek(0, io.SeekStart)
-	switch errorCode {
+	switch {
 	default:
-		if len(errorCode) == 0 {
-			errorCode = "UnknownError"
-		}
 		genericError := &smithy.GenericAPIError{
 			Code:    errorCode,
-			Message: errorCode,
+			Message: errorMessage,
 		}
 		return genericError
 
 	}
 }
+
 func awsRestxml_deserializeDocumentXmlMapsOutput(v **XmlMapsOutput, decoder *smithydecoding.XMLNodeDecoder) error {
 	if v == nil {
 		return fmt.Errorf("unexpected nil of type %T", v)
@@ -3648,8 +3657,8 @@ func awsRestxml_deserializeDocumentXmlMapsOutput(v **XmlMapsOutput, decoder *smi
 		if done {
 			break
 		}
-		switch t.Name.Local {
-		case "myMap":
+		switch {
+		case strings.EqualFold("myMap", t.Name.Local):
 			nodeDecoder := smithydecoding.NewXMLNodeDecoder(decoder.Decoder, t)
 			if err := awsRestxml_deserializeDocumentXmlMapsInputOutputMap(&sv.MyMap, nodeDecoder); err != nil {
 				return err
@@ -3728,24 +3737,26 @@ func awsRestxml_deserializeOpErrorXmlMapsXmlName(response *smithyhttp.Response) 
 		return &smithy.DeserializationError{Err: fmt.Errorf("failed to copy error response body, %w", err)}
 	}
 	errorBody := bytes.NewReader(errorBuffer.Bytes())
+
+	errorCode := "UnknownError"
+	errorMessage := errorCode
+
 	errorCode, err := smithydecoding.GetXMLResponseErrorCode(errorBody, false)
 	if err != nil {
 		return err
 	}
 	errorBody.Seek(0, io.SeekStart)
-	switch errorCode {
+	switch {
 	default:
-		if len(errorCode) == 0 {
-			errorCode = "UnknownError"
-		}
 		genericError := &smithy.GenericAPIError{
 			Code:    errorCode,
-			Message: errorCode,
+			Message: errorMessage,
 		}
 		return genericError
 
 	}
 }
+
 func awsRestxml_deserializeDocumentXmlMapsXmlNameOutput(v **XmlMapsXmlNameOutput, decoder *smithydecoding.XMLNodeDecoder) error {
 	if v == nil {
 		return fmt.Errorf("unexpected nil of type %T", v)
@@ -3765,8 +3776,8 @@ func awsRestxml_deserializeDocumentXmlMapsXmlNameOutput(v **XmlMapsXmlNameOutput
 		if done {
 			break
 		}
-		switch t.Name.Local {
-		case "myMap":
+		switch {
+		case strings.EqualFold("myMap", t.Name.Local):
 			nodeDecoder := smithydecoding.NewXMLNodeDecoder(decoder.Decoder, t)
 			if err := awsRestxml_deserializeDocumentXmlMapsXmlNameInputOutputMap(&sv.MyMap, nodeDecoder); err != nil {
 				return err
@@ -3845,24 +3856,26 @@ func awsRestxml_deserializeOpErrorXmlNamespaces(response *smithyhttp.Response) e
 		return &smithy.DeserializationError{Err: fmt.Errorf("failed to copy error response body, %w", err)}
 	}
 	errorBody := bytes.NewReader(errorBuffer.Bytes())
+
+	errorCode := "UnknownError"
+	errorMessage := errorCode
+
 	errorCode, err := smithydecoding.GetXMLResponseErrorCode(errorBody, false)
 	if err != nil {
 		return err
 	}
 	errorBody.Seek(0, io.SeekStart)
-	switch errorCode {
+	switch {
 	default:
-		if len(errorCode) == 0 {
-			errorCode = "UnknownError"
-		}
 		genericError := &smithy.GenericAPIError{
 			Code:    errorCode,
-			Message: errorCode,
+			Message: errorMessage,
 		}
 		return genericError
 
 	}
 }
+
 func awsRestxml_deserializeDocumentXmlNamespacesOutput(v **XmlNamespacesOutput, decoder *smithydecoding.XMLNodeDecoder) error {
 	if v == nil {
 		return fmt.Errorf("unexpected nil of type %T", v)
@@ -3882,8 +3895,8 @@ func awsRestxml_deserializeDocumentXmlNamespacesOutput(v **XmlNamespacesOutput, 
 		if done {
 			break
 		}
-		switch t.Name.Local {
-		case "nested":
+		switch {
+		case strings.EqualFold("nested", t.Name.Local):
 			nodeDecoder := smithydecoding.NewXMLNodeDecoder(decoder.Decoder, t)
 			if err := awsRestxml_deserializeDocumentXmlNamespaceNested(&sv.Nested, nodeDecoder); err != nil {
 				return err
@@ -3962,24 +3975,26 @@ func awsRestxml_deserializeOpErrorXmlTimestamps(response *smithyhttp.Response) e
 		return &smithy.DeserializationError{Err: fmt.Errorf("failed to copy error response body, %w", err)}
 	}
 	errorBody := bytes.NewReader(errorBuffer.Bytes())
+
+	errorCode := "UnknownError"
+	errorMessage := errorCode
+
 	errorCode, err := smithydecoding.GetXMLResponseErrorCode(errorBody, false)
 	if err != nil {
 		return err
 	}
 	errorBody.Seek(0, io.SeekStart)
-	switch errorCode {
+	switch {
 	default:
-		if len(errorCode) == 0 {
-			errorCode = "UnknownError"
-		}
 		genericError := &smithy.GenericAPIError{
 			Code:    errorCode,
-			Message: errorCode,
+			Message: errorMessage,
 		}
 		return genericError
 
 	}
 }
+
 func awsRestxml_deserializeDocumentXmlTimestampsOutput(v **XmlTimestampsOutput, decoder *smithydecoding.XMLNodeDecoder) error {
 	if v == nil {
 		return fmt.Errorf("unexpected nil of type %T", v)
@@ -3999,8 +4014,8 @@ func awsRestxml_deserializeDocumentXmlTimestampsOutput(v **XmlTimestampsOutput, 
 		if done {
 			break
 		}
-		switch t.Name.Local {
-		case "dateTime":
+		switch {
+		case strings.EqualFold("dateTime", t.Name.Local):
 			val, done, err := decoder.Value()
 			if err != nil {
 				return err
@@ -4017,7 +4032,7 @@ func awsRestxml_deserializeDocumentXmlTimestampsOutput(v **XmlTimestampsOutput, 
 				sv.DateTime = &t
 			}
 
-		case "epochSeconds":
+		case strings.EqualFold("epochSeconds", t.Name.Local):
 			val, done, err := decoder.Value()
 			if err != nil {
 				return err
@@ -4034,7 +4049,7 @@ func awsRestxml_deserializeDocumentXmlTimestampsOutput(v **XmlTimestampsOutput, 
 				sv.EpochSeconds = ptr.Time(smithytime.ParseEpochSeconds(f64))
 			}
 
-		case "httpDate":
+		case strings.EqualFold("httpDate", t.Name.Local):
 			val, done, err := decoder.Value()
 			if err != nil {
 				return err
@@ -4051,7 +4066,7 @@ func awsRestxml_deserializeDocumentXmlTimestampsOutput(v **XmlTimestampsOutput, 
 				sv.HttpDate = &t
 			}
 
-		case "normal":
+		case strings.EqualFold("normal", t.Name.Local):
 			val, done, err := decoder.Value()
 			if err != nil {
 				return err
@@ -4089,25 +4104,69 @@ func awsRestxml_deserializeHttpBindingsComplexError(v *types.ComplexError, respo
 
 	return nil
 }
-func awsRestxml_deserializeErrorComplexError(decoder *smithydecoding.XMLNodeDecoder, response *smithyhttp.Response) error {
+func awsRestxml_deserializeErrorComplexError(response *smithyhttp.Response, errorBody *bytes.Reader) error {
 	output := &types.ComplexError{}
-	err := awsRestxml_deserializeDocumentComplexError(&output, decoder)
+	buff := make([]byte, 1024)
+	ringBuffer := smithyio.NewRingBuffer(buff)
+	body := io.TeeReader(errorBody, ringBuffer)
+	rootDecoder := xml.NewDecoder(body)
+	t, err := smithydecoding.FetchXmlRootElement(rootDecoder)
 	if err != nil && err != io.EOF {
-		return &smithy.DeserializationError{Err: fmt.Errorf("failed to decode response error with invalid XML document bindings, %w", err)}
+		var snapshot bytes.Buffer
+		io.Copy(&snapshot, ringBuffer)
+		return &smithy.DeserializationError{
+			Err:      fmt.Errorf("failed to decode response body, %w", err),
+			Snapshot: snapshot.Bytes(),
+		}
 	}
+
+	decoder := smithydecoding.NewXMLNodeDecoder(rootDecoder, t)
+	err = awsRestxml_deserializeDocumentComplexError(&output, decoder)
+	if err != nil && err != io.EOF {
+		var snapshot bytes.Buffer
+		io.Copy(&snapshot, ringBuffer)
+		return &smithy.DeserializationError{
+			Err:      fmt.Errorf("failed to decode response body, %w", err),
+			Snapshot: snapshot.Bytes(),
+		}
+	}
+
 	if err := awsRestxml_deserializeHttpBindingsComplexError(output, response); err != nil {
 		return &smithy.DeserializationError{Err: fmt.Errorf("failed to decode response error with invalid HTTP bindings, %w", err)}
 	}
 	return output
 }
-func awsRestxml_deserializeErrorInvalidGreeting(decoder *smithydecoding.XMLNodeDecoder, response *smithyhttp.Response) error {
+
+func awsRestxml_deserializeErrorInvalidGreeting(response *smithyhttp.Response, errorBody *bytes.Reader) error {
 	output := &types.InvalidGreeting{}
-	err := awsRestxml_deserializeDocumentInvalidGreeting(&output, decoder)
+	buff := make([]byte, 1024)
+	ringBuffer := smithyio.NewRingBuffer(buff)
+	body := io.TeeReader(errorBody, ringBuffer)
+	rootDecoder := xml.NewDecoder(body)
+	t, err := smithydecoding.FetchXmlRootElement(rootDecoder)
 	if err != nil && err != io.EOF {
-		return &smithy.DeserializationError{Err: fmt.Errorf("failed to decode response error with invalid XML document bindings, %w", err)}
+		var snapshot bytes.Buffer
+		io.Copy(&snapshot, ringBuffer)
+		return &smithy.DeserializationError{
+			Err:      fmt.Errorf("failed to decode response body, %w", err),
+			Snapshot: snapshot.Bytes(),
+		}
 	}
+
+	decoder := smithydecoding.NewXMLNodeDecoder(rootDecoder, t)
+	err = awsRestxml_deserializeDocumentInvalidGreeting(&output, decoder)
+	if err != nil && err != io.EOF {
+		var snapshot bytes.Buffer
+		io.Copy(&snapshot, ringBuffer)
+		return &smithy.DeserializationError{
+			Err:      fmt.Errorf("failed to decode response body, %w", err),
+			Snapshot: snapshot.Bytes(),
+		}
+	}
+
 	return output
 }
+
 func awsRestxml_deserializeDocumentComplexError(v **types.ComplexError, decoder *smithydecoding.XMLNodeDecoder) error {
 	if v == nil {
 		return fmt.Errorf("unexpected nil of type %T", v)
@@ -4127,8 +4186,8 @@ func awsRestxml_deserializeDocumentComplexError(v **types.ComplexError, decoder 
 		if done {
 			break
 		}
-		switch t.Name.Local {
-		case "Header":
+		switch {
+		case strings.EqualFold("Header", t.Name.Local):
 			val, done, err := decoder.Value()
 			if err != nil {
 				return err
@@ -4141,13 +4200,13 @@ func awsRestxml_deserializeDocumentComplexError(v **types.ComplexError, decoder 
 				sv.Header = &xtv
 			}
 
-		case "Nested":
+		case strings.EqualFold("Nested", t.Name.Local):
 			nodeDecoder := smithydecoding.NewXMLNodeDecoder(decoder.Decoder, t)
 			if err := awsRestxml_deserializeDocumentComplexNestedErrorData(&sv.Nested, nodeDecoder); err != nil {
 				return err
 			}
 
-		case "TopLevel":
+		case strings.EqualFold("TopLevel", t.Name.Local):
 			val, done, err := decoder.Value()
 			if err != nil {
 				return err
@@ -4188,8 +4247,8 @@ func awsRestxml_deserializeDocumentComplexNestedErrorData(v **types.ComplexNeste
 		if done {
 			break
 		}
-		switch t.Name.Local {
-		case "Foo":
+		switch {
+		case strings.EqualFold("Foo", t.Name.Local):
 			val, done, err := decoder.Value()
 			if err != nil {
 				return err
@@ -4230,7 +4289,7 @@ func awsRestxml_deserializeDocumentFlattenedXmlMapWithXmlNameInputOutputMap(v *m
 		if done {
 			break
 		}
-		if t.Name.Local == "entry" {
+		if strings.EqualFold("entry", t.Name.Local) {
 			entryDecoder := smithydecoding.NewXMLNodeDecoder(decoder.Decoder, t)
 			if err := awsRestxml_deserializeDocumentFlattenedXmlMapWithXmlNameInputOutputMapUnwrapped(&sv, entryDecoder); err != nil {
 				return err
@@ -4260,8 +4319,8 @@ func awsRestxml_deserializeDocumentFlattenedXmlMapWithXmlNameInputOutputMapUnwra
 			sv[*ek] = ev
 			break
 		}
-		switch t.Name.Local {
-		case "K":
+		switch {
+		case strings.EqualFold("K", t.Name.Local):
 			val, done, err := decoder.Value()
 			if err != nil {
 				return err
@@ -4274,7 +4333,7 @@ func awsRestxml_deserializeDocumentFlattenedXmlMapWithXmlNameInputOutputMapUnwra
 				ek = &xtv
 			}
 
-		case "V":
+		case strings.EqualFold("V", t.Name.Local):
 			val, done, err := decoder.Value()
 			if err != nil {
 				return err
@@ -4314,8 +4373,8 @@ func awsRestxml_deserializeDocumentInvalidGreeting(v **types.InvalidGreeting, de
 		if done {
 			break
 		}
-		switch t.Name.Local {
-		case "Message":
+		switch {
+		case strings.EqualFold("Message", t.Name.Local):
 			val, done, err := decoder.Value()
 			if err != nil {
 				return err
@@ -4356,8 +4415,8 @@ func awsRestxml_deserializeDocumentNestedPayload(v **types.NestedPayload, decode
 		if done {
 			break
 		}
-		switch t.Name.Local {
-		case "greeting":
+		switch {
+		case strings.EqualFold("greeting", t.Name.Local):
 			val, done, err := decoder.Value()
 			if err != nil {
 				return err
@@ -4370,7 +4429,7 @@ func awsRestxml_deserializeDocumentNestedPayload(v **types.NestedPayload, decode
 				sv.Greeting = &xtv
 			}
 
-		case "name":
+		case strings.EqualFold("name", t.Name.Local):
 			val, done, err := decoder.Value()
 			if err != nil {
 				return err
@@ -4411,8 +4470,8 @@ func awsRestxml_deserializeDocumentPayloadWithXmlName(v **types.PayloadWithXmlNa
 		if done {
 			break
 		}
-		switch t.Name.Local {
-		case "name":
+		switch {
+		case strings.EqualFold("name", t.Name.Local):
 			val, done, err := decoder.Value()
 			if err != nil {
 				return err
@@ -4453,8 +4512,8 @@ func awsRestxml_deserializeDocumentPayloadWithXmlNamespace(v **types.PayloadWith
 		if done {
 			break
 		}
-		switch t.Name.Local {
-		case "name":
+		switch {
+		case strings.EqualFold("name", t.Name.Local):
 			val, done, err := decoder.Value()
 			if err != nil {
 				return err
@@ -4495,8 +4554,8 @@ func awsRestxml_deserializeDocumentPayloadWithXmlNamespaceAndPrefix(v **types.Pa
 		if done {
 			break
 		}
-		switch t.Name.Local {
-		case "name":
+		switch {
+		case strings.EqualFold("name", t.Name.Local):
 			val, done, err := decoder.Value()
 			if err != nil {
 				return err
@@ -4537,8 +4596,8 @@ func awsRestxml_deserializeDocumentRecursiveShapesInputOutputNested1(v **types.R
 		if done {
 			break
 		}
-		switch t.Name.Local {
-		case "foo":
+		switch {
+		case strings.EqualFold("foo", t.Name.Local):
 			val, done, err := decoder.Value()
 			if err != nil {
 				return err
@@ -4551,7 +4610,7 @@ func awsRestxml_deserializeDocumentRecursiveShapesInputOutputNested1(v **types.R
 				sv.Foo = &xtv
 			}
 
-		case "nested":
+		case strings.EqualFold("nested", t.Name.Local):
 			nodeDecoder := smithydecoding.NewXMLNodeDecoder(decoder.Decoder, t)
 			if err := awsRestxml_deserializeDocumentRecursiveShapesInputOutputNested2(&sv.Nested, nodeDecoder); err != nil {
 				return err
@@ -4585,8 +4644,8 @@ func awsRestxml_deserializeDocumentRecursiveShapesInputOutputNested2(v **types.R
 		if done {
 			break
 		}
-		switch t.Name.Local {
-		case "bar":
+		switch {
+		case strings.EqualFold("bar", t.Name.Local):
 			val, done, err := decoder.Value()
 			if err != nil {
 				return err
@@ -4599,7 +4658,7 @@ func awsRestxml_deserializeDocumentRecursiveShapesInputOutputNested2(v **types.R
 				sv.Bar = &xtv
 			}
 
-		case "recursiveMember":
+		case strings.EqualFold("recursiveMember", t.Name.Local):
 			nodeDecoder := smithydecoding.NewXMLNodeDecoder(decoder.Decoder, t)
 			if err := awsRestxml_deserializeDocumentRecursiveShapesInputOutputNested1(&sv.RecursiveMember, nodeDecoder); err != nil {
 				return err
@@ -4637,7 +4696,7 @@ func awsRestxml_deserializeDocumentRenamedListMembers(v *[]*string, decoder *smi
 		memberDecoder := smithydecoding.NewXMLNodeDecoder(decoder.Decoder, t)
 		decoder = memberDecoder
 		for {
-			if t.Name.Local == "item" {
+			if strings.EqualFold("item", t.Name.Local) {
 				var col *string
 				val, done, err := decoder.Value()
 				if err != nil {
@@ -4708,7 +4767,7 @@ func awsRestxml_deserializeDocumentStructureList(v *[]*types.StructureListMember
 			break
 		}
 		for {
-			if t.Name.Local == "item" {
+			if strings.EqualFold("item", t.Name.Local) {
 				var col *types.StructureListMember
 				nodeDecoder := smithydecoding.NewXMLNodeDecoder(decoder.Decoder, t)
 				if err := awsRestxml_deserializeDocumentStructureListMember(&col, nodeDecoder); err != nil {
@@ -4764,8 +4823,8 @@ func awsRestxml_deserializeDocumentStructureListMember(v **types.StructureListMe
 		if done {
 			break
 		}
-		switch t.Name.Local {
-		case "value":
+		switch {
+		case strings.EqualFold("value", t.Name.Local):
 			val, done, err := decoder.Value()
 			if err != nil {
 				return err
@@ -4778,7 +4837,7 @@ func awsRestxml_deserializeDocumentStructureListMember(v **types.StructureListMe
 				sv.A = &xtv
 			}
 
-		case "other":
+		case strings.EqualFold("other", t.Name.Local):
 			val, done, err := decoder.Value()
 			if err != nil {
 				return err
@@ -4812,8 +4871,8 @@ func awsRestxml_deserializeDocumentXmlAttributesInputOutput(v **types.XmlAttribu
 	}
 
 	for _, attr := range decoder.StartEl.Attr {
-		switch attr.Name.Local {
-		case "test":
+		switch {
+		case strings.EqualFold("test", attr.Name.Local):
 			val := []byte(attr.Value)
 			if val != nil {
 				xtv := string(val)
@@ -4830,8 +4889,8 @@ func awsRestxml_deserializeDocumentXmlAttributesInputOutput(v **types.XmlAttribu
 		if done {
 			break
 		}
-		switch t.Name.Local {
-		case "foo":
+		switch {
+		case strings.EqualFold("foo", t.Name.Local):
 			val, done, err := decoder.Value()
 			if err != nil {
 				return err
@@ -4872,7 +4931,7 @@ func awsRestxml_deserializeDocumentXmlMapsInputOutputMap(v *map[string]*types.Gr
 		if done {
 			break
 		}
-		if t.Name.Local == "entry" {
+		if strings.EqualFold("entry", t.Name.Local) {
 			entryDecoder := smithydecoding.NewXMLNodeDecoder(decoder.Decoder, t)
 			if err := awsRestxml_deserializeDocumentXmlMapsInputOutputMapUnwrapped(&sv, entryDecoder); err != nil {
 				return err
@@ -4902,8 +4961,8 @@ func awsRestxml_deserializeDocumentXmlMapsInputOutputMapUnwrapped(v *map[string]
 			sv[*ek] = ev
 			break
 		}
-		switch t.Name.Local {
-		case "key":
+		switch {
+		case strings.EqualFold("key", t.Name.Local):
 			val, done, err := decoder.Value()
 			if err != nil {
 				return err
@@ -4916,7 +4975,7 @@ func awsRestxml_deserializeDocumentXmlMapsInputOutputMapUnwrapped(v *map[string]
 				ek = &xtv
 			}
 
-		case "value":
+		case strings.EqualFold("value", t.Name.Local):
 			nodeDecoder := smithydecoding.NewXMLNodeDecoder(decoder.Decoder, t)
 			if err := awsRestxml_deserializeDocumentGreetingStruct(&ev, nodeDecoder); err != nil {
 				return err
@@ -4949,7 +5008,7 @@ func awsRestxml_deserializeDocumentXmlMapsXmlNameInputOutputMap(v *map[string]*t
 		if done {
 			break
 		}
-		if t.Name.Local == "entry" {
+		if strings.EqualFold("entry", t.Name.Local) {
 			entryDecoder := smithydecoding.NewXMLNodeDecoder(decoder.Decoder, t)
 			if err := awsRestxml_deserializeDocumentXmlMapsXmlNameInputOutputMapUnwrapped(&sv, entryDecoder); err != nil {
 				return err
@@ -4979,8 +5038,8 @@ func awsRestxml_deserializeDocumentXmlMapsXmlNameInputOutputMapUnwrapped(v *map[
 			sv[*ek] = ev
 			break
 		}
-		switch t.Name.Local {
-		case "Attribute":
+		switch {
+		case strings.EqualFold("Attribute", t.Name.Local):
 			val, done, err := decoder.Value()
 			if err != nil {
 				return err
@@ -4993,7 +5052,7 @@ func awsRestxml_deserializeDocumentXmlMapsXmlNameInputOutputMapUnwrapped(v *map[
 				ek = &xtv
 			}
 
-		case "Setting":
+		case strings.EqualFold("Setting", t.Name.Local):
 			nodeDecoder := smithydecoding.NewXMLNodeDecoder(decoder.Decoder, t)
 			if err := awsRestxml_deserializeDocumentGreetingStruct(&ev, nodeDecoder); err != nil {
 				return err
@@ -5030,7 +5089,7 @@ func awsRestxml_deserializeDocumentXmlNamespacedList(v *[]*string, decoder *smit
 		memberDecoder := smithydecoding.NewXMLNodeDecoder(decoder.Decoder, t)
 		decoder = memberDecoder
 		for {
-			if t.Name.Local == "member" {
+			if strings.EqualFold("member", t.Name.Local) {
 				var col *string
 				val, done, err := decoder.Value()
 				if err != nil {
@@ -5099,8 +5158,8 @@ func awsRestxml_deserializeDocumentXmlNamespaceNested(v **types.XmlNamespaceNest
 		if done {
 			break
 		}
-		switch t.Name.Local {
-		case "foo":
+		switch {
+		case strings.EqualFold("foo", t.Name.Local):
 			val, done, err := decoder.Value()
 			if err != nil {
 				return err
@@ -5113,7 +5172,7 @@ func awsRestxml_deserializeDocumentXmlNamespaceNested(v **types.XmlNamespaceNest
 				sv.Foo = &xtv
 			}
 
-		case "values":
+		case strings.EqualFold("values", t.Name.Local):
 			nodeDecoder := smithydecoding.NewXMLNodeDecoder(decoder.Decoder, t)
 			if err := awsRestxml_deserializeDocumentXmlNamespacedList(&sv.Values, nodeDecoder); err != nil {
 				return err
@@ -5151,7 +5210,7 @@ func awsRestxml_deserializeDocumentBooleanList(v *[]*bool, decoder *smithydecodi
 		memberDecoder := smithydecoding.NewXMLNodeDecoder(decoder.Decoder, t)
 		decoder = memberDecoder
 		for {
-			if t.Name.Local == "member" {
+			if strings.EqualFold("member", t.Name.Local) {
 				var col *bool
 				val, done, err := decoder.Value()
 				if err != nil {
@@ -5230,7 +5289,7 @@ func awsRestxml_deserializeDocumentFooEnumList(v *[]types.FooEnum, decoder *smit
 		memberDecoder := smithydecoding.NewXMLNodeDecoder(decoder.Decoder, t)
 		decoder = memberDecoder
 		for {
-			if t.Name.Local == "member" {
+			if strings.EqualFold("member", t.Name.Local) {
 				var col types.FooEnum
 				val, done, err := decoder.Value()
 				if err != nil {
@@ -5299,7 +5358,7 @@ func awsRestxml_deserializeDocumentFooEnumMap(v *map[string]types.FooEnum, decod
 		if done {
 			break
 		}
-		if t.Name.Local == "entry" {
+		if strings.EqualFold("entry", t.Name.Local) {
 			entryDecoder := smithydecoding.NewXMLNodeDecoder(decoder.Decoder, t)
 			if err := awsRestxml_deserializeDocumentFooEnumMapUnwrapped(&sv, entryDecoder); err != nil {
 				return err
@@ -5329,8 +5388,8 @@ func awsRestxml_deserializeDocumentFooEnumMapUnwrapped(v *map[string]types.FooEn
 			sv[*ek] = ev
 			break
 		}
-		switch t.Name.Local {
-		case "key":
+		switch {
+		case strings.EqualFold("key", t.Name.Local):
 			val, done, err := decoder.Value()
 			if err != nil {
 				return err
@@ -5343,7 +5402,7 @@ func awsRestxml_deserializeDocumentFooEnumMapUnwrapped(v *map[string]types.FooEn
 				ek = &xtv
 			}
 
-		case "value":
+		case strings.EqualFold("value", t.Name.Local):
 			val, done, err := decoder.Value()
 			if err != nil {
 				return err
@@ -5387,7 +5446,7 @@ func awsRestxml_deserializeDocumentFooEnumSet(v *[]types.FooEnum, decoder *smith
 		memberDecoder := smithydecoding.NewXMLNodeDecoder(decoder.Decoder, t)
 		decoder = memberDecoder
 		for {
-			if t.Name.Local == "member" {
+			if strings.EqualFold("member", t.Name.Local) {
 				var col types.FooEnum
 				val, done, err := decoder.Value()
 				if err != nil {
@@ -5456,8 +5515,8 @@ func awsRestxml_deserializeDocumentGreetingStruct(v **types.GreetingStruct, deco
 		if done {
 			break
 		}
-		switch t.Name.Local {
-		case "hi":
+		switch {
+		case strings.EqualFold("hi", t.Name.Local):
 			val, done, err := decoder.Value()
 			if err != nil {
 				return err
@@ -5502,7 +5561,7 @@ func awsRestxml_deserializeDocumentIntegerList(v *[]*int32, decoder *smithydecod
 		memberDecoder := smithydecoding.NewXMLNodeDecoder(decoder.Decoder, t)
 		decoder = memberDecoder
 		for {
-			if t.Name.Local == "member" {
+			if strings.EqualFold("member", t.Name.Local) {
 				var col *int32
 				val, done, err := decoder.Value()
 				if err != nil {
@@ -5581,7 +5640,7 @@ func awsRestxml_deserializeDocumentNestedStringList(v *[][]*string, decoder *smi
 			break
 		}
 		for {
-			if t.Name.Local == "member" {
+			if strings.EqualFold("member", t.Name.Local) {
 				var col []*string
 				nodeDecoder := smithydecoding.NewXMLNodeDecoder(decoder.Decoder, t)
 				if err := awsRestxml_deserializeDocumentStringList(&col, nodeDecoder); err != nil {
@@ -5641,7 +5700,7 @@ func awsRestxml_deserializeDocumentStringList(v *[]*string, decoder *smithydecod
 		memberDecoder := smithydecoding.NewXMLNodeDecoder(decoder.Decoder, t)
 		decoder = memberDecoder
 		for {
-			if t.Name.Local == "member" {
+			if strings.EqualFold("member", t.Name.Local) {
 				var col *string
 				val, done, err := decoder.Value()
 				if err != nil {
@@ -5714,7 +5773,7 @@ func awsRestxml_deserializeDocumentStringSet(v *[]*string, decoder *smithydecodi
 		memberDecoder := smithydecoding.NewXMLNodeDecoder(decoder.Decoder, t)
 		decoder = memberDecoder
 		for {
-			if t.Name.Local == "member" {
+			if strings.EqualFold("member", t.Name.Local) {
 				var col *string
 				val, done, err := decoder.Value()
 				if err != nil {
@@ -5787,7 +5846,7 @@ func awsRestxml_deserializeDocumentTimestampList(v *[]*time.Time, decoder *smith
 		memberDecoder := smithydecoding.NewXMLNodeDecoder(decoder.Decoder, t)
 		decoder = memberDecoder
 		for {
-			if t.Name.Local == "member" {
+			if strings.EqualFold("member", t.Name.Local) {
 				var col *time.Time
 				val, done, err := decoder.Value()
 				if err != nil {
