@@ -25,13 +25,13 @@ final class XmlProtocolUtils {
 
         writer.addUseImports(SmithyGoDependency.IO);
         writer.addUseImports(SmithyGoDependency.XML);
-        writer.addUseImports(SmithyGoDependency.SMITHY_DECODING);
+        writer.addUseImports(SmithyGoDependency.SMITHY_XML);
         writer.write("body := io.TeeReader($L, ringBuffer)", bodyLocation);
         writer.write("rootDecoder := xml.NewDecoder(body)");
-        writer.write("t, err := smithydecoding.FetchXmlRootElement(rootDecoder)");
+        writer.write("t, err := smithyxml.FetchRootElement(rootDecoder)");
 
         handleDecodeError(writer, "");
-        writer.write("decoder := smithydecoding.NewXMLNodeDecoder(rootDecoder, t)");
+        writer.write("decoder := smithyxml.NewNodeDecoder(rootDecoder, t)");
         writer.insertTrailingNewline();
     }
 
@@ -70,7 +70,8 @@ final class XmlProtocolUtils {
         boolean isNoErrorWrapping = context.getService().getTrait(RestXmlTrait.class).map(
                 RestXmlTrait::isNoErrorWrapping).orElse(false);
 
-        writer.write("errorCode, err := smithydecoding.GetXMLResponseErrorCode(errorBody, $L)", isNoErrorWrapping);
+        writer.addUseImports(SmithyGoDependency.SMITHY_XML);
+        writer.write("errorCode, err := smithyxml.GetResponseErrorCode(errorBody, $L)", isNoErrorWrapping);
         writer.write("if err != nil { return err }");
         writer.insertTrailingNewline();
 

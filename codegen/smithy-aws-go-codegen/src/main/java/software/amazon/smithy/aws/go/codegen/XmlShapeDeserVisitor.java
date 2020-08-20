@@ -66,7 +66,7 @@ public class XmlShapeDeserVisitor extends DocumentShapeDeserVisitor {
 
     @Override
     protected Map<String, String> getAdditionalArguments() {
-        return Collections.singletonMap("decoder", "*smithydecoding.XMLNodeDecoder");
+        return Collections.singletonMap("decoder", "*smithyxml.NodeDecoder");
     }
 
     private XmlMemberDeserVisitor getMemberDeserVisitor(MemberShape member, String dataDest, boolean isXmlAttibuteMember) {
@@ -155,7 +155,7 @@ public class XmlShapeDeserVisitor extends DocumentShapeDeserVisitor {
             // If target is a simple shape, we must get an explicit member decoder to handle `member` element tag for
             // each member element of the list. This is not needed for the aggregate shapes as visitor handles it directly.
             if (target instanceof SimpleShape) {
-                writer.write("memberDecoder := smithydecoding.NewXMLNodeDecoder(decoder.Decoder, t)");
+                writer.write("memberDecoder := smithyxml.NewNodeDecoder(decoder.Decoder, t)");
                 writer.write("decoder = memberDecoder");
             }
 
@@ -188,7 +188,7 @@ public class XmlShapeDeserVisitor extends DocumentShapeDeserVisitor {
         Symbol memberSymbol = symbolProvider.toSymbol(member);
         Shape target = context.getModel().expectShape(member.getTarget());
 
-        writer.openBlock("func $L(v *$P, decoder *smithydecoding.XMLNodeDecoder) error {", "}",
+        writer.openBlock("func $L(v *$P, decoder *smithyxml.NodeDecoder) error {", "}",
                 getUnwrappedMapDelegateFunctionName(context, shape), symbol, () -> {
                     // initialize the output member variable
                     generatesIntializerForOutputVariable(context, shape);
@@ -222,7 +222,7 @@ public class XmlShapeDeserVisitor extends DocumentShapeDeserVisitor {
             // non-flattened maps
             writer.addUseImports(SmithyGoDependency.STRINGS);
             writer.openBlock("if strings.EqualFold(\"entry\", t.Name.Local) {", "}", () -> {
-                writer.write("entryDecoder := smithydecoding.NewXMLNodeDecoder(decoder.Decoder, t)");
+                writer.write("entryDecoder := smithyxml.NewNodeDecoder(decoder.Decoder, t)");
                 // delegate to unwrapped map deserializer function
                 writer.openBlock("if err := $L(&sv, entryDecoder); err != nil {", "}",
                         getUnwrappedMapDelegateFunctionName(context, shape), () -> {
@@ -240,7 +240,7 @@ public class XmlShapeDeserVisitor extends DocumentShapeDeserVisitor {
         SymbolProvider symbolProvider = context.getSymbolProvider();
         Symbol symbol = symbolProvider.toSymbol(shape);
 
-        writer.openBlock("func $L(v *$P, decoder *smithydecoding.XMLNodeDecoder) error {", "}",
+        writer.openBlock("func $L(v *$P, decoder *smithyxml.NodeDecoder) error {", "}",
                 getUnwrappedMapDelegateFunctionName(context, shape), symbol, () -> {
                     // initialize the output member variable
                     generatesIntializerForOutputVariable(context, shape);

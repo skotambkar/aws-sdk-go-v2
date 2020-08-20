@@ -10,12 +10,12 @@ import (
 	"fmt"
 	"github.com/aws/aws-sdk-go-v2/internal/protocoltest/restxml/types"
 	smithy "github.com/awslabs/smithy-go"
-	smithydecoding "github.com/awslabs/smithy-go/decoding"
 	smithyio "github.com/awslabs/smithy-go/io"
 	"github.com/awslabs/smithy-go/middleware"
 	"github.com/awslabs/smithy-go/ptr"
 	smithytime "github.com/awslabs/smithy-go/time"
 	smithyhttp "github.com/awslabs/smithy-go/transport/http"
+	smithyxml "github.com/awslabs/smithy-go/xml"
 	"io"
 	"io/ioutil"
 	"strconv"
@@ -64,7 +64,7 @@ func awsRestxml_deserializeOpErrorAllQueryStringTypes(response *smithyhttp.Respo
 	errorCode := "UnknownError"
 	errorMessage := errorCode
 
-	errorCode, err := smithydecoding.GetXMLResponseErrorCode(errorBody, false)
+	errorCode, err := smithyxml.GetResponseErrorCode(errorBody, false)
 	if err != nil {
 		return err
 	}
@@ -121,7 +121,7 @@ func awsRestxml_deserializeOpErrorConstantAndVariableQueryString(response *smith
 	errorCode := "UnknownError"
 	errorMessage := errorCode
 
-	errorCode, err := smithydecoding.GetXMLResponseErrorCode(errorBody, false)
+	errorCode, err := smithyxml.GetResponseErrorCode(errorBody, false)
 	if err != nil {
 		return err
 	}
@@ -178,7 +178,7 @@ func awsRestxml_deserializeOpErrorConstantQueryString(response *smithyhttp.Respo
 	errorCode := "UnknownError"
 	errorMessage := errorCode
 
-	errorCode, err := smithydecoding.GetXMLResponseErrorCode(errorBody, false)
+	errorCode, err := smithyxml.GetResponseErrorCode(errorBody, false)
 	if err != nil {
 		return err
 	}
@@ -235,7 +235,7 @@ func awsRestxml_deserializeOpErrorEmptyInputAndEmptyOutput(response *smithyhttp.
 	errorCode := "UnknownError"
 	errorMessage := errorCode
 
-	errorCode, err := smithydecoding.GetXMLResponseErrorCode(errorBody, false)
+	errorCode, err := smithyxml.GetResponseErrorCode(errorBody, false)
 	if err != nil {
 		return err
 	}
@@ -277,7 +277,7 @@ func (m *awsRestxml_deserializeOpFlattenedXmlMap) HandleDeserialize(ctx context.
 	output := &FlattenedXmlMapOutput{}
 	out.Result = output
 
-	var decoder *smithydecoding.XMLNodeDecoder
+	var decoder *smithyxml.NodeDecoder
 	buff := make([]byte, 1024)
 	ringBuffer := smithyio.NewRingBuffer(buff)
 	body := io.TeeReader(response.Body, ringBuffer)
@@ -285,14 +285,14 @@ func (m *awsRestxml_deserializeOpFlattenedXmlMap) HandleDeserialize(ctx context.
 	if decoder == nil {
 		rootDecoder := xml.NewDecoder(body)
 		// fetch the root element ignoring comments and preamble
-		t, err := smithydecoding.FetchXmlRootElement(rootDecoder)
+		t, err := smithyxml.FetchRootElement(rootDecoder)
 		if err == io.EOF {
 			err = nil
 		}
 		if err != nil {
 			return out, metadata, fmt.Errorf("error fetching the start element of xml response body: %w", err)
 		}
-		decoder = smithydecoding.NewXMLNodeDecoder(rootDecoder, t)
+		decoder = smithyxml.NewNodeDecoder(rootDecoder, t)
 	}
 	err = awsRestxml_deserializeDocumentFlattenedXmlMapOutput(&output, decoder)
 	if err != nil {
@@ -319,7 +319,7 @@ func awsRestxml_deserializeOpErrorFlattenedXmlMap(response *smithyhttp.Response)
 	errorCode := "UnknownError"
 	errorMessage := errorCode
 
-	errorCode, err := smithydecoding.GetXMLResponseErrorCode(errorBody, false)
+	errorCode, err := smithyxml.GetResponseErrorCode(errorBody, false)
 	if err != nil {
 		return err
 	}
@@ -335,7 +335,7 @@ func awsRestxml_deserializeOpErrorFlattenedXmlMap(response *smithyhttp.Response)
 	}
 }
 
-func awsRestxml_deserializeDocumentFlattenedXmlMapOutput(v **FlattenedXmlMapOutput, decoder *smithydecoding.XMLNodeDecoder) error {
+func awsRestxml_deserializeDocumentFlattenedXmlMapOutput(v **FlattenedXmlMapOutput, decoder *smithyxml.NodeDecoder) error {
 	if v == nil {
 		return fmt.Errorf("unexpected nil of type %T", v)
 	}
@@ -356,7 +356,7 @@ func awsRestxml_deserializeDocumentFlattenedXmlMapOutput(v **FlattenedXmlMapOutp
 		}
 		switch {
 		case strings.EqualFold("myMap", t.Name.Local):
-			nodeDecoder := smithydecoding.NewXMLNodeDecoder(decoder.Decoder, t)
+			nodeDecoder := smithyxml.NewNodeDecoder(decoder.Decoder, t)
 			if err := awsRestxml_deserializeDocumentFooEnumMapUnwrapped(&sv.MyMap, nodeDecoder); err != nil {
 				return err
 			}
@@ -396,7 +396,7 @@ func (m *awsRestxml_deserializeOpFlattenedXmlMapWithXmlName) HandleDeserialize(c
 	output := &FlattenedXmlMapWithXmlNameOutput{}
 	out.Result = output
 
-	var decoder *smithydecoding.XMLNodeDecoder
+	var decoder *smithyxml.NodeDecoder
 	buff := make([]byte, 1024)
 	ringBuffer := smithyio.NewRingBuffer(buff)
 	body := io.TeeReader(response.Body, ringBuffer)
@@ -404,14 +404,14 @@ func (m *awsRestxml_deserializeOpFlattenedXmlMapWithXmlName) HandleDeserialize(c
 	if decoder == nil {
 		rootDecoder := xml.NewDecoder(body)
 		// fetch the root element ignoring comments and preamble
-		t, err := smithydecoding.FetchXmlRootElement(rootDecoder)
+		t, err := smithyxml.FetchRootElement(rootDecoder)
 		if err == io.EOF {
 			err = nil
 		}
 		if err != nil {
 			return out, metadata, fmt.Errorf("error fetching the start element of xml response body: %w", err)
 		}
-		decoder = smithydecoding.NewXMLNodeDecoder(rootDecoder, t)
+		decoder = smithyxml.NewNodeDecoder(rootDecoder, t)
 	}
 	err = awsRestxml_deserializeDocumentFlattenedXmlMapWithXmlNameOutput(&output, decoder)
 	if err != nil {
@@ -438,7 +438,7 @@ func awsRestxml_deserializeOpErrorFlattenedXmlMapWithXmlName(response *smithyhtt
 	errorCode := "UnknownError"
 	errorMessage := errorCode
 
-	errorCode, err := smithydecoding.GetXMLResponseErrorCode(errorBody, false)
+	errorCode, err := smithyxml.GetResponseErrorCode(errorBody, false)
 	if err != nil {
 		return err
 	}
@@ -454,7 +454,7 @@ func awsRestxml_deserializeOpErrorFlattenedXmlMapWithXmlName(response *smithyhtt
 	}
 }
 
-func awsRestxml_deserializeDocumentFlattenedXmlMapWithXmlNameOutput(v **FlattenedXmlMapWithXmlNameOutput, decoder *smithydecoding.XMLNodeDecoder) error {
+func awsRestxml_deserializeDocumentFlattenedXmlMapWithXmlNameOutput(v **FlattenedXmlMapWithXmlNameOutput, decoder *smithyxml.NodeDecoder) error {
 	if v == nil {
 		return fmt.Errorf("unexpected nil of type %T", v)
 	}
@@ -475,7 +475,7 @@ func awsRestxml_deserializeDocumentFlattenedXmlMapWithXmlNameOutput(v **Flattene
 		}
 		switch {
 		case strings.EqualFold("KVP", t.Name.Local):
-			nodeDecoder := smithydecoding.NewXMLNodeDecoder(decoder.Decoder, t)
+			nodeDecoder := smithyxml.NewNodeDecoder(decoder.Decoder, t)
 			if err := awsRestxml_deserializeDocumentFlattenedXmlMapWithXmlNameInputOutputMapUnwrapped(&sv.MyMap, nodeDecoder); err != nil {
 				return err
 			}
@@ -535,7 +535,7 @@ func awsRestxml_deserializeOpErrorGreetingWithErrors(response *smithyhttp.Respon
 	errorCode := "UnknownError"
 	errorMessage := errorCode
 
-	errorCode, err := smithydecoding.GetXMLResponseErrorCode(errorBody, false)
+	errorCode, err := smithyxml.GetResponseErrorCode(errorBody, false)
 	if err != nil {
 		return err
 	}
@@ -621,7 +621,7 @@ func awsRestxml_deserializeOpErrorHttpPayloadTraits(response *smithyhttp.Respons
 	errorCode := "UnknownError"
 	errorMessage := errorCode
 
-	errorCode, err := smithydecoding.GetXMLResponseErrorCode(errorBody, false)
+	errorCode, err := smithyxml.GetResponseErrorCode(errorBody, false)
 	if err != nil {
 		return err
 	}
@@ -714,7 +714,7 @@ func awsRestxml_deserializeOpErrorHttpPayloadTraitsWithMediaType(response *smith
 	errorCode := "UnknownError"
 	errorMessage := errorCode
 
-	errorCode, err := smithydecoding.GetXMLResponseErrorCode(errorBody, false)
+	errorCode, err := smithyxml.GetResponseErrorCode(errorBody, false)
 	if err != nil {
 		return err
 	}
@@ -782,7 +782,7 @@ func (m *awsRestxml_deserializeOpHttpPayloadWithStructure) HandleDeserialize(ctx
 	output := &HttpPayloadWithStructureOutput{}
 	out.Result = output
 
-	var decoder *smithydecoding.XMLNodeDecoder
+	var decoder *smithyxml.NodeDecoder
 	buff := make([]byte, 1024)
 	ringBuffer := smithyio.NewRingBuffer(buff)
 	body := io.TeeReader(response.Body, ringBuffer)
@@ -790,14 +790,14 @@ func (m *awsRestxml_deserializeOpHttpPayloadWithStructure) HandleDeserialize(ctx
 	if decoder == nil {
 		rootDecoder := xml.NewDecoder(body)
 		// fetch the root element ignoring comments and preamble
-		t, err := smithydecoding.FetchXmlRootElement(rootDecoder)
+		t, err := smithyxml.FetchRootElement(rootDecoder)
 		if err == io.EOF {
 			err = nil
 		}
 		if err != nil {
 			return out, metadata, fmt.Errorf("error fetching the start element of xml response body: %w", err)
 		}
-		decoder = smithydecoding.NewXMLNodeDecoder(rootDecoder, t)
+		decoder = smithyxml.NewNodeDecoder(rootDecoder, t)
 	}
 	err = awsRestxml_deserializeDocumentNestedPayload(&output.Nested, decoder)
 	if err != nil {
@@ -824,7 +824,7 @@ func awsRestxml_deserializeOpErrorHttpPayloadWithStructure(response *smithyhttp.
 	errorCode := "UnknownError"
 	errorMessage := errorCode
 
-	errorCode, err := smithydecoding.GetXMLResponseErrorCode(errorBody, false)
+	errorCode, err := smithyxml.GetResponseErrorCode(errorBody, false)
 	if err != nil {
 		return err
 	}
@@ -840,7 +840,7 @@ func awsRestxml_deserializeOpErrorHttpPayloadWithStructure(response *smithyhttp.
 	}
 }
 
-func awsRestxml_deserializeDocumentHttpPayloadWithStructureOutput(v **HttpPayloadWithStructureOutput, decoder *smithydecoding.XMLNodeDecoder) error {
+func awsRestxml_deserializeDocumentHttpPayloadWithStructureOutput(v **HttpPayloadWithStructureOutput, decoder *smithyxml.NodeDecoder) error {
 	if v == nil {
 		return fmt.Errorf("unexpected nil of type %T", v)
 	}
@@ -861,7 +861,7 @@ func awsRestxml_deserializeDocumentHttpPayloadWithStructureOutput(v **HttpPayloa
 		}
 		switch {
 		case strings.EqualFold("nested", t.Name.Local):
-			nodeDecoder := smithydecoding.NewXMLNodeDecoder(decoder.Decoder, t)
+			nodeDecoder := smithyxml.NewNodeDecoder(decoder.Decoder, t)
 			if err := awsRestxml_deserializeDocumentNestedPayload(&sv.Nested, nodeDecoder); err != nil {
 				return err
 			}
@@ -901,7 +901,7 @@ func (m *awsRestxml_deserializeOpHttpPayloadWithXmlName) HandleDeserialize(ctx c
 	output := &HttpPayloadWithXmlNameOutput{}
 	out.Result = output
 
-	var decoder *smithydecoding.XMLNodeDecoder
+	var decoder *smithyxml.NodeDecoder
 	buff := make([]byte, 1024)
 	ringBuffer := smithyio.NewRingBuffer(buff)
 	body := io.TeeReader(response.Body, ringBuffer)
@@ -909,14 +909,14 @@ func (m *awsRestxml_deserializeOpHttpPayloadWithXmlName) HandleDeserialize(ctx c
 	if decoder == nil {
 		rootDecoder := xml.NewDecoder(body)
 		// fetch the root element ignoring comments and preamble
-		t, err := smithydecoding.FetchXmlRootElement(rootDecoder)
+		t, err := smithyxml.FetchRootElement(rootDecoder)
 		if err == io.EOF {
 			err = nil
 		}
 		if err != nil {
 			return out, metadata, fmt.Errorf("error fetching the start element of xml response body: %w", err)
 		}
-		decoder = smithydecoding.NewXMLNodeDecoder(rootDecoder, t)
+		decoder = smithyxml.NewNodeDecoder(rootDecoder, t)
 	}
 	err = awsRestxml_deserializeDocumentPayloadWithXmlName(&output.Nested, decoder)
 	if err != nil {
@@ -943,7 +943,7 @@ func awsRestxml_deserializeOpErrorHttpPayloadWithXmlName(response *smithyhttp.Re
 	errorCode := "UnknownError"
 	errorMessage := errorCode
 
-	errorCode, err := smithydecoding.GetXMLResponseErrorCode(errorBody, false)
+	errorCode, err := smithyxml.GetResponseErrorCode(errorBody, false)
 	if err != nil {
 		return err
 	}
@@ -959,7 +959,7 @@ func awsRestxml_deserializeOpErrorHttpPayloadWithXmlName(response *smithyhttp.Re
 	}
 }
 
-func awsRestxml_deserializeDocumentHttpPayloadWithXmlNameOutput(v **HttpPayloadWithXmlNameOutput, decoder *smithydecoding.XMLNodeDecoder) error {
+func awsRestxml_deserializeDocumentHttpPayloadWithXmlNameOutput(v **HttpPayloadWithXmlNameOutput, decoder *smithyxml.NodeDecoder) error {
 	if v == nil {
 		return fmt.Errorf("unexpected nil of type %T", v)
 	}
@@ -980,7 +980,7 @@ func awsRestxml_deserializeDocumentHttpPayloadWithXmlNameOutput(v **HttpPayloadW
 		}
 		switch {
 		case strings.EqualFold("nested", t.Name.Local):
-			nodeDecoder := smithydecoding.NewXMLNodeDecoder(decoder.Decoder, t)
+			nodeDecoder := smithyxml.NewNodeDecoder(decoder.Decoder, t)
 			if err := awsRestxml_deserializeDocumentPayloadWithXmlName(&sv.Nested, nodeDecoder); err != nil {
 				return err
 			}
@@ -1020,7 +1020,7 @@ func (m *awsRestxml_deserializeOpHttpPayloadWithXmlNamespace) HandleDeserialize(
 	output := &HttpPayloadWithXmlNamespaceOutput{}
 	out.Result = output
 
-	var decoder *smithydecoding.XMLNodeDecoder
+	var decoder *smithyxml.NodeDecoder
 	buff := make([]byte, 1024)
 	ringBuffer := smithyio.NewRingBuffer(buff)
 	body := io.TeeReader(response.Body, ringBuffer)
@@ -1028,14 +1028,14 @@ func (m *awsRestxml_deserializeOpHttpPayloadWithXmlNamespace) HandleDeserialize(
 	if decoder == nil {
 		rootDecoder := xml.NewDecoder(body)
 		// fetch the root element ignoring comments and preamble
-		t, err := smithydecoding.FetchXmlRootElement(rootDecoder)
+		t, err := smithyxml.FetchRootElement(rootDecoder)
 		if err == io.EOF {
 			err = nil
 		}
 		if err != nil {
 			return out, metadata, fmt.Errorf("error fetching the start element of xml response body: %w", err)
 		}
-		decoder = smithydecoding.NewXMLNodeDecoder(rootDecoder, t)
+		decoder = smithyxml.NewNodeDecoder(rootDecoder, t)
 	}
 	err = awsRestxml_deserializeDocumentPayloadWithXmlNamespace(&output.Nested, decoder)
 	if err != nil {
@@ -1062,7 +1062,7 @@ func awsRestxml_deserializeOpErrorHttpPayloadWithXmlNamespace(response *smithyht
 	errorCode := "UnknownError"
 	errorMessage := errorCode
 
-	errorCode, err := smithydecoding.GetXMLResponseErrorCode(errorBody, false)
+	errorCode, err := smithyxml.GetResponseErrorCode(errorBody, false)
 	if err != nil {
 		return err
 	}
@@ -1078,7 +1078,7 @@ func awsRestxml_deserializeOpErrorHttpPayloadWithXmlNamespace(response *smithyht
 	}
 }
 
-func awsRestxml_deserializeDocumentHttpPayloadWithXmlNamespaceOutput(v **HttpPayloadWithXmlNamespaceOutput, decoder *smithydecoding.XMLNodeDecoder) error {
+func awsRestxml_deserializeDocumentHttpPayloadWithXmlNamespaceOutput(v **HttpPayloadWithXmlNamespaceOutput, decoder *smithyxml.NodeDecoder) error {
 	if v == nil {
 		return fmt.Errorf("unexpected nil of type %T", v)
 	}
@@ -1099,7 +1099,7 @@ func awsRestxml_deserializeDocumentHttpPayloadWithXmlNamespaceOutput(v **HttpPay
 		}
 		switch {
 		case strings.EqualFold("nested", t.Name.Local):
-			nodeDecoder := smithydecoding.NewXMLNodeDecoder(decoder.Decoder, t)
+			nodeDecoder := smithyxml.NewNodeDecoder(decoder.Decoder, t)
 			if err := awsRestxml_deserializeDocumentPayloadWithXmlNamespace(&sv.Nested, nodeDecoder); err != nil {
 				return err
 			}
@@ -1139,7 +1139,7 @@ func (m *awsRestxml_deserializeOpHttpPayloadWithXmlNamespaceAndPrefix) HandleDes
 	output := &HttpPayloadWithXmlNamespaceAndPrefixOutput{}
 	out.Result = output
 
-	var decoder *smithydecoding.XMLNodeDecoder
+	var decoder *smithyxml.NodeDecoder
 	buff := make([]byte, 1024)
 	ringBuffer := smithyio.NewRingBuffer(buff)
 	body := io.TeeReader(response.Body, ringBuffer)
@@ -1147,14 +1147,14 @@ func (m *awsRestxml_deserializeOpHttpPayloadWithXmlNamespaceAndPrefix) HandleDes
 	if decoder == nil {
 		rootDecoder := xml.NewDecoder(body)
 		// fetch the root element ignoring comments and preamble
-		t, err := smithydecoding.FetchXmlRootElement(rootDecoder)
+		t, err := smithyxml.FetchRootElement(rootDecoder)
 		if err == io.EOF {
 			err = nil
 		}
 		if err != nil {
 			return out, metadata, fmt.Errorf("error fetching the start element of xml response body: %w", err)
 		}
-		decoder = smithydecoding.NewXMLNodeDecoder(rootDecoder, t)
+		decoder = smithyxml.NewNodeDecoder(rootDecoder, t)
 	}
 	err = awsRestxml_deserializeDocumentPayloadWithXmlNamespaceAndPrefix(&output.Nested, decoder)
 	if err != nil {
@@ -1181,7 +1181,7 @@ func awsRestxml_deserializeOpErrorHttpPayloadWithXmlNamespaceAndPrefix(response 
 	errorCode := "UnknownError"
 	errorMessage := errorCode
 
-	errorCode, err := smithydecoding.GetXMLResponseErrorCode(errorBody, false)
+	errorCode, err := smithyxml.GetResponseErrorCode(errorBody, false)
 	if err != nil {
 		return err
 	}
@@ -1197,7 +1197,7 @@ func awsRestxml_deserializeOpErrorHttpPayloadWithXmlNamespaceAndPrefix(response 
 	}
 }
 
-func awsRestxml_deserializeDocumentHttpPayloadWithXmlNamespaceAndPrefixOutput(v **HttpPayloadWithXmlNamespaceAndPrefixOutput, decoder *smithydecoding.XMLNodeDecoder) error {
+func awsRestxml_deserializeDocumentHttpPayloadWithXmlNamespaceAndPrefixOutput(v **HttpPayloadWithXmlNamespaceAndPrefixOutput, decoder *smithyxml.NodeDecoder) error {
 	if v == nil {
 		return fmt.Errorf("unexpected nil of type %T", v)
 	}
@@ -1218,7 +1218,7 @@ func awsRestxml_deserializeDocumentHttpPayloadWithXmlNamespaceAndPrefixOutput(v 
 		}
 		switch {
 		case strings.EqualFold("nested", t.Name.Local):
-			nodeDecoder := smithydecoding.NewXMLNodeDecoder(decoder.Decoder, t)
+			nodeDecoder := smithyxml.NewNodeDecoder(decoder.Decoder, t)
 			if err := awsRestxml_deserializeDocumentPayloadWithXmlNamespaceAndPrefix(&sv.Nested, nodeDecoder); err != nil {
 				return err
 			}
@@ -1278,7 +1278,7 @@ func awsRestxml_deserializeOpErrorHttpPrefixHeaders(response *smithyhttp.Respons
 	errorCode := "UnknownError"
 	errorMessage := errorCode
 
-	errorCode, err := smithydecoding.GetXMLResponseErrorCode(errorBody, false)
+	errorCode, err := smithyxml.GetResponseErrorCode(errorBody, false)
 	if err != nil {
 		return err
 	}
@@ -1358,7 +1358,7 @@ func awsRestxml_deserializeOpErrorHttpRequestWithGreedyLabelInPath(response *smi
 	errorCode := "UnknownError"
 	errorMessage := errorCode
 
-	errorCode, err := smithydecoding.GetXMLResponseErrorCode(errorBody, false)
+	errorCode, err := smithyxml.GetResponseErrorCode(errorBody, false)
 	if err != nil {
 		return err
 	}
@@ -1415,7 +1415,7 @@ func awsRestxml_deserializeOpErrorHttpRequestWithLabels(response *smithyhttp.Res
 	errorCode := "UnknownError"
 	errorMessage := errorCode
 
-	errorCode, err := smithydecoding.GetXMLResponseErrorCode(errorBody, false)
+	errorCode, err := smithyxml.GetResponseErrorCode(errorBody, false)
 	if err != nil {
 		return err
 	}
@@ -1472,7 +1472,7 @@ func awsRestxml_deserializeOpErrorHttpRequestWithLabelsAndTimestampFormat(respon
 	errorCode := "UnknownError"
 	errorMessage := errorCode
 
-	errorCode, err := smithydecoding.GetXMLResponseErrorCode(errorBody, false)
+	errorCode, err := smithyxml.GetResponseErrorCode(errorBody, false)
 	if err != nil {
 		return err
 	}
@@ -1514,7 +1514,7 @@ func (m *awsRestxml_deserializeOpIgnoreQueryParamsInResponse) HandleDeserialize(
 	output := &IgnoreQueryParamsInResponseOutput{}
 	out.Result = output
 
-	var decoder *smithydecoding.XMLNodeDecoder
+	var decoder *smithyxml.NodeDecoder
 	buff := make([]byte, 1024)
 	ringBuffer := smithyio.NewRingBuffer(buff)
 	body := io.TeeReader(response.Body, ringBuffer)
@@ -1522,14 +1522,14 @@ func (m *awsRestxml_deserializeOpIgnoreQueryParamsInResponse) HandleDeserialize(
 	if decoder == nil {
 		rootDecoder := xml.NewDecoder(body)
 		// fetch the root element ignoring comments and preamble
-		t, err := smithydecoding.FetchXmlRootElement(rootDecoder)
+		t, err := smithyxml.FetchRootElement(rootDecoder)
 		if err == io.EOF {
 			err = nil
 		}
 		if err != nil {
 			return out, metadata, fmt.Errorf("error fetching the start element of xml response body: %w", err)
 		}
-		decoder = smithydecoding.NewXMLNodeDecoder(rootDecoder, t)
+		decoder = smithyxml.NewNodeDecoder(rootDecoder, t)
 	}
 	err = awsRestxml_deserializeDocumentIgnoreQueryParamsInResponseOutput(&output, decoder)
 	if err != nil {
@@ -1556,7 +1556,7 @@ func awsRestxml_deserializeOpErrorIgnoreQueryParamsInResponse(response *smithyht
 	errorCode := "UnknownError"
 	errorMessage := errorCode
 
-	errorCode, err := smithydecoding.GetXMLResponseErrorCode(errorBody, false)
+	errorCode, err := smithyxml.GetResponseErrorCode(errorBody, false)
 	if err != nil {
 		return err
 	}
@@ -1572,7 +1572,7 @@ func awsRestxml_deserializeOpErrorIgnoreQueryParamsInResponse(response *smithyht
 	}
 }
 
-func awsRestxml_deserializeDocumentIgnoreQueryParamsInResponseOutput(v **IgnoreQueryParamsInResponseOutput, decoder *smithydecoding.XMLNodeDecoder) error {
+func awsRestxml_deserializeDocumentIgnoreQueryParamsInResponseOutput(v **IgnoreQueryParamsInResponseOutput, decoder *smithyxml.NodeDecoder) error {
 	if v == nil {
 		return fmt.Errorf("unexpected nil of type %T", v)
 	}
@@ -1660,7 +1660,7 @@ func awsRestxml_deserializeOpErrorInputAndOutputWithHeaders(response *smithyhttp
 	errorCode := "UnknownError"
 	errorMessage := errorCode
 
-	errorCode, err := smithydecoding.GetXMLResponseErrorCode(errorBody, false)
+	errorCode, err := smithyxml.GetResponseErrorCode(errorBody, false)
 	if err != nil {
 		return err
 	}
@@ -1915,7 +1915,7 @@ func awsRestxml_deserializeOpErrorNoInputAndNoOutput(response *smithyhttp.Respon
 	errorCode := "UnknownError"
 	errorMessage := errorCode
 
-	errorCode, err := smithydecoding.GetXMLResponseErrorCode(errorBody, false)
+	errorCode, err := smithyxml.GetResponseErrorCode(errorBody, false)
 	if err != nil {
 		return err
 	}
@@ -1972,7 +1972,7 @@ func awsRestxml_deserializeOpErrorNoInputAndOutput(response *smithyhttp.Response
 	errorCode := "UnknownError"
 	errorMessage := errorCode
 
-	errorCode, err := smithydecoding.GetXMLResponseErrorCode(errorBody, false)
+	errorCode, err := smithyxml.GetResponseErrorCode(errorBody, false)
 	if err != nil {
 		return err
 	}
@@ -2034,7 +2034,7 @@ func awsRestxml_deserializeOpErrorNullAndEmptyHeadersClient(response *smithyhttp
 	errorCode := "UnknownError"
 	errorMessage := errorCode
 
-	errorCode, err := smithydecoding.GetXMLResponseErrorCode(errorBody, false)
+	errorCode, err := smithyxml.GetResponseErrorCode(errorBody, false)
 	if err != nil {
 		return err
 	}
@@ -2130,7 +2130,7 @@ func awsRestxml_deserializeOpErrorNullAndEmptyHeadersServer(response *smithyhttp
 	errorCode := "UnknownError"
 	errorMessage := errorCode
 
-	errorCode, err := smithydecoding.GetXMLResponseErrorCode(errorBody, false)
+	errorCode, err := smithyxml.GetResponseErrorCode(errorBody, false)
 	if err != nil {
 		return err
 	}
@@ -2221,7 +2221,7 @@ func awsRestxml_deserializeOpErrorOmitsNullSerializesEmptyString(response *smith
 	errorCode := "UnknownError"
 	errorMessage := errorCode
 
-	errorCode, err := smithydecoding.GetXMLResponseErrorCode(errorBody, false)
+	errorCode, err := smithyxml.GetResponseErrorCode(errorBody, false)
 	if err != nil {
 		return err
 	}
@@ -2278,7 +2278,7 @@ func awsRestxml_deserializeOpErrorQueryIdempotencyTokenAutoFill(response *smithy
 	errorCode := "UnknownError"
 	errorMessage := errorCode
 
-	errorCode, err := smithydecoding.GetXMLResponseErrorCode(errorBody, false)
+	errorCode, err := smithyxml.GetResponseErrorCode(errorBody, false)
 	if err != nil {
 		return err
 	}
@@ -2320,7 +2320,7 @@ func (m *awsRestxml_deserializeOpRecursiveShapes) HandleDeserialize(ctx context.
 	output := &RecursiveShapesOutput{}
 	out.Result = output
 
-	var decoder *smithydecoding.XMLNodeDecoder
+	var decoder *smithyxml.NodeDecoder
 	buff := make([]byte, 1024)
 	ringBuffer := smithyio.NewRingBuffer(buff)
 	body := io.TeeReader(response.Body, ringBuffer)
@@ -2328,14 +2328,14 @@ func (m *awsRestxml_deserializeOpRecursiveShapes) HandleDeserialize(ctx context.
 	if decoder == nil {
 		rootDecoder := xml.NewDecoder(body)
 		// fetch the root element ignoring comments and preamble
-		t, err := smithydecoding.FetchXmlRootElement(rootDecoder)
+		t, err := smithyxml.FetchRootElement(rootDecoder)
 		if err == io.EOF {
 			err = nil
 		}
 		if err != nil {
 			return out, metadata, fmt.Errorf("error fetching the start element of xml response body: %w", err)
 		}
-		decoder = smithydecoding.NewXMLNodeDecoder(rootDecoder, t)
+		decoder = smithyxml.NewNodeDecoder(rootDecoder, t)
 	}
 	err = awsRestxml_deserializeDocumentRecursiveShapesOutput(&output, decoder)
 	if err != nil {
@@ -2362,7 +2362,7 @@ func awsRestxml_deserializeOpErrorRecursiveShapes(response *smithyhttp.Response)
 	errorCode := "UnknownError"
 	errorMessage := errorCode
 
-	errorCode, err := smithydecoding.GetXMLResponseErrorCode(errorBody, false)
+	errorCode, err := smithyxml.GetResponseErrorCode(errorBody, false)
 	if err != nil {
 		return err
 	}
@@ -2378,7 +2378,7 @@ func awsRestxml_deserializeOpErrorRecursiveShapes(response *smithyhttp.Response)
 	}
 }
 
-func awsRestxml_deserializeDocumentRecursiveShapesOutput(v **RecursiveShapesOutput, decoder *smithydecoding.XMLNodeDecoder) error {
+func awsRestxml_deserializeDocumentRecursiveShapesOutput(v **RecursiveShapesOutput, decoder *smithyxml.NodeDecoder) error {
 	if v == nil {
 		return fmt.Errorf("unexpected nil of type %T", v)
 	}
@@ -2399,7 +2399,7 @@ func awsRestxml_deserializeDocumentRecursiveShapesOutput(v **RecursiveShapesOutp
 		}
 		switch {
 		case strings.EqualFold("nested", t.Name.Local):
-			nodeDecoder := smithydecoding.NewXMLNodeDecoder(decoder.Decoder, t)
+			nodeDecoder := smithyxml.NewNodeDecoder(decoder.Decoder, t)
 			if err := awsRestxml_deserializeDocumentRecursiveShapesInputOutputNested1(&sv.Nested, nodeDecoder); err != nil {
 				return err
 			}
@@ -2444,7 +2444,7 @@ func (m *awsRestxml_deserializeOpSimpleScalarProperties) HandleDeserialize(ctx c
 		return out, metadata, &smithy.DeserializationError{Err: fmt.Errorf("failed to decode response with invalid Http bindings, %w", err)}
 	}
 
-	var decoder *smithydecoding.XMLNodeDecoder
+	var decoder *smithyxml.NodeDecoder
 	buff := make([]byte, 1024)
 	ringBuffer := smithyio.NewRingBuffer(buff)
 	body := io.TeeReader(response.Body, ringBuffer)
@@ -2452,14 +2452,14 @@ func (m *awsRestxml_deserializeOpSimpleScalarProperties) HandleDeserialize(ctx c
 	if decoder == nil {
 		rootDecoder := xml.NewDecoder(body)
 		// fetch the root element ignoring comments and preamble
-		t, err := smithydecoding.FetchXmlRootElement(rootDecoder)
+		t, err := smithyxml.FetchRootElement(rootDecoder)
 		if err == io.EOF {
 			err = nil
 		}
 		if err != nil {
 			return out, metadata, fmt.Errorf("error fetching the start element of xml response body: %w", err)
 		}
-		decoder = smithydecoding.NewXMLNodeDecoder(rootDecoder, t)
+		decoder = smithyxml.NewNodeDecoder(rootDecoder, t)
 	}
 	err = awsRestxml_deserializeDocumentSimpleScalarPropertiesOutput(&output, decoder)
 	if err != nil {
@@ -2486,7 +2486,7 @@ func awsRestxml_deserializeOpErrorSimpleScalarProperties(response *smithyhttp.Re
 	errorCode := "UnknownError"
 	errorMessage := errorCode
 
-	errorCode, err := smithydecoding.GetXMLResponseErrorCode(errorBody, false)
+	errorCode, err := smithyxml.GetResponseErrorCode(errorBody, false)
 	if err != nil {
 		return err
 	}
@@ -2514,7 +2514,7 @@ func awsRestxml_deserializeHttpBindingsSimpleScalarPropertiesOutput(v *SimpleSca
 
 	return nil
 }
-func awsRestxml_deserializeDocumentSimpleScalarPropertiesOutput(v **SimpleScalarPropertiesOutput, decoder *smithydecoding.XMLNodeDecoder) error {
+func awsRestxml_deserializeDocumentSimpleScalarPropertiesOutput(v **SimpleScalarPropertiesOutput, decoder *smithyxml.NodeDecoder) error {
 	if v == nil {
 		return fmt.Errorf("unexpected nil of type %T", v)
 	}
@@ -2736,7 +2736,7 @@ func awsRestxml_deserializeOpErrorTimestampFormatHeaders(response *smithyhttp.Re
 	errorCode := "UnknownError"
 	errorMessage := errorCode
 
-	errorCode, err := smithydecoding.GetXMLResponseErrorCode(errorBody, false)
+	errorCode, err := smithyxml.GetResponseErrorCode(errorBody, false)
 	if err != nil {
 		return err
 	}
@@ -2851,7 +2851,7 @@ func (m *awsRestxml_deserializeOpXmlAttributes) HandleDeserialize(ctx context.Co
 	output := &XmlAttributesOutput{}
 	out.Result = output
 
-	var decoder *smithydecoding.XMLNodeDecoder
+	var decoder *smithyxml.NodeDecoder
 	buff := make([]byte, 1024)
 	ringBuffer := smithyio.NewRingBuffer(buff)
 	body := io.TeeReader(response.Body, ringBuffer)
@@ -2859,14 +2859,14 @@ func (m *awsRestxml_deserializeOpXmlAttributes) HandleDeserialize(ctx context.Co
 	if decoder == nil {
 		rootDecoder := xml.NewDecoder(body)
 		// fetch the root element ignoring comments and preamble
-		t, err := smithydecoding.FetchXmlRootElement(rootDecoder)
+		t, err := smithyxml.FetchRootElement(rootDecoder)
 		if err == io.EOF {
 			err = nil
 		}
 		if err != nil {
 			return out, metadata, fmt.Errorf("error fetching the start element of xml response body: %w", err)
 		}
-		decoder = smithydecoding.NewXMLNodeDecoder(rootDecoder, t)
+		decoder = smithyxml.NewNodeDecoder(rootDecoder, t)
 	}
 	err = awsRestxml_deserializeDocumentXmlAttributesOutput(&output, decoder)
 	if err != nil {
@@ -2893,7 +2893,7 @@ func awsRestxml_deserializeOpErrorXmlAttributes(response *smithyhttp.Response) e
 	errorCode := "UnknownError"
 	errorMessage := errorCode
 
-	errorCode, err := smithydecoding.GetXMLResponseErrorCode(errorBody, false)
+	errorCode, err := smithyxml.GetResponseErrorCode(errorBody, false)
 	if err != nil {
 		return err
 	}
@@ -2909,7 +2909,7 @@ func awsRestxml_deserializeOpErrorXmlAttributes(response *smithyhttp.Response) e
 	}
 }
 
-func awsRestxml_deserializeDocumentXmlAttributesOutput(v **XmlAttributesOutput, decoder *smithydecoding.XMLNodeDecoder) error {
+func awsRestxml_deserializeDocumentXmlAttributesOutput(v **XmlAttributesOutput, decoder *smithyxml.NodeDecoder) error {
 	if v == nil {
 		return fmt.Errorf("unexpected nil of type %T", v)
 	}
@@ -2988,7 +2988,7 @@ func (m *awsRestxml_deserializeOpXmlAttributesOnPayload) HandleDeserialize(ctx c
 	output := &XmlAttributesOnPayloadOutput{}
 	out.Result = output
 
-	var decoder *smithydecoding.XMLNodeDecoder
+	var decoder *smithyxml.NodeDecoder
 	buff := make([]byte, 1024)
 	ringBuffer := smithyio.NewRingBuffer(buff)
 	body := io.TeeReader(response.Body, ringBuffer)
@@ -2996,14 +2996,14 @@ func (m *awsRestxml_deserializeOpXmlAttributesOnPayload) HandleDeserialize(ctx c
 	if decoder == nil {
 		rootDecoder := xml.NewDecoder(body)
 		// fetch the root element ignoring comments and preamble
-		t, err := smithydecoding.FetchXmlRootElement(rootDecoder)
+		t, err := smithyxml.FetchRootElement(rootDecoder)
 		if err == io.EOF {
 			err = nil
 		}
 		if err != nil {
 			return out, metadata, fmt.Errorf("error fetching the start element of xml response body: %w", err)
 		}
-		decoder = smithydecoding.NewXMLNodeDecoder(rootDecoder, t)
+		decoder = smithyxml.NewNodeDecoder(rootDecoder, t)
 	}
 	err = awsRestxml_deserializeDocumentXmlAttributesInputOutput(&output.Payload, decoder)
 	if err != nil {
@@ -3030,7 +3030,7 @@ func awsRestxml_deserializeOpErrorXmlAttributesOnPayload(response *smithyhttp.Re
 	errorCode := "UnknownError"
 	errorMessage := errorCode
 
-	errorCode, err := smithydecoding.GetXMLResponseErrorCode(errorBody, false)
+	errorCode, err := smithyxml.GetResponseErrorCode(errorBody, false)
 	if err != nil {
 		return err
 	}
@@ -3046,7 +3046,7 @@ func awsRestxml_deserializeOpErrorXmlAttributesOnPayload(response *smithyhttp.Re
 	}
 }
 
-func awsRestxml_deserializeDocumentXmlAttributesOnPayloadOutput(v **XmlAttributesOnPayloadOutput, decoder *smithydecoding.XMLNodeDecoder) error {
+func awsRestxml_deserializeDocumentXmlAttributesOnPayloadOutput(v **XmlAttributesOnPayloadOutput, decoder *smithyxml.NodeDecoder) error {
 	if v == nil {
 		return fmt.Errorf("unexpected nil of type %T", v)
 	}
@@ -3067,7 +3067,7 @@ func awsRestxml_deserializeDocumentXmlAttributesOnPayloadOutput(v **XmlAttribute
 		}
 		switch {
 		case strings.EqualFold("payload", t.Name.Local):
-			nodeDecoder := smithydecoding.NewXMLNodeDecoder(decoder.Decoder, t)
+			nodeDecoder := smithyxml.NewNodeDecoder(decoder.Decoder, t)
 			if err := awsRestxml_deserializeDocumentXmlAttributesInputOutput(&sv.Payload, nodeDecoder); err != nil {
 				return err
 			}
@@ -3107,7 +3107,7 @@ func (m *awsRestxml_deserializeOpXmlBlobs) HandleDeserialize(ctx context.Context
 	output := &XmlBlobsOutput{}
 	out.Result = output
 
-	var decoder *smithydecoding.XMLNodeDecoder
+	var decoder *smithyxml.NodeDecoder
 	buff := make([]byte, 1024)
 	ringBuffer := smithyio.NewRingBuffer(buff)
 	body := io.TeeReader(response.Body, ringBuffer)
@@ -3115,14 +3115,14 @@ func (m *awsRestxml_deserializeOpXmlBlobs) HandleDeserialize(ctx context.Context
 	if decoder == nil {
 		rootDecoder := xml.NewDecoder(body)
 		// fetch the root element ignoring comments and preamble
-		t, err := smithydecoding.FetchXmlRootElement(rootDecoder)
+		t, err := smithyxml.FetchRootElement(rootDecoder)
 		if err == io.EOF {
 			err = nil
 		}
 		if err != nil {
 			return out, metadata, fmt.Errorf("error fetching the start element of xml response body: %w", err)
 		}
-		decoder = smithydecoding.NewXMLNodeDecoder(rootDecoder, t)
+		decoder = smithyxml.NewNodeDecoder(rootDecoder, t)
 	}
 	err = awsRestxml_deserializeDocumentXmlBlobsOutput(&output, decoder)
 	if err != nil {
@@ -3149,7 +3149,7 @@ func awsRestxml_deserializeOpErrorXmlBlobs(response *smithyhttp.Response) error 
 	errorCode := "UnknownError"
 	errorMessage := errorCode
 
-	errorCode, err := smithydecoding.GetXMLResponseErrorCode(errorBody, false)
+	errorCode, err := smithyxml.GetResponseErrorCode(errorBody, false)
 	if err != nil {
 		return err
 	}
@@ -3165,7 +3165,7 @@ func awsRestxml_deserializeOpErrorXmlBlobs(response *smithyhttp.Response) error 
 	}
 }
 
-func awsRestxml_deserializeDocumentXmlBlobsOutput(v **XmlBlobsOutput, decoder *smithydecoding.XMLNodeDecoder) error {
+func awsRestxml_deserializeDocumentXmlBlobsOutput(v **XmlBlobsOutput, decoder *smithyxml.NodeDecoder) error {
 	if v == nil {
 		return fmt.Errorf("unexpected nil of type %T", v)
 	}
@@ -3231,7 +3231,7 @@ func (m *awsRestxml_deserializeOpXmlEnums) HandleDeserialize(ctx context.Context
 	output := &XmlEnumsOutput{}
 	out.Result = output
 
-	var decoder *smithydecoding.XMLNodeDecoder
+	var decoder *smithyxml.NodeDecoder
 	buff := make([]byte, 1024)
 	ringBuffer := smithyio.NewRingBuffer(buff)
 	body := io.TeeReader(response.Body, ringBuffer)
@@ -3239,14 +3239,14 @@ func (m *awsRestxml_deserializeOpXmlEnums) HandleDeserialize(ctx context.Context
 	if decoder == nil {
 		rootDecoder := xml.NewDecoder(body)
 		// fetch the root element ignoring comments and preamble
-		t, err := smithydecoding.FetchXmlRootElement(rootDecoder)
+		t, err := smithyxml.FetchRootElement(rootDecoder)
 		if err == io.EOF {
 			err = nil
 		}
 		if err != nil {
 			return out, metadata, fmt.Errorf("error fetching the start element of xml response body: %w", err)
 		}
-		decoder = smithydecoding.NewXMLNodeDecoder(rootDecoder, t)
+		decoder = smithyxml.NewNodeDecoder(rootDecoder, t)
 	}
 	err = awsRestxml_deserializeDocumentXmlEnumsOutput(&output, decoder)
 	if err != nil {
@@ -3273,7 +3273,7 @@ func awsRestxml_deserializeOpErrorXmlEnums(response *smithyhttp.Response) error 
 	errorCode := "UnknownError"
 	errorMessage := errorCode
 
-	errorCode, err := smithydecoding.GetXMLResponseErrorCode(errorBody, false)
+	errorCode, err := smithyxml.GetResponseErrorCode(errorBody, false)
 	if err != nil {
 		return err
 	}
@@ -3289,7 +3289,7 @@ func awsRestxml_deserializeOpErrorXmlEnums(response *smithyhttp.Response) error 
 	}
 }
 
-func awsRestxml_deserializeDocumentXmlEnumsOutput(v **XmlEnumsOutput, decoder *smithydecoding.XMLNodeDecoder) error {
+func awsRestxml_deserializeDocumentXmlEnumsOutput(v **XmlEnumsOutput, decoder *smithyxml.NodeDecoder) error {
 	if v == nil {
 		return fmt.Errorf("unexpected nil of type %T", v)
 	}
@@ -3349,19 +3349,19 @@ func awsRestxml_deserializeDocumentXmlEnumsOutput(v **XmlEnumsOutput, decoder *s
 			}
 
 		case strings.EqualFold("fooEnumList", t.Name.Local):
-			nodeDecoder := smithydecoding.NewXMLNodeDecoder(decoder.Decoder, t)
+			nodeDecoder := smithyxml.NewNodeDecoder(decoder.Decoder, t)
 			if err := awsRestxml_deserializeDocumentFooEnumList(&sv.FooEnumList, nodeDecoder); err != nil {
 				return err
 			}
 
 		case strings.EqualFold("fooEnumMap", t.Name.Local):
-			nodeDecoder := smithydecoding.NewXMLNodeDecoder(decoder.Decoder, t)
+			nodeDecoder := smithyxml.NewNodeDecoder(decoder.Decoder, t)
 			if err := awsRestxml_deserializeDocumentFooEnumMap(&sv.FooEnumMap, nodeDecoder); err != nil {
 				return err
 			}
 
 		case strings.EqualFold("fooEnumSet", t.Name.Local):
-			nodeDecoder := smithydecoding.NewXMLNodeDecoder(decoder.Decoder, t)
+			nodeDecoder := smithyxml.NewNodeDecoder(decoder.Decoder, t)
 			if err := awsRestxml_deserializeDocumentFooEnumSet(&sv.FooEnumSet, nodeDecoder); err != nil {
 				return err
 			}
@@ -3401,7 +3401,7 @@ func (m *awsRestxml_deserializeOpXmlLists) HandleDeserialize(ctx context.Context
 	output := &XmlListsOutput{}
 	out.Result = output
 
-	var decoder *smithydecoding.XMLNodeDecoder
+	var decoder *smithyxml.NodeDecoder
 	buff := make([]byte, 1024)
 	ringBuffer := smithyio.NewRingBuffer(buff)
 	body := io.TeeReader(response.Body, ringBuffer)
@@ -3409,14 +3409,14 @@ func (m *awsRestxml_deserializeOpXmlLists) HandleDeserialize(ctx context.Context
 	if decoder == nil {
 		rootDecoder := xml.NewDecoder(body)
 		// fetch the root element ignoring comments and preamble
-		t, err := smithydecoding.FetchXmlRootElement(rootDecoder)
+		t, err := smithyxml.FetchRootElement(rootDecoder)
 		if err == io.EOF {
 			err = nil
 		}
 		if err != nil {
 			return out, metadata, fmt.Errorf("error fetching the start element of xml response body: %w", err)
 		}
-		decoder = smithydecoding.NewXMLNodeDecoder(rootDecoder, t)
+		decoder = smithyxml.NewNodeDecoder(rootDecoder, t)
 	}
 	err = awsRestxml_deserializeDocumentXmlListsOutput(&output, decoder)
 	if err != nil {
@@ -3443,7 +3443,7 @@ func awsRestxml_deserializeOpErrorXmlLists(response *smithyhttp.Response) error 
 	errorCode := "UnknownError"
 	errorMessage := errorCode
 
-	errorCode, err := smithydecoding.GetXMLResponseErrorCode(errorBody, false)
+	errorCode, err := smithyxml.GetResponseErrorCode(errorBody, false)
 	if err != nil {
 		return err
 	}
@@ -3459,7 +3459,7 @@ func awsRestxml_deserializeOpErrorXmlLists(response *smithyhttp.Response) error 
 	}
 }
 
-func awsRestxml_deserializeDocumentXmlListsOutput(v **XmlListsOutput, decoder *smithydecoding.XMLNodeDecoder) error {
+func awsRestxml_deserializeDocumentXmlListsOutput(v **XmlListsOutput, decoder *smithyxml.NodeDecoder) error {
 	if v == nil {
 		return fmt.Errorf("unexpected nil of type %T", v)
 	}
@@ -3480,67 +3480,67 @@ func awsRestxml_deserializeDocumentXmlListsOutput(v **XmlListsOutput, decoder *s
 		}
 		switch {
 		case strings.EqualFold("booleanList", t.Name.Local):
-			nodeDecoder := smithydecoding.NewXMLNodeDecoder(decoder.Decoder, t)
+			nodeDecoder := smithyxml.NewNodeDecoder(decoder.Decoder, t)
 			if err := awsRestxml_deserializeDocumentBooleanList(&sv.BooleanList, nodeDecoder); err != nil {
 				return err
 			}
 
 		case strings.EqualFold("enumList", t.Name.Local):
-			nodeDecoder := smithydecoding.NewXMLNodeDecoder(decoder.Decoder, t)
+			nodeDecoder := smithyxml.NewNodeDecoder(decoder.Decoder, t)
 			if err := awsRestxml_deserializeDocumentFooEnumList(&sv.EnumList, nodeDecoder); err != nil {
 				return err
 			}
 
 		case strings.EqualFold("flattenedList", t.Name.Local):
-			nodeDecoder := smithydecoding.NewXMLNodeDecoder(decoder.Decoder, t)
+			nodeDecoder := smithyxml.NewNodeDecoder(decoder.Decoder, t)
 			if err := awsRestxml_deserializeDocumentRenamedListMembersUnwrapped(&sv.FlattenedList, nodeDecoder); err != nil {
 				return err
 			}
 
 		case strings.EqualFold("customName", t.Name.Local):
-			nodeDecoder := smithydecoding.NewXMLNodeDecoder(decoder.Decoder, t)
+			nodeDecoder := smithyxml.NewNodeDecoder(decoder.Decoder, t)
 			if err := awsRestxml_deserializeDocumentRenamedListMembersUnwrapped(&sv.FlattenedList2, nodeDecoder); err != nil {
 				return err
 			}
 
 		case strings.EqualFold("integerList", t.Name.Local):
-			nodeDecoder := smithydecoding.NewXMLNodeDecoder(decoder.Decoder, t)
+			nodeDecoder := smithyxml.NewNodeDecoder(decoder.Decoder, t)
 			if err := awsRestxml_deserializeDocumentIntegerList(&sv.IntegerList, nodeDecoder); err != nil {
 				return err
 			}
 
 		case strings.EqualFold("nestedStringList", t.Name.Local):
-			nodeDecoder := smithydecoding.NewXMLNodeDecoder(decoder.Decoder, t)
+			nodeDecoder := smithyxml.NewNodeDecoder(decoder.Decoder, t)
 			if err := awsRestxml_deserializeDocumentNestedStringList(&sv.NestedStringList, nodeDecoder); err != nil {
 				return err
 			}
 
 		case strings.EqualFold("renamed", t.Name.Local):
-			nodeDecoder := smithydecoding.NewXMLNodeDecoder(decoder.Decoder, t)
+			nodeDecoder := smithyxml.NewNodeDecoder(decoder.Decoder, t)
 			if err := awsRestxml_deserializeDocumentRenamedListMembers(&sv.RenamedListMembers, nodeDecoder); err != nil {
 				return err
 			}
 
 		case strings.EqualFold("stringList", t.Name.Local):
-			nodeDecoder := smithydecoding.NewXMLNodeDecoder(decoder.Decoder, t)
+			nodeDecoder := smithyxml.NewNodeDecoder(decoder.Decoder, t)
 			if err := awsRestxml_deserializeDocumentStringList(&sv.StringList, nodeDecoder); err != nil {
 				return err
 			}
 
 		case strings.EqualFold("stringSet", t.Name.Local):
-			nodeDecoder := smithydecoding.NewXMLNodeDecoder(decoder.Decoder, t)
+			nodeDecoder := smithyxml.NewNodeDecoder(decoder.Decoder, t)
 			if err := awsRestxml_deserializeDocumentStringSet(&sv.StringSet, nodeDecoder); err != nil {
 				return err
 			}
 
 		case strings.EqualFold("myStructureList", t.Name.Local):
-			nodeDecoder := smithydecoding.NewXMLNodeDecoder(decoder.Decoder, t)
+			nodeDecoder := smithyxml.NewNodeDecoder(decoder.Decoder, t)
 			if err := awsRestxml_deserializeDocumentStructureList(&sv.StructureList, nodeDecoder); err != nil {
 				return err
 			}
 
 		case strings.EqualFold("timestampList", t.Name.Local):
-			nodeDecoder := smithydecoding.NewXMLNodeDecoder(decoder.Decoder, t)
+			nodeDecoder := smithyxml.NewNodeDecoder(decoder.Decoder, t)
 			if err := awsRestxml_deserializeDocumentTimestampList(&sv.TimestampList, nodeDecoder); err != nil {
 				return err
 			}
@@ -3580,7 +3580,7 @@ func (m *awsRestxml_deserializeOpXmlMaps) HandleDeserialize(ctx context.Context,
 	output := &XmlMapsOutput{}
 	out.Result = output
 
-	var decoder *smithydecoding.XMLNodeDecoder
+	var decoder *smithyxml.NodeDecoder
 	buff := make([]byte, 1024)
 	ringBuffer := smithyio.NewRingBuffer(buff)
 	body := io.TeeReader(response.Body, ringBuffer)
@@ -3588,14 +3588,14 @@ func (m *awsRestxml_deserializeOpXmlMaps) HandleDeserialize(ctx context.Context,
 	if decoder == nil {
 		rootDecoder := xml.NewDecoder(body)
 		// fetch the root element ignoring comments and preamble
-		t, err := smithydecoding.FetchXmlRootElement(rootDecoder)
+		t, err := smithyxml.FetchRootElement(rootDecoder)
 		if err == io.EOF {
 			err = nil
 		}
 		if err != nil {
 			return out, metadata, fmt.Errorf("error fetching the start element of xml response body: %w", err)
 		}
-		decoder = smithydecoding.NewXMLNodeDecoder(rootDecoder, t)
+		decoder = smithyxml.NewNodeDecoder(rootDecoder, t)
 	}
 	err = awsRestxml_deserializeDocumentXmlMapsOutput(&output, decoder)
 	if err != nil {
@@ -3622,7 +3622,7 @@ func awsRestxml_deserializeOpErrorXmlMaps(response *smithyhttp.Response) error {
 	errorCode := "UnknownError"
 	errorMessage := errorCode
 
-	errorCode, err := smithydecoding.GetXMLResponseErrorCode(errorBody, false)
+	errorCode, err := smithyxml.GetResponseErrorCode(errorBody, false)
 	if err != nil {
 		return err
 	}
@@ -3638,7 +3638,7 @@ func awsRestxml_deserializeOpErrorXmlMaps(response *smithyhttp.Response) error {
 	}
 }
 
-func awsRestxml_deserializeDocumentXmlMapsOutput(v **XmlMapsOutput, decoder *smithydecoding.XMLNodeDecoder) error {
+func awsRestxml_deserializeDocumentXmlMapsOutput(v **XmlMapsOutput, decoder *smithyxml.NodeDecoder) error {
 	if v == nil {
 		return fmt.Errorf("unexpected nil of type %T", v)
 	}
@@ -3659,7 +3659,7 @@ func awsRestxml_deserializeDocumentXmlMapsOutput(v **XmlMapsOutput, decoder *smi
 		}
 		switch {
 		case strings.EqualFold("myMap", t.Name.Local):
-			nodeDecoder := smithydecoding.NewXMLNodeDecoder(decoder.Decoder, t)
+			nodeDecoder := smithyxml.NewNodeDecoder(decoder.Decoder, t)
 			if err := awsRestxml_deserializeDocumentXmlMapsInputOutputMap(&sv.MyMap, nodeDecoder); err != nil {
 				return err
 			}
@@ -3699,7 +3699,7 @@ func (m *awsRestxml_deserializeOpXmlMapsXmlName) HandleDeserialize(ctx context.C
 	output := &XmlMapsXmlNameOutput{}
 	out.Result = output
 
-	var decoder *smithydecoding.XMLNodeDecoder
+	var decoder *smithyxml.NodeDecoder
 	buff := make([]byte, 1024)
 	ringBuffer := smithyio.NewRingBuffer(buff)
 	body := io.TeeReader(response.Body, ringBuffer)
@@ -3707,14 +3707,14 @@ func (m *awsRestxml_deserializeOpXmlMapsXmlName) HandleDeserialize(ctx context.C
 	if decoder == nil {
 		rootDecoder := xml.NewDecoder(body)
 		// fetch the root element ignoring comments and preamble
-		t, err := smithydecoding.FetchXmlRootElement(rootDecoder)
+		t, err := smithyxml.FetchRootElement(rootDecoder)
 		if err == io.EOF {
 			err = nil
 		}
 		if err != nil {
 			return out, metadata, fmt.Errorf("error fetching the start element of xml response body: %w", err)
 		}
-		decoder = smithydecoding.NewXMLNodeDecoder(rootDecoder, t)
+		decoder = smithyxml.NewNodeDecoder(rootDecoder, t)
 	}
 	err = awsRestxml_deserializeDocumentXmlMapsXmlNameOutput(&output, decoder)
 	if err != nil {
@@ -3741,7 +3741,7 @@ func awsRestxml_deserializeOpErrorXmlMapsXmlName(response *smithyhttp.Response) 
 	errorCode := "UnknownError"
 	errorMessage := errorCode
 
-	errorCode, err := smithydecoding.GetXMLResponseErrorCode(errorBody, false)
+	errorCode, err := smithyxml.GetResponseErrorCode(errorBody, false)
 	if err != nil {
 		return err
 	}
@@ -3757,7 +3757,7 @@ func awsRestxml_deserializeOpErrorXmlMapsXmlName(response *smithyhttp.Response) 
 	}
 }
 
-func awsRestxml_deserializeDocumentXmlMapsXmlNameOutput(v **XmlMapsXmlNameOutput, decoder *smithydecoding.XMLNodeDecoder) error {
+func awsRestxml_deserializeDocumentXmlMapsXmlNameOutput(v **XmlMapsXmlNameOutput, decoder *smithyxml.NodeDecoder) error {
 	if v == nil {
 		return fmt.Errorf("unexpected nil of type %T", v)
 	}
@@ -3778,7 +3778,7 @@ func awsRestxml_deserializeDocumentXmlMapsXmlNameOutput(v **XmlMapsXmlNameOutput
 		}
 		switch {
 		case strings.EqualFold("myMap", t.Name.Local):
-			nodeDecoder := smithydecoding.NewXMLNodeDecoder(decoder.Decoder, t)
+			nodeDecoder := smithyxml.NewNodeDecoder(decoder.Decoder, t)
 			if err := awsRestxml_deserializeDocumentXmlMapsXmlNameInputOutputMap(&sv.MyMap, nodeDecoder); err != nil {
 				return err
 			}
@@ -3818,7 +3818,7 @@ func (m *awsRestxml_deserializeOpXmlNamespaces) HandleDeserialize(ctx context.Co
 	output := &XmlNamespacesOutput{}
 	out.Result = output
 
-	var decoder *smithydecoding.XMLNodeDecoder
+	var decoder *smithyxml.NodeDecoder
 	buff := make([]byte, 1024)
 	ringBuffer := smithyio.NewRingBuffer(buff)
 	body := io.TeeReader(response.Body, ringBuffer)
@@ -3826,14 +3826,14 @@ func (m *awsRestxml_deserializeOpXmlNamespaces) HandleDeserialize(ctx context.Co
 	if decoder == nil {
 		rootDecoder := xml.NewDecoder(body)
 		// fetch the root element ignoring comments and preamble
-		t, err := smithydecoding.FetchXmlRootElement(rootDecoder)
+		t, err := smithyxml.FetchRootElement(rootDecoder)
 		if err == io.EOF {
 			err = nil
 		}
 		if err != nil {
 			return out, metadata, fmt.Errorf("error fetching the start element of xml response body: %w", err)
 		}
-		decoder = smithydecoding.NewXMLNodeDecoder(rootDecoder, t)
+		decoder = smithyxml.NewNodeDecoder(rootDecoder, t)
 	}
 	err = awsRestxml_deserializeDocumentXmlNamespacesOutput(&output, decoder)
 	if err != nil {
@@ -3860,7 +3860,7 @@ func awsRestxml_deserializeOpErrorXmlNamespaces(response *smithyhttp.Response) e
 	errorCode := "UnknownError"
 	errorMessage := errorCode
 
-	errorCode, err := smithydecoding.GetXMLResponseErrorCode(errorBody, false)
+	errorCode, err := smithyxml.GetResponseErrorCode(errorBody, false)
 	if err != nil {
 		return err
 	}
@@ -3876,7 +3876,7 @@ func awsRestxml_deserializeOpErrorXmlNamespaces(response *smithyhttp.Response) e
 	}
 }
 
-func awsRestxml_deserializeDocumentXmlNamespacesOutput(v **XmlNamespacesOutput, decoder *smithydecoding.XMLNodeDecoder) error {
+func awsRestxml_deserializeDocumentXmlNamespacesOutput(v **XmlNamespacesOutput, decoder *smithyxml.NodeDecoder) error {
 	if v == nil {
 		return fmt.Errorf("unexpected nil of type %T", v)
 	}
@@ -3897,7 +3897,7 @@ func awsRestxml_deserializeDocumentXmlNamespacesOutput(v **XmlNamespacesOutput, 
 		}
 		switch {
 		case strings.EqualFold("nested", t.Name.Local):
-			nodeDecoder := smithydecoding.NewXMLNodeDecoder(decoder.Decoder, t)
+			nodeDecoder := smithyxml.NewNodeDecoder(decoder.Decoder, t)
 			if err := awsRestxml_deserializeDocumentXmlNamespaceNested(&sv.Nested, nodeDecoder); err != nil {
 				return err
 			}
@@ -3937,7 +3937,7 @@ func (m *awsRestxml_deserializeOpXmlTimestamps) HandleDeserialize(ctx context.Co
 	output := &XmlTimestampsOutput{}
 	out.Result = output
 
-	var decoder *smithydecoding.XMLNodeDecoder
+	var decoder *smithyxml.NodeDecoder
 	buff := make([]byte, 1024)
 	ringBuffer := smithyio.NewRingBuffer(buff)
 	body := io.TeeReader(response.Body, ringBuffer)
@@ -3945,14 +3945,14 @@ func (m *awsRestxml_deserializeOpXmlTimestamps) HandleDeserialize(ctx context.Co
 	if decoder == nil {
 		rootDecoder := xml.NewDecoder(body)
 		// fetch the root element ignoring comments and preamble
-		t, err := smithydecoding.FetchXmlRootElement(rootDecoder)
+		t, err := smithyxml.FetchRootElement(rootDecoder)
 		if err == io.EOF {
 			err = nil
 		}
 		if err != nil {
 			return out, metadata, fmt.Errorf("error fetching the start element of xml response body: %w", err)
 		}
-		decoder = smithydecoding.NewXMLNodeDecoder(rootDecoder, t)
+		decoder = smithyxml.NewNodeDecoder(rootDecoder, t)
 	}
 	err = awsRestxml_deserializeDocumentXmlTimestampsOutput(&output, decoder)
 	if err != nil {
@@ -3979,7 +3979,7 @@ func awsRestxml_deserializeOpErrorXmlTimestamps(response *smithyhttp.Response) e
 	errorCode := "UnknownError"
 	errorMessage := errorCode
 
-	errorCode, err := smithydecoding.GetXMLResponseErrorCode(errorBody, false)
+	errorCode, err := smithyxml.GetResponseErrorCode(errorBody, false)
 	if err != nil {
 		return err
 	}
@@ -3995,7 +3995,7 @@ func awsRestxml_deserializeOpErrorXmlTimestamps(response *smithyhttp.Response) e
 	}
 }
 
-func awsRestxml_deserializeDocumentXmlTimestampsOutput(v **XmlTimestampsOutput, decoder *smithydecoding.XMLNodeDecoder) error {
+func awsRestxml_deserializeDocumentXmlTimestampsOutput(v **XmlTimestampsOutput, decoder *smithyxml.NodeDecoder) error {
 	if v == nil {
 		return fmt.Errorf("unexpected nil of type %T", v)
 	}
@@ -4110,7 +4110,7 @@ func awsRestxml_deserializeErrorComplexError(response *smithyhttp.Response, erro
 	ringBuffer := smithyio.NewRingBuffer(buff)
 	body := io.TeeReader(errorBody, ringBuffer)
 	rootDecoder := xml.NewDecoder(body)
-	t, err := smithydecoding.FetchXmlRootElement(rootDecoder)
+	t, err := smithyxml.FetchRootElement(rootDecoder)
 	if err != nil && err != io.EOF {
 		var snapshot bytes.Buffer
 		io.Copy(&snapshot, ringBuffer)
@@ -4120,7 +4120,7 @@ func awsRestxml_deserializeErrorComplexError(response *smithyhttp.Response, erro
 		}
 	}
 
-	decoder := smithydecoding.NewXMLNodeDecoder(rootDecoder, t)
+	decoder := smithyxml.NewNodeDecoder(rootDecoder, t)
 	err = awsRestxml_deserializeDocumentComplexError(&output, decoder)
 	if err != nil && err != io.EOF {
 		var snapshot bytes.Buffer
@@ -4143,7 +4143,7 @@ func awsRestxml_deserializeErrorInvalidGreeting(response *smithyhttp.Response, e
 	ringBuffer := smithyio.NewRingBuffer(buff)
 	body := io.TeeReader(errorBody, ringBuffer)
 	rootDecoder := xml.NewDecoder(body)
-	t, err := smithydecoding.FetchXmlRootElement(rootDecoder)
+	t, err := smithyxml.FetchRootElement(rootDecoder)
 	if err != nil && err != io.EOF {
 		var snapshot bytes.Buffer
 		io.Copy(&snapshot, ringBuffer)
@@ -4153,7 +4153,7 @@ func awsRestxml_deserializeErrorInvalidGreeting(response *smithyhttp.Response, e
 		}
 	}
 
-	decoder := smithydecoding.NewXMLNodeDecoder(rootDecoder, t)
+	decoder := smithyxml.NewNodeDecoder(rootDecoder, t)
 	err = awsRestxml_deserializeDocumentInvalidGreeting(&output, decoder)
 	if err != nil && err != io.EOF {
 		var snapshot bytes.Buffer
@@ -4167,7 +4167,7 @@ func awsRestxml_deserializeErrorInvalidGreeting(response *smithyhttp.Response, e
 	return output
 }
 
-func awsRestxml_deserializeDocumentComplexError(v **types.ComplexError, decoder *smithydecoding.XMLNodeDecoder) error {
+func awsRestxml_deserializeDocumentComplexError(v **types.ComplexError, decoder *smithyxml.NodeDecoder) error {
 	if v == nil {
 		return fmt.Errorf("unexpected nil of type %T", v)
 	}
@@ -4201,7 +4201,7 @@ func awsRestxml_deserializeDocumentComplexError(v **types.ComplexError, decoder 
 			}
 
 		case strings.EqualFold("Nested", t.Name.Local):
-			nodeDecoder := smithydecoding.NewXMLNodeDecoder(decoder.Decoder, t)
+			nodeDecoder := smithyxml.NewNodeDecoder(decoder.Decoder, t)
 			if err := awsRestxml_deserializeDocumentComplexNestedErrorData(&sv.Nested, nodeDecoder); err != nil {
 				return err
 			}
@@ -4228,7 +4228,7 @@ func awsRestxml_deserializeDocumentComplexError(v **types.ComplexError, decoder 
 	return nil
 }
 
-func awsRestxml_deserializeDocumentComplexNestedErrorData(v **types.ComplexNestedErrorData, decoder *smithydecoding.XMLNodeDecoder) error {
+func awsRestxml_deserializeDocumentComplexNestedErrorData(v **types.ComplexNestedErrorData, decoder *smithyxml.NodeDecoder) error {
 	if v == nil {
 		return fmt.Errorf("unexpected nil of type %T", v)
 	}
@@ -4270,7 +4270,7 @@ func awsRestxml_deserializeDocumentComplexNestedErrorData(v **types.ComplexNeste
 	return nil
 }
 
-func awsRestxml_deserializeDocumentFlattenedXmlMapWithXmlNameInputOutputMap(v *map[string]*string, decoder *smithydecoding.XMLNodeDecoder) error {
+func awsRestxml_deserializeDocumentFlattenedXmlMapWithXmlNameInputOutputMap(v *map[string]*string, decoder *smithyxml.NodeDecoder) error {
 	if v == nil {
 		return fmt.Errorf("unexpected nil of type %T", v)
 	}
@@ -4290,7 +4290,7 @@ func awsRestxml_deserializeDocumentFlattenedXmlMapWithXmlNameInputOutputMap(v *m
 			break
 		}
 		if strings.EqualFold("entry", t.Name.Local) {
-			entryDecoder := smithydecoding.NewXMLNodeDecoder(decoder.Decoder, t)
+			entryDecoder := smithyxml.NewNodeDecoder(decoder.Decoder, t)
 			if err := awsRestxml_deserializeDocumentFlattenedXmlMapWithXmlNameInputOutputMapUnwrapped(&sv, entryDecoder); err != nil {
 				return err
 			}
@@ -4300,7 +4300,7 @@ func awsRestxml_deserializeDocumentFlattenedXmlMapWithXmlNameInputOutputMap(v *m
 	return nil
 }
 
-func awsRestxml_deserializeDocumentFlattenedXmlMapWithXmlNameInputOutputMapUnwrapped(v *map[string]*string, decoder *smithydecoding.XMLNodeDecoder) error {
+func awsRestxml_deserializeDocumentFlattenedXmlMapWithXmlNameInputOutputMapUnwrapped(v *map[string]*string, decoder *smithyxml.NodeDecoder) error {
 	var sv map[string]*string
 	if *v == nil {
 		sv = make(map[string]*string, 0)
@@ -4354,7 +4354,7 @@ func awsRestxml_deserializeDocumentFlattenedXmlMapWithXmlNameInputOutputMapUnwra
 	*v = sv
 	return nil
 }
-func awsRestxml_deserializeDocumentInvalidGreeting(v **types.InvalidGreeting, decoder *smithydecoding.XMLNodeDecoder) error {
+func awsRestxml_deserializeDocumentInvalidGreeting(v **types.InvalidGreeting, decoder *smithyxml.NodeDecoder) error {
 	if v == nil {
 		return fmt.Errorf("unexpected nil of type %T", v)
 	}
@@ -4396,7 +4396,7 @@ func awsRestxml_deserializeDocumentInvalidGreeting(v **types.InvalidGreeting, de
 	return nil
 }
 
-func awsRestxml_deserializeDocumentNestedPayload(v **types.NestedPayload, decoder *smithydecoding.XMLNodeDecoder) error {
+func awsRestxml_deserializeDocumentNestedPayload(v **types.NestedPayload, decoder *smithyxml.NodeDecoder) error {
 	if v == nil {
 		return fmt.Errorf("unexpected nil of type %T", v)
 	}
@@ -4451,7 +4451,7 @@ func awsRestxml_deserializeDocumentNestedPayload(v **types.NestedPayload, decode
 	return nil
 }
 
-func awsRestxml_deserializeDocumentPayloadWithXmlName(v **types.PayloadWithXmlName, decoder *smithydecoding.XMLNodeDecoder) error {
+func awsRestxml_deserializeDocumentPayloadWithXmlName(v **types.PayloadWithXmlName, decoder *smithyxml.NodeDecoder) error {
 	if v == nil {
 		return fmt.Errorf("unexpected nil of type %T", v)
 	}
@@ -4493,7 +4493,7 @@ func awsRestxml_deserializeDocumentPayloadWithXmlName(v **types.PayloadWithXmlNa
 	return nil
 }
 
-func awsRestxml_deserializeDocumentPayloadWithXmlNamespace(v **types.PayloadWithXmlNamespace, decoder *smithydecoding.XMLNodeDecoder) error {
+func awsRestxml_deserializeDocumentPayloadWithXmlNamespace(v **types.PayloadWithXmlNamespace, decoder *smithyxml.NodeDecoder) error {
 	if v == nil {
 		return fmt.Errorf("unexpected nil of type %T", v)
 	}
@@ -4535,7 +4535,7 @@ func awsRestxml_deserializeDocumentPayloadWithXmlNamespace(v **types.PayloadWith
 	return nil
 }
 
-func awsRestxml_deserializeDocumentPayloadWithXmlNamespaceAndPrefix(v **types.PayloadWithXmlNamespaceAndPrefix, decoder *smithydecoding.XMLNodeDecoder) error {
+func awsRestxml_deserializeDocumentPayloadWithXmlNamespaceAndPrefix(v **types.PayloadWithXmlNamespaceAndPrefix, decoder *smithyxml.NodeDecoder) error {
 	if v == nil {
 		return fmt.Errorf("unexpected nil of type %T", v)
 	}
@@ -4577,7 +4577,7 @@ func awsRestxml_deserializeDocumentPayloadWithXmlNamespaceAndPrefix(v **types.Pa
 	return nil
 }
 
-func awsRestxml_deserializeDocumentRecursiveShapesInputOutputNested1(v **types.RecursiveShapesInputOutputNested1, decoder *smithydecoding.XMLNodeDecoder) error {
+func awsRestxml_deserializeDocumentRecursiveShapesInputOutputNested1(v **types.RecursiveShapesInputOutputNested1, decoder *smithyxml.NodeDecoder) error {
 	if v == nil {
 		return fmt.Errorf("unexpected nil of type %T", v)
 	}
@@ -4611,7 +4611,7 @@ func awsRestxml_deserializeDocumentRecursiveShapesInputOutputNested1(v **types.R
 			}
 
 		case strings.EqualFold("nested", t.Name.Local):
-			nodeDecoder := smithydecoding.NewXMLNodeDecoder(decoder.Decoder, t)
+			nodeDecoder := smithyxml.NewNodeDecoder(decoder.Decoder, t)
 			if err := awsRestxml_deserializeDocumentRecursiveShapesInputOutputNested2(&sv.Nested, nodeDecoder); err != nil {
 				return err
 			}
@@ -4625,7 +4625,7 @@ func awsRestxml_deserializeDocumentRecursiveShapesInputOutputNested1(v **types.R
 	return nil
 }
 
-func awsRestxml_deserializeDocumentRecursiveShapesInputOutputNested2(v **types.RecursiveShapesInputOutputNested2, decoder *smithydecoding.XMLNodeDecoder) error {
+func awsRestxml_deserializeDocumentRecursiveShapesInputOutputNested2(v **types.RecursiveShapesInputOutputNested2, decoder *smithyxml.NodeDecoder) error {
 	if v == nil {
 		return fmt.Errorf("unexpected nil of type %T", v)
 	}
@@ -4659,7 +4659,7 @@ func awsRestxml_deserializeDocumentRecursiveShapesInputOutputNested2(v **types.R
 			}
 
 		case strings.EqualFold("recursiveMember", t.Name.Local):
-			nodeDecoder := smithydecoding.NewXMLNodeDecoder(decoder.Decoder, t)
+			nodeDecoder := smithyxml.NewNodeDecoder(decoder.Decoder, t)
 			if err := awsRestxml_deserializeDocumentRecursiveShapesInputOutputNested1(&sv.RecursiveMember, nodeDecoder); err != nil {
 				return err
 			}
@@ -4673,7 +4673,7 @@ func awsRestxml_deserializeDocumentRecursiveShapesInputOutputNested2(v **types.R
 	return nil
 }
 
-func awsRestxml_deserializeDocumentRenamedListMembers(v *[]*string, decoder *smithydecoding.XMLNodeDecoder) error {
+func awsRestxml_deserializeDocumentRenamedListMembers(v *[]*string, decoder *smithyxml.NodeDecoder) error {
 	if v == nil {
 		return fmt.Errorf("unexpected nil of type %T", v)
 	}
@@ -4693,7 +4693,7 @@ func awsRestxml_deserializeDocumentRenamedListMembers(v *[]*string, decoder *smi
 		if done {
 			break
 		}
-		memberDecoder := smithydecoding.NewXMLNodeDecoder(decoder.Decoder, t)
+		memberDecoder := smithyxml.NewNodeDecoder(decoder.Decoder, t)
 		decoder = memberDecoder
 		for {
 			if strings.EqualFold("item", t.Name.Local) {
@@ -4718,7 +4718,7 @@ func awsRestxml_deserializeDocumentRenamedListMembers(v *[]*string, decoder *smi
 	return nil
 }
 
-func awsRestxml_deserializeDocumentRenamedListMembersUnwrapped(v *[]*string, decoder *smithydecoding.XMLNodeDecoder) error {
+func awsRestxml_deserializeDocumentRenamedListMembersUnwrapped(v *[]*string, decoder *smithyxml.NodeDecoder) error {
 	var sv []*string
 	if *v == nil {
 		sv = make([]*string, 0)
@@ -4746,7 +4746,7 @@ func awsRestxml_deserializeDocumentRenamedListMembersUnwrapped(v *[]*string, dec
 	*v = sv
 	return nil
 }
-func awsRestxml_deserializeDocumentStructureList(v *[]*types.StructureListMember, decoder *smithydecoding.XMLNodeDecoder) error {
+func awsRestxml_deserializeDocumentStructureList(v *[]*types.StructureListMember, decoder *smithyxml.NodeDecoder) error {
 	if v == nil {
 		return fmt.Errorf("unexpected nil of type %T", v)
 	}
@@ -4769,7 +4769,7 @@ func awsRestxml_deserializeDocumentStructureList(v *[]*types.StructureListMember
 		for {
 			if strings.EqualFold("item", t.Name.Local) {
 				var col *types.StructureListMember
-				nodeDecoder := smithydecoding.NewXMLNodeDecoder(decoder.Decoder, t)
+				nodeDecoder := smithyxml.NewNodeDecoder(decoder.Decoder, t)
 				if err := awsRestxml_deserializeDocumentStructureListMember(&col, nodeDecoder); err != nil {
 					return err
 				}
@@ -4783,7 +4783,7 @@ func awsRestxml_deserializeDocumentStructureList(v *[]*types.StructureListMember
 	return nil
 }
 
-func awsRestxml_deserializeDocumentStructureListUnwrapped(v *[]*types.StructureListMember, decoder *smithydecoding.XMLNodeDecoder) error {
+func awsRestxml_deserializeDocumentStructureListUnwrapped(v *[]*types.StructureListMember, decoder *smithyxml.NodeDecoder) error {
 	var sv []*types.StructureListMember
 	if *v == nil {
 		sv = make([]*types.StructureListMember, 0)
@@ -4795,7 +4795,7 @@ func awsRestxml_deserializeDocumentStructureListUnwrapped(v *[]*types.StructureL
 		var mv *types.StructureListMember
 		t := decoder.StartEl
 		_ = t
-		nodeDecoder := smithydecoding.NewXMLNodeDecoder(decoder.Decoder, t)
+		nodeDecoder := smithyxml.NewNodeDecoder(decoder.Decoder, t)
 		if err := awsRestxml_deserializeDocumentStructureListMember(&mv, nodeDecoder); err != nil {
 			return err
 		}
@@ -4804,7 +4804,7 @@ func awsRestxml_deserializeDocumentStructureListUnwrapped(v *[]*types.StructureL
 	*v = sv
 	return nil
 }
-func awsRestxml_deserializeDocumentStructureListMember(v **types.StructureListMember, decoder *smithydecoding.XMLNodeDecoder) error {
+func awsRestxml_deserializeDocumentStructureListMember(v **types.StructureListMember, decoder *smithyxml.NodeDecoder) error {
 	if v == nil {
 		return fmt.Errorf("unexpected nil of type %T", v)
 	}
@@ -4859,7 +4859,7 @@ func awsRestxml_deserializeDocumentStructureListMember(v **types.StructureListMe
 	return nil
 }
 
-func awsRestxml_deserializeDocumentXmlAttributesInputOutput(v **types.XmlAttributesInputOutput, decoder *smithydecoding.XMLNodeDecoder) error {
+func awsRestxml_deserializeDocumentXmlAttributesInputOutput(v **types.XmlAttributesInputOutput, decoder *smithyxml.NodeDecoder) error {
 	if v == nil {
 		return fmt.Errorf("unexpected nil of type %T", v)
 	}
@@ -4912,7 +4912,7 @@ func awsRestxml_deserializeDocumentXmlAttributesInputOutput(v **types.XmlAttribu
 	return nil
 }
 
-func awsRestxml_deserializeDocumentXmlMapsInputOutputMap(v *map[string]*types.GreetingStruct, decoder *smithydecoding.XMLNodeDecoder) error {
+func awsRestxml_deserializeDocumentXmlMapsInputOutputMap(v *map[string]*types.GreetingStruct, decoder *smithyxml.NodeDecoder) error {
 	if v == nil {
 		return fmt.Errorf("unexpected nil of type %T", v)
 	}
@@ -4932,7 +4932,7 @@ func awsRestxml_deserializeDocumentXmlMapsInputOutputMap(v *map[string]*types.Gr
 			break
 		}
 		if strings.EqualFold("entry", t.Name.Local) {
-			entryDecoder := smithydecoding.NewXMLNodeDecoder(decoder.Decoder, t)
+			entryDecoder := smithyxml.NewNodeDecoder(decoder.Decoder, t)
 			if err := awsRestxml_deserializeDocumentXmlMapsInputOutputMapUnwrapped(&sv, entryDecoder); err != nil {
 				return err
 			}
@@ -4942,7 +4942,7 @@ func awsRestxml_deserializeDocumentXmlMapsInputOutputMap(v *map[string]*types.Gr
 	return nil
 }
 
-func awsRestxml_deserializeDocumentXmlMapsInputOutputMapUnwrapped(v *map[string]*types.GreetingStruct, decoder *smithydecoding.XMLNodeDecoder) error {
+func awsRestxml_deserializeDocumentXmlMapsInputOutputMapUnwrapped(v *map[string]*types.GreetingStruct, decoder *smithyxml.NodeDecoder) error {
 	var sv map[string]*types.GreetingStruct
 	if *v == nil {
 		sv = make(map[string]*types.GreetingStruct, 0)
@@ -4976,7 +4976,7 @@ func awsRestxml_deserializeDocumentXmlMapsInputOutputMapUnwrapped(v *map[string]
 			}
 
 		case strings.EqualFold("value", t.Name.Local):
-			nodeDecoder := smithydecoding.NewXMLNodeDecoder(decoder.Decoder, t)
+			nodeDecoder := smithyxml.NewNodeDecoder(decoder.Decoder, t)
 			if err := awsRestxml_deserializeDocumentGreetingStruct(&ev, nodeDecoder); err != nil {
 				return err
 			}
@@ -4989,7 +4989,7 @@ func awsRestxml_deserializeDocumentXmlMapsInputOutputMapUnwrapped(v *map[string]
 	*v = sv
 	return nil
 }
-func awsRestxml_deserializeDocumentXmlMapsXmlNameInputOutputMap(v *map[string]*types.GreetingStruct, decoder *smithydecoding.XMLNodeDecoder) error {
+func awsRestxml_deserializeDocumentXmlMapsXmlNameInputOutputMap(v *map[string]*types.GreetingStruct, decoder *smithyxml.NodeDecoder) error {
 	if v == nil {
 		return fmt.Errorf("unexpected nil of type %T", v)
 	}
@@ -5009,7 +5009,7 @@ func awsRestxml_deserializeDocumentXmlMapsXmlNameInputOutputMap(v *map[string]*t
 			break
 		}
 		if strings.EqualFold("entry", t.Name.Local) {
-			entryDecoder := smithydecoding.NewXMLNodeDecoder(decoder.Decoder, t)
+			entryDecoder := smithyxml.NewNodeDecoder(decoder.Decoder, t)
 			if err := awsRestxml_deserializeDocumentXmlMapsXmlNameInputOutputMapUnwrapped(&sv, entryDecoder); err != nil {
 				return err
 			}
@@ -5019,7 +5019,7 @@ func awsRestxml_deserializeDocumentXmlMapsXmlNameInputOutputMap(v *map[string]*t
 	return nil
 }
 
-func awsRestxml_deserializeDocumentXmlMapsXmlNameInputOutputMapUnwrapped(v *map[string]*types.GreetingStruct, decoder *smithydecoding.XMLNodeDecoder) error {
+func awsRestxml_deserializeDocumentXmlMapsXmlNameInputOutputMapUnwrapped(v *map[string]*types.GreetingStruct, decoder *smithyxml.NodeDecoder) error {
 	var sv map[string]*types.GreetingStruct
 	if *v == nil {
 		sv = make(map[string]*types.GreetingStruct, 0)
@@ -5053,7 +5053,7 @@ func awsRestxml_deserializeDocumentXmlMapsXmlNameInputOutputMapUnwrapped(v *map[
 			}
 
 		case strings.EqualFold("Setting", t.Name.Local):
-			nodeDecoder := smithydecoding.NewXMLNodeDecoder(decoder.Decoder, t)
+			nodeDecoder := smithyxml.NewNodeDecoder(decoder.Decoder, t)
 			if err := awsRestxml_deserializeDocumentGreetingStruct(&ev, nodeDecoder); err != nil {
 				return err
 			}
@@ -5066,7 +5066,7 @@ func awsRestxml_deserializeDocumentXmlMapsXmlNameInputOutputMapUnwrapped(v *map[
 	*v = sv
 	return nil
 }
-func awsRestxml_deserializeDocumentXmlNamespacedList(v *[]*string, decoder *smithydecoding.XMLNodeDecoder) error {
+func awsRestxml_deserializeDocumentXmlNamespacedList(v *[]*string, decoder *smithyxml.NodeDecoder) error {
 	if v == nil {
 		return fmt.Errorf("unexpected nil of type %T", v)
 	}
@@ -5086,7 +5086,7 @@ func awsRestxml_deserializeDocumentXmlNamespacedList(v *[]*string, decoder *smit
 		if done {
 			break
 		}
-		memberDecoder := smithydecoding.NewXMLNodeDecoder(decoder.Decoder, t)
+		memberDecoder := smithyxml.NewNodeDecoder(decoder.Decoder, t)
 		decoder = memberDecoder
 		for {
 			if strings.EqualFold("member", t.Name.Local) {
@@ -5111,7 +5111,7 @@ func awsRestxml_deserializeDocumentXmlNamespacedList(v *[]*string, decoder *smit
 	return nil
 }
 
-func awsRestxml_deserializeDocumentXmlNamespacedListUnwrapped(v *[]*string, decoder *smithydecoding.XMLNodeDecoder) error {
+func awsRestxml_deserializeDocumentXmlNamespacedListUnwrapped(v *[]*string, decoder *smithyxml.NodeDecoder) error {
 	var sv []*string
 	if *v == nil {
 		sv = make([]*string, 0)
@@ -5139,7 +5139,7 @@ func awsRestxml_deserializeDocumentXmlNamespacedListUnwrapped(v *[]*string, deco
 	*v = sv
 	return nil
 }
-func awsRestxml_deserializeDocumentXmlNamespaceNested(v **types.XmlNamespaceNested, decoder *smithydecoding.XMLNodeDecoder) error {
+func awsRestxml_deserializeDocumentXmlNamespaceNested(v **types.XmlNamespaceNested, decoder *smithyxml.NodeDecoder) error {
 	if v == nil {
 		return fmt.Errorf("unexpected nil of type %T", v)
 	}
@@ -5173,7 +5173,7 @@ func awsRestxml_deserializeDocumentXmlNamespaceNested(v **types.XmlNamespaceNest
 			}
 
 		case strings.EqualFold("values", t.Name.Local):
-			nodeDecoder := smithydecoding.NewXMLNodeDecoder(decoder.Decoder, t)
+			nodeDecoder := smithyxml.NewNodeDecoder(decoder.Decoder, t)
 			if err := awsRestxml_deserializeDocumentXmlNamespacedList(&sv.Values, nodeDecoder); err != nil {
 				return err
 			}
@@ -5187,7 +5187,7 @@ func awsRestxml_deserializeDocumentXmlNamespaceNested(v **types.XmlNamespaceNest
 	return nil
 }
 
-func awsRestxml_deserializeDocumentBooleanList(v *[]*bool, decoder *smithydecoding.XMLNodeDecoder) error {
+func awsRestxml_deserializeDocumentBooleanList(v *[]*bool, decoder *smithyxml.NodeDecoder) error {
 	if v == nil {
 		return fmt.Errorf("unexpected nil of type %T", v)
 	}
@@ -5207,7 +5207,7 @@ func awsRestxml_deserializeDocumentBooleanList(v *[]*bool, decoder *smithydecodi
 		if done {
 			break
 		}
-		memberDecoder := smithydecoding.NewXMLNodeDecoder(decoder.Decoder, t)
+		memberDecoder := smithyxml.NewNodeDecoder(decoder.Decoder, t)
 		decoder = memberDecoder
 		for {
 			if strings.EqualFold("member", t.Name.Local) {
@@ -5235,7 +5235,7 @@ func awsRestxml_deserializeDocumentBooleanList(v *[]*bool, decoder *smithydecodi
 	return nil
 }
 
-func awsRestxml_deserializeDocumentBooleanListUnwrapped(v *[]*bool, decoder *smithydecoding.XMLNodeDecoder) error {
+func awsRestxml_deserializeDocumentBooleanListUnwrapped(v *[]*bool, decoder *smithyxml.NodeDecoder) error {
 	var sv []*bool
 	if *v == nil {
 		sv = make([]*bool, 0)
@@ -5266,7 +5266,7 @@ func awsRestxml_deserializeDocumentBooleanListUnwrapped(v *[]*bool, decoder *smi
 	*v = sv
 	return nil
 }
-func awsRestxml_deserializeDocumentFooEnumList(v *[]types.FooEnum, decoder *smithydecoding.XMLNodeDecoder) error {
+func awsRestxml_deserializeDocumentFooEnumList(v *[]types.FooEnum, decoder *smithyxml.NodeDecoder) error {
 	if v == nil {
 		return fmt.Errorf("unexpected nil of type %T", v)
 	}
@@ -5286,7 +5286,7 @@ func awsRestxml_deserializeDocumentFooEnumList(v *[]types.FooEnum, decoder *smit
 		if done {
 			break
 		}
-		memberDecoder := smithydecoding.NewXMLNodeDecoder(decoder.Decoder, t)
+		memberDecoder := smithyxml.NewNodeDecoder(decoder.Decoder, t)
 		decoder = memberDecoder
 		for {
 			if strings.EqualFold("member", t.Name.Local) {
@@ -5311,7 +5311,7 @@ func awsRestxml_deserializeDocumentFooEnumList(v *[]types.FooEnum, decoder *smit
 	return nil
 }
 
-func awsRestxml_deserializeDocumentFooEnumListUnwrapped(v *[]types.FooEnum, decoder *smithydecoding.XMLNodeDecoder) error {
+func awsRestxml_deserializeDocumentFooEnumListUnwrapped(v *[]types.FooEnum, decoder *smithyxml.NodeDecoder) error {
 	var sv []types.FooEnum
 	if *v == nil {
 		sv = make([]types.FooEnum, 0)
@@ -5339,7 +5339,7 @@ func awsRestxml_deserializeDocumentFooEnumListUnwrapped(v *[]types.FooEnum, deco
 	*v = sv
 	return nil
 }
-func awsRestxml_deserializeDocumentFooEnumMap(v *map[string]types.FooEnum, decoder *smithydecoding.XMLNodeDecoder) error {
+func awsRestxml_deserializeDocumentFooEnumMap(v *map[string]types.FooEnum, decoder *smithyxml.NodeDecoder) error {
 	if v == nil {
 		return fmt.Errorf("unexpected nil of type %T", v)
 	}
@@ -5359,7 +5359,7 @@ func awsRestxml_deserializeDocumentFooEnumMap(v *map[string]types.FooEnum, decod
 			break
 		}
 		if strings.EqualFold("entry", t.Name.Local) {
-			entryDecoder := smithydecoding.NewXMLNodeDecoder(decoder.Decoder, t)
+			entryDecoder := smithyxml.NewNodeDecoder(decoder.Decoder, t)
 			if err := awsRestxml_deserializeDocumentFooEnumMapUnwrapped(&sv, entryDecoder); err != nil {
 				return err
 			}
@@ -5369,7 +5369,7 @@ func awsRestxml_deserializeDocumentFooEnumMap(v *map[string]types.FooEnum, decod
 	return nil
 }
 
-func awsRestxml_deserializeDocumentFooEnumMapUnwrapped(v *map[string]types.FooEnum, decoder *smithydecoding.XMLNodeDecoder) error {
+func awsRestxml_deserializeDocumentFooEnumMapUnwrapped(v *map[string]types.FooEnum, decoder *smithyxml.NodeDecoder) error {
 	var sv map[string]types.FooEnum
 	if *v == nil {
 		sv = make(map[string]types.FooEnum, 0)
@@ -5423,7 +5423,7 @@ func awsRestxml_deserializeDocumentFooEnumMapUnwrapped(v *map[string]types.FooEn
 	*v = sv
 	return nil
 }
-func awsRestxml_deserializeDocumentFooEnumSet(v *[]types.FooEnum, decoder *smithydecoding.XMLNodeDecoder) error {
+func awsRestxml_deserializeDocumentFooEnumSet(v *[]types.FooEnum, decoder *smithyxml.NodeDecoder) error {
 	if v == nil {
 		return fmt.Errorf("unexpected nil of type %T", v)
 	}
@@ -5443,7 +5443,7 @@ func awsRestxml_deserializeDocumentFooEnumSet(v *[]types.FooEnum, decoder *smith
 		if done {
 			break
 		}
-		memberDecoder := smithydecoding.NewXMLNodeDecoder(decoder.Decoder, t)
+		memberDecoder := smithyxml.NewNodeDecoder(decoder.Decoder, t)
 		decoder = memberDecoder
 		for {
 			if strings.EqualFold("member", t.Name.Local) {
@@ -5468,7 +5468,7 @@ func awsRestxml_deserializeDocumentFooEnumSet(v *[]types.FooEnum, decoder *smith
 	return nil
 }
 
-func awsRestxml_deserializeDocumentFooEnumSetUnwrapped(v *[]types.FooEnum, decoder *smithydecoding.XMLNodeDecoder) error {
+func awsRestxml_deserializeDocumentFooEnumSetUnwrapped(v *[]types.FooEnum, decoder *smithyxml.NodeDecoder) error {
 	var sv []types.FooEnum
 	if *v == nil {
 		sv = make([]types.FooEnum, 0)
@@ -5496,7 +5496,7 @@ func awsRestxml_deserializeDocumentFooEnumSetUnwrapped(v *[]types.FooEnum, decod
 	*v = sv
 	return nil
 }
-func awsRestxml_deserializeDocumentGreetingStruct(v **types.GreetingStruct, decoder *smithydecoding.XMLNodeDecoder) error {
+func awsRestxml_deserializeDocumentGreetingStruct(v **types.GreetingStruct, decoder *smithyxml.NodeDecoder) error {
 	if v == nil {
 		return fmt.Errorf("unexpected nil of type %T", v)
 	}
@@ -5538,7 +5538,7 @@ func awsRestxml_deserializeDocumentGreetingStruct(v **types.GreetingStruct, deco
 	return nil
 }
 
-func awsRestxml_deserializeDocumentIntegerList(v *[]*int32, decoder *smithydecoding.XMLNodeDecoder) error {
+func awsRestxml_deserializeDocumentIntegerList(v *[]*int32, decoder *smithyxml.NodeDecoder) error {
 	if v == nil {
 		return fmt.Errorf("unexpected nil of type %T", v)
 	}
@@ -5558,7 +5558,7 @@ func awsRestxml_deserializeDocumentIntegerList(v *[]*int32, decoder *smithydecod
 		if done {
 			break
 		}
-		memberDecoder := smithydecoding.NewXMLNodeDecoder(decoder.Decoder, t)
+		memberDecoder := smithyxml.NewNodeDecoder(decoder.Decoder, t)
 		decoder = memberDecoder
 		for {
 			if strings.EqualFold("member", t.Name.Local) {
@@ -5587,7 +5587,7 @@ func awsRestxml_deserializeDocumentIntegerList(v *[]*int32, decoder *smithydecod
 	return nil
 }
 
-func awsRestxml_deserializeDocumentIntegerListUnwrapped(v *[]*int32, decoder *smithydecoding.XMLNodeDecoder) error {
+func awsRestxml_deserializeDocumentIntegerListUnwrapped(v *[]*int32, decoder *smithyxml.NodeDecoder) error {
 	var sv []*int32
 	if *v == nil {
 		sv = make([]*int32, 0)
@@ -5619,7 +5619,7 @@ func awsRestxml_deserializeDocumentIntegerListUnwrapped(v *[]*int32, decoder *sm
 	*v = sv
 	return nil
 }
-func awsRestxml_deserializeDocumentNestedStringList(v *[][]*string, decoder *smithydecoding.XMLNodeDecoder) error {
+func awsRestxml_deserializeDocumentNestedStringList(v *[][]*string, decoder *smithyxml.NodeDecoder) error {
 	if v == nil {
 		return fmt.Errorf("unexpected nil of type %T", v)
 	}
@@ -5642,7 +5642,7 @@ func awsRestxml_deserializeDocumentNestedStringList(v *[][]*string, decoder *smi
 		for {
 			if strings.EqualFold("member", t.Name.Local) {
 				var col []*string
-				nodeDecoder := smithydecoding.NewXMLNodeDecoder(decoder.Decoder, t)
+				nodeDecoder := smithyxml.NewNodeDecoder(decoder.Decoder, t)
 				if err := awsRestxml_deserializeDocumentStringList(&col, nodeDecoder); err != nil {
 					return err
 				}
@@ -5656,7 +5656,7 @@ func awsRestxml_deserializeDocumentNestedStringList(v *[][]*string, decoder *smi
 	return nil
 }
 
-func awsRestxml_deserializeDocumentNestedStringListUnwrapped(v *[][]*string, decoder *smithydecoding.XMLNodeDecoder) error {
+func awsRestxml_deserializeDocumentNestedStringListUnwrapped(v *[][]*string, decoder *smithyxml.NodeDecoder) error {
 	var sv [][]*string
 	if *v == nil {
 		sv = make([][]*string, 0)
@@ -5668,7 +5668,7 @@ func awsRestxml_deserializeDocumentNestedStringListUnwrapped(v *[][]*string, dec
 		var mv []*string
 		t := decoder.StartEl
 		_ = t
-		nodeDecoder := smithydecoding.NewXMLNodeDecoder(decoder.Decoder, t)
+		nodeDecoder := smithyxml.NewNodeDecoder(decoder.Decoder, t)
 		if err := awsRestxml_deserializeDocumentStringList(&mv, nodeDecoder); err != nil {
 			return err
 		}
@@ -5677,7 +5677,7 @@ func awsRestxml_deserializeDocumentNestedStringListUnwrapped(v *[][]*string, dec
 	*v = sv
 	return nil
 }
-func awsRestxml_deserializeDocumentStringList(v *[]*string, decoder *smithydecoding.XMLNodeDecoder) error {
+func awsRestxml_deserializeDocumentStringList(v *[]*string, decoder *smithyxml.NodeDecoder) error {
 	if v == nil {
 		return fmt.Errorf("unexpected nil of type %T", v)
 	}
@@ -5697,7 +5697,7 @@ func awsRestxml_deserializeDocumentStringList(v *[]*string, decoder *smithydecod
 		if done {
 			break
 		}
-		memberDecoder := smithydecoding.NewXMLNodeDecoder(decoder.Decoder, t)
+		memberDecoder := smithyxml.NewNodeDecoder(decoder.Decoder, t)
 		decoder = memberDecoder
 		for {
 			if strings.EqualFold("member", t.Name.Local) {
@@ -5722,7 +5722,7 @@ func awsRestxml_deserializeDocumentStringList(v *[]*string, decoder *smithydecod
 	return nil
 }
 
-func awsRestxml_deserializeDocumentStringListUnwrapped(v *[]*string, decoder *smithydecoding.XMLNodeDecoder) error {
+func awsRestxml_deserializeDocumentStringListUnwrapped(v *[]*string, decoder *smithyxml.NodeDecoder) error {
 	var sv []*string
 	if *v == nil {
 		sv = make([]*string, 0)
@@ -5750,7 +5750,7 @@ func awsRestxml_deserializeDocumentStringListUnwrapped(v *[]*string, decoder *sm
 	*v = sv
 	return nil
 }
-func awsRestxml_deserializeDocumentStringSet(v *[]*string, decoder *smithydecoding.XMLNodeDecoder) error {
+func awsRestxml_deserializeDocumentStringSet(v *[]*string, decoder *smithyxml.NodeDecoder) error {
 	if v == nil {
 		return fmt.Errorf("unexpected nil of type %T", v)
 	}
@@ -5770,7 +5770,7 @@ func awsRestxml_deserializeDocumentStringSet(v *[]*string, decoder *smithydecodi
 		if done {
 			break
 		}
-		memberDecoder := smithydecoding.NewXMLNodeDecoder(decoder.Decoder, t)
+		memberDecoder := smithyxml.NewNodeDecoder(decoder.Decoder, t)
 		decoder = memberDecoder
 		for {
 			if strings.EqualFold("member", t.Name.Local) {
@@ -5795,7 +5795,7 @@ func awsRestxml_deserializeDocumentStringSet(v *[]*string, decoder *smithydecodi
 	return nil
 }
 
-func awsRestxml_deserializeDocumentStringSetUnwrapped(v *[]*string, decoder *smithydecoding.XMLNodeDecoder) error {
+func awsRestxml_deserializeDocumentStringSetUnwrapped(v *[]*string, decoder *smithyxml.NodeDecoder) error {
 	var sv []*string
 	if *v == nil {
 		sv = make([]*string, 0)
@@ -5823,7 +5823,7 @@ func awsRestxml_deserializeDocumentStringSetUnwrapped(v *[]*string, decoder *smi
 	*v = sv
 	return nil
 }
-func awsRestxml_deserializeDocumentTimestampList(v *[]*time.Time, decoder *smithydecoding.XMLNodeDecoder) error {
+func awsRestxml_deserializeDocumentTimestampList(v *[]*time.Time, decoder *smithyxml.NodeDecoder) error {
 	if v == nil {
 		return fmt.Errorf("unexpected nil of type %T", v)
 	}
@@ -5843,7 +5843,7 @@ func awsRestxml_deserializeDocumentTimestampList(v *[]*time.Time, decoder *smith
 		if done {
 			break
 		}
-		memberDecoder := smithydecoding.NewXMLNodeDecoder(decoder.Decoder, t)
+		memberDecoder := smithyxml.NewNodeDecoder(decoder.Decoder, t)
 		decoder = memberDecoder
 		for {
 			if strings.EqualFold("member", t.Name.Local) {
@@ -5872,7 +5872,7 @@ func awsRestxml_deserializeDocumentTimestampList(v *[]*time.Time, decoder *smith
 	return nil
 }
 
-func awsRestxml_deserializeDocumentTimestampListUnwrapped(v *[]*time.Time, decoder *smithydecoding.XMLNodeDecoder) error {
+func awsRestxml_deserializeDocumentTimestampListUnwrapped(v *[]*time.Time, decoder *smithyxml.NodeDecoder) error {
 	var sv []*time.Time
 	if *v == nil {
 		sv = make([]*time.Time, 0)

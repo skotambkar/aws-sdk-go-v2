@@ -267,10 +267,10 @@ abstract class RestXmlProtocolGenerator extends HttpBindingProtocolGenerator {
             Shape shape,
             String operand
     ) {
-        writer.addUseImports(SmithyGoDependency.SMITHY_DECODING);
+        writer.addUseImports(SmithyGoDependency.SMITHY_XML);
         writer.addUseImports(SmithyGoDependency.SMITHY_IO);
 
-        writer.write("var decoder *smithydecoding.XMLNodeDecoder");
+        writer.write("var decoder *smithyxml.NodeDecoder");
         writer.write("buff := make([]byte, 1024)");
         writer.write("ringBuffer := smithyio.NewRingBuffer(buff)");
         writer.insertTrailingNewline();
@@ -282,17 +282,17 @@ abstract class RestXmlProtocolGenerator extends HttpBindingProtocolGenerator {
 
         writer.openBlock("if decoder == nil {", "}", () -> {
             writer.addUseImports(SmithyGoDependency.XML);
-            writer.addUseImports(SmithyGoDependency.SMITHY_DECODING);
+            writer.addUseImports(SmithyGoDependency.SMITHY_XML);
             writer.write("rootDecoder := xml.NewDecoder(body)");
 
             writer.writeDocs("fetch the root element ignoring comments and preamble");
-            writer.write("t, err  := smithydecoding.FetchXmlRootElement(rootDecoder)");
+            writer.write("t, err  := smithyxml.FetchRootElement(rootDecoder)");
 
             writer.addUseImports(SmithyGoDependency.IO);
             writer.write("if err == io.EOF { err = nil }");
             writer.write("if err != nil {return out, metadata, "
                     + "fmt.Errorf(\"error fetching the start element of xml response body: %w\", err)}");
-            writer.write("decoder = smithydecoding.NewXMLNodeDecoder(rootDecoder, t)");
+            writer.write("decoder = smithyxml.NewNodeDecoder(rootDecoder, t)");
             writer.insertTrailingNewline();
         });
 
