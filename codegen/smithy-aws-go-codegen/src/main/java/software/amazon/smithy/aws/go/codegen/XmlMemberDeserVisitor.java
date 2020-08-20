@@ -354,7 +354,7 @@ public class XmlMemberDeserVisitor implements ShapeVisitor<Void> {
     private void writeDelegateFunction(Shape shape) {
         String functionName = ProtocolGenerator.getDocumentDeserializerFunctionName(shape, context.getProtocolName());
         GoWriter writer = context.getWriter();
-        writer.write("nodeDecoder := smithyxml.NewNodeDecoder(decoder.Decoder, t)");
+        writer.write("nodeDecoder := smithyxml.WrapNodeDecoder(decoder.Decoder, t)");
         writer.openBlock("if err := $L(&$L, nodeDecoder); err != nil {", "}", functionName, dataDest, () -> {
             writer.write("return err");
         });
@@ -367,7 +367,7 @@ public class XmlMemberDeserVisitor implements ShapeVisitor<Void> {
     private void writeUnwrappedDelegateFunction(Shape shape) {
         String functionName = getUnwrappedDelegateFunctionName(shape);
         GoWriter writer = context.getWriter();
-        writer.write("nodeDecoder := smithyxml.NewNodeDecoder(decoder.Decoder, t)");
+        writer.write("nodeDecoder := smithyxml.WrapNodeDecoder(decoder.Decoder, t)");
         writer.openBlock("if err := $L(&$L, nodeDecoder); err != nil {", "}", functionName, dataDest, () -> {
             writer.write("return err");
         });

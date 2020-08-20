@@ -270,7 +270,6 @@ abstract class RestXmlProtocolGenerator extends HttpBindingProtocolGenerator {
         writer.addUseImports(SmithyGoDependency.SMITHY_XML);
         writer.addUseImports(SmithyGoDependency.SMITHY_IO);
 
-        writer.write("var decoder *smithyxml.NodeDecoder");
         writer.write("buff := make([]byte, 1024)");
         writer.write("ringBuffer := smithyio.NewRingBuffer(buff)");
         writer.insertTrailingNewline();
@@ -280,21 +279,19 @@ abstract class RestXmlProtocolGenerator extends HttpBindingProtocolGenerator {
         writer.write("defer response.Body.Close()");
         writer.insertTrailingNewline();
 
-        writer.openBlock("if decoder == nil {", "}", () -> {
-            writer.addUseImports(SmithyGoDependency.XML);
-            writer.addUseImports(SmithyGoDependency.SMITHY_XML);
-            writer.write("rootDecoder := xml.NewDecoder(body)");
+        writer.addUseImports(SmithyGoDependency.XML);
+        writer.addUseImports(SmithyGoDependency.SMITHY_XML);
+        writer.write("rootDecoder := xml.NewDecoder(body)");
 
-            writer.writeDocs("fetch the root element ignoring comments and preamble");
-            writer.write("t, err  := smithyxml.FetchRootElement(rootDecoder)");
+        writer.writeDocs("fetch the root element ignoring comments and preamble");
+        writer.write("t, err  := smithyxml.FetchRootElement(rootDecoder)");
 
-            writer.addUseImports(SmithyGoDependency.IO);
-            writer.write("if err == io.EOF { err = nil }");
-            writer.write("if err != nil {return out, metadata, "
-                    + "fmt.Errorf(\"error fetching the start element of xml response body: %w\", err)}");
-            writer.write("decoder = smithyxml.NewNodeDecoder(rootDecoder, t)");
-            writer.insertTrailingNewline();
-        });
+        writer.addUseImports(SmithyGoDependency.IO);
+        writer.write("if err == io.EOF { err = nil }");
+        writer.write("if err != nil {return out, metadata, "
+                + "fmt.Errorf(\"error fetching the start element of xml response body: %w\", err)}");
+        writer.write("decoder := smithyxml.WrapNodeDecoder(rootDecoder, t)");
+        writer.insertTrailingNewline();
 
         String deserFuncName = ProtocolGenerator.getDocumentDeserializerFunctionName(shape, getProtocolName());
         writer.write("err = $L(&$L, decoder)", deserFuncName, operand);

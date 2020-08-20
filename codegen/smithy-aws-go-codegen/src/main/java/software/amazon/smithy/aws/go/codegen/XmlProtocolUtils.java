@@ -31,7 +31,7 @@ final class XmlProtocolUtils {
         writer.write("t, err := smithyxml.FetchRootElement(rootDecoder)");
 
         handleDecodeError(writer, "");
-        writer.write("decoder := smithyxml.NewNodeDecoder(rootDecoder, t)");
+        writer.write("decoder := smithyxml.WrapNodeDecoder(rootDecoder, t)");
         writer.insertTrailingNewline();
     }
 
