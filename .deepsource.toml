@@ -1,0 +1,13 @@
+version = 1
+
+test_patterns = [
+    "**/*_test.go"
+]
+
+[[analyzers]]
+name = "go"
+enabled = true
+
+[analyzers.meta]
+import_paths = ["github.com/skotambkar/aws-sdk-go-v2"]
+cgo_enabled = false
