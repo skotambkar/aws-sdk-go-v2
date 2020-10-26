@@ -39,12 +39,12 @@ func (r ResourceRequest) ARN() awsarn.ARN {
 }
 
 // UseFIPS returns true if request config region is FIPS region.
-func (r ResourceRequest) UseFips() (bool, error) {
+func (r ResourceRequest) UseFips() bool {
 	return IsFIPS(r.Options.RequestRegion)
 }
 
 // ResourceConfiguredForFIPS returns true if resource ARNs region is FIPS
-func (r ResourceRequest) ResourceConfiguredForFIPS() (bool, error) {
+func (r ResourceRequest) ResourceConfiguredForFIPS() bool {
 	return IsFIPS(r.ARN().Region)
 }
 
@@ -71,12 +71,9 @@ func (r ResourceRequest) IsCrossPartition() (bool, error) {
 }
 
 // IsCrossRegion returns true if request signing region is not same as arn region
-func (r ResourceRequest) IsCrossRegion() (bool, error) {
+func (r ResourceRequest) IsCrossRegion() bool {
 	v := r.Options.SigningRegion
-	if len(v) == 0 {
-		return false, fmt.Errorf("empty signing region provided for IsCrossRegion check")
-	}
-	return !strings.EqualFold(v, r.Resource.GetARN().Region), nil
+	return !strings.EqualFold(v, r.Resource.GetARN().Region)
 }
 
 // HasCustomEndpoint returns true if custom endpoint is provided
@@ -86,11 +83,7 @@ func (r ResourceRequest) HasCustomEndpoint() bool {
 
 // TODO: should this be moved in aws endpoints package
 // IsFIPS returns true if region is a fips region
-func IsFIPS(clientRegion string) (bool, error) {
-	if len(clientRegion) == 0 {
-		return false, fmt.Errorf("empty region provided for isFIPS assertion")
-	}
-
+func IsFIPS(clientRegion string) bool {
 	return (strings.HasPrefix(clientRegion, "fips-") ||
-		strings.HasSuffix(clientRegion, "-fips")), nil
+		strings.HasSuffix(clientRegion, "-fips"))
 }
