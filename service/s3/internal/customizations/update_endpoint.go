@@ -7,10 +7,15 @@ import (
 	"net/url"
 	"strings"
 
+	"github.com/aws/aws-sdk-go-v2/service/internal/s3shared"
 	"github.com/awslabs/smithy-go/middleware"
+<<<<<<< HEAD
 	smithyhttp "github.com/awslabs/smithy-go/transport/http"
 
 	"github.com/aws/aws-sdk-go-v2/service/internal/s3shared"
+=======
+	"github.com/awslabs/smithy-go/transport/http"
+>>>>>>> stash
 )
 
 // UpdateEndpointOptions provides the options for the UpdateEndpoint middleware setup.
@@ -37,15 +42,26 @@ type UpdateEndpointOptions struct {
 
 	// use dualstack
 	UseDualstack bool
+
+	// use ARN region
+	UseARNRegion bool
 }
 
 // UpdateEndpoint adds the middleware to the middleware stack based on the UpdateEndpointOptions.
 func UpdateEndpoint(stack *middleware.Stack, options UpdateEndpointOptions) {
 
+	// process arn
+	stack.Serialize.Insert(&processARNResourceMiddleware{
+		GetARN:        options.GetBucketFromInput,
+		UseARNRegion:  options.UseARNRegion,
+		UseAccelerate: options.UseAccelerate,
+		UseDualstack:  options.UseDualstack,
+	}, "OperationSerializer", middleware.Before)
+
 	// enable dual stack support
 	stack.Serialize.Insert(&s3shared.EnableDualstackMiddleware{
 		UseDualstack: options.UseDualstack,
-		ServiceID:    "s3",
+		ServiceID:    "s3", // TODO : fetch this data from runtime ctx inside EnableDualstackMiddleware
 	}, "OperationSerializer", middleware.After)
 
 	// update endpoint to use options for path style and accelerate

@@ -50,6 +50,7 @@ public class S3UpdateEndpoint implements GoIntegration {
     private static final String USE_PATH_STYLE_OPTION = "UsePathStyle";
     private static final String USE_ACCELERATE_OPTION = "UseAccelerate";
     private static final String USE_DUALSTACK_OPTION = "UseDualstack";
+    private static final String USE_ARNREGION_OPTION = "UseARNRegion";
 
     // middleware addition constants
     private static final String UPDATE_ENDPOINT_ADDER = "addUpdateEndpointMiddleware";
@@ -172,7 +173,8 @@ public class S3UpdateEndpoint implements GoIntegration {
         writer.openBlock("func $L(stack *middleware.Stack, options Options) {", "}", UPDATE_ENDPOINT_ADDER, () -> {
             writer.write("$T(stack, $T{ \n"
                             + "Region: options.Region,\n GetBucketFromInput: $L,\n UsePathStyle: options.$L,\n "
-                            + "UseAccelerate: options.$L,\n SupportsAccelerate: $L,\n UseDualstack: options.$L, \n})",
+                            + "UseAccelerate: options.$L,\n SupportsAccelerate: $L,\n UseDualstack: options.$L, \n "
+                            + "UseARNRegion: options.$L, \n })",
                     SymbolUtils.createValueSymbolBuilder(UPDATE_ENDPOINT_INTERNAL_ADDER,
                             AwsCustomGoDependency.S3_CUSTOMIZATION).build(),
                     SymbolUtils.createValueSymbolBuilder(UPDATE_ENDPOINT_INTERNAL_ADDER + "Options",
@@ -181,7 +183,8 @@ public class S3UpdateEndpoint implements GoIntegration {
                     USE_PATH_STYLE_OPTION,
                     USE_ACCELERATE_OPTION,
                     SUPPORT_ACCELERATE,
-                    USE_DUALSTACK_OPTION
+                    USE_DUALSTACK_OPTION,
+                    USE_ARNREGION_OPTION
             );
         });
         writer.insertTrailingNewline();
@@ -229,7 +232,14 @@ public class S3UpdateEndpoint implements GoIntegration {
                                 .putProperty(SymbolUtils.GO_UNIVERSE_TYPE, true)
                                 .build())
                             .documentation("Allows you to enable Dualstack endpoint support for the service.")
-                            .build()
+                            .build(),
+                                ConfigField.builder()
+                                        .name(USE_ARNREGION_OPTION)
+                                        .type(SymbolUtils.createValueSymbolBuilder("bool")
+                                                .putProperty(SymbolUtils.GO_UNIVERSE_TYPE, true)
+                                                .build())
+                                        .documentation("Allows you to enable arn region support for the service.")
+                                        .build()
                         ))
                         .registerMiddleware(MiddlewareRegistrar.builder()
                                 .resolvedFunction(SymbolUtils.createValueSymbolBuilder(UPDATE_ENDPOINT_ADDER).build())
