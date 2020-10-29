@@ -138,3 +138,14 @@ func newServiceMetadataMiddleware_opPutPublicAccessBlock(region string) awsmiddl
 		OperationName: "PutPublicAccessBlock",
 	}
 }
+
+func (in PutPublicAccessBlockInput) backfillAccountID(v string) (PutPublicAccessBlockInput, error) {
+	if in.AccountId != nil {
+		if !strings.EqualFold(*in.AccountId, v) {
+			return in, fmt.Errorf("error backfilling account id")
+		}
+		return in, nil
+	}
+	in.AccountId = &v
+	return in, nil
+}

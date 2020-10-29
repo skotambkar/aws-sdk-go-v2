@@ -53,10 +53,10 @@ func NewInvalidARNError(resource arn.Resource, err error) InvalidARNError {
 	}
 }
 
-// NewInvalidARNWithCustomEndpointError ARN not supported for custom clients endpoints
-func NewInvalidARNWithCustomEndpointError(resource arn.Resource, err error) InvalidARNError {
+// NewInvalidARNWithImmutableEndpointError ARN not supported for clients endpoints that are defined immutable
+func NewInvalidARNWithImmutableEndpointError(resource arn.Resource, err error) InvalidARNError {
 	return InvalidARNError{
-		message:  "resource ARN not supported with custom client endpoints",
+		message:  "resource ARN not supported for a custom immutable endpoint",
 		origErr:  err,
 		resource: resource,
 	}

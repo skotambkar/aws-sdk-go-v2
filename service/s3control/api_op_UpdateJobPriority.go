@@ -160,3 +160,14 @@ func newServiceMetadataMiddleware_opUpdateJobPriority(region string) awsmiddlewa
 		OperationName: "UpdateJobPriority",
 	}
 }
+
+func (in UpdateJobPriorityInput) backfillAccountID(v string) (UpdateJobPriorityInput, error) {
+	if in.AccountId != nil {
+		if !strings.EqualFold(*in.AccountId, v) {
+			return in, fmt.Errorf("error backfilling account id")
+		}
+		return in, nil
+	}
+	in.AccountId = &v
+	return in, nil
+}

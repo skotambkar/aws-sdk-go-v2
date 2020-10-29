@@ -165,3 +165,14 @@ func newServiceMetadataMiddleware_opUpdateJobStatus(region string) awsmiddleware
 		OperationName: "UpdateJobStatus",
 	}
 }
+
+func (in UpdateJobStatusInput) backfillAccountID(v string) (UpdateJobStatusInput, error) {
+	if in.AccountId != nil {
+		if !strings.EqualFold(*in.AccountId, v) {
+			return in, fmt.Errorf("error backfilling account id")
+		}
+		return in, nil
+	}
+	in.AccountId = &v
+	return in, nil
+}

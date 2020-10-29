@@ -24,7 +24,6 @@ type s3BucketTest struct {
 }
 
 func TestUpdateEndpointBuild(t *testing.T) {
-<<<<<<< HEAD
 	cases := map[string]map[string]struct {
 		tests          []s3BucketTest
 		useAccelerate  bool
@@ -42,29 +41,6 @@ func TestUpdateEndpointBuild(t *testing.T) {
 					{"a.b.c", "https://s3.mock-region.amazonaws.com/a.b.c", ""},
 					{"a..bc", "https://s3.mock-region.amazonaws.com/a..bc", ""},
 				},
-=======
-	cases := map[string]struct {
-		tests         []s3BucketTest
-		useAccelerate bool
-		useDualstack  bool
-		usePathStyle  bool
-		disableHTTPS  bool
-		useARNRegion  bool
-	}{
-		"Accesspoint arn": {
-			useARNRegion: true,
-			tests: []s3BucketTest{
-				""
-			},
-		},
-		"PathStyleBucket": {
-			usePathStyle: true,
-			tests: []s3BucketTest{
-				{"abc", "https://s3.mock-region.amazonaws.com/abc", ""},
-				{"a$b$c", "https://s3.mock-region.amazonaws.com/a%24b%24c", ""},
-				{"a.b.c", "https://s3.mock-region.amazonaws.com/a.b.c", ""},
-				{"a..bc", "https://s3.mock-region.amazonaws.com/a..bc", ""},
->>>>>>> stash
 			},
 			"VirtualHostStyleBucket": {
 				tests: []s3BucketTest{
@@ -186,7 +162,6 @@ func TestUpdateEndpointBuild(t *testing.T) {
 		},
 	}
 
-<<<<<<< HEAD
 	for suitName, cs := range cases {
 		t.Run(suitName, func(t *testing.T) {
 			for unitName, c := range cs {
@@ -250,40 +225,6 @@ func TestUpdateEndpointBuild(t *testing.T) {
 						})
 					}
 				})
-=======
-			UsePathStyle:  c.usePathStyle,
-			UseAccelerate: c.useAccelerate,
-			UseDualstack:  c.useDualstack,
-			UseARNRegion:  c.useARNRegion,
-		}
-
-		svc := s3.New(options)
-		for i, test := range c.tests {
-			fm := requestRetrieverMiddleware{}
-			_, err := svc.ListObjects(context.Background(),
-				&s3.ListObjectsInput{Bucket: &test.bucket},
-				func(options *s3.Options) {
-					options.APIOptions = append(options.APIOptions, func(stack *middleware.Stack) error {
-						stack.Serialize.Insert(&fm, "OperationSerializer", middleware.Before)
-						return nil
-					})
-				},
-			)
-
-			if test.err != "" {
-				if err == nil {
-					t.Fatalf("test %d: expected error, got none", i)
-				}
-				if a, e := err.Error(), test.err; !strings.Contains(a, e) {
-					t.Fatalf("%s: %d, expect error code to contain %q, got %q", name, i, e, a)
-				}
-			}
-
-			req := fm.request
-
-			if e, a := test.url, req.URL.String(); e != a {
-				t.Fatalf("%s: %d, expect url %s, got %s", name, i, e, a)
->>>>>>> stash
 			}
 		})
 	}

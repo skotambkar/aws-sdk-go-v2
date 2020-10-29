@@ -155,3 +155,24 @@ func newServiceMetadataMiddleware_opGetBucket(region string) awsmiddleware.Regis
 		OperationName: "GetBucket",
 	}
 }
+
+func (in GetBucketInput) getARNMemberValue() (*string, bool) {
+	if in.Bucket == nil {
+		return nil, false
+	}
+	return in.Bucket, false
+}
+func (in GetBucketInput) updateARNMemberValue(v string) GetBucketInput {
+	in.Bucket = &v
+	return in
+}
+func (in GetBucketInput) backfillAccountID(v string) (GetBucketInput, error) {
+	if in.AccountId != nil {
+		if !strings.EqualFold(*in.AccountId, v) {
+			return in, fmt.Errorf("error backfilling account id")
+		}
+		return in, nil
+	}
+	in.AccountId = &v
+	return in, nil
+}

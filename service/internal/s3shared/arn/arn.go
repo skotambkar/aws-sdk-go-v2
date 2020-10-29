@@ -19,12 +19,7 @@ type Resource interface {
 type ResourceParser func(arn.ARN) (Resource, error)
 
 // ParseResource parses an AWS ARN into a typed resource for the S3 API.
-func ParseResource(s string, resParser ResourceParser) (resARN Resource, err error) {
-	a, err := arn.Parse(s)
-	if err != nil {
-		return nil, err
-	}
-
+func ParseResource(a arn.ARN, resParser ResourceParser) (resARN Resource, err error) {
 	if len(a.Partition) == 0 {
 		return nil, InvalidARNError{ARN: a, Reason: "partition not set"}
 	}

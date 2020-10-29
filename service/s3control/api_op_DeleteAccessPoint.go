@@ -150,3 +150,24 @@ func newServiceMetadataMiddleware_opDeleteAccessPoint(region string) awsmiddlewa
 		OperationName: "DeleteAccessPoint",
 	}
 }
+
+func (in DeleteAccessPointInput) getARNMemberValue() (*string, bool) {
+	if in.Name == nil {
+		return nil, false
+	}
+	return in.Name, false
+}
+func (in DeleteAccessPointInput) updateARNMemberValue(v string) DeleteAccessPointInput {
+	in.Name = &v
+	return in
+}
+func (in DeleteAccessPointInput) backfillAccountID(v string) (DeleteAccessPointInput, error) {
+	if in.AccountId != nil {
+		if !strings.EqualFold(*in.AccountId, v) {
+			return in, fmt.Errorf("error backfilling account id")
+		}
+		return in, nil
+	}
+	in.AccountId = &v
+	return in, nil
+}

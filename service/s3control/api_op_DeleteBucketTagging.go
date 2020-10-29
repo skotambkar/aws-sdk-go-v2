@@ -154,3 +154,24 @@ func newServiceMetadataMiddleware_opDeleteBucketTagging(region string) awsmiddle
 		OperationName: "DeleteBucketTagging",
 	}
 }
+
+func (in DeleteBucketTaggingInput) getARNMemberValue() (*string, bool) {
+	if in.Bucket == nil {
+		return nil, false
+	}
+	return in.Bucket, false
+}
+func (in DeleteBucketTaggingInput) updateARNMemberValue(v string) DeleteBucketTaggingInput {
+	in.Bucket = &v
+	return in
+}
+func (in DeleteBucketTaggingInput) backfillAccountID(v string) (DeleteBucketTaggingInput, error) {
+	if in.AccountId != nil {
+		if !strings.EqualFold(*in.AccountId, v) {
+			return in, fmt.Errorf("error backfilling account id")
+		}
+		return in, nil
+	}
+	in.AccountId = &v
+	return in, nil
+}

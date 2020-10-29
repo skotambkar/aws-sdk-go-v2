@@ -156,3 +156,24 @@ func newServiceMetadataMiddleware_opDeleteBucket(region string) awsmiddleware.Re
 		OperationName: "DeleteBucket",
 	}
 }
+
+func (in DeleteBucketInput) getARNMemberValue() (*string, bool) {
+	if in.Bucket == nil {
+		return nil, false
+	}
+	return in.Bucket, false
+}
+func (in DeleteBucketInput) updateARNMemberValue(v string) DeleteBucketInput {
+	in.Bucket = &v
+	return in
+}
+func (in DeleteBucketInput) backfillAccountID(v string) (DeleteBucketInput, error) {
+	if in.AccountId != nil {
+		if !strings.EqualFold(*in.AccountId, v) {
+			return in, fmt.Errorf("error backfilling account id")
+		}
+		return in, nil
+	}
+	in.AccountId = &v
+	return in, nil
+}

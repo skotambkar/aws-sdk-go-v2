@@ -189,3 +189,14 @@ func newServiceMetadataMiddleware_opPutJobTagging(region string) awsmiddleware.R
 		OperationName: "PutJobTagging",
 	}
 }
+
+func (in PutJobTaggingInput) backfillAccountID(v string) (PutJobTaggingInput, error) {
+	if in.AccountId != nil {
+		if !strings.EqualFold(*in.AccountId, v) {
+			return in, fmt.Errorf("error backfilling account id")
+		}
+		return in, nil
+	}
+	in.AccountId = &v
+	return in, nil
+}

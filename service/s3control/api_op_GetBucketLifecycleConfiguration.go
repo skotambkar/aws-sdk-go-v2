@@ -182,3 +182,24 @@ func newServiceMetadataMiddleware_opGetBucketLifecycleConfiguration(region strin
 		OperationName: "GetBucketLifecycleConfiguration",
 	}
 }
+
+func (in GetBucketLifecycleConfigurationInput) getARNMemberValue() (*string, bool) {
+	if in.Bucket == nil {
+		return nil, false
+	}
+	return in.Bucket, false
+}
+func (in GetBucketLifecycleConfigurationInput) updateARNMemberValue(v string) GetBucketLifecycleConfigurationInput {
+	in.Bucket = &v
+	return in
+}
+func (in GetBucketLifecycleConfigurationInput) backfillAccountID(v string) (GetBucketLifecycleConfigurationInput, error) {
+	if in.AccountId != nil {
+		if !strings.EqualFold(*in.AccountId, v) {
+			return in, fmt.Errorf("error backfilling account id")
+		}
+		return in, nil
+	}
+	in.AccountId = &v
+	return in, nil
+}

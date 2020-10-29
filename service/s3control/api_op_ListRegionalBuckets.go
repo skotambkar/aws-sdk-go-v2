@@ -146,3 +146,14 @@ func newServiceMetadataMiddleware_opListRegionalBuckets(region string) awsmiddle
 		OperationName: "ListRegionalBuckets",
 	}
 }
+
+func (in ListRegionalBucketsInput) backfillAccountID(v string) (ListRegionalBucketsInput, error) {
+	if in.AccountId != nil {
+		if !strings.EqualFold(*in.AccountId, v) {
+			return in, fmt.Errorf("error backfilling account id")
+		}
+		return in, nil
+	}
+	in.AccountId = &v
+	return in, nil
+}

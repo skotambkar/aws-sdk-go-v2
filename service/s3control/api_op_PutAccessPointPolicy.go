@@ -158,3 +158,24 @@ func newServiceMetadataMiddleware_opPutAccessPointPolicy(region string) awsmiddl
 		OperationName: "PutAccessPointPolicy",
 	}
 }
+
+func (in PutAccessPointPolicyInput) getARNMemberValue() (*string, bool) {
+	if in.Name == nil {
+		return nil, false
+	}
+	return in.Name, false
+}
+func (in PutAccessPointPolicyInput) updateARNMemberValue(v string) PutAccessPointPolicyInput {
+	in.Name = &v
+	return in
+}
+func (in PutAccessPointPolicyInput) backfillAccountID(v string) (PutAccessPointPolicyInput, error) {
+	if in.AccountId != nil {
+		if !strings.EqualFold(*in.AccountId, v) {
+			return in, fmt.Errorf("error backfilling account id")
+		}
+		return in, nil
+	}
+	in.AccountId = &v
+	return in, nil
+}

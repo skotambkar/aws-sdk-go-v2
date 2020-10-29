@@ -28,6 +28,12 @@ func (u *EnableDualstackMiddleware) HandleSerialize(
 ) (
 	out middleware.SerializeOutput, metadata middleware.Metadata, err error,
 ) {
+	// If ARN was processed this middleware should be skipped.
+	_, ok := GetARNResourceFromContext(ctx)
+	if ok {
+		return next.HandleSerialize(ctx, in)
+	}
+
 	if smithyhttp.GetHostnameImmutable(ctx) {
 		return next.HandleSerialize(ctx, in)
 	}

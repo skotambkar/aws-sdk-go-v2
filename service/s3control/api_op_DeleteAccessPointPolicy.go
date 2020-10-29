@@ -146,3 +146,24 @@ func newServiceMetadataMiddleware_opDeleteAccessPointPolicy(region string) awsmi
 		OperationName: "DeleteAccessPointPolicy",
 	}
 }
+
+func (in DeleteAccessPointPolicyInput) getARNMemberValue() (*string, bool) {
+	if in.Name == nil {
+		return nil, false
+	}
+	return in.Name, false
+}
+func (in DeleteAccessPointPolicyInput) updateARNMemberValue(v string) DeleteAccessPointPolicyInput {
+	in.Name = &v
+	return in
+}
+func (in DeleteAccessPointPolicyInput) backfillAccountID(v string) (DeleteAccessPointPolicyInput, error) {
+	if in.AccountId != nil {
+		if !strings.EqualFold(*in.AccountId, v) {
+			return in, fmt.Errorf("error backfilling account id")
+		}
+		return in, nil
+	}
+	in.AccountId = &v
+	return in, nil
+}

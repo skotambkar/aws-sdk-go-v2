@@ -173,3 +173,24 @@ func newServiceMetadataMiddleware_opPutBucketPolicy(region string) awsmiddleware
 		OperationName: "PutBucketPolicy",
 	}
 }
+
+func (in PutBucketPolicyInput) getARNMemberValue() (*string, bool) {
+	if in.Bucket == nil {
+		return nil, false
+	}
+	return in.Bucket, false
+}
+func (in PutBucketPolicyInput) updateARNMemberValue(v string) PutBucketPolicyInput {
+	in.Bucket = &v
+	return in
+}
+func (in PutBucketPolicyInput) backfillAccountID(v string) (PutBucketPolicyInput, error) {
+	if in.AccountId != nil {
+		if !strings.EqualFold(*in.AccountId, v) {
+			return in, fmt.Errorf("error backfilling account id")
+		}
+		return in, nil
+	}
+	in.AccountId = &v
+	return in, nil
+}

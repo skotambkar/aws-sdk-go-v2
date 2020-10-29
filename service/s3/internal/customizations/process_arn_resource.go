@@ -14,13 +14,12 @@ import (
 	awsmiddleware "github.com/aws/aws-sdk-go-v2/aws/middleware"
 	"github.com/aws/aws-sdk-go-v2/service/internal/s3shared"
 	"github.com/aws/aws-sdk-go-v2/service/internal/s3shared/arn"
+
+	"github.com/aws/aws-sdk-go-v2/service/s3/internal/endpoints"
 )
 
 // processARNResourceMiddleware is used to process an ARN resource.
 type processARNResourceMiddleware struct {
-	// GetARN points to a function that processes an input and returns ARN as string ptr,
-	// and bool indicating if ARN is supported or set.
-	GetARN func(interface{}) (*string, bool)
 
 	// UseARNRegion indicates if region parsed from an ARN should be used.
 	UseARNRegion bool
@@ -30,6 +29,12 @@ type processARNResourceMiddleware struct {
 
 	// UseDualstack instructs if s3 dualstack endpoint config is enabled
 	UseDualstack bool
+
+	// EndpointResolver used to resolve endpoints. This may be a custom endpoint resolver
+	EndpointResolver EndpointResolver
+
+	// EndpointResolverOptions used by endpoint resolver
+	EndpointResolverOptions EndpointResolverOptions
 }
 
 // ID returns the middleware ID.
@@ -40,33 +45,31 @@ func (m *processARNResourceMiddleware) HandleSerialize(
 ) (
 	out middleware.SerializeOutput, metadata middleware.Metadata, err error,
 ) {
+	// check if arn was provided, if not skip this middleware
+	arnValue, ok := s3shared.GetARNResourceFromContext(ctx)
+	if !ok {
+		return next.HandleSerialize(ctx, in)
+	}
+
+	// TODO: verify behavior in case arn region resolves to custom endpoint that is mutable
+
 	req, ok := in.Request.(*http.Request)
 	if !ok {
 		return out, metadata, fmt.Errorf("unknown request type %T", req)
 	}
 
-	// get arn from an arnable field.
-	v, ok := m.GetARN(in.Parameters)
-	if !ok || v == nil {
-		return next.HandleSerialize(ctx, in)
-	}
-
-	resource, err := parseEndpointARN(*v)
+	// parse arn into an endpoint arn wrt to service
+	resource, err := parseEndpointARN(arnValue)
 	if err != nil {
-		return out, metadata, fmt.Errorf("Error parsing resource arn %w", err)
+		return out, metadata, err
 	}
 
 	resourceRequest := s3shared.ResourceRequest{
-		Resource: resource,
-		Request:  req,
-		Options: s3shared.ResourceRequestOptions{
-			RequestRegion: awsmiddleware.GetRegion(ctx),
-			SigningRegion: awsmiddleware.GetSigningRegion(ctx),
-			PartitionID:   awsmiddleware.GetPartitionID(ctx),
-			UseARNRegion:  m.UseARNRegion,
-			// TODO: change HasCustomEndpoint value to use HostImmutable from ctx
-			HasCustomEndpoint: false,
-		},
+		Resource:      resource,
+		RequestRegion: awsmiddleware.GetRegion(ctx),
+		SigningRegion: awsmiddleware.GetSigningRegion(ctx),
+		PartitionID:   awsmiddleware.GetPartitionID(ctx),
+		UseARNRegion:  m.UseARNRegion,
 	}
 
 	// validate resource request
@@ -81,13 +84,14 @@ func (m *processARNResourceMiddleware) HandleSerialize(
 		// check if accelerate
 		if m.UseAccelerate {
 			return out, metadata, s3shared.NewClientConfiguredForAccelerateError(tv,
-				resourceRequest.Options.PartitionID, resourceRequest.Options.RequestRegion, nil)
+				resourceRequest.PartitionID, resourceRequest.RequestRegion, nil)
 		}
 
 		// TODO : Do we provide an option to disable host prefix behavior ? If yes, that option should be set to false
 
 		resolveRegion := tv.Region
 		resolveService := tv.Service
+		_ = resolveService // todo : verify no arn is of type s3control/s3outpost
 		// check if request region is FIPS
 		if resourceRequest.UseFips() {
 			// if use arn region is enabled and request signing region is not same as arn region
@@ -98,44 +102,61 @@ func (m *processARNResourceMiddleware) HandleSerialize(
 				return out, metadata,
 					s3shared.NewClientConfiguredForCrossRegionFIPSError(
 						tv,
-						resourceRequest.Options.PartitionID,
-						resourceRequest.Options.RequestRegion,
+						resourceRequest.PartitionID,
+						resourceRequest.RequestRegion,
 						nil,
 					)
 			}
 
 			// if use arn region is NOT set, we should use the request region
-			resolveRegion = resourceRequest.Options.RequestRegion
+			resolveRegion = resourceRequest.RequestRegion
 		}
 
 		// resolve regional endpoint for resolved region.
-		// we do not support custom endpoint resolver for this middleware behavior
-		var endpointResolver aws.EndpointResolver
-		endpoint, err := endpointResolver.ResolveEndpoint(resolveService, resolveRegion)
-		if err != nil {
-			return out, metadata, s3shared.NewFailedToResolveEndpointError(
-				tv,
-				resourceRequest.Options.PartitionID,
-				resourceRequest.Options.RequestRegion,
-				err,
-			)
+		var endpoint aws.Endpoint
+		if m.EndpointResolver != nil {
+			endpoint, err = m.EndpointResolver.ResolveEndpoint(resolveRegion, m.EndpointResolverOptions)
+			if err != nil {
+				return out, metadata, s3shared.NewFailedToResolveEndpointError(
+					tv,
+					resourceRequest.PartitionID,
+					resourceRequest.RequestRegion,
+					err,
+				)
+			}
+		} else {
+			endpoint, err = endpoints.New().ResolveEndpoint(resolveRegion, m.EndpointResolverOptions)
+			if err != nil {
+				return out, metadata, s3shared.NewFailedToResolveEndpointError(
+					tv,
+					resourceRequest.PartitionID,
+					resourceRequest.RequestRegion,
+					err,
+				)
+			}
 		}
 
+		// assign resolved endpoint url to request url
 		req.URL, err = url.Parse(endpoint.URL)
 		if err != nil {
 			return out, metadata, fmt.Errorf("failed to parse endpoint URL: %w", err)
+		}
+
+		// redirect signer to use resolved endpoint signing name and region
+		ctx = awsmiddleware.SetSigningName(ctx, endpoint.SigningName)
+		ctx = awsmiddleware.SetSigningRegion(ctx, endpoint.SigningRegion)
+
+		// skip arn processing, if arn region resolves to a immutable endpoint
+		if endpoint.HostnameImmutable {
+			return next.HandleSerialize(ctx, in)
 		}
 
 		const serviceEndpointLabel = "s3-accesspoint"
 		cfgHost := req.URL.Host
 		if strings.HasPrefix(cfgHost, "s3") {
 			// replace service hostlabel "s3" to "s3-accesspoint"
-			resourceRequest.Request.URL.Host = serviceEndpointLabel + cfgHost[len("s3"):]
+			req.URL.Host = serviceEndpointLabel + cfgHost[len("s3"):]
 		}
-
-		// redirect signer to use resolved endpoint signing name and region
-		ctx = awsmiddleware.SetSigningName(ctx, endpoint.SigningName)
-		ctx = awsmiddleware.SetSigningRegion(ctx, endpoint.SigningRegion)
 
 		// add host prefix for s3-accesspoint
 		accessPointHostPrefix := "{" + tv.AccessPointName + "}-{" + tv.AccountID + "}."
@@ -144,9 +165,13 @@ func (m *processARNResourceMiddleware) HandleSerialize(
 			req.Host = accessPointHostPrefix + req.Host
 		}
 
-		// TODO: Need another middleware to remove arnable field from path
-		// remove the serialized arn in place in place of /{Bucket}
-		// removeBucketFromPath(req.URL, tv.String())
+		// validate the endpoint host
+		if err := http.ValidateEndpointHost(req.URL.Host); err != nil {
+			return out, metadata, s3shared.NewInvalidARNError(tv, err)
+		}
+
+		// remove the serialized arn in place of /{Bucket}
+		ctx = setBucketToRemoveOnContext(ctx, tv.String())
 
 	// process outpost accesspoint ARN
 	case arn.OutpostAccessPointARN:
@@ -154,13 +179,13 @@ func (m *processARNResourceMiddleware) HandleSerialize(
 		// check if accelerate
 		if m.UseAccelerate {
 			return out, metadata, s3shared.NewClientConfiguredForAccelerateError(tv,
-				resourceRequest.Options.PartitionID, resourceRequest.Options.RequestRegion, nil)
+				resourceRequest.PartitionID, resourceRequest.RequestRegion, nil)
 		}
 
 		// check if dual stack
 		if m.UseDualstack {
 			return out, metadata, s3shared.NewClientConfiguredForDualStackError(tv,
-				resourceRequest.Options.PartitionID, resourceRequest.Options.RequestRegion, nil)
+				resourceRequest.PartitionID, resourceRequest.RequestRegion, nil)
 		}
 
 		// TODO : Do we provide an option to disable host prefix behavior ? If yes, that option should be set to false
@@ -179,16 +204,27 @@ func (m *processARNResourceMiddleware) HandleSerialize(
 		}
 
 		// resolve regional endpoint for resolved region.
-		// we do not support custom endpoint resolver for this middleware behavior
-		var endpointResolver aws.EndpointResolver
-		endpoint, err := endpointResolver.ResolveEndpoint(endpointsID, resolveRegion)
-		if err != nil {
-			return out, metadata, s3shared.NewFailedToResolveEndpointError(
-				tv,
-				resourceRequest.Options.PartitionID,
-				resourceRequest.Options.RequestRegion,
-				err,
-			)
+		var endpoint aws.Endpoint
+		if m.EndpointResolver != nil {
+			endpoint, err = m.EndpointResolver.ResolveEndpoint(resolveRegion, m.EndpointResolverOptions)
+			if err != nil {
+				return out, metadata, s3shared.NewFailedToResolveEndpointError(
+					tv,
+					resourceRequest.PartitionID,
+					resourceRequest.RequestRegion,
+					err,
+				)
+			}
+		} else {
+			endpoint, err = endpoints.New().ResolveEndpoint(resolveRegion, m.EndpointResolverOptions)
+			if err != nil {
+				return out, metadata, s3shared.NewFailedToResolveEndpointError(
+					tv,
+					resourceRequest.PartitionID,
+					resourceRequest.RequestRegion,
+					err,
+				)
+			}
 		}
 
 		// assign resolved endpoint url to request url
@@ -197,15 +233,20 @@ func (m *processARNResourceMiddleware) HandleSerialize(
 			return out, metadata, fmt.Errorf("failed to parse endpoint URL: %w", err)
 		}
 
-		cfgHost := req.URL.Host
-		if strings.HasPrefix(cfgHost, endpointsID) {
-			// replace service endpointID label with resolved service
-			resourceRequest.Request.URL.Host = resolveService + cfgHost[len(endpointsID):]
-		}
-
 		// redirect signer to use resolved endpoint signing name and region
 		ctx = awsmiddleware.SetSigningName(ctx, endpoint.SigningName)
 		ctx = awsmiddleware.SetSigningRegion(ctx, endpoint.SigningRegion)
+
+		// skip arn processing, if arn region resolves to a immutable endpoint
+		if endpoint.HostnameImmutable {
+			return next.HandleSerialize(ctx, in)
+		}
+
+		cfgHost := req.URL.Host
+		if strings.HasPrefix(cfgHost, endpointsID) {
+			// replace service endpointID label with resolved service
+			req.URL.Host = resolveService + cfgHost[len(endpointsID):]
+		}
 
 		// add host prefix for s3-outposts
 		outpostAPHostPrefix := "{" + tv.AccessPointName + "}-{" + tv.AccountID + "}." + "{" + tv.OutpostID + "}"
@@ -219,9 +260,8 @@ func (m *processARNResourceMiddleware) HandleSerialize(
 			return out, metadata, s3shared.NewInvalidARNError(tv, err)
 		}
 
-		// TODO: Need another middleware to remove arnable field from path
-		// remove the serialized arn in place in place of /{Bucket}
-		// removeBucketFromPath(req.URL, tv.String())
+		// remove the serialized arn in place of /{Bucket}
+		ctx = setBucketToRemoveOnContext(ctx, tv.String())
 	default:
 		return out, metadata, s3shared.NewInvalidARNError(resource, nil)
 	}
@@ -239,27 +279,21 @@ func validateResourceRequest(resourceRequest s3shared.ResourceRequest) error {
 	if v {
 		// if cross partition
 		return s3shared.NewClientPartitionMismatchError(resourceRequest.Resource,
-			resourceRequest.Options.PartitionID, resourceRequest.Options.RequestRegion, nil)
+			resourceRequest.PartitionID, resourceRequest.RequestRegion, nil)
 	}
 
 	// check if resourceRequest leads to a cross region error
 	if !resourceRequest.AllowCrossRegion() && resourceRequest.IsCrossRegion() {
 		// if cross region, but not use ARN region is not enabled
 		return s3shared.NewClientRegionMismatchError(resourceRequest.Resource,
-			resourceRequest.Options.PartitionID, resourceRequest.Options.RequestRegion, nil)
-	}
-
-	// check if resourceRequest leads to a custom endpoint error
-	if resourceRequest.HasCustomEndpoint() {
-		// if a custom endpoint was provided, return an error
-		return s3shared.NewInvalidARNWithCustomEndpointError(resourceRequest.Resource, nil)
+			resourceRequest.PartitionID, resourceRequest.RequestRegion, nil)
 	}
 
 	return nil
 }
 
 // Used by shapes with members decorated as endpoint ARN.
-func parseEndpointARN(v string) (arn.Resource, error) {
+func parseEndpointARN(v awsarn.ARN) (arn.Resource, error) {
 	return arn.ParseResource(v, accessPointResourceParser)
 }
 
@@ -318,4 +352,46 @@ func parseOutpostAccessPointResource(a awsarn.ARN, resParts []string) (arn.Outpo
 	// set outpost id
 	outpostAccessPointARN.OutpostID = resID
 	return outpostAccessPointARN, nil
+}
+
+// removeBucketFromPathMiddleware needs to be executed after serialize step is performed
+type removeBucketFromPathMiddleware struct {
+}
+
+func (m *removeBucketFromPathMiddleware) ID() string {
+	return "S3:RemoveBucketFromPathMiddleware"
+}
+
+func (m *removeBucketFromPathMiddleware) HandleSerialize(
+	ctx context.Context, in middleware.SerializeInput, next middleware.SerializeHandler,
+) (
+	out middleware.SerializeOutput, metadata middleware.Metadata, err error,
+) {
+	// check if a bucket removal from HTTP path is required
+	bucket, ok := getRemoveBucketFromPath(ctx)
+	if !ok {
+		return next.HandleSerialize(ctx, in)
+	}
+
+	req, ok := in.Request.(*http.Request)
+	if !ok {
+		return out, metadata, fmt.Errorf("unknown request type %T", req)
+	}
+
+	removeBucketFromPath(req.URL, bucket)
+	return next.HandleSerialize(ctx, in)
+}
+
+// TODO: move these helpers
+type removeBucketKeyForContext struct {
+	bucket string
+}
+
+func setBucketToRemoveOnContext(ctx context.Context, bucket string) context.Context {
+	return context.WithValue(ctx, removeBucketKeyForContext{}, bucket)
+}
+
+func getRemoveBucketFromPath(ctx context.Context) (string, bool) {
+	v, ok := ctx.Value(removeBucketKeyForContext{}).(string)
+	return v, ok
 }

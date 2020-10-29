@@ -164,3 +164,24 @@ func newServiceMetadataMiddleware_opDeleteBucketPolicy(region string) awsmiddlew
 		OperationName: "DeleteBucketPolicy",
 	}
 }
+
+func (in DeleteBucketPolicyInput) getARNMemberValue() (*string, bool) {
+	if in.Bucket == nil {
+		return nil, false
+	}
+	return in.Bucket, false
+}
+func (in DeleteBucketPolicyInput) updateARNMemberValue(v string) DeleteBucketPolicyInput {
+	in.Bucket = &v
+	return in
+}
+func (in DeleteBucketPolicyInput) backfillAccountID(v string) (DeleteBucketPolicyInput, error) {
+	if in.AccountId != nil {
+		if !strings.EqualFold(*in.AccountId, v) {
+			return in, fmt.Errorf("error backfilling account id")
+		}
+		return in, nil
+	}
+	in.AccountId = &v
+	return in, nil
+}

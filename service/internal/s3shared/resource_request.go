@@ -4,13 +4,12 @@ import (
 	"fmt"
 	"strings"
 
-	smithyhttp "github.com/awslabs/smithy-go/transport/http"
-
 	awsarn "github.com/aws/aws-sdk-go-v2/aws/arn"
 	"github.com/aws/aws-sdk-go-v2/service/internal/s3shared/arn"
 )
 
-type ResourceRequestOptions struct {
+type ResourceRequest struct {
+	Resource arn.Resource
 	// RequestRegion is the region configured on the request config
 	RequestRegion string
 
@@ -22,15 +21,6 @@ type ResourceRequestOptions struct {
 
 	// UseARNRegion indicates if client should use the region provided in an ARN resource
 	UseARNRegion bool
-
-	// HasCustomEndpoint indicates if a custom endpoint is provided
-	HasCustomEndpoint bool
-}
-
-type ResourceRequest struct {
-	Resource arn.Resource
-	Options  ResourceRequestOptions
-	Request  *smithyhttp.Request
 }
 
 // ARN returns the resource ARN
@@ -40,7 +30,7 @@ func (r ResourceRequest) ARN() awsarn.ARN {
 
 // UseFIPS returns true if request config region is FIPS region.
 func (r ResourceRequest) UseFips() bool {
-	return IsFIPS(r.Options.RequestRegion)
+	return IsFIPS(r.RequestRegion)
 }
 
 // ResourceConfiguredForFIPS returns true if resource ARNs region is FIPS
@@ -50,14 +40,14 @@ func (r ResourceRequest) ResourceConfiguredForFIPS() bool {
 
 // AllowCrossRegion returns a bool value to denote if S3UseARNRegion flag is set
 func (r ResourceRequest) AllowCrossRegion() bool {
-	return r.Options.UseARNRegion
+	return r.UseARNRegion
 }
 
 // IsCrossPartition returns true if request is configured for region of another partition, than
 // the partition that resource ARN region resolves to.
 func (r ResourceRequest) IsCrossPartition() (bool, error) {
 	// These error checks should never be triggered, unless validations are turned off
-	rv := r.Options.PartitionID
+	rv := r.PartitionID
 	if len(rv) == 0 {
 		return false, fmt.Errorf("partition id was not found for provided request region")
 	}
@@ -72,13 +62,8 @@ func (r ResourceRequest) IsCrossPartition() (bool, error) {
 
 // IsCrossRegion returns true if request signing region is not same as arn region
 func (r ResourceRequest) IsCrossRegion() bool {
-	v := r.Options.SigningRegion
+	v := r.SigningRegion
 	return !strings.EqualFold(v, r.Resource.GetARN().Region)
-}
-
-// HasCustomEndpoint returns true if custom endpoint is provided
-func (r ResourceRequest) HasCustomEndpoint() bool {
-	return r.Options.HasCustomEndpoint
 }
 
 // TODO: should this be moved in aws endpoints package

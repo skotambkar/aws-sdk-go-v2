@@ -194,3 +194,24 @@ func newServiceMetadataMiddleware_opCreateAccessPoint(region string) awsmiddlewa
 		OperationName: "CreateAccessPoint",
 	}
 }
+
+func (in CreateAccessPointInput) getARNMemberValue() (*string, bool) {
+	if in.Bucket == nil {
+		return nil, false
+	}
+	return in.Bucket, false
+}
+func (in CreateAccessPointInput) updateARNMemberValue(v string) CreateAccessPointInput {
+	in.Bucket = &v
+	return in
+}
+func (in CreateAccessPointInput) backfillAccountID(v string) (CreateAccessPointInput, error) {
+	if in.AccountId != nil {
+		if !strings.EqualFold(*in.AccountId, v) {
+			return in, fmt.Errorf("error backfilling account id")
+		}
+		return in, nil
+	}
+	in.AccountId = &v
+	return in, nil
+}

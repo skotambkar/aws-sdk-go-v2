@@ -150,3 +150,14 @@ func newServiceMetadataMiddleware_opDescribeJob(region string) awsmiddleware.Reg
 		OperationName: "DescribeJob",
 	}
 }
+
+func (in DescribeJobInput) backfillAccountID(v string) (DescribeJobInput, error) {
+	if in.AccountId != nil {
+		if !strings.EqualFold(*in.AccountId, v) {
+			return in, fmt.Errorf("error backfilling account id")
+		}
+		return in, nil
+	}
+	in.AccountId = &v
+	return in, nil
+}

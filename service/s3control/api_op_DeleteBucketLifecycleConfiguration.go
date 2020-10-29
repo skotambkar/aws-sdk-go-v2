@@ -161,3 +161,24 @@ func newServiceMetadataMiddleware_opDeleteBucketLifecycleConfiguration(region st
 		OperationName: "DeleteBucketLifecycleConfiguration",
 	}
 }
+
+func (in DeleteBucketLifecycleConfigurationInput) getARNMemberValue() (*string, bool) {
+	if in.Bucket == nil {
+		return nil, false
+	}
+	return in.Bucket, false
+}
+func (in DeleteBucketLifecycleConfigurationInput) updateARNMemberValue(v string) DeleteBucketLifecycleConfigurationInput {
+	in.Bucket = &v
+	return in
+}
+func (in DeleteBucketLifecycleConfigurationInput) backfillAccountID(v string) (DeleteBucketLifecycleConfigurationInput, error) {
+	if in.AccountId != nil {
+		if !strings.EqualFold(*in.AccountId, v) {
+			return in, fmt.Errorf("error backfilling account id")
+		}
+		return in, nil
+	}
+	in.AccountId = &v
+	return in, nil
+}

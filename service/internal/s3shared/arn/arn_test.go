@@ -92,7 +92,11 @@ func TestParseResource(t *testing.T) {
 
 	for name, c := range cases {
 		t.Run(name, func(t *testing.T) {
-			parsed, err := ParseResource(c.Input, mappedResourceParser(c.MappedResources))
+			var parsed Resource
+			arn, err := arn.Parse(c.Input)
+			if err != nil {
+				parsed, err = ParseResource(arn, mappedResourceParser(c.MappedResources))
+			}
 
 			if len(c.ExpectErr) == 0 && err != nil {
 				t.Fatalf("expect no error but got %v", err)

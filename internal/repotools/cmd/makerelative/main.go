@@ -126,6 +126,7 @@ func (r *Registry) Load(dir string) (module *Module, err error) {
 		if err != nil {
 			return nil, err
 		}
+		log.Printf("error: %v; dir: %v", err, dir)
 		module = &Module{File: m}
 		r.dirToModule[dir] = module
 		r.pathToDir[module.Module.Mod.Path] = dir

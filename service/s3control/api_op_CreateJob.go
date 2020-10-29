@@ -228,3 +228,14 @@ func newServiceMetadataMiddleware_opCreateJob(region string) awsmiddleware.Regis
 		OperationName: "CreateJob",
 	}
 }
+
+func (in CreateJobInput) backfillAccountID(v string) (CreateJobInput, error) {
+	if in.AccountId != nil {
+		if !strings.EqualFold(*in.AccountId, v) {
+			return in, fmt.Errorf("error backfilling account id")
+		}
+		return in, nil
+	}
+	in.AccountId = &v
+	return in, nil
+}
