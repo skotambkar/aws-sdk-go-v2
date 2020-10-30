@@ -132,13 +132,13 @@ func newServiceMetadataMiddleware_opDeletePublicAccessBlock(region string) awsmi
 	}
 }
 
-func (in DeletePublicAccessBlockInput) backfillAccountID(v string) (DeletePublicAccessBlockInput, error) {
+func (in DeletePublicAccessBlockInput) backfillAccountID(v string) (interface{}, error) {
 	if in.AccountId != nil {
 		if !strings.EqualFold(*in.AccountId, v) {
-			return in, fmt.Errorf("error backfilling account id")
+			return &in, fmt.Errorf("error backfilling account id")
 		}
-		return in, nil
+		return &in, nil
 	}
 	in.AccountId = &v
-	return in, nil
+	return &in, nil
 }

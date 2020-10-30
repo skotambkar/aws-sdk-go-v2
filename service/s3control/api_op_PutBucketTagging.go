@@ -215,19 +215,19 @@ func (in PutBucketTaggingInput) getARNMemberValue() (*string, bool) {
 	if in.Bucket == nil {
 		return nil, false
 	}
-	return in.Bucket, false
+	return in.Bucket, true
 }
-func (in PutBucketTaggingInput) updateARNMemberValue(v string) PutBucketTaggingInput {
+func (in PutBucketTaggingInput) updateARNMemberValue(v string) interface{} {
 	in.Bucket = &v
-	return in
+	return &in
 }
-func (in PutBucketTaggingInput) backfillAccountID(v string) (PutBucketTaggingInput, error) {
+func (in PutBucketTaggingInput) backfillAccountID(v string) (interface{}, error) {
 	if in.AccountId != nil {
 		if !strings.EqualFold(*in.AccountId, v) {
-			return in, fmt.Errorf("error backfilling account id")
+			return &in, fmt.Errorf("error backfilling account id")
 		}
-		return in, nil
+		return &in, nil
 	}
 	in.AccountId = &v
-	return in, nil
+	return &in, nil
 }

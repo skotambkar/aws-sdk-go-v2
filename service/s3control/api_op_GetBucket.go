@@ -160,7 +160,7 @@ func (in GetBucketInput) getARNMemberValue() (*string, bool) {
 	if in.Bucket == nil {
 		return nil, false
 	}
-	return in.Bucket, true // TODO: codegen this true
+	return in.Bucket, true
 }
 func (in GetBucketInput) updateARNMemberValue(v string) interface{} {
 	in.Bucket = &v

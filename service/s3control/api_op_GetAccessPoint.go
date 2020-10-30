@@ -188,19 +188,19 @@ func (in GetAccessPointInput) getARNMemberValue() (*string, bool) {
 	if in.Name == nil {
 		return nil, false
 	}
-	return in.Name, false
+	return in.Name, true
 }
-func (in GetAccessPointInput) updateARNMemberValue(v string) GetAccessPointInput {
+func (in GetAccessPointInput) updateARNMemberValue(v string) interface{} {
 	in.Name = &v
-	return in
+	return &in
 }
-func (in GetAccessPointInput) backfillAccountID(v string) (GetAccessPointInput, error) {
+func (in GetAccessPointInput) backfillAccountID(v string) (interface{}, error) {
 	if in.AccountId != nil {
 		if !strings.EqualFold(*in.AccountId, v) {
-			return in, fmt.Errorf("error backfilling account id")
+			return &in, fmt.Errorf("error backfilling account id")
 		}
-		return in, nil
+		return &in, nil
 	}
 	in.AccountId = &v
-	return in, nil
+	return &in, nil
 }

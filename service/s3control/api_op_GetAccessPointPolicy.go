@@ -149,19 +149,19 @@ func (in GetAccessPointPolicyInput) getARNMemberValue() (*string, bool) {
 	if in.Name == nil {
 		return nil, false
 	}
-	return in.Name, false
+	return in.Name, true
 }
-func (in GetAccessPointPolicyInput) updateARNMemberValue(v string) GetAccessPointPolicyInput {
+func (in GetAccessPointPolicyInput) updateARNMemberValue(v string) interface{} {
 	in.Name = &v
-	return in
+	return &in
 }
-func (in GetAccessPointPolicyInput) backfillAccountID(v string) (GetAccessPointPolicyInput, error) {
+func (in GetAccessPointPolicyInput) backfillAccountID(v string) (interface{}, error) {
 	if in.AccountId != nil {
 		if !strings.EqualFold(*in.AccountId, v) {
-			return in, fmt.Errorf("error backfilling account id")
+			return &in, fmt.Errorf("error backfilling account id")
 		}
-		return in, nil
+		return &in, nil
 	}
 	in.AccountId = &v
-	return in, nil
+	return &in, nil
 }

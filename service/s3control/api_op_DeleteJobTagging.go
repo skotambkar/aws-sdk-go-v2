@@ -143,13 +143,13 @@ func newServiceMetadataMiddleware_opDeleteJobTagging(region string) awsmiddlewar
 	}
 }
 
-func (in DeleteJobTaggingInput) backfillAccountID(v string) (DeleteJobTaggingInput, error) {
+func (in DeleteJobTaggingInput) backfillAccountID(v string) (interface{}, error) {
 	if in.AccountId != nil {
 		if !strings.EqualFold(*in.AccountId, v) {
-			return in, fmt.Errorf("error backfilling account id")
+			return &in, fmt.Errorf("error backfilling account id")
 		}
-		return in, nil
+		return &in, nil
 	}
 	in.AccountId = &v
-	return in, nil
+	return &in, nil
 }

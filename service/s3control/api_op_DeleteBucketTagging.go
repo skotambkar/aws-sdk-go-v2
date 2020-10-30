@@ -159,19 +159,19 @@ func (in DeleteBucketTaggingInput) getARNMemberValue() (*string, bool) {
 	if in.Bucket == nil {
 		return nil, false
 	}
-	return in.Bucket, false
+	return in.Bucket, true
 }
-func (in DeleteBucketTaggingInput) updateARNMemberValue(v string) DeleteBucketTaggingInput {
+func (in DeleteBucketTaggingInput) updateARNMemberValue(v string) interface{} {
 	in.Bucket = &v
-	return in
+	return &in
 }
-func (in DeleteBucketTaggingInput) backfillAccountID(v string) (DeleteBucketTaggingInput, error) {
+func (in DeleteBucketTaggingInput) backfillAccountID(v string) (interface{}, error) {
 	if in.AccountId != nil {
 		if !strings.EqualFold(*in.AccountId, v) {
-			return in, fmt.Errorf("error backfilling account id")
+			return &in, fmt.Errorf("error backfilling account id")
 		}
-		return in, nil
+		return &in, nil
 	}
 	in.AccountId = &v
-	return in, nil
+	return &in, nil
 }

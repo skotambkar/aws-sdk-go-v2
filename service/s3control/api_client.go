@@ -240,7 +240,7 @@ func getARNMemberValue(in interface{}) (*string, bool) {
 func updateARNMemberValue(in interface{}, v string) (interface{}, bool) {
 	iv, ok := in.(interface{ updateARNMemberValue(string) interface{} })
 	if !ok {
-		return in, false
+		return &in, false
 	}
 	return iv.updateARNMemberValue(v), true
 }

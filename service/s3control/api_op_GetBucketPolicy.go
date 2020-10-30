@@ -174,19 +174,19 @@ func (in GetBucketPolicyInput) getARNMemberValue() (*string, bool) {
 	if in.Bucket == nil {
 		return nil, false
 	}
-	return in.Bucket, false
+	return in.Bucket, true
 }
-func (in GetBucketPolicyInput) updateARNMemberValue(v string) GetBucketPolicyInput {
+func (in GetBucketPolicyInput) updateARNMemberValue(v string) interface{} {
 	in.Bucket = &v
-	return in
+	return &in
 }
-func (in GetBucketPolicyInput) backfillAccountID(v string) (GetBucketPolicyInput, error) {
+func (in GetBucketPolicyInput) backfillAccountID(v string) (interface{}, error) {
 	if in.AccountId != nil {
 		if !strings.EqualFold(*in.AccountId, v) {
-			return in, fmt.Errorf("error backfilling account id")
+			return &in, fmt.Errorf("error backfilling account id")
 		}
-		return in, nil
+		return &in, nil
 	}
 	in.AccountId = &v
-	return in, nil
+	return &in, nil
 }
