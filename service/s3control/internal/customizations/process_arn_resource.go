@@ -14,7 +14,6 @@ import (
 	awsmiddleware "github.com/aws/aws-sdk-go-v2/aws/middleware"
 	"github.com/aws/aws-sdk-go-v2/service/internal/s3shared"
 	"github.com/aws/aws-sdk-go-v2/service/internal/s3shared/arn"
-	"github.com/aws/aws-sdk-go-v2/service/s3control/internal/endpoints"
 	s3endpoints "github.com/aws/aws-sdk-go-v2/service/s3control/internal/endpoints/s3"
 )
 
@@ -124,17 +123,17 @@ func (m *processARNResourceMiddleware) HandleSerialize(
 
 		// resolve regional endpoint for resolved region.
 		var endpoint aws.Endpoint
-		if m.EndpointResolver != nil {
-			endpoint, err = m.EndpointResolver.ResolveEndpoint(resolveRegion, m.EndpointResolverOptions)
+		if endpointsID == "s3" {
+			// TODO: no way to know if customer has provided a custom resolver anticipating this behavior
+			//  By default a provided endpoint resolver has a fallback to s3-control default resolver
+			//  that would prevent endpointID switch and cross region endpoint resolver behavior.
+
+			// use s3 endpoint resolver
+			endpoint, err = s3endpoints.New().ResolveEndpoint(resolveRegion, s3endpoints.Options{
+				DisableHTTPS: m.EndpointResolverOptions.DisableHTTPS,
+			})
 		} else {
-			if endpointsID == "s3" {
-				// use s3 endpoint resolver
-				endpoint, err = s3endpoints.New().ResolveEndpoint(resolveRegion, s3endpoints.Options{
-					DisableHTTPS: m.EndpointResolverOptions.DisableHTTPS,
-				})
-			} else {
-				endpoint, err = endpoints.New().ResolveEndpoint(resolveRegion, m.EndpointResolverOptions)
-			}
+			endpoint, err = m.EndpointResolver.ResolveEndpoint(resolveRegion, m.EndpointResolverOptions)
 		}
 
 		if err != nil {
@@ -152,8 +151,19 @@ func (m *processARNResourceMiddleware) HandleSerialize(
 		}
 
 		// redirect signer to use resolved endpoint signing name and region
-		ctx = awsmiddleware.SetSigningName(ctx, endpoint.SigningName)
-		ctx = awsmiddleware.SetSigningRegion(ctx, endpoint.SigningRegion)
+		if len(endpoint.SigningName) != 0 {
+			ctx = awsmiddleware.SetSigningName(ctx, endpoint.SigningName)
+		} else {
+			// assign resolved service from arn as signing name
+			ctx = awsmiddleware.SetSigningName(ctx, resolveService)
+		}
+
+		if len(endpoint.SigningRegion) != 0 {
+			// redirect signer to use resolved endpoint signing name and region
+			ctx = awsmiddleware.SetSigningRegion(ctx, endpoint.SigningRegion)
+		} else {
+			ctx = awsmiddleware.SetSigningRegion(ctx, resolveRegion)
+		}
 
 		// skip arn processing, if arn region resolves to a immutable endpoint
 		if endpoint.HostnameImmutable {
@@ -173,6 +183,8 @@ func (m *processARNResourceMiddleware) HandleSerialize(
 		if err := http.ValidateEndpointHost(req.URL.Host); err != nil {
 			return out, metadata, s3shared.NewInvalidARNError(tv, err)
 		}
+
+		// TODO: Disable endpoint host prefix for s3-control
 
 	// process outpost accesspoint ARN
 	case arn.OutpostBucketARN:
@@ -205,26 +217,14 @@ func (m *processARNResourceMiddleware) HandleSerialize(
 
 		// resolve regional endpoint for resolved region.
 		var endpoint aws.Endpoint
-		if m.EndpointResolver != nil {
-			endpoint, err = m.EndpointResolver.ResolveEndpoint(resolveRegion, m.EndpointResolverOptions)
-			if err != nil {
-				return out, metadata, s3shared.NewFailedToResolveEndpointError(
-					tv,
-					resourceRequest.PartitionID,
-					resourceRequest.RequestRegion,
-					err,
-				)
-			}
-		} else {
-			endpoint, err = endpoints.New().ResolveEndpoint(resolveRegion, m.EndpointResolverOptions)
-			if err != nil {
-				return out, metadata, s3shared.NewFailedToResolveEndpointError(
-					tv,
-					resourceRequest.PartitionID,
-					resourceRequest.RequestRegion,
-					err,
-				)
-			}
+		endpoint, err = m.EndpointResolver.ResolveEndpoint(resolveRegion, m.EndpointResolverOptions)
+		if err != nil {
+			return out, metadata, s3shared.NewFailedToResolveEndpointError(
+				tv,
+				resourceRequest.PartitionID,
+				resourceRequest.RequestRegion,
+				err,
+			)
 		}
 
 		// assign resolved endpoint url to request url
@@ -233,9 +233,19 @@ func (m *processARNResourceMiddleware) HandleSerialize(
 			return out, metadata, fmt.Errorf("failed to parse endpoint URL: %w", err)
 		}
 
-		// redirect signer to use resolved endpoint signing name and region
-		ctx = awsmiddleware.SetSigningName(ctx, endpoint.SigningName)
-		ctx = awsmiddleware.SetSigningRegion(ctx, endpoint.SigningRegion)
+		if len(endpoint.SigningName) != 0 {
+			ctx = awsmiddleware.SetSigningName(ctx, endpoint.SigningName)
+		} else {
+			// assign resolved service from arn as signing name
+			ctx = awsmiddleware.SetSigningName(ctx, resolveService)
+		}
+
+		if len(endpoint.SigningRegion) != 0 {
+			// redirect signer to use resolved endpoint signing name and region
+			ctx = awsmiddleware.SetSigningRegion(ctx, endpoint.SigningRegion)
+		} else {
+			ctx = awsmiddleware.SetSigningRegion(ctx, resolveRegion)
+		}
 
 		// skip arn processing, if arn region resolves to a immutable endpoint
 		if endpoint.HostnameImmutable {
@@ -255,6 +265,8 @@ func (m *processARNResourceMiddleware) HandleSerialize(
 		if err := http.ValidateEndpointHost(req.URL.Host); err != nil {
 			return out, metadata, s3shared.NewInvalidARNError(tv, err)
 		}
+
+		// TODO: disable host prefix for s3-control
 	default:
 		return out, metadata, s3shared.NewInvalidARNError(resource, nil)
 	}

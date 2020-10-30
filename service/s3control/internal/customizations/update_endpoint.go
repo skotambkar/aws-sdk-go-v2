@@ -61,19 +61,19 @@ func UpdateEndpoint(stack *middleware.Stack, options UpdateEndpointOptions) {
 		GetARNValue: options.GetARNInput,
 	}, (&BackfillInputMiddleware{}).ID(), middleware.Before)
 
+	// process arn
+	stack.Serialize.Insert(&processARNResourceMiddleware{
+		UpdateARNField:          options.UpdateARNField,
+		UseARNRegion:            options.UseARNRegion,
+		UseDualstack:            options.UseDualstack,
+		EndpointResolver:        options.EndpointResolver,
+		EndpointResolverOptions: options.EndpointResolverOptions,
+	}, "OperationSerializer", middleware.Before)
+
 	// outpostID middleware
 	stack.Serialize.Insert(&processOutpostIDMiddleware{
 		GetOutpostID: options.GetOutpostIDInput,
-	}, "OperationSerializer", middleware.Before)
-
-	// process arn
-	stack.Serialize.Insert(&processARNResourceMiddleware{
-		UpdateARNField:   options.UpdateARNField,
-		UseARNRegion:     options.UseARNRegion,
-		UseDualstack:     options.UseDualstack,
-		EndpointResolver: options.EndpointResolver,
-		EndpointResolverOptions: options.EndpointResolverOptions,
-	}, "OperationSerializer", middleware.Before)
+	}, (&processARNResourceMiddleware{}).ID(), middleware.Before)
 
 	// enable dual stack support
 	stack.Serialize.Insert(&s3shared.EnableDualstackMiddleware{

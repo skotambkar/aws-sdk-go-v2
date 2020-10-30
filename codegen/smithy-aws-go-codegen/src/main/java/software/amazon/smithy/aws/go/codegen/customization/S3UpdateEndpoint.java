@@ -155,13 +155,13 @@ public class S3UpdateEndpoint implements GoIntegration {
     //      if in.AccountId!=nil {
     //         iv := *in.AccountId
     //         if !strings.EqualFold(iv, v) {
-    //             return in, fmt.Errorf("error backfilling account id")
+    //             return &in, fmt.Errorf("error backfilling account id")
     //         }
-    //         return in, nil
+    //         return &in, nil
     //      }
     //
     //   in.AccountId = &v
-    //   return in, nil
+    //   return &in, nil
     // }
     private void writeOpBackfillAccountIDHelper(GoWriter writer, Model model,SymbolProvider symbolProvider, OperationShape operation) {
         StructureShape input = model.expectShape(operation.getInput().get(), StructureShape.class);
@@ -177,24 +177,24 @@ public class S3UpdateEndpoint implements GoIntegration {
         if (!targetAccountIDShape.isEmpty()) {
             Symbol inputSymbol = symbolProvider.toSymbol(input);
             String memberName = targetAccountIDShape.get(0).getMemberName();
-            writer.write("func (in $T) $L (v string) ($T, error) { ", inputSymbol, BACKFILL_ACCOUNT_ID, inputSymbol);
+            writer.write("func (in $T) $L (v string) (interface{}, error) { ", inputSymbol, BACKFILL_ACCOUNT_ID);
             writer.write("if in.$L != nil {", memberName);
 
             writer.addUseImports(SmithyGoDependency.STRINGS);
             writer.write("if !strings.EqualFold(*in.$L, v) {", memberName);
 
             writer.addUseImports(SmithyGoDependency.FMT);
-            writer.write("return in, fmt.Errorf(\"error backfilling account id\") }");
-            writer.write("return in, nil }");
+            writer.write("return &in, fmt.Errorf(\"error backfilling account id\") }");
+            writer.write("return &in, nil }");
             writer.write("in.$L = &v", memberName);
-            writer.write("return in, nil }");
+            writer.write("return &in, nil }");
         }
     }
 
     // writes getARNMemberValue and updateARNMemberValue update function for all input operations
     private void writeARNHelper(GoWriter writer, Model model,SymbolProvider symbolProvider, ServiceShape service) {
         // write getARNMemberValue
-        writer.write("func $L(in interface{}) (*string,bool) { ", GET_ARN_FROM_INPUT);
+        writer.write("func $L(in interface{}) (*string, bool) { ", GET_ARN_FROM_INPUT);
         writer.write("iv, ok := in.(interface{ $L() (*string, bool) })", GET_ARN_FROM_INPUT);
         writer.write("if !ok  { return nil, false }");
         writer.write("return iv.$L() }", GET_ARN_FROM_INPUT);
@@ -202,7 +202,7 @@ public class S3UpdateEndpoint implements GoIntegration {
         // write UpdateARNMemberValue
         writer.write("func $L(in interface{}, v string) (interface{},bool) { ", UPDATE_ARN_MEMBER_VALUE);
         writer.write("iv, ok := in.(interface{ $L(string) (interface{}) })", UPDATE_ARN_MEMBER_VALUE);
-        writer.write("if !ok  { return in, false }");
+        writer.write("if !ok  { return &in, false }");
         writer.write("return iv.$L(v), true }", UPDATE_ARN_MEMBER_VALUE);
     }
 
@@ -228,12 +228,12 @@ public class S3UpdateEndpoint implements GoIntegration {
             String memberName = listOfARNMembers.get(0).getMemberName();
             writer.write("func (in $T) $L () (*string, bool) { ", inputSymbol, GET_ARN_FROM_INPUT);
             writer.write("if in.$L == nil {return nil, false }", memberName);
-            writer.write("return in.$L, false }", memberName);
+            writer.write("return in.$L, true }", memberName);
 
             writer.insertTrailingNewline();
-            writer.write("func (in $T) $L (v string) $T {", inputSymbol, UPDATE_ARN_MEMBER_VALUE, inputSymbol);
+            writer.write("func (in $T) $L (v string) interface{} {", inputSymbol, UPDATE_ARN_MEMBER_VALUE);
             writer.write("in.$L = &v", memberName);
-            writer.write("return in }");
+            writer.write("return &in }");
         }
     }
 

@@ -21,7 +21,7 @@ type processOutpostIDMiddleware struct {
 }
 
 // ID returns the middleware ID.
-func (*processOutpostIDMiddleware) ID() string { return "S3Control:ProcessARNResourceMiddleware" }
+func (*processOutpostIDMiddleware) ID() string { return "S3Control:ProcessOutpostIDMiddleware" }
 
 // HandleSerialize adds a serialize step, this has to be before operation serializer and arn endpoint logic.
 // Ideally this step will be ahead of ARN customization for CreateBucket, ListRegionalBucket operation.
@@ -35,7 +35,7 @@ func (m *processOutpostIDMiddleware) HandleSerialize(
 		return next.HandleSerialize(ctx, in)
 	}
 
-	outpostID, ok := m.GetOutpostID(in)
+	outpostID, ok := m.GetOutpostID(in.Parameters)
 	if !ok {
 		return next.HandleSerialize(ctx, in)
 	}
