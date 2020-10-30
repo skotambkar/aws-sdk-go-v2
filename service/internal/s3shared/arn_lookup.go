@@ -27,10 +27,11 @@ func (m *InitARNLookupMiddleware) HandleInitialize(ctx context.Context, in middl
 	out middleware.InitializeOutput, metadata middleware.Metadata, err error,
 ) {
 	// check is input resource is an ARN; if not go to next
-	v, ok := m.GetARNValue(in)
-	if !ok || v == nil {
+	v, ok := m.GetARNValue(in.Parameters)
+	if !ok || v == nil || !arn.IsARN(*v) {
 		return next.HandleInitialize(ctx, in)
 	}
+
 	// if ARN process ResourceRequest and put it on ctx
 	av, err := arn.Parse(*v)
 	if err != nil {

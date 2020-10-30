@@ -28,6 +28,9 @@ public class S3ControlEndpointResolverCustomizations implements GoIntegration  {
            return;
         }
 
+        // TODO: the sdkID, arnNamespace is hard-coded; how do I get these?
+        //  The problem here is model is in context of `s3control`, while we need info for `s3`.
+        //  Alternatively, is a service allowed to change these values in a model?
         new EndpointGenerator(settings, model, writerFactory,"S3","s3", true).run();
     }
 }
