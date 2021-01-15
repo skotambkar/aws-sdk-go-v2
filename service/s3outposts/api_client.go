@@ -89,6 +89,14 @@ type Options struct {
 	HTTPClient HTTPClient
 }
 
+// WithAPIOptions returns a functional option for setting the Client's APIOptions
+// option.
+func WithAPIOptions(optFns ...func(*middleware.Stack) error) func(*Options) {
+	return func(o *Options) {
+		o.APIOptions = append(o.APIOptions, optFns...)
+	}
+}
+
 type HTTPClient interface {
 	Do(*http.Request) (*http.Response, error)
 }
@@ -101,6 +109,7 @@ func (o Options) Copy() Options {
 	return to
 }
 func (c *Client) invokeOperation(ctx context.Context, opID string, params interface{}, optFns []func(*Options), stackFns ...func(*middleware.Stack, Options) error) (result interface{}, metadata middleware.Metadata, err error) {
+	ctx = middleware.ClearStackValues(ctx)
 	stack := middleware.NewStack(opID, smithyhttp.NewStackRequest)
 	options := c.options.Copy()
 	for _, fn := range optFns {
