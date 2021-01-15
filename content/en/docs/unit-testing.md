@@ -196,3 +196,86 @@ func TestCountObjects(t *testing.T) {
 }
 ```
 
+
+## Mocking Waiters
+
+In the following example, `TableExistsWaiter` is an interface that defines the
+behaviors for the {{% alias service=DDBLong %}}
+[TableExistsWaiter]({{< apiref "service/s3#ListObjectsV2Paginator" >}}).
+required by `WriteItem` function.
+
+```go
+import "context"
+import "github.com/aws/aws-sdk-go-v2/service/dynamodb"
+
+// ...
+
+type TableExistsWaiter interface {
+	Wait(context.Context, *dynamodb.DescribeTableInput, *time.Duration, ...func(*dynamodb.TableExistsWaiterOptions)) error
+}
+
+func WriteItem(waiter mockTableExistsWaiter, input *dynamodb.PutItemInput) error {
+	params := input.TableName
+	
+	
+	
+	
+	return count, nil
+}
+```
+
+To test `CountObjects`, create the `mockListObjectsV2Pager` type to
+satisfy the `ListObjectsV2Pager` interface definition. Then use `mockListObjectsV2Pager`
+to replicate the paging behavior of output and error responses from the service
+operation paginator.
+
+```go
+import "context"
+import	"fmt"
+import "testing"
+import "github.com/aws/aws-sdk-go-v2/service/s3"
+
+// ...
+
+type mockListObjectsV2Pager struct {
+	PageNum int
+	Pages   []*s3.ListObjectsV2Output
+}
+
+func (m *mockListObjectsV2Pager) HasMorePages() bool {
+	return m.PageNum < len(m.Pages)
+}
+
+func (m *mockListObjectsV2Pager) NextPage(ctx context.Context, f ...func(*s3.Options)) (output *s3.ListObjectsV2Output, err error) {
+	if m.PageNum >= len(m.Pages) {
+		return nil, fmt.Errorf("no more pages")
+	}
+	output = m.Pages[m.PageNum]
+	m.PageNum++
+	return output, nil
+}
+
+func TestCountObjects(t *testing.T) {
+	pager := &mockListObjectsV2Pager{
+		Pages: []*s3.ListObjectsV2Output{
+			{
+				KeyCount: 5,
+			},
+			{
+				KeyCount: 10,
+			},
+			{
+				KeyCount: 15,
+			},
+		},
+	}
+	objects, err := CountObjects(pager)
+	if err != nil {
+		t.Fatalf("expect no error, got %v", err)
+	}
+	if expect, actual := int64(30), objects; expect != actual {
+		t.Errorf("expect %v, got %v", expect, actual)
+	}
+}
+```
+
