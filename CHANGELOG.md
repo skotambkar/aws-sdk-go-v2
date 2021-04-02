@@ -1,12 +1,12 @@
 # Release 2021-04-01
 ## Service Client Highlights
-* Bug Fix: Fix URL Path and RawQuery of resolved endpoint being ignored by the API client's request serialization. Fixes https://github.com/aws/aws-sdk-go-v2/issues/1191
-* Bug Fix: Refactored internal endpoints model for accessors
+* Bug Fix: Fix URL Path and RawQuery of resolved endpoint being ignored by the API client's request serialization.
+  * Fixes [issue#1191](https://github.com/aws/aws-sdk-go-v2/issues/1191)
+* Refactored internal endpoints model for accessors
 * Feature: updated to latest models
-* `service/location` - v1.0.0
-  * v1 Release: new service
-* `service/lookoutmetrics` - v1.0.0
-  * v1 Release: new service
+* New services 
+  * `service/location` - v1.0.0
+  * `service/lookoutmetrics` - v1.0.0
 ## Core SDK Highlights
 * Dependency Update: update smithy-go module
 * Dependency Update: Updated SDK dependencies to their latest versions.
