@@ -25,7 +25,7 @@ func (c *Client) UpdateContinuousBackups(ctx context.Context, params *UpdateCont
 		params = &UpdateContinuousBackupsInput{}
 	}
 
-	result, metadata, err := c.invokeOperation(ctx, "UpdateContinuousBackups", params, optFns, addOperationUpdateContinuousBackupsMiddlewares)
+	result, metadata, err := c.invokeOperation(ctx, "UpdateContinuousBackups", params, optFns, c.addOperationUpdateContinuousBackupsMiddlewares)
 	if err != nil {
 		return nil, err
 	}
@@ -58,7 +58,7 @@ type UpdateContinuousBackupsOutput struct {
 	ResultMetadata middleware.Metadata
 }
 
-func addOperationUpdateContinuousBackupsMiddlewares(stack *middleware.Stack, options Options) (err error) {
+func (c *Client) addOperationUpdateContinuousBackupsMiddlewares(stack *middleware.Stack, options Options) (err error) {
 	err = stack.Serialize.Add(&awsAwsjson10_serializeOpUpdateContinuousBackups{}, middleware.After)
 	if err != nil {
 		return err

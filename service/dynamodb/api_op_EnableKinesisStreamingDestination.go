@@ -20,7 +20,7 @@ func (c *Client) EnableKinesisStreamingDestination(ctx context.Context, params *
 		params = &EnableKinesisStreamingDestinationInput{}
 	}
 
-	result, metadata, err := c.invokeOperation(ctx, "EnableKinesisStreamingDestination", params, optFns, addOperationEnableKinesisStreamingDestinationMiddlewares)
+	result, metadata, err := c.invokeOperation(ctx, "EnableKinesisStreamingDestination", params, optFns, c.addOperationEnableKinesisStreamingDestinationMiddlewares)
 	if err != nil {
 		return nil, err
 	}
@@ -58,7 +58,7 @@ type EnableKinesisStreamingDestinationOutput struct {
 	ResultMetadata middleware.Metadata
 }
 
-func addOperationEnableKinesisStreamingDestinationMiddlewares(stack *middleware.Stack, options Options) (err error) {
+func (c *Client) addOperationEnableKinesisStreamingDestinationMiddlewares(stack *middleware.Stack, options Options) (err error) {
 	err = stack.Serialize.Add(&awsAwsjson10_serializeOpEnableKinesisStreamingDestination{}, middleware.After)
 	if err != nil {
 		return err

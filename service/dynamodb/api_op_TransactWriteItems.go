@@ -74,7 +74,7 @@ func (c *Client) TransactWriteItems(ctx context.Context, params *TransactWriteIt
 		params = &TransactWriteItemsInput{}
 	}
 
-	result, metadata, err := c.invokeOperation(ctx, "TransactWriteItems", params, optFns, addOperationTransactWriteItemsMiddlewares)
+	result, metadata, err := c.invokeOperation(ctx, "TransactWriteItems", params, optFns, c.addOperationTransactWriteItemsMiddlewares)
 	if err != nil {
 		return nil, err
 	}
@@ -151,7 +151,7 @@ type TransactWriteItemsOutput struct {
 	ResultMetadata middleware.Metadata
 }
 
-func addOperationTransactWriteItemsMiddlewares(stack *middleware.Stack, options Options) (err error) {
+func (c *Client) addOperationTransactWriteItemsMiddlewares(stack *middleware.Stack, options Options) (err error) {
 	err = stack.Serialize.Add(&awsAwsjson10_serializeOpTransactWriteItems{}, middleware.After)
 	if err != nil {
 		return err

@@ -23,7 +23,7 @@ func (c *Client) CreateMap(ctx context.Context, params *CreateMapInput, optFns .
 		params = &CreateMapInput{}
 	}
 
-	result, metadata, err := c.invokeOperation(ctx, "CreateMap", params, optFns, addOperationCreateMapMiddlewares)
+	result, metadata, err := c.invokeOperation(ctx, "CreateMap", params, optFns, c.addOperationCreateMapMiddlewares)
 	if err != nil {
 		return nil, err
 	}
@@ -92,7 +92,7 @@ type CreateMapOutput struct {
 	ResultMetadata middleware.Metadata
 }
 
-func addOperationCreateMapMiddlewares(stack *middleware.Stack, options Options) (err error) {
+func (c *Client) addOperationCreateMapMiddlewares(stack *middleware.Stack, options Options) (err error) {
 	err = stack.Serialize.Add(&awsRestjson1_serializeOpCreateMap{}, middleware.After)
 	if err != nil {
 		return err

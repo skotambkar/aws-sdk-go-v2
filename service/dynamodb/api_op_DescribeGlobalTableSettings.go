@@ -20,7 +20,7 @@ func (c *Client) DescribeGlobalTableSettings(ctx context.Context, params *Descri
 		params = &DescribeGlobalTableSettingsInput{}
 	}
 
-	result, metadata, err := c.invokeOperation(ctx, "DescribeGlobalTableSettings", params, optFns, addOperationDescribeGlobalTableSettingsMiddlewares)
+	result, metadata, err := c.invokeOperation(ctx, "DescribeGlobalTableSettings", params, optFns, c.addOperationDescribeGlobalTableSettingsMiddlewares)
 	if err != nil {
 		return nil, err
 	}
@@ -50,7 +50,7 @@ type DescribeGlobalTableSettingsOutput struct {
 	ResultMetadata middleware.Metadata
 }
 
-func addOperationDescribeGlobalTableSettingsMiddlewares(stack *middleware.Stack, options Options) (err error) {
+func (c *Client) addOperationDescribeGlobalTableSettingsMiddlewares(stack *middleware.Stack, options Options) (err error) {
 	err = stack.Serialize.Add(&awsAwsjson10_serializeOpDescribeGlobalTableSettings{}, middleware.After)
 	if err != nil {
 		return err

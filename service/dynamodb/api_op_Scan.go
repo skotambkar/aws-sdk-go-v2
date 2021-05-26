@@ -40,7 +40,7 @@ func (c *Client) Scan(ctx context.Context, params *ScanInput, optFns ...func(*Op
 		params = &ScanInput{}
 	}
 
-	result, metadata, err := c.invokeOperation(ctx, "Scan", params, optFns, addOperationScanMiddlewares)
+	result, metadata, err := c.invokeOperation(ctx, "Scan", params, optFns, c.addOperationScanMiddlewares)
 	if err != nil {
 		return nil, err
 	}
@@ -317,7 +317,7 @@ type ScanOutput struct {
 	ResultMetadata middleware.Metadata
 }
 
-func addOperationScanMiddlewares(stack *middleware.Stack, options Options) (err error) {
+func (c *Client) addOperationScanMiddlewares(stack *middleware.Stack, options Options) (err error) {
 	err = stack.Serialize.Add(&awsAwsjson10_serializeOpScan{}, middleware.After)
 	if err != nil {
 		return err

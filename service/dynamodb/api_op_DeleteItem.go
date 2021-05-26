@@ -25,7 +25,7 @@ func (c *Client) DeleteItem(ctx context.Context, params *DeleteItemInput, optFns
 		params = &DeleteItemInput{}
 	}
 
-	result, metadata, err := c.invokeOperation(ctx, "DeleteItem", params, optFns, addOperationDeleteItemMiddlewares)
+	result, metadata, err := c.invokeOperation(ctx, "DeleteItem", params, optFns, c.addOperationDeleteItemMiddlewares)
 	if err != nil {
 		return nil, err
 	}
@@ -217,7 +217,7 @@ type DeleteItemOutput struct {
 	ResultMetadata middleware.Metadata
 }
 
-func addOperationDeleteItemMiddlewares(stack *middleware.Stack, options Options) (err error) {
+func (c *Client) addOperationDeleteItemMiddlewares(stack *middleware.Stack, options Options) (err error) {
 	err = stack.Serialize.Add(&awsAwsjson10_serializeOpDeleteItem{}, middleware.After)
 	if err != nil {
 		return err

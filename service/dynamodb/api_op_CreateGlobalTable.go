@@ -61,7 +61,7 @@ func (c *Client) CreateGlobalTable(ctx context.Context, params *CreateGlobalTabl
 		params = &CreateGlobalTableInput{}
 	}
 
-	result, metadata, err := c.invokeOperation(ctx, "CreateGlobalTable", params, optFns, addOperationCreateGlobalTableMiddlewares)
+	result, metadata, err := c.invokeOperation(ctx, "CreateGlobalTable", params, optFns, c.addOperationCreateGlobalTableMiddlewares)
 	if err != nil {
 		return nil, err
 	}
@@ -93,7 +93,7 @@ type CreateGlobalTableOutput struct {
 	ResultMetadata middleware.Metadata
 }
 
-func addOperationCreateGlobalTableMiddlewares(stack *middleware.Stack, options Options) (err error) {
+func (c *Client) addOperationCreateGlobalTableMiddlewares(stack *middleware.Stack, options Options) (err error) {
 	err = stack.Serialize.Add(&awsAwsjson10_serializeOpCreateGlobalTable{}, middleware.After)
 	if err != nil {
 		return err

@@ -28,7 +28,7 @@ func (c *Client) CreateTable(ctx context.Context, params *CreateTableInput, optF
 		params = &CreateTableInput{}
 	}
 
-	result, metadata, err := c.invokeOperation(ctx, "CreateTable", params, optFns, addOperationCreateTableMiddlewares)
+	result, metadata, err := c.invokeOperation(ctx, "CreateTable", params, optFns, c.addOperationCreateTableMiddlewares)
 	if err != nil {
 		return nil, err
 	}
@@ -228,7 +228,7 @@ type CreateTableOutput struct {
 	ResultMetadata middleware.Metadata
 }
 
-func addOperationCreateTableMiddlewares(stack *middleware.Stack, options Options) (err error) {
+func (c *Client) addOperationCreateTableMiddlewares(stack *middleware.Stack, options Options) (err error) {
 	err = stack.Serialize.Add(&awsAwsjson10_serializeOpCreateTable{}, middleware.After)
 	if err != nil {
 		return err

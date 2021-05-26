@@ -36,7 +36,7 @@ func (c *Client) TransactGetItems(ctx context.Context, params *TransactGetItemsI
 		params = &TransactGetItemsInput{}
 	}
 
-	result, metadata, err := c.invokeOperation(ctx, "TransactGetItems", params, optFns, addOperationTransactGetItemsMiddlewares)
+	result, metadata, err := c.invokeOperation(ctx, "TransactGetItems", params, optFns, c.addOperationTransactGetItemsMiddlewares)
 	if err != nil {
 		return nil, err
 	}
@@ -81,7 +81,7 @@ type TransactGetItemsOutput struct {
 	ResultMetadata middleware.Metadata
 }
 
-func addOperationTransactGetItemsMiddlewares(stack *middleware.Stack, options Options) (err error) {
+func (c *Client) addOperationTransactGetItemsMiddlewares(stack *middleware.Stack, options Options) (err error) {
 	err = stack.Serialize.Add(&awsAwsjson10_serializeOpTransactGetItems{}, middleware.After)
 	if err != nil {
 		return err

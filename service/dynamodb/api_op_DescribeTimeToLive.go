@@ -17,7 +17,7 @@ func (c *Client) DescribeTimeToLive(ctx context.Context, params *DescribeTimeToL
 		params = &DescribeTimeToLiveInput{}
 	}
 
-	result, metadata, err := c.invokeOperation(ctx, "DescribeTimeToLive", params, optFns, addOperationDescribeTimeToLiveMiddlewares)
+	result, metadata, err := c.invokeOperation(ctx, "DescribeTimeToLive", params, optFns, c.addOperationDescribeTimeToLiveMiddlewares)
 	if err != nil {
 		return nil, err
 	}
@@ -44,7 +44,7 @@ type DescribeTimeToLiveOutput struct {
 	ResultMetadata middleware.Metadata
 }
 
-func addOperationDescribeTimeToLiveMiddlewares(stack *middleware.Stack, options Options) (err error) {
+func (c *Client) addOperationDescribeTimeToLiveMiddlewares(stack *middleware.Stack, options Options) (err error) {
 	err = stack.Serialize.Add(&awsAwsjson10_serializeOpDescribeTimeToLive{}, middleware.After)
 	if err != nil {
 		return err

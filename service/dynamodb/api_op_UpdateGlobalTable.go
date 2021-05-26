@@ -33,7 +33,7 @@ func (c *Client) UpdateGlobalTable(ctx context.Context, params *UpdateGlobalTabl
 		params = &UpdateGlobalTableInput{}
 	}
 
-	result, metadata, err := c.invokeOperation(ctx, "UpdateGlobalTable", params, optFns, addOperationUpdateGlobalTableMiddlewares)
+	result, metadata, err := c.invokeOperation(ctx, "UpdateGlobalTable", params, optFns, c.addOperationUpdateGlobalTableMiddlewares)
 	if err != nil {
 		return nil, err
 	}
@@ -65,7 +65,7 @@ type UpdateGlobalTableOutput struct {
 	ResultMetadata middleware.Metadata
 }
 
-func addOperationUpdateGlobalTableMiddlewares(stack *middleware.Stack, options Options) (err error) {
+func (c *Client) addOperationUpdateGlobalTableMiddlewares(stack *middleware.Stack, options Options) (err error) {
 	err = stack.Serialize.Add(&awsAwsjson10_serializeOpUpdateGlobalTable{}, middleware.After)
 	if err != nil {
 		return err

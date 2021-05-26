@@ -18,7 +18,7 @@ func (c *Client) AdminRespondToAuthChallenge(ctx context.Context, params *AdminR
 		params = &AdminRespondToAuthChallengeInput{}
 	}
 
-	result, metadata, err := c.invokeOperation(ctx, "AdminRespondToAuthChallenge", params, optFns, addOperationAdminRespondToAuthChallengeMiddlewares)
+	result, metadata, err := c.invokeOperation(ctx, "AdminRespondToAuthChallenge", params, optFns, c.addOperationAdminRespondToAuthChallengeMiddlewares)
 	if err != nil {
 		return nil, err
 	}
@@ -147,7 +147,7 @@ type AdminRespondToAuthChallengeOutput struct {
 	ResultMetadata middleware.Metadata
 }
 
-func addOperationAdminRespondToAuthChallengeMiddlewares(stack *middleware.Stack, options Options) (err error) {
+func (c *Client) addOperationAdminRespondToAuthChallengeMiddlewares(stack *middleware.Stack, options Options) (err error) {
 	err = stack.Serialize.Add(&awsAwsjson11_serializeOpAdminRespondToAuthChallenge{}, middleware.After)
 	if err != nil {
 		return err

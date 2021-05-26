@@ -29,7 +29,7 @@ func (c *Client) DeleteTable(ctx context.Context, params *DeleteTableInput, optF
 		params = &DeleteTableInput{}
 	}
 
-	result, metadata, err := c.invokeOperation(ctx, "DeleteTable", params, optFns, addOperationDeleteTableMiddlewares)
+	result, metadata, err := c.invokeOperation(ctx, "DeleteTable", params, optFns, c.addOperationDeleteTableMiddlewares)
 	if err != nil {
 		return nil, err
 	}
@@ -58,7 +58,7 @@ type DeleteTableOutput struct {
 	ResultMetadata middleware.Metadata
 }
 
-func addOperationDeleteTableMiddlewares(stack *middleware.Stack, options Options) (err error) {
+func (c *Client) addOperationDeleteTableMiddlewares(stack *middleware.Stack, options Options) (err error) {
 	err = stack.Serialize.Add(&awsAwsjson10_serializeOpDeleteTable{}, middleware.After)
 	if err != nil {
 		return err

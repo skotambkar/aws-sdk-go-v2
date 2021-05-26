@@ -35,7 +35,7 @@ func (c *Client) UpdateTimeToLive(ctx context.Context, params *UpdateTimeToLiveI
 		params = &UpdateTimeToLiveInput{}
 	}
 
-	result, metadata, err := c.invokeOperation(ctx, "UpdateTimeToLive", params, optFns, addOperationUpdateTimeToLiveMiddlewares)
+	result, metadata, err := c.invokeOperation(ctx, "UpdateTimeToLive", params, optFns, c.addOperationUpdateTimeToLiveMiddlewares)
 	if err != nil {
 		return nil, err
 	}
@@ -69,7 +69,7 @@ type UpdateTimeToLiveOutput struct {
 	ResultMetadata middleware.Metadata
 }
 
-func addOperationUpdateTimeToLiveMiddlewares(stack *middleware.Stack, options Options) (err error) {
+func (c *Client) addOperationUpdateTimeToLiveMiddlewares(stack *middleware.Stack, options Options) (err error) {
 	err = stack.Serialize.Add(&awsAwsjson10_serializeOpUpdateTimeToLive{}, middleware.After)
 	if err != nil {
 		return err

@@ -78,7 +78,7 @@ func (c *Client) BatchWriteItem(ctx context.Context, params *BatchWriteItemInput
 		params = &BatchWriteItemInput{}
 	}
 
-	result, metadata, err := c.invokeOperation(ctx, "BatchWriteItem", params, optFns, addOperationBatchWriteItemMiddlewares)
+	result, metadata, err := c.invokeOperation(ctx, "BatchWriteItem", params, optFns, c.addOperationBatchWriteItemMiddlewares)
 	if err != nil {
 		return nil, err
 	}
@@ -211,7 +211,7 @@ type BatchWriteItemOutput struct {
 	ResultMetadata middleware.Metadata
 }
 
-func addOperationBatchWriteItemMiddlewares(stack *middleware.Stack, options Options) (err error) {
+func (c *Client) addOperationBatchWriteItemMiddlewares(stack *middleware.Stack, options Options) (err error) {
 	err = stack.Serialize.Add(&awsAwsjson10_serializeOpBatchWriteItem{}, middleware.After)
 	if err != nil {
 		return err

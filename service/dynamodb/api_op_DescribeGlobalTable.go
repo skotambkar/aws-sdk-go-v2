@@ -24,7 +24,7 @@ func (c *Client) DescribeGlobalTable(ctx context.Context, params *DescribeGlobal
 		params = &DescribeGlobalTableInput{}
 	}
 
-	result, metadata, err := c.invokeOperation(ctx, "DescribeGlobalTable", params, optFns, addOperationDescribeGlobalTableMiddlewares)
+	result, metadata, err := c.invokeOperation(ctx, "DescribeGlobalTable", params, optFns, c.addOperationDescribeGlobalTableMiddlewares)
 	if err != nil {
 		return nil, err
 	}
@@ -51,7 +51,7 @@ type DescribeGlobalTableOutput struct {
 	ResultMetadata middleware.Metadata
 }
 
-func addOperationDescribeGlobalTableMiddlewares(stack *middleware.Stack, options Options) (err error) {
+func (c *Client) addOperationDescribeGlobalTableMiddlewares(stack *middleware.Stack, options Options) (err error) {
 	err = stack.Serialize.Add(&awsAwsjson10_serializeOpDescribeGlobalTable{}, middleware.After)
 	if err != nil {
 		return err

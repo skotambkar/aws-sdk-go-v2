@@ -17,7 +17,7 @@ func (c *Client) UpdateGlobalTableSettings(ctx context.Context, params *UpdateGl
 		params = &UpdateGlobalTableSettingsInput{}
 	}
 
-	result, metadata, err := c.invokeOperation(ctx, "UpdateGlobalTableSettings", params, optFns, addOperationUpdateGlobalTableSettingsMiddlewares)
+	result, metadata, err := c.invokeOperation(ctx, "UpdateGlobalTableSettings", params, optFns, c.addOperationUpdateGlobalTableSettingsMiddlewares)
 	if err != nil {
 		return nil, err
 	}
@@ -76,7 +76,7 @@ type UpdateGlobalTableSettingsOutput struct {
 	ResultMetadata middleware.Metadata
 }
 
-func addOperationUpdateGlobalTableSettingsMiddlewares(stack *middleware.Stack, options Options) (err error) {
+func (c *Client) addOperationUpdateGlobalTableSettingsMiddlewares(stack *middleware.Stack, options Options) (err error) {
 	err = stack.Serialize.Add(&awsAwsjson10_serializeOpUpdateGlobalTableSettings{}, middleware.After)
 	if err != nil {
 		return err

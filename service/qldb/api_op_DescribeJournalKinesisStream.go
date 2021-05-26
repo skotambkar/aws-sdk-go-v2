@@ -19,7 +19,7 @@ func (c *Client) DescribeJournalKinesisStream(ctx context.Context, params *Descr
 		params = &DescribeJournalKinesisStreamInput{}
 	}
 
-	result, metadata, err := c.invokeOperation(ctx, "DescribeJournalKinesisStream", params, optFns, addOperationDescribeJournalKinesisStreamMiddlewares)
+	result, metadata, err := c.invokeOperation(ctx, "DescribeJournalKinesisStream", params, optFns, c.addOperationDescribeJournalKinesisStreamMiddlewares)
 	if err != nil {
 		return nil, err
 	}
@@ -52,7 +52,7 @@ type DescribeJournalKinesisStreamOutput struct {
 	ResultMetadata middleware.Metadata
 }
 
-func addOperationDescribeJournalKinesisStreamMiddlewares(stack *middleware.Stack, options Options) (err error) {
+func (c *Client) addOperationDescribeJournalKinesisStreamMiddlewares(stack *middleware.Stack, options Options) (err error) {
 	err = stack.Serialize.Add(&awsRestjson1_serializeOpDescribeJournalKinesisStream{}, middleware.After)
 	if err != nil {
 		return err

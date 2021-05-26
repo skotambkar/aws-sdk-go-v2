@@ -56,7 +56,7 @@ func (c *Client) BatchGetItem(ctx context.Context, params *BatchGetItemInput, op
 		params = &BatchGetItemInput{}
 	}
 
-	result, metadata, err := c.invokeOperation(ctx, "BatchGetItem", params, optFns, addOperationBatchGetItemMiddlewares)
+	result, metadata, err := c.invokeOperation(ctx, "BatchGetItem", params, optFns, c.addOperationBatchGetItemMiddlewares)
 	if err != nil {
 		return nil, err
 	}
@@ -204,7 +204,7 @@ type BatchGetItemOutput struct {
 	ResultMetadata middleware.Metadata
 }
 
-func addOperationBatchGetItemMiddlewares(stack *middleware.Stack, options Options) (err error) {
+func (c *Client) addOperationBatchGetItemMiddlewares(stack *middleware.Stack, options Options) (err error) {
 	err = stack.Serialize.Add(&awsAwsjson10_serializeOpBatchGetItem{}, middleware.After)
 	if err != nil {
 		return err

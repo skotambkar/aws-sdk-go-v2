@@ -25,7 +25,7 @@ func (c *Client) AdminCreateUser(ctx context.Context, params *AdminCreateUserInp
 		params = &AdminCreateUserInput{}
 	}
 
-	result, metadata, err := c.invokeOperation(ctx, "AdminCreateUser", params, optFns, addOperationAdminCreateUserMiddlewares)
+	result, metadata, err := c.invokeOperation(ctx, "AdminCreateUser", params, optFns, c.addOperationAdminCreateUserMiddlewares)
 	if err != nil {
 		return nil, err
 	}
@@ -157,7 +157,7 @@ type AdminCreateUserOutput struct {
 	ResultMetadata middleware.Metadata
 }
 
-func addOperationAdminCreateUserMiddlewares(stack *middleware.Stack, options Options) (err error) {
+func (c *Client) addOperationAdminCreateUserMiddlewares(stack *middleware.Stack, options Options) (err error) {
 	err = stack.Serialize.Add(&awsAwsjson11_serializeOpAdminCreateUser{}, middleware.After)
 	if err != nil {
 		return err

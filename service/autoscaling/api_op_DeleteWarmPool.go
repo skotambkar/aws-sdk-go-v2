@@ -16,7 +16,7 @@ func (c *Client) DeleteWarmPool(ctx context.Context, params *DeleteWarmPoolInput
 		params = &DeleteWarmPoolInput{}
 	}
 
-	result, metadata, err := c.invokeOperation(ctx, "DeleteWarmPool", params, optFns, addOperationDeleteWarmPoolMiddlewares)
+	result, metadata, err := c.invokeOperation(ctx, "DeleteWarmPool", params, optFns, c.addOperationDeleteWarmPoolMiddlewares)
 	if err != nil {
 		return nil, err
 	}
@@ -45,7 +45,7 @@ type DeleteWarmPoolOutput struct {
 	ResultMetadata middleware.Metadata
 }
 
-func addOperationDeleteWarmPoolMiddlewares(stack *middleware.Stack, options Options) (err error) {
+func (c *Client) addOperationDeleteWarmPoolMiddlewares(stack *middleware.Stack, options Options) (err error) {
 	err = stack.Serialize.Add(&awsAwsquery_serializeOpDeleteWarmPool{}, middleware.After)
 	if err != nil {
 		return err

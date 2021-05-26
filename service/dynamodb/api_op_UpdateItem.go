@@ -23,7 +23,7 @@ func (c *Client) UpdateItem(ctx context.Context, params *UpdateItemInput, optFns
 		params = &UpdateItemInput{}
 	}
 
-	result, metadata, err := c.invokeOperation(ctx, "UpdateItem", params, optFns, addOperationUpdateItemMiddlewares)
+	result, metadata, err := c.invokeOperation(ctx, "UpdateItem", params, optFns, c.addOperationUpdateItemMiddlewares)
 	if err != nil {
 		return nil, err
 	}
@@ -303,7 +303,7 @@ type UpdateItemOutput struct {
 	ResultMetadata middleware.Metadata
 }
 
-func addOperationUpdateItemMiddlewares(stack *middleware.Stack, options Options) (err error) {
+func (c *Client) addOperationUpdateItemMiddlewares(stack *middleware.Stack, options Options) (err error) {
 	err = stack.Serialize.Add(&awsAwsjson10_serializeOpUpdateItem{}, middleware.After)
 	if err != nil {
 		return err

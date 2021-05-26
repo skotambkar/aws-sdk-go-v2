@@ -86,3 +86,19 @@ func (c Config) Copy() Config {
 	cp := c
 	return cp
 }
+
+// EndpointDiscoveryEnableState indicates if endpoint discovery is
+// enabled, disabled, or in default (auto) behavior state.
+//
+// Default behavior (AUTO) indicates operations that require endpoint
+// discovery will use Endpoint Discovery by default. Operations that
+// optionally use Endpoint Discovery will not use Endpoint Discovery
+// unless EndpointDiscovery is explicitly enabled.
+type EndpointDiscoveryEnableState string
+
+// Enumeration values for EndpointDiscoveryEnableState
+const (
+	EndpointDiscoveryAuto     = EndpointDiscoveryEnableState("auto")  // default state
+	EndpointDiscoveryDisabled = EndpointDiscoveryEnableState("false") // endpoint discovery disabled
+	EndpointDiscoveryEnabled  = EndpointDiscoveryEnableState("true")  // endpoint discovery enabled
+)

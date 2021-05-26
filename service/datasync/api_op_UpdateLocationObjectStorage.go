@@ -19,7 +19,7 @@ func (c *Client) UpdateLocationObjectStorage(ctx context.Context, params *Update
 		params = &UpdateLocationObjectStorageInput{}
 	}
 
-	result, metadata, err := c.invokeOperation(ctx, "UpdateLocationObjectStorage", params, optFns, addOperationUpdateLocationObjectStorageMiddlewares)
+	result, metadata, err := c.invokeOperation(ctx, "UpdateLocationObjectStorage", params, optFns, c.addOperationUpdateLocationObjectStorageMiddlewares)
 	if err != nil {
 		return nil, err
 	}
@@ -73,7 +73,7 @@ type UpdateLocationObjectStorageOutput struct {
 	ResultMetadata middleware.Metadata
 }
 
-func addOperationUpdateLocationObjectStorageMiddlewares(stack *middleware.Stack, options Options) (err error) {
+func (c *Client) addOperationUpdateLocationObjectStorageMiddlewares(stack *middleware.Stack, options Options) (err error) {
 	err = stack.Serialize.Add(&awsAwsjson11_serializeOpUpdateLocationObjectStorage{}, middleware.After)
 	if err != nil {
 		return err

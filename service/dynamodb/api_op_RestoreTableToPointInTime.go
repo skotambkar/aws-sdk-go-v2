@@ -55,7 +55,7 @@ func (c *Client) RestoreTableToPointInTime(ctx context.Context, params *RestoreT
 		params = &RestoreTableToPointInTimeInput{}
 	}
 
-	result, metadata, err := c.invokeOperation(ctx, "RestoreTableToPointInTime", params, optFns, addOperationRestoreTableToPointInTimeMiddlewares)
+	result, metadata, err := c.invokeOperation(ctx, "RestoreTableToPointInTime", params, optFns, c.addOperationRestoreTableToPointInTimeMiddlewares)
 	if err != nil {
 		return nil, err
 	}
@@ -115,7 +115,7 @@ type RestoreTableToPointInTimeOutput struct {
 	ResultMetadata middleware.Metadata
 }
 
-func addOperationRestoreTableToPointInTimeMiddlewares(stack *middleware.Stack, options Options) (err error) {
+func (c *Client) addOperationRestoreTableToPointInTimeMiddlewares(stack *middleware.Stack, options Options) (err error) {
 	err = stack.Serialize.Add(&awsAwsjson10_serializeOpRestoreTableToPointInTime{}, middleware.After)
 	if err != nil {
 		return err

@@ -23,7 +23,7 @@ func (c *Client) GetItem(ctx context.Context, params *GetItemInput, optFns ...fu
 		params = &GetItemInput{}
 	}
 
-	result, metadata, err := c.invokeOperation(ctx, "GetItem", params, optFns, addOperationGetItemMiddlewares)
+	result, metadata, err := c.invokeOperation(ctx, "GetItem", params, optFns, c.addOperationGetItemMiddlewares)
 	if err != nil {
 		return nil, err
 	}
@@ -150,7 +150,7 @@ type GetItemOutput struct {
 	ResultMetadata middleware.Metadata
 }
 
-func addOperationGetItemMiddlewares(stack *middleware.Stack, options Options) (err error) {
+func (c *Client) addOperationGetItemMiddlewares(stack *middleware.Stack, options Options) (err error) {
 	err = stack.Serialize.Add(&awsAwsjson10_serializeOpGetItem{}, middleware.After)
 	if err != nil {
 		return err

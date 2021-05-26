@@ -34,7 +34,7 @@ func (c *Client) RestoreTableFromBackup(ctx context.Context, params *RestoreTabl
 		params = &RestoreTableFromBackupInput{}
 	}
 
-	result, metadata, err := c.invokeOperation(ctx, "RestoreTableFromBackup", params, optFns, addOperationRestoreTableFromBackupMiddlewares)
+	result, metadata, err := c.invokeOperation(ctx, "RestoreTableFromBackup", params, optFns, c.addOperationRestoreTableFromBackupMiddlewares)
 	if err != nil {
 		return nil, err
 	}
@@ -85,7 +85,7 @@ type RestoreTableFromBackupOutput struct {
 	ResultMetadata middleware.Metadata
 }
 
-func addOperationRestoreTableFromBackupMiddlewares(stack *middleware.Stack, options Options) (err error) {
+func (c *Client) addOperationRestoreTableFromBackupMiddlewares(stack *middleware.Stack, options Options) (err error) {
 	err = stack.Serialize.Add(&awsAwsjson10_serializeOpRestoreTableFromBackup{}, middleware.After)
 	if err != nil {
 		return err

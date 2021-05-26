@@ -20,7 +20,7 @@ func (c *Client) ListGlobalTables(ctx context.Context, params *ListGlobalTablesI
 		params = &ListGlobalTablesInput{}
 	}
 
-	result, metadata, err := c.invokeOperation(ctx, "ListGlobalTables", params, optFns, addOperationListGlobalTablesMiddlewares)
+	result, metadata, err := c.invokeOperation(ctx, "ListGlobalTables", params, optFns, c.addOperationListGlobalTablesMiddlewares)
 	if err != nil {
 		return nil, err
 	}
@@ -58,7 +58,7 @@ type ListGlobalTablesOutput struct {
 	ResultMetadata middleware.Metadata
 }
 
-func addOperationListGlobalTablesMiddlewares(stack *middleware.Stack, options Options) (err error) {
+func (c *Client) addOperationListGlobalTablesMiddlewares(stack *middleware.Stack, options Options) (err error) {
 	err = stack.Serialize.Add(&awsAwsjson10_serializeOpListGlobalTables{}, middleware.After)
 	if err != nil {
 		return err
